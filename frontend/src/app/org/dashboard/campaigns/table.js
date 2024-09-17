@@ -1,0 +1,110 @@
+"use client"
+
+import Link from "next/link";
+import { FaEdit } from "react-icons/fa";
+import { IoMdOpen } from "react-icons/io";
+import axios from "axios";
+import { useEffect, useState, useContext } from "react";
+import { AuthContext } from "@/app/context/authContext.js";
+import { FaSortUp } from "react-icons/fa";
+import { FaSortDown } from "react-icons/fa";
+
+
+const Table = () => {
+   const columns = [
+      { id: 'actions', label: 'Actions', sortable: false},
+      { id: 'title', label: 'Title', sortable: false },
+      { id: 'date', label: 'Date', sortable: false },
+      { id: 'raised', label: 'Raised', sortable: true},
+      { id: 'goal', label: 'Goal', sortable: true },
+      { id: 'donations', label: 'Donations', sortable: true },
+      { id: 'visits', label: 'Visits', sortable: true },
+      { id: 'active', label: 'Active', sortable: false }
+   ];
+   
+   // const {currentUser} = useContext(AuthContext)
+   
+   const [data, setData] = useState(null)
+   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
+
+   const sortData = (key) => {
+      let direction = 'ascending';
+      if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+         direction = 'descending';
+      }
+      const sortedData = [...data].sort((a, b) => {
+         if (a[key] < b[key]) return direction === 'ascending' ? -1 : 1;
+         if (a[key] > b[key]) return direction === 'ascending' ? 1 : -1;
+         return 0;
+      });
+      setData(sortedData);
+      setSortConfig({ key, direction });
+   };
+
+   useEffect(() => {
+      const fetchData = async() => {
+         try {
+            const response = await axios.get(`http://localhost:4000/api/campaign/getByOrg/${6}`)
+            setData(response.data)
+         } catch (err) {
+            console.log(err)
+         }
+      }
+
+      fetchData()
+   }, [])
+
+   return (
+      <div className="p-8">
+         <table className="min-w-full bg-white  border-gray-300 rounded-md">
+            {/* Table Header */}
+            <thead className="border-b border-gray-300">
+               <tr>
+                  {columns.map((column, index) => (
+                     <th key={index} className="px-4 py-2 text-left text-gray-600 text-sm font-semibold" onClick={() => sortData(column.id)}>
+                        <div className="flex flex-row items-center justify-center">
+                           {column.label}
+                           {column.sortable &&
+                           <div className="h-full flex items-center justify-center cursor-pointer">
+                              {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? 
+                                 (<FaSortUp className="ml-2 text-gray-600" />) : (<FaSortDown className="ml-2 text-gray-600" />)
+                              }
+                           </div>
+                           }
+                        </div>
+                     </th>
+                  ))}
+               </tr>
+            </thead>
+            
+            {/* Table Body */}
+            <tbody>
+               {data && data.map((row, index) => (
+                  <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
+                     <td className="px-4 py-2 text-center text-sm">
+                        <div className="flex items-center justify-center space-x-2">
+                           <Link href="/org/campaign/edit">
+                              <FaEdit className="text-lg mr-2" />
+                           </Link>
+                           <div className="border-r border-gray-400 h-6" />
+                           <Link href="/org/campaign/view">
+                              <IoMdOpen className="text-lg ml-2" />
+                           </Link>
+                        </div>
+                     </td>
+                     <td className="px-4 py-2 text-sm text-center">{row.title}</td>
+                     <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString()}</td>
+                     <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
+                     <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
+                     <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
+                     <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
+                     <td className="px-4 py-2 text-sm text-center">{row.status}</td>
+                  </tr>
+               ))}
+            </tbody>
+         </table>
+      </div>
+   );
+};
+
+export default Table;
