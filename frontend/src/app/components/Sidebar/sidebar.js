@@ -36,7 +36,7 @@ const Sidebar = () => {
             <SidebarItem icon={<FaDonate className='h-full w-full'/>} text="Transactions" isCollapsed={isCollapsed} link="/org/dashboard/transactions"/>
          </div>
 
-         <div className={`mt-64 pt-4 ${isCollapsed ? 'flex flex-col items-center' : 'flex flex-col'}`}>
+         <div className={`mt-72 pt-4 ${isCollapsed ? 'flex flex-col items-center' : 'flex flex-col'}`}>
          <SidebarItem icon={<IoIosSettings className='h-full w-full'/>} text="Settings" isCollapsed={isCollapsed} link="/org/dashboard/settings"/>
          </div>
       </div>

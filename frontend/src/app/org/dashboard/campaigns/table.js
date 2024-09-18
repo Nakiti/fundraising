@@ -83,11 +83,11 @@ const Table = () => {
                   <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
                      <td className="px-4 py-2 text-center text-sm">
                         <div className="flex items-center justify-center space-x-2">
-                           <Link href="/org/campaign/edit">
+                           <Link href={`/org/campaign/edit/${row.id}`}>
                               <FaEdit className="text-lg mr-2" />
                            </Link>
                            <div className="border-r border-gray-400 h-6" />
-                           <Link href="/org/campaign/view">
+                           <Link href={`/org/campaign/view/${row.id}`}>
                               <IoMdOpen className="text-lg ml-2" />
                            </Link>
                         </div>

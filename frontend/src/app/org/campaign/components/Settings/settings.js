@@ -6,13 +6,12 @@ import DesignationDropdown from "./designationDropdown";
 const Settings = () => {
    const {settingsInputs, handleSettingsInputsChange} = useContext(CampaignContext)
 
-
    return (
       <div className="p-6 bg-white m-8">
          {/* Grid layout with two columns */}
          <h1 className="text-2xl font-bold mb-4">Campaign Settings</h1>
          <div className="h-full grid grid-cols-2 gap-4 grid-rows-3">
-            <div className="flex flex-col mb-4 row-start-1 row-end-2">
+            <div className="flex flex-col  row-start-1 row-end-2">
                <label className="text-gray-700 text-md font-medium mb-1">Title</label>
                <input
                   name="title"
@@ -23,7 +22,7 @@ const Settings = () => {
                   onChange={handleSettingsInputsChange}
                />
             </div>
-            <div className="flex flex-col mb-4 row-start-1 row-end-3">
+            <div className="flex flex-col row-start-1 row-end-3">
                <label className="text-gray-700 text-md font-medium mb-1">Description</label>
                <textarea
                   name="description"
@@ -35,7 +34,7 @@ const Settings = () => {
                   onChange={handleSettingsInputsChange}
                />
             </div>
-            <div className="flex flex-col mb-4 row-start-2 row-end-3">
+            <div className="flex flex-col row-start-2 row-end-3">
                <label className="text-gray-700 text-md font-medium mb-1">Goal</label>
                <input
                   name="goal"
@@ -46,7 +45,7 @@ const Settings = () => {
                   onChange={handleSettingsInputsChange}
                />
             </div>
-            <div className="flex flex-col mb-4 row-start-3 row-end-4 col-start-2 col-end-3">
+            <div className="flex flex-col row-start-3 row-end-4 col-start-2 col-end-3">
                <label className="text-gray-700 text-md font-medium mb-1">URL</label>
                <input
                   name="url"

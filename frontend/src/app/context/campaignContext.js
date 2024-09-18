@@ -27,11 +27,11 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
 
    const [selectedDesignations, setSelectedDesignations] = useState([]);
    const [designations, setDesignations] = useState([])
+   const [status, setStatus] = useState("inactive")
 
    useEffect(() => {
       const fetchData = async () => {
          try {
-
             if (campaignId) {
                const settingsResponse = (await axios.get(`http://localhost:4000/api/campaign/get/${1}`)).data[0]
                setSettingsInputs({
@@ -40,6 +40,8 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                   goal: settingsResponse.goal,
                   url: settingsResponse.url
                })
+
+               setStatus(settingsResponse.status)
 
                const previewResponse = (await axios.get(`http://localhost:4000/api/campaign/get/${1}`)).data[0]
                setPreviewInputs({
@@ -62,10 +64,11 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
          }
       }
 
+      fetchData()
    }, []);
 
    return (
-      <CampaignContext.Provider value={{previewInputs, settingsInputs, handlePreviewInputsChange, handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, designations}}>
+      <CampaignContext.Provider value={{status, previewInputs, settingsInputs, handlePreviewInputsChange, handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, designations}}>
          {children}
       </CampaignContext.Provider>
    );

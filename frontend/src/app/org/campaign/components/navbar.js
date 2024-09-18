@@ -1,16 +1,19 @@
 "use client"
 
-import { useState } from "react";
-import { IoIosArrowRoundBack } from "react-icons/io";
+import { CampaignContext } from "@/app/context/campaignContext";
+import { useState, useContext } from "react";
+import Link from "next/link";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 
-const Navbar = ({active, handleActiveChange}) => {
+const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDeactivate}) => {
+   const {status} = useContext(CampaignContext)
 
    return (
       <div className="flex items-center justify-between p-2 border-b border-gray-100 shadow-sm bg-white text-black">
          {/* Button on the left */}
          <div className="flex flex-row">
-            <button className="px-4"> <IoIosArrowRoundBack className="text-xl w-8 h-8"/></button>
+            <Link href="/org/dashboard/campaigns" className="px-4 flex items-center"> <IoMdArrowRoundBack className="text-xl"/></Link>
             <div className="border-r h-8 border-gray-300"/>
             <h1 className="text-lg font-semibold px-4">New Campaign</h1>
 
@@ -34,10 +37,24 @@ const Navbar = ({active, handleActiveChange}) => {
 
          {/* Buttons on the right */} 
          <div className="flex space-x-4 text-sm">
-            <button className="border-2 border-blue-700 hover:bg-gray-100 py-1 px-4 rounded-md">
-               Save
-            </button>
-            <button className="border-2 border-blue-700 hover:bg-gray-100 py-1 px-4 rounded-md">
+            {status == "inactive" ? 
+               <button 
+                  className="border-2 border-blue-700 hover:bg-gray-100 py-1 px-4 rounded-md"
+                  onClick={handleSave}
+               >
+                  Save
+               </button> :
+               <button 
+                  className="border-2 border-red-300 hover:bg-gray-100 py-1 px-4 rounded-md"
+                  onClick={handleDeactivate}
+               >
+                  Deactivate
+               </button>
+            }
+            <button 
+               className="border-2 border-blue-700 hover:bg-gray-100 py-1 px-4 rounded-md"
+               onClick={handlePublish}
+            >
                Publish
             </button>
          </div>

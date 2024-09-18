@@ -1,6 +1,16 @@
-
+"use client"
+import axios from "axios"
+import { useEffect } from "react"
 
 const Summary = () => {
+
+
+   useEffect(() => {
+      const fetchData = async() => {
+         const response = axios.get("http://localhost:4000/api/campaign/")
+      }
+
+   }, [])
 
    return (
       <div className="flex justify-between items-center gap-4 p-6">

@@ -1,11 +1,11 @@
 "use client"
 
 import { CampaignContextProvider } from "@/app/context/campaignContext"
-import { useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 
 const CampaignLayout = ({children}) => {
-   const router = useRouter()
-   const campaignId = router.query?.id
+   const params = useParams()
+   const campaignId = params?.id
 
    return (
       <CampaignContextProvider campaignId={campaignId}>

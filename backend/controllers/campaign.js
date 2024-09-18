@@ -15,14 +15,14 @@ export const createCampaign = (req, res) => {
          req.body.title,
          req.body.description,
          req.body.goal,
-         req.body.raised,
-         req.body.donations,
-         req.body.visits,
+         0,
+         0,
+         0,
          req.body.status,
          (new Date()).toISOString().slice(0, 19).replace('T', ' '),
          (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-         0,
-         0,
+         req.body.created_by,
+         req.body.created_by,
          req.body.url
       ]
    
