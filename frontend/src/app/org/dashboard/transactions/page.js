@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import axios from "axios"
 import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
+import { AuthContext } from "@/app/context/authContext";
 
 const Transactions = () => {
    const [data, setData] = useState(null)
@@ -32,11 +33,13 @@ const Transactions = () => {
       setSortConfig({ key, direction });
    };
 
+   const {currentUser} = useContext(AuthContext)
+
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await axios.get(`http://localhost:4000/api/transaction/getByOrg/${6}`)
+            const response = await axios.get(`http://localhost:4000/api/transaction/getByOrg/${currentUser.organization_id}`)
             console.log(response.data)
             setData(response.data || [])
 

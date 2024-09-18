@@ -1,5 +1,6 @@
 import React from "react"
 import Table from "./table"
+import Summary from "./summary"
 
 
 const Campaigns = () => {
@@ -11,6 +12,8 @@ const Campaigns = () => {
             <h1 className="text-4xl font-bold">Campaigns</h1>
             <button className="bg-blue-700 p-2 px-4 rounded-md text-white">New Campaign</button>
          </div>
+
+         <Summary />
 
          <div className="mt-4 ml-8">
             <select

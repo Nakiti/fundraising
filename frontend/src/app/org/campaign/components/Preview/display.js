@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 import { IoIosClose } from "react-icons/io";
 
-const Preview = () => {
+const Display = () => {
    const {previewInputs, handlePreviewInputsChange, setPreviewInputs} = useContext(CampaignContext)
 
    const handleImageUpload = (e) => {
@@ -110,6 +110,6 @@ const Preview = () => {
          </div>
       </div>
    );
-};
+}
 
-export default Preview;
+export default Display

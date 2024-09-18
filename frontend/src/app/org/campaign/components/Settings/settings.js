@@ -1,6 +1,7 @@
 "use client"
 import { CampaignContext } from "@/app/context/campaignContext.js";
 import { useContext } from "react";
+import DesignationDropdown from "./designationDropdown";
 
 const Settings = () => {
    const {settingsInputs, handleSettingsInputsChange} = useContext(CampaignContext)
@@ -22,7 +23,7 @@ const Settings = () => {
                   onChange={handleSettingsInputsChange}
                />
             </div>
-            <div className="flex flex-col mb-4 row-start-1 row-end-4">
+            <div className="flex flex-col mb-4 row-start-1 row-end-3">
                <label className="text-gray-700 text-md font-medium mb-1">Description</label>
                <textarea
                   name="description"
@@ -45,7 +46,7 @@ const Settings = () => {
                   onChange={handleSettingsInputsChange}
                />
             </div>
-            <div className="flex flex-col mb-4 row-start-3 row-end-4">
+            <div className="flex flex-col mb-4 row-start-3 row-end-4 col-start-2 col-end-3">
                <label className="text-gray-700 text-md font-medium mb-1">URL</label>
                <input
                   name="url"
@@ -55,6 +56,10 @@ const Settings = () => {
                   value={settingsInputs.url}
                   onChange={handleSettingsInputsChange}
                />
+            </div>
+            <div className="flex flex-col mb-4 row-start-3 row-end-4 col-start-1 col-end-2">
+               <label className="text-gray-700 text-md font-medium mb-1">Designations</label>
+               <DesignationDropdown />
             </div>
          </div>
       </div>

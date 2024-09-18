@@ -22,7 +22,7 @@ const Table = () => {
       { id: 'active', label: 'Active', sortable: false }
    ];
    
-   // const {currentUser} = useContext(AuthContext)
+   const {currentUser} = useContext(AuthContext)
    
    const [data, setData] = useState(null)
    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
@@ -44,7 +44,7 @@ const Table = () => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await axios.get(`http://localhost:4000/api/campaign/getByOrg/${6}`)
+            const response = await axios.get(`http://localhost:4000/api/campaign/getByOrg/${currentUser.organization_id}`)
             setData(response.data)
          } catch (err) {
             console.log(err)

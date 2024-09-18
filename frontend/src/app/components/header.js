@@ -1,11 +1,13 @@
+"use client"
+import Link from "next/link";
 
 const Header = () => {
    return (
       <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-sm">
-         <h1 className="text-xl font-bold">Title</h1>
-         <button className="text-black font-semibold mr-4">
+         <Link href="/" className="text-xl font-bold">Title</Link>
+         <Link href="/login" className="text-black font-semibold mr-4">
             Login
-         </button>
+         </Link>
       </div>
    );
 }
