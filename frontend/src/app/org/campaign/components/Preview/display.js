@@ -23,18 +23,19 @@ const Display = () => {
    }
 
    return (
-      <div className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-lg shadow-md mt-10 overflow-y-auto">
-         <div className="text-xl font-bold text-start text-white px-4 py-2 bg-gray-800">
+      <div className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-lg shadow-md mt-6 overflow-y-auto">
+         <div className="text-xl font-bold text-start text-white px-4 py-2 bg-gray-800" style={{backgroundColor: previewInputs.h_color || "#000"}}>
             <input 
                placeholder="Enter a Heading"
                className="bg-gray-800 border border-white px-2 py-1 rounded-md border-dashed"
                name="heading"
                value={previewInputs.heading}
                onChange={handlePreviewInputsChange}
+               style={{backgroundColor: previewInputs.h_color || "#000", color: previewInputs.h_color}}
             />
          </div>
 
-         <div className="grid grid-cols-12 gap-4">
+         <div className="grid grid-cols-12 gap-4" style={{backgroundColor: previewInputs.bg_color || "#FFF"}}>
             <div className="flex flex-col px-6 py-4 col-start-1 col-end-8">
                <input 
                   placeholder="Enter a Title"
@@ -42,6 +43,7 @@ const Display = () => {
                   name="title"
                   value={previewInputs.title}
                   onChange={handlePreviewInputsChange}
+                  style={{backgroundColor: previewInputs.bg_color || "#FFF", color: previewInputs.p_color || "black"}}
                />
                {!previewInputs.image ? 
                   <label className="w-full h-64 flex items-center justify-center border border-dashed border-gray-400 rounded-md bg-gray-50 cursor-pointer">
@@ -71,7 +73,7 @@ const Display = () => {
                }
                <div className="flex flex-row items-center px-4 py-2 border-b text-sm">
                   <CgProfile className="h-6 w-6"/>
-                  <p className="text-gray-600 font-medium ml-4">Created by John Doe</p>
+                  <p className="text-gray-600 font-medium ml-4" style={{color: previewInputs.s_color || "#000"}}>Created by John Doe</p>
                </div>
                <div className="p-4 border-b">
                   <textarea 
@@ -81,21 +83,22 @@ const Display = () => {
                      name="description"
                      value={previewInputs.description}
                      onChange={handlePreviewInputsChange}
+                     style={{backgroundColor: previewInputs.bg_color || "#FFF", color: previewInputs.s_color || "#000"}}
                   />
                </div>
-               <p className="text-gray-400 text-sm px-4 py-2">Created on September 16, 2024</p>
+               <p className="text-gray-400 text-sm px-4 py-2" style={{color: previewInputs.s_color || "#000"}}>Created on September 16, 2024</p>
             </div>
 
             {/* Progress and Actions */}
             <div className="bg-gray-50 p-6 rounded-md shadow-md col-start-8 col-end-12 mt-6 mb-8">
-               <p className="text-lg font-medium mb-2">X of 1000 raised</p>
+               <p className="text-lg font-medium mb-2" style={{color: previewInputs.p_color || "#000"}}>X of 1000 raised</p>
 
                {/* Progress Bar */}
                <div className="w-full bg-gray-300 rounded-full h-2 mb-4">
                   <div className="bg-blue-600 h-2 rounded-full w-1/12"></div>
                </div>
 
-               <p className="text-sm text-gray-600 mb-4">X donations</p>
+               <p className="text-sm text-gray-600 mb-4" style={{color: previewInputs.s_color || "#000"}}>X donations</p>
 
                {/* Action Buttons */}
                <div className="flex flex-col justify-center items-center">

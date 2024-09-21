@@ -1,29 +1,36 @@
-import { useContext } from "react"
+"use client"
+
+import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
-import { FaAngleDown } from "react-icons/fa";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+
 
 
 const ColorInputs = () => {
 
    const {previewInputs, handlePreviewInputsChange} = useContext(CampaignContext)
+   const [open, setOpen] = useState(true)
 
    const colors = [
       {value: "bg_color", label: "Background Color"},
-      {value: "p_color", label: "Primary Color"},
-      {value: "s_color", label: "Secondary Color"},
+      {value: "p_color", label: "Primary Text Color"},
+      {value: "s_color", label: "Secondary Text Color"},
       {value: "h_color", label: "Header Color"},
+      {value: "ht_color", label: "Header Text Color"},
+      {value: "ht_color", label: "Donate Button Color"},
+      {value: "ht_color", label: "Share Button Color"},
    ]
 
    return (
       <div className="bg-white shadow-md p-6 rounded-md w-full max-w-6xl mx-auto mt-4">
          <div className="flex flex-row justify-between">
             <h1 className="text-xl font-bold">Configure Display</h1>
-            <button>
-               <FaAngleDown />
+            <button onClick={() => setOpen(!open)}>
+               {open ? <FaAngleDown /> : <FaAngleUp />}
             </button>
          </div>
 
-         <div className="w-full grid grid-cols-4 gap-4 mt-4">
+         {open && <div className="w-full grid grid-cols-4 gap-4 mt-4">
             {colors.map((item, index) => {
                return (
                   <div className="flex items-center space-x-2 justify-center">
@@ -45,7 +52,7 @@ const ColorInputs = () => {
                )
             })}
 
-         </div>
+         </div>}
       </div>
    )
 

@@ -14,7 +14,9 @@ export default function RootLayout({ children }) {
          <AuthContextProvider>
             <body className="bg-gray-50">
                <Header />
-               {children}
+               <div style={{height: "90vh"}}>
+                  {children}
+               </div>
             </body>
          </AuthContextProvider>
       </html>

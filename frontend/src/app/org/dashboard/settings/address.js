@@ -1,6 +1,8 @@
 "use client"
 import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
+import { getOrganization } from "@/app/services/fetchService"
+import { updateOrganization } from "@/app/services/updateServices"
 import axios from "axios"
 import { useContext, useEffect } from "react"
 import { FaCheck } from "react-icons/fa";
@@ -9,6 +11,7 @@ const Address = () => {
    const {currentUser} = useContext(AuthContext)
 
    const [info, handleInfoChange, setInfo] = useFormInput({
+      name: "",
       address: "",
       city: "",
       state: "",
@@ -16,20 +19,32 @@ const Address = () => {
       zip: ""
    })
 
+
    useEffect(() => {
       fetchData()
    }, [])
 
+   const handleUpdate = async () => {
+      try {
+         await updateOrganization(currentUser.organization_id, info)
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
    const fetchData = async() => {
       try {
-         const response = (await axios.get(`http://localhost:4000/api/organization/get/${currentUser.organization_id}`)).data[0]
+         const response = await getOrganization(currentUser.organization_id)
          setInfo({
+            ...info,
             address: response.address,
             city: response.city,
             state: response.state,
             country: response.country,
             zip: response.zip
          })
+
+         fetchData()
       }  catch (err) {
          console.log(err)
       }
@@ -47,6 +62,7 @@ const Address = () => {
                   placeholder="Title"
                   className="bg-gray-50 w-full px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   value={info.address}
+                  onChange={handleInfoChange}
                />
             </div>
             <div className="flex flex-col">
@@ -57,6 +73,7 @@ const Address = () => {
                   placeholder="Title"
                   className="bg-gray-50 w-full px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   value={info.city}
+                  onChange={handleInfoChange}
                />
             </div>
             <div className="flex flex-col">
@@ -67,6 +84,7 @@ const Address = () => {
                   placeholder="Title"
                   className="bg-gray-50 w-full px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   value={info.state}
+                  onChange={handleInfoChange}
                />
             </div>
             <div className="flex flex-col">
@@ -77,6 +95,7 @@ const Address = () => {
                   placeholder="Title"
                   className="bg-gray-50 w-full px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   value={info.country}
+                  onChange={handleInfoChange}
                />
             </div>
             <div className="flex flex-col">
@@ -87,11 +106,12 @@ const Address = () => {
                   placeholder="Title"
                   className="bg-gray-50 w-full px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   value={info.zip}
+                  onChange={handleInfoChange}
                />
             </div>
             <div className="flex justify-start items-end">
                <button
-                  type="submit"
+                  onClick={handleUpdate}
                   className="px-6 py-1 h-1/2  bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none  focus:ring-blue-600"
                >
                   <FaCheck />

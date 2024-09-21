@@ -1,34 +1,54 @@
 "use client"
 import axios from "axios"
-import { useEffect } from "react"
+import { useEffect, useContext, useState } from "react"
+import { AuthContext, } from "@/app/context/authContext"
+import { getAllCampaigns } from "@/app/services/fetchService"
+import Box from "./box"
 
 const Summary = () => {
+   const {currentUser} = useContext(AuthContext)
+
+   const [data, setData] = useState(null)
+   const [summary, setSummary] = useState({
+      totalDonations: 0,
+      totalRaised: 0,
+      totalVisits: 0,
+      averageRaised: 0,
+      averageConversionRate: 0,
+   });
 
 
    useEffect(() => {
-      const fetchData = async() => {
-         const response = axios.get("http://localhost:4000/api/campaign/")
-      }
+      const campaigns = getAllCampaigns(currentUser.organization_id);
+      setData(campaigns);
 
+      if (campaigns && campaigns.length > 0) {
+         const totalDonations = campaigns.reduce((acc, campaign) => acc + campaign.donations, 0);
+         const totalRaised = campaigns.reduce((acc, campaign) => acc + campaign.raised, 0);
+         const totalVisits = campaigns.reduce((acc, campaign) => acc + campaign.visits, 0);
+         const averageRaised = totalRaised / campaigns.length;
+         const averageConversionRate = campaigns.reduce((acc, campaign) => {
+            const conversionRate = campaign.visits > 0 ? (campaign.donations / campaign.visits) * 100 : 0;
+            return acc + conversionRate;
+         }, 0) / campaigns.length;
+
+         setSummary({
+            totalDonations,
+            totalRaised,
+            totalVisits,
+            averageRaised,
+            averageConversionRate,
+         });
+      }
    }, [])
 
    return (
       <div className="flex justify-between items-center gap-4 p-6">
-         <div className="flex justify-center items-center w-1/5 h-24 bg-gray-200">
-         Box 1
-         </div>
-         <div className="flex justify-center items-center w-1/5 h-24 bg-gray-200">
-         Box 2
-         </div>
-         <div className="flex justify-center items-center w-1/5 h-24 bg-gray-200">
-         Box 3
-         </div>
-         <div className="flex justify-center items-center w-1/5 h-24 bg-gray-200">
-         Box 4
-         </div>
-         <div className="flex justify-center items-center w-1/5 h-24 bg-gray-200">
-            Box 5
-         </div>
+         <Box text={"Total Raised: " + summary.totalRaised}/>
+         <Box text={"Total Donations: " + summary.totalDonations}/>
+         <Box text={"Total Visits: " + summary.totalVisits}/>
+         <Box text={"Average Raised: " + summary.averageRaised}/>
+         <Box text={"Average Conversion Rate: " + summary.averageConversionRate}/>
       </div>
    )
 }

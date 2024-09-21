@@ -4,20 +4,37 @@ import useFormInput from "@/app/hooks/useFormInput"
 import { useContext, useEffect } from "react"
 import { FaCheck } from "react-icons/fa";
 import axios from "axios";
+import { getOrganization } from "@/app/services/fetchService";
+import { updateOrganization } from "@/app/services/updateServices";
 
 const CampaignInfo = () => {
    const {currentUser} = useContext(AuthContext)
 
    const [info, handleInfoChange, setInfo] = useFormInput({
-      name: ""
+      name: "",
+      address: "",
+      city: "",
+      state: "",
+      country: "",
+      zip: ""
    })
 
    const fetchData = async() => {
       try {
-         const response = (await axios.get(`http://localhost:4000/api/organization/get/${currentUser.organization_id}`)).data[0]
+         const response = await getOrganization(currentUser.organization_id)
          setInfo({
-            name: response.name
+            ...info,
+            name: response.name,
          })
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
+   const handleUpdate = async() => {
+      try {
+         await updateOrganization(currentUser.organization_id, info)
+         fetchData()
       } catch (err) {
          console.log(err)
       }
@@ -47,7 +64,7 @@ const CampaignInfo = () => {
             </div>
             <div className="flex justify-start items-end">
                <button
-                  type="submit"
+                  onClick={handleUpdate}
                   className="px-6 py-1 h-1/2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none  focus:ring-blue-600"
                >
                   <FaCheck />

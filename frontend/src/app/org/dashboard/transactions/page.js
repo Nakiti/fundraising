@@ -13,8 +13,8 @@ const Transactions = () => {
       { id: 'email', label: 'Email', sortable: false },
       { id: 'date', label: 'Date', sortable: true},
       { id: 'amount', label: 'Amount', sortable: true },
-      { id: 'campaign', label: 'Campaign', sortable: true },
-      { id: 'method', label: 'Method', sortable: true },
+      { id: 'campaign', label: 'Campaign', sortable: false },
+      { id: 'method', label: 'Method', sortable: false },
    ];
 
    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
@@ -53,9 +53,9 @@ const Transactions = () => {
 
    return (
       <div className="bg-white w-full h-full">
-         <h2 className="text-4xl font-bold p-6">Transactions</h2>
+         <h2 className="text-3xl font-bold p-6">Transactions</h2>
 
-         <div className="p-8">
+         <div className="px-8">
             <table className="min-w-full bg-white  border-gray-300 rounded-md">
                {/* Table Header */}
                <thead className="border-b border-gray-300">

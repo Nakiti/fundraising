@@ -24,12 +24,12 @@ const DesignationDropdown = () => {
    };
 
    return (
-      <div className="relative flex flex-row justify-between w-full items-center mb-2">
+      <div className="relative flex flex-row justify-between w-full items-center">
          <div className="relative w-full">
          {/* Button to toggle dropdown */}
          <button
             type="button"
-            className="w-full bg-white text-sm border border-gray-300 rounded-md shadow-sm pl-3 pr-6 py-4 text-left cursor-pointer flex justify-between items-center focus:outline-none"
+            className="w-full bg-white text-md border border-gray-300 rounded-md shadow-sm pl-3 pr-6 py-3 text-left cursor-pointer flex justify-between items-center focus:outline-none"
             onClick={toggleDropdown}
          >
             <span>

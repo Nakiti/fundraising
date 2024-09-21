@@ -55,7 +55,7 @@ const Table = () => {
    }, [])
 
    return (
-      <div className="p-8">
+      <div className="px-8 mt-4">
          <table className="min-w-full bg-white  border-gray-300 rounded-md">
             {/* Table Header */}
             <thead className="border-b border-gray-300">

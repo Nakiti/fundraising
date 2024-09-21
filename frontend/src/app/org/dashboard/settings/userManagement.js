@@ -4,6 +4,12 @@ import { useState, useEffect, useContext } from "react"
 import axios from "axios"
 import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
+import { createUser } from "@/app/services/createServices"
+import { updateUser } from "@/app/services/updateServices"
+import { getAllUsers } from "@/app/services/fetchService"
+import { FaCheck, FaPlus } from "react-icons/fa";
+
+
 
 
 const UserManagement = () => {
@@ -26,11 +32,7 @@ const UserManagement = () => {
       e.preventDefault();
 
       try {
-         await axios.post("http://localhost:4000/api/user/create", {
-            ...newUser,
-            organization_id: currentUser.organization_id
-         });
-
+         await createUser({...newUser, organization_id: currentUser.organization_id});
          setNewUser({ firstName: "", lastName: "", email: "" });
          fetchData();
       } catch (err) {
@@ -42,9 +44,7 @@ const UserManagement = () => {
       const updatedUser = users.find(user => user.id === id);
 
       try {
-         await axios.put(`http://localhost:4000/api/user/update/${id}`, {
-            role: updatedUser.role
-         });
+         await updateUser(id, {role: updatedUser.role});
          fetchData()
       } catch (err) {
          console.log(err);
@@ -57,8 +57,8 @@ const UserManagement = () => {
 
    const fetchData = async () => {
       try {
-         const response = await axios.get(`http://localhost:4000/api/user/getByOrg/${currentUser.organization_id}`);
-         setUsers(response.data);
+         const response = await getAllUsers(currentUser.organization_id);
+         setUsers(response);
       } catch (err) {
          console.log(err);
       }
@@ -100,7 +100,7 @@ const UserManagement = () => {
                               onClick={() => handleConfirm(user.id)}
                               className="px-4 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                            >
-                              Confirm
+                              <FaCheck />
                            </button>
                         </td>
                      </tr>
@@ -152,7 +152,7 @@ const UserManagement = () => {
                      type="submit"
                      className="px-6 py-1 h-1/2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
-                     Add User
+                     <FaPlus />
                   </button>
                </div>
             </form>

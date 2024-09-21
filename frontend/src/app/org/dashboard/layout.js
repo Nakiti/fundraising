@@ -2,7 +2,7 @@ import Sidebar from "@/app/components/Sidebar/sidebar.js";
 
 const DashboardLayout = ({ children }) => {
    return (
-      <div className="flex h-screen" style={{height: "90vh"}}>
+      <div className="flex h-screen overflow-y-hidden" style={{height: "90vh"}}>
          {/* Sidebar */}
          <Sidebar />
 

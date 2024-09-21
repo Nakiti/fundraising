@@ -5,12 +5,12 @@ import Settings from "../../components/Settings/settings"
 import { useContext, useEffect, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
-import { updateCampaign, updatePreview } from "@/app/services/campaignService"
+import { createCampaignDesignation, deleteCampaignDesignation, updateCampaign, updatePreview } from "@/app/services/campaignService"
 
 const EditCampaign = ({params}) => {
-   const [active, setActive] = useState("settings")
+   const [active, setActive] = useState("preview")
    const campaignId = params.id
-   const {previewInputs, settingsInputs} = useContext(CampaignContext)
+   const {previewInputs, settingsInputs, selectedDesignations} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
 
    const handleActiveChange = (tab) => {
@@ -21,6 +21,8 @@ const EditCampaign = ({params}) => {
       try {
          await updateCampaign(campaignId, settingsInputs, "active", currentUser)
          await updatePreview(campaignId, previewInputs)
+         await deleteCampaignDesignation(campaignId)
+         await createCampaignDesignation(campaignId, selectedDesignations)
       } catch (err) {
          console.log(err)
       }
@@ -30,6 +32,8 @@ const EditCampaign = ({params}) => {
       try {
          await updateCampaign(campaignId, settingsInputs, 'inactive', currentUser);
          await updatePreview(campaignId, previewInputs);
+         await deleteCampaignDesignation(campaignId)
+         await createCampaignDesignation(campaignId, selectedDesignations)
       } catch (err) {
          console.log(err)
       }

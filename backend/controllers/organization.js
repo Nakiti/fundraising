@@ -44,10 +44,10 @@ export const get = (req, res) => {
 }
 
 export const update = (req, res) => {
-   const query = "UPDATE organizations SET `title` = ?, `address` = ?, `city` = ?, `state` = ?, `country` = ?, `zip` = ?, `updated_at` = ?, `updated_by` = ? WHERE id = ?"
+   const query = "UPDATE organizations SET `name` = ?, `address` = ?, `city` = ?, `state` = ?, `country` = ?, `zip` = ?, `updated_at` = ?, `updated_by` = ? WHERE id = ?"
 
    const values = [
-      req.body.title, 
+      req.body.name, 
       req.body.address,
       req.body.city,
       req.body.state,

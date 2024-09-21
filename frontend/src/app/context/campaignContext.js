@@ -2,10 +2,14 @@
 import axios from "axios"
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
+import { AuthContext } from "./authContext";
+import { getActiveDesignations, getCampaignDetails, getCampaignPreview } from "../services/fetchService.js";
 
 export const CampaignContext = createContext();
 
 export const CampaignContextProvider = ({ children, campaignId }) => {
+   const {currentUser} = useContext(AuthContext)
+   const organization_id = currentUser.organization_id
 
    const [previewInputs, handlePreviewInputsChange, setPreviewInputs] = useFormInput({
       title: '',
@@ -33,7 +37,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
       const fetchData = async () => {
          try {
             if (campaignId) {
-               const settingsResponse = (await axios.get(`http://localhost:4000/api/campaign/get/${1}`)).data[0]
+               const settingsResponse = await getCampaignDetails(campaignId)
                setSettingsInputs({
                   title: settingsResponse.title,
                   description: settingsResponse.description,
@@ -43,7 +47,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
 
                setStatus(settingsResponse.status)
 
-               const previewResponse = (await axios.get(`http://localhost:4000/api/campaign/get/${1}`)).data[0]
+               const previewResponse = await getCampaignPreview(campaignId)
                setPreviewInputs({
                   title: previewResponse.title,
                   message: previewResponse.message,
@@ -54,10 +58,14 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                   s_color: previewResponse.s_color,
                   h_color: previewResponse.h_color
                })
+
+               const selectedDesignationsResponse = await getCampaignDetails(campaignId)
+               setSelectedDesignations(selectedDesignationsResponse)
+               console.log(selectedDesignationsResponse)
             }
 
-            const designationResponse = await axios.get(`http://localhost:4000/api/designation/get${1}`)
-            setDesignations(designationResponse.data)
+            const designationResponse = await getActiveDesignations(organization_id)
+            setDesignations(designationResponse)
  
          } catch (err) {
             console.log(err)

@@ -4,6 +4,11 @@ import { useState, useEffect, useContext } from "react"
 import axios from "axios"
 import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
+import { getAllDesignations } from "@/app/services/fetchService"
+import { updateDesignation } from "@/app/services/updateServices"
+import { createDesignation } from "@/app/services/createServices"
+import { FaCheck } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa"
 
 const Designations = () => {
    const [designations, setDesignations] = useState([]);
@@ -25,7 +30,7 @@ const Designations = () => {
       e.preventDefault();
 
       try {
-         await axios.post("http://localhost:4000/api/designation/create", {
+         await createDesignation({
             organization_id: currentUser.organization_id,
             title: newDesignation.title,
             goal: newDesignation.goal,
@@ -44,11 +49,7 @@ const Designations = () => {
       const updatedDesignation = designations.find(designation => designation.id === id);
 
       try {
-         await axios.put(`http://localhost:4000/api/designation/update/${id}`, {
-            title: updatedDesignation.title,
-            goal: updatedDesignation.goal,
-            status: updatedDesignation.status
-         });
+         await updateDesignation(id, {title: updatedDesignation.title, goal: updatedDesignation.goal, status: updatedDesignation.status})
       } catch (err) {
          console.log(err);
       }
@@ -60,8 +61,8 @@ const Designations = () => {
 
    const fetchData = async () => {
       try {
-         const response = await axios.get(`http://localhost:4000/api/designation/get/${currentUser.organization_id}`);
-         setDesignations(response.data);
+         const response = await getAllDesignations(currentUser.organization_id)
+         setDesignations(response);
       } catch (err) {
          console.log(err);
       }
@@ -118,7 +119,7 @@ const Designations = () => {
                               onClick={() => handleConfirm(designation.id)}
                               className="px-4 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                            >
-                              Confirm
+                              <FaCheck />
                            </button>
                         </td>
                      </tr>
@@ -151,12 +152,12 @@ const Designations = () => {
                      required
                   />
                </div>
-               <div className="flex justify-end">
+               <div className="flex justify-start">
                   <button
                      type="submit"
                      className="px-6 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
-                     Add Designation
+                     <FaPlus />
                   </button>
                </div>
             </form>
