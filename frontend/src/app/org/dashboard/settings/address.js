@@ -20,9 +20,7 @@ const Address = () => {
    })
 
 
-   useEffect(() => {
-      fetchData()
-   }, [])
+
 
    const handleUpdate = async () => {
       try {
@@ -35,20 +33,23 @@ const Address = () => {
    const fetchData = async() => {
       try {
          const response = await getOrganization(currentUser.organization_id)
-         setInfo({
-            ...info,
+         setInfo(prev => ({
+            ...prev,
             address: response.address,
             city: response.city,
             state: response.state,
             country: response.country,
             zip: response.zip
-         })
-
-         fetchData()
+         }))
+         
       }  catch (err) {
          console.log(err)
       }
    }
+
+   useEffect(() => {
+      fetchData()
+   }, [])
 
    return (
       <div>

@@ -30,6 +30,7 @@ export const createCampaign = (req, res) => {
       
       db.query(query, [values], (err, data) => {
          if (err) return res.json(err)
+         console.log(data)
          return res.status(200).json(data.insertId)
       })
    })
@@ -50,6 +51,8 @@ export const getCampaignsByOrg = (req, res) => {
    const query = "SELECT * FROM campaigns WHERE `organization_id` = ?"
 
    const value = req.params.id
+
+   console.log("campaign", value)
 
    db.query(query, value, (err, data) => {
       if (err) return res.json(err)

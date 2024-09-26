@@ -22,10 +22,10 @@ const CampaignInfo = () => {
    const fetchData = async() => {
       try {
          const response = await getOrganization(currentUser.organization_id)
-         setInfo({
-            ...info,
+         setInfo((prevInfo) => ({
+            ...prevInfo, 
             name: response.name,
-         })
+         }))
       } catch (err) {
          console.log(err)
       }

@@ -3,12 +3,14 @@ import { getCampaignDetails, getCampaignPreview } from "@/app/services/fetchServ
 import { useState, useEffect } from "react"
 import { CgProfile } from "react-icons/cg"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 const CampaignPage = ({params}) => {
    const campaignId = params.campaignId
    const [campaign, setCampaign] = useState(null)
    const [display, setDisplay] = useState(null)
    const router = useRouter()
+   const currentPath = router.asPath
 
    useEffect(() => {
       const fetchData = async() => {
@@ -74,9 +76,11 @@ const CampaignPage = ({params}) => {
                <p className="text-sm text-gray-600 mb-4">{campaign.donations} donations</p>
 
                <div className="flex flex-col justify-center items-center">
-                  <button className="w-3/4 px-4 py-3 mt-4 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                  <Link 
+                     href={`${currentPath}/donate`}
+                     className="w-3/4 px-4 py-3 mt-4 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700">
                      Donate
-                  </button>
+                  </Link>
                   <button className="w-3/4 px-4 py-3 mt-4 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
                      Share
                   </button>

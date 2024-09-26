@@ -87,3 +87,22 @@ export const getAllUsers = async(organizationId) => {
 }
 
 
+// Transactions
+export const getTransactionsByOrg = async (organizationId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/transaction/getByOrg/${organizationId}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getTransactionsByCampaign = async (campaignId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/transaction/getByCampaign/${campaignId}`)
+      console.log(response.data)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}

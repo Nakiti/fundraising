@@ -11,8 +11,6 @@ const Settings = () => {
 
          <CampaignInfo />
          <div className="border-b-2 border-gray-200 w-full my-4" />
-
-
          <Address />
          <div className="border-b-2 border-gray-200 w-full my-4" />
          <UserManagement />

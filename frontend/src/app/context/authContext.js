@@ -34,9 +34,9 @@ export const AuthContextProvider = ({children}) => {
    };
 
    useEffect(() => {
-      if (typeof window !== "undefined") {
+      // if (typeof window !== "undefined") {
          sessionStorage.setItem("user", JSON.stringify(currentUser));
-      }
+      
    }, [currentUser]);
 
    return (

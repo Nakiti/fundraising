@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs"
 export const login = (req, res) => {
    const query = "SELECT * FROM users WHERE email = ?"
 
-   console.log(req.body)
+   console.log("userid", req.body)
 
    db.query(query, [req.body.email], (err, data) => {
       if (err) return res.status(500).json(err)

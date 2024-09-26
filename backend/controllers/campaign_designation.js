@@ -3,6 +3,8 @@ import { db } from "../db.js";
 export const createRelationBatch = (req, res) => {
    const query = "INSERT INTO campaign_designations (`campaign_id`, `designation_id`, `created_at`) VALUES ?"
 
+   console.log("body", req.body)
+
    const values = req.body.map(relation => [
       Number(req.params.campaign_id),
       relation.id,

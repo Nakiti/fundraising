@@ -9,37 +9,19 @@ import { AuthContext } from "@/app/context/authContext.js";
 import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
 
-
 const Table = () => {
    const columns = [
-      { id: 'actions', label: 'Actions', sortable: false},
-      { id: 'title', label: 'Title', sortable: false },
-      { id: 'date', label: 'Date', sortable: false },
-      { id: 'raised', label: 'Raised', sortable: true},
-      { id: 'goal', label: 'Goal', sortable: true },
-      { id: 'donations', label: 'Donations', sortable: true },
-      { id: 'visits', label: 'Visits', sortable: true },
-      { id: 'active', label: 'Active', sortable: false }
+      { id: 'actions', label: 'Actions'},
+      { id: 'title', label: 'Title'},
+      { id: 'date', label: 'Date'},
+      { id: 'campaign', label: 'Campaign'},
+      { id: 'goal', label: 'Sign-Ups'},
+      {id: "status", label: "Status"}
    ];
    
    const {currentUser} = useContext(AuthContext)
    
    const [data, setData] = useState(null)
-   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
-
-   const sortData = (key) => {
-      let direction = 'ascending';
-      if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-         direction = 'descending';
-      }
-      const sortedData = [...data].sort((a, b) => {
-         if (a[key] < b[key]) return direction === 'ascending' ? -1 : 1;
-         if (a[key] > b[key]) return direction === 'ascending' ? 1 : -1;
-         return 0;
-      });
-      setData(sortedData);
-      setSortConfig({ key, direction });
-   };
 
    useEffect(() => {
       const fetchData = async() => {
@@ -65,13 +47,6 @@ const Table = () => {
                      <th key={index} className="px-4 py-2 text-left text-gray-600 text-sm font-semibold" onClick={() => sortData(column.id)}>
                         <div className="flex flex-row items-center justify-center">
                            {column.label}
-                           {column.sortable &&
-                           <div className="h-full flex items-center justify-center cursor-pointer">
-                              {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? 
-                                 (<FaSortUp className="ml-2 text-gray-600" />) : (<FaSortDown className="ml-2 text-gray-600" />)
-                              }
-                           </div>
-                           }
                         </div>
                      </th>
                   ))}
@@ -95,10 +70,8 @@ const Table = () => {
                      </td>
                      <td className="px-4 py-2 text-sm text-center">{row.title}</td>
                      <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString("en-US")}</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
+                     <td className="px-4 py-2 text-sm text-center">Campaign Name</td>
                      <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
                      <td className="px-4 py-2 text-sm text-center">
                         <label className={`px-2 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-600" : "bg-green-600"}`}>{row.status.toUpperCase()}</label>
                      </td>
@@ -107,7 +80,7 @@ const Table = () => {
             </tbody>
          </table>
       </div>
-   );
-};
+   )
+}
 
-export default Table;
+export default Table

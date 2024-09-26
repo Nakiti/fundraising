@@ -1,19 +1,28 @@
-"use client"
+"use client";
 
-import { CampaignContextProvider } from "@/app/context/campaignContext"
-import { useParams } from "next/navigation"
+import { CampaignContextProvider } from "@/app/context/campaignContext";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const CampaignLayout = ({children}) => {
-   const params = useParams()
-   const campaignId = params?.id
+const CampaignLayout = ({ children }) => {
+  const [isClient, setIsClient] = useState(false);
+  const params = useParams();
+  const campaignId = params?.id;
 
-   return (
-      <CampaignContextProvider campaignId={campaignId}>
-         <div>
-            {children}
-         </div>
-      </CampaignContextProvider>
-   )
-}
+  // Ensure this only runs on the client-side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-export default CampaignLayout
+  if (!isClient) return null; // Wait until it's safe to use client-side hooks
+
+  return (
+    <CampaignContextProvider campaignId={campaignId}>
+      <div>
+        {children}
+      </div>
+    </CampaignContextProvider>
+  );
+};
+
+export default CampaignLayout;

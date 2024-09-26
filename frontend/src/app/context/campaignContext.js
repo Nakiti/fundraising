@@ -3,7 +3,7 @@ import axios from "axios"
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
-import { getActiveDesignations, getCampaignDetails, getCampaignPreview } from "../services/fetchService.js";
+import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview } from "../services/fetchService.js";
 
 export const CampaignContext = createContext();
 
@@ -59,7 +59,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                   h_color: previewResponse.h_color
                })
 
-               const selectedDesignationsResponse = await getCampaignDetails(campaignId)
+               const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
                setSelectedDesignations(selectedDesignationsResponse)
                console.log(selectedDesignationsResponse)
             }

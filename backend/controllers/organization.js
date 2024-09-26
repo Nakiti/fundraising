@@ -35,10 +35,11 @@ export const get = (req, res) => {
 
    const id = req.params.id;
 
-   console.log(id)
+   console.log("id", id)
 
    db.query(query, [id], (err, data) => {
       if (err) return console.log(err)
+      console.log(err, data)
       return res.status(200).json(data)
    })
 }

@@ -31,7 +31,7 @@ const Display = () => {
                name="heading"
                value={previewInputs.heading}
                onChange={handlePreviewInputsChange}
-               style={{backgroundColor: previewInputs.h_color || "#000", color: previewInputs.h_color}}
+               style={{backgroundColor: previewInputs.h_color || "#000", color: previewInputs.p_color}}
             />
          </div>
 

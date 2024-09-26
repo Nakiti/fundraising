@@ -1,22 +1,29 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SidebarItem from './sidebarItem';
 import { IoIosStats } from "react-icons/io";
 import { FaDonate } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { IoReorderThree } from "react-icons/io5";
-
-
-
-
+import { TbBrandPagekit } from "react-icons/tb";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const Sidebar = () => {
    const [isCollapsed, setIsCollapsed] = useState(false);
+   const [isClient, setIsClient] = useState(false);
+
+   useEffect(() => {
+      setIsClient(true); // Indicates that the component has mounted on the client
+   }, []);
 
    const toggleSidebar = () => {
       setIsCollapsed(!isCollapsed);
    };
+
+   if (!isClient) {
+      return null; // Or you can return a loading spinner if you prefer
+   }
 
    return (
       <div 
@@ -33,10 +40,12 @@ const Sidebar = () => {
          {/* Sidebar Buttons */}
          <div className={`mt-8 ${isCollapsed ? 'flex flex-col items-center' : 'flex flex-col'}`}>
             <SidebarItem icon={<IoIosStats className='h-full w-full'/>} text="Campaigns" isCollapsed={isCollapsed} link="/org/dashboard/campaigns" />
+            <SidebarItem icon={<FaCalendarAlt className='h-full w-full'/>} text="Events" isCollapsed={isCollapsed} link="/org/dashboard/events" />
             <SidebarItem icon={<FaDonate className='h-full w-full'/>} text="Transactions" isCollapsed={isCollapsed} link="/org/dashboard/transactions"/>
+            <SidebarItem icon={<TbBrandPagekit className='h-full w-full'/>} text="Pages" isCollapsed={isCollapsed} link="/org/dashboard/pages"/>
          </div>
 
-         <div className={`mt-72 pt-4 ${isCollapsed ? 'flex flex-col items-center' : 'flex flex-col'}`}>
+         <div className={`mt-40 pt-4 ${isCollapsed ? 'flex flex-col items-center' : 'flex flex-col'}`}>
          <SidebarItem icon={<IoIosSettings className='h-full w-full'/>} text="Settings" isCollapsed={isCollapsed} link="/org/dashboard/settings"/>
          </div>
       </div>
