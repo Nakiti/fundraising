@@ -32,6 +32,17 @@ export const getAllCampaigns = async(organizationId) => {
    }
 }
 
+export const getCampaignsFiltered = async(organizationId, status) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/campaign/getFiltered/${organizationId}`, {
+         params: { status }
+      });      
+      return response.data
+   } catch (err) {
+      console.log("err", err)
+   }
+}
+
 //Organization
 
 export const getOrganization = async(organizationId) => {

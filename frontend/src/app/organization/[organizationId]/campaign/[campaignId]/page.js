@@ -7,6 +7,7 @@ import Link from "next/link"
 
 const CampaignPage = ({params}) => {
    const campaignId = params.campaignId
+   const organizationId = params.organizationId
    const [campaign, setCampaign] = useState(null)
    const [display, setDisplay] = useState(null)
    const router = useRouter()
@@ -15,10 +16,14 @@ const CampaignPage = ({params}) => {
    useEffect(() => {
       const fetchData = async() => {
          const campaignResponse = await getCampaignDetails(campaignId)
-         setCampaign(campaignResponse)
 
-         const displayResponse = await getCampaignPreview(campaignId)
-         setDisplay(displayResponse)
+         if (organizationId == campaignResponse.organization_id && campaignResponse.status == "active") {
+            setCampaign(campaignResponse)
+
+
+            const displayResponse = await getCampaignPreview(campaignId)
+            setDisplay(displayResponse)
+         }
       }
 
       fetchData()
@@ -77,7 +82,7 @@ const CampaignPage = ({params}) => {
 
                <div className="flex flex-col justify-center items-center">
                   <Link 
-                     href={`${currentPath}/donate`}
+                     href={`/organization/${organizationId}/campaign/${campaignId}/donate`}
                      className="w-3/4 px-4 py-3 mt-4 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700">
                      Donate
                   </Link>

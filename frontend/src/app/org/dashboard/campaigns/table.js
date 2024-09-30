@@ -8,6 +8,8 @@ import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "@/app/context/authContext.js";
 import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
+import { GrView } from "react-icons/gr";
+import { getCampaignsFiltered } from "@/app/services/fetchService";
 
 
 const Table = () => {
@@ -23,9 +25,11 @@ const Table = () => {
    ];
    
    const {currentUser} = useContext(AuthContext)
+   const organizationId = currentUser.organization_id
    
    const [data, setData] = useState(null)
    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
+   const [filter, setFilter] = useState("all")
 
    const sortData = (key) => {
       let direction = 'ascending';
@@ -40,6 +44,11 @@ const Table = () => {
       setData(sortedData);
       setSortConfig({ key, direction });
    };
+
+   const handleFilter = async (e) => {
+      const response = await getCampaignsFiltered(currentUser.organization_id, e.target.value)
+      setData(response)
+   }
 
    useEffect(() => {
       const fetchData = async() => {
@@ -57,6 +66,18 @@ const Table = () => {
 
    return (
       <div className="px-8 mt-4 mb-4">
+         <div className="mb-8">
+            <select
+               className="bg-gray-50 text-black px-4 py-1 text-sm rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+               defaultValue="all"
+               onChange={handleFilter}
+            >
+               <option value="all">All</option>
+               <option value="active">Active</option>
+               <option value="inactive">Inactive</option>
+            </select>
+         </div>
+
          <table className="min-w-full bg-white  border-gray-300 rounded-md">
             {/* Table Header */}
             <thead className="border-b border-gray-300">
@@ -85,11 +106,15 @@ const Table = () => {
                      <td className="px-4 py-2 text-center text-sm">
                         <div className="flex items-center justify-center space-x-2">
                            <Link href={`/org/campaign/edit/${row.id}`}>
-                              <FaEdit className="text-lg mr-2" />
+                              <FaEdit className="text-lg" />
                            </Link>
                            <div className="border-r border-gray-400 h-6" />
                            <Link href={`/org/campaign/view/${row.id}`}>
-                              <IoMdOpen className="text-lg ml-2" />
+                              <GrView className="text-lg" />
+                           </Link>
+                           <div className="border-r border-gray-400 h-6" />
+                           <Link href={`/organization/${organizationId}/campaign/${row.id}`}>
+                              <IoMdOpen className="text-lg" />
                            </Link>
                         </div>
                      </td>
@@ -99,7 +124,7 @@ const Table = () => {
                      <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
                      <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
                      <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
-                     <td className="px-4 py-2 text-sm text-center">
+                     <td className="px-4 py-2 text-xs text-center">
                         <label className={`px-2 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-600" : "bg-green-600"}`}>{row.status.toUpperCase()}</label>
                      </td>
                   </tr>

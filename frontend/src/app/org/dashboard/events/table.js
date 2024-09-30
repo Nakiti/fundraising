@@ -8,6 +8,8 @@ import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "@/app/context/authContext.js";
 import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
+import { GrView } from "react-icons/gr";
+
 
 const Table = () => {
    const columns = [
@@ -34,7 +36,7 @@ const Table = () => {
          }
       }
 
-      fetchData()
+      // fetchData()
    }, [])
 
    return (

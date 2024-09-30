@@ -13,10 +13,10 @@ export default function RootLayout({ children }) {
       <html lang="en">
          <AuthContextProvider>
             <body className="bg-gray-50">
-               <Header />
-               <div style={{height: "90vh"}}>
+               {/* <Header /> */}
+               {/* <div style={{height: "90vh"}}> */}
                   {children}
-               </div>
+               {/* </div> */}
             </body>
          </AuthContextProvider>
       </html>

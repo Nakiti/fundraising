@@ -1,7 +1,7 @@
 "use client"
-import Navbar from "../../components/navbar"
-import Preview from "../../components/Preview/preview"
-import Settings from "../../components/Settings/settings"
+import Navbar from "../../../components/navbar"
+import Preview from "../../../components/Preview/preview"
+import Settings from "../../../components/Settings/settings"
 import { useContext, useEffect, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
@@ -25,7 +25,7 @@ const EditCampaign = ({params}) => {
          await updatePreview(campaignId, previewInputs)
          await deleteCampaignDesignation(campaignId)
          await createCampaignDesignation(campaignId, selectedDesignations)
-         
+
          router.push("/org/dashboard/campaigns")
       } catch (err) {
          console.log(err)

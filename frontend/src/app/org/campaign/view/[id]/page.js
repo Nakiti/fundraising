@@ -16,8 +16,8 @@ const View = ({params}) => {
          const campaignResponse = await getCampaignDetails(campaignId)
          setCampaign(campaignResponse)
 
-         // const transactionResponse = await getTransactionsByCampaign(campaignId)
-         // setTransactions(transactionResponse)
+         const transactionResponse = await getTransactionsByCampaign(campaignId)
+         setTransactions(transactionResponse)
       }
 
       fetchData()
@@ -25,23 +25,23 @@ const View = ({params}) => {
 
    return (
       <div className="w-full bg-gray-50 ">
-         <div className="flex items-center justify-between p-2 border-b border-gray-100 shadow-sm bg-white text-black">
+         {campaign && <div className="flex items-center justify-between p-2 border-b border-gray-100 shadow-sm bg-white text-black">
             <div className="flex flex-row">
                <Link href="/org/dashboard/campaigns" className="px-4 flex items-center"> <IoMdArrowRoundBack className="text-xl"/></Link>
                <div className="border-r h-8 border-gray-300"/>
-               <h1 className="text-lg font-semibold px-4">Campaign Title</h1>
+               <h1 className="text-lg font-semibold px-4">{campaign.title}</h1>
 
             </div>
-         </div>
+         </div>}
 
-         <div className="mt-4 mx-6 grid grid-cols-12 grid-rows-12 gap-4">
+         {campaign && <div className="mt-4 mx-6 grid grid-cols-12 grid-rows-4 gap-4">
 
             <div className="bg-white rounded-md shadow-md col-start-1 p-4 col-end-8 row-start-1 row-end-2">
-               <h1 className="text-xl font-semibold mb-2">Raised:</h1>
+               <h1 className="text-2xl font-semibold mb-2">Raised:</h1>
                <p className="text-sm text-gray-700">Total Amount</p>
                <div className="flex flex-row">
-                  <p className="text-md mb-2 font-bold">X Raised</p>
-                  <p className="text-md mb-2 ml-1">out of X goal</p>
+                  <p className="text-md mb-2 font-bold">{campaign.raised} Raised</p>
+                  <p className="text-md mb-2 ml-1">out of {campaign.goal} goal</p>
                </div>
                <div className="w-full bg-green-200 rounded-full h-2 mb-4">
                   <div className="bg-green-600 h-2 rounded-full w-1/12"></div>
@@ -64,19 +64,19 @@ const View = ({params}) => {
                <div>
                   <div className="flex flex-col items-start mb-2">
                      <p className="text-sm font-bold">Total Donations:</p>
-                     <p className="text-lg ml-2">34</p>
+                     <p className="text-lg ml-2">{campaign.donations}</p>
                   </div>
                   <div className="flex flex-col items-start mb-2">
                      <p className="text-sm font-bold">Total Visits:</p>
-                     <p className="text-lg ml-2">34</p>
+                     <p className="text-lg ml-2">{campaign.visits}</p>
                   </div>
                   <div className="flex flex-col items-start mb-2">
                      <p className="text-sm font-bold">Conversion Rate:</p>
-                     <p className="text-lg ml-2">34</p>
+                     <p className="text-lg ml-2">{campaign.donations/campaign.vists}</p>
                   </div>
                   <div className="flex flex-col items-start mb-2">
                      <p className="text-sm font-bold">Average Donation:</p>
-                     <p className="text-lg ml-2">34</p>
+                     <p className="text-lg ml-2">{campaign.amount/campaign.donations}</p>
                   </div>
                </div>
             </div>
@@ -121,7 +121,7 @@ const View = ({params}) => {
                </table>
             </div>
 
-         </div>
+         </div>}
          
       </div>
    )

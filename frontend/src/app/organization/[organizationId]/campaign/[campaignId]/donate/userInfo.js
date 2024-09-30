@@ -3,10 +3,10 @@
 const UserInfo = ({setPage, handleUserInfoChange, userInfo}) => {
 
    return (
-      <div className="w-1/2 mx-auto bg-white p-4 pb-12">
-         <h1 className="text-4xl font-bold text-gray-800 mb-12 text-center">Your Information</h1>
+      <div className="w-1/2 mx-auto p-4 pb-12">
+         <h1 className="text-5xl font-bold text-gray-800 mb-12 text-center">Your Information</h1>
 
-         <div className="space-y-6">
+         <div className="space-y-6 py-8">
             <div className="space-y-2">
                <h3 className="text-lg font-semibold text-gray-700">Details:</h3>
                <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto mt-2">

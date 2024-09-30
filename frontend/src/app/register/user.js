@@ -3,7 +3,7 @@
 const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
    return (
       <div className="w-full max-w-2xl bg-white rounded-md shadow-md p-8">
-         <h1 className="text-2xl font-bold">Register a User:</h1>
+         <h1 className="text-2xl font-bold">Register Admin User:</h1>
 
          <div className="w-full grid grid-cols-4 grid-rows-3 gap-x-4 mt-4">
             <div className="flex flex-col mb-4 col-start-1 col-end-3 row-start-1 row-end-2">
@@ -11,7 +11,7 @@ const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
                <input
                   name="firstName"
                   type="text"
-                  placeholder="Enter an Organization Name"
+                  placeholder="Enter an First Name"
                   className="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={userData.firstName}
                   onChange={handleUserDataChange}

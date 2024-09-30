@@ -4,6 +4,7 @@ import { AuthContext } from "../context/authContext"
 import useFormInput from "../hooks/useFormInput"
 import { useContext, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Header from "../components/header"
 
 const Login = () => {
    const {login, currentUser} = useContext(AuthContext)
@@ -30,6 +31,7 @@ const Login = () => {
 
    return (
       <div className="flex items-start justify-center min-h-screen bg-gray-50">
+         <Header />
          <div className="w-full mt-16 max-w-sm p-8 bg-white rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
             <form className="space-y-6" onSubmit={handleSubmit}>

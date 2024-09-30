@@ -6,7 +6,7 @@ const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
       <div className="w-full max-w-2xl bg-white rounded-md shadow-md p-8">
          <h1 className="text-2xl font-bold">Register an Organization:</h1>
 
-         <div className="w-full grid grid-cols-4 grid-rows-3 gap-x-4 mt-4">
+         <div className="w-full grid grid-cols-4 grid-rows-4 gap-x-4 mt-4">
             <div className="flex flex-col mb-4 col-start-1 col-end-3 row-start-1 row-end-2">
                <label className="text-gray-700 text-md font-medium mb-1">Organization Name</label>
                <input
@@ -18,7 +18,7 @@ const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
                   onChange={handleOrgDataChange}
                />
             </div>
-            <div className="flex flex-col mb-4 col-start-3 col-end-5 row-start-1 row-end-2">
+            <div className="flex flex-col mb-4 col-start-1 col-end-5 row-start-2 row-end-3">
                <label className="text-gray-700 text-md font-medium mb-1">Organization Email</label>
                <input
                   name="email"
@@ -29,7 +29,18 @@ const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
                   onChange={handleOrgDataChange}
                />
             </div>
-            <div className="flex flex-col mb-4 col-start-1 col-end-4 row-start-2 row-end-3">
+            <div className="flex flex-col mb-4 col-start-3 col-end-5 row-start-1 row-end-2">
+               <label className="text-gray-700 text-md font-medium mb-1">Organization URL</label>
+               <input
+                  name="url"
+                  type="text"
+                  placeholder="Enter an Organization URL"
+                  className="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={orgData.url}
+                  onChange={handleOrgDataChange}
+               />
+            </div>
+            <div className="flex flex-col mb-4 col-start-1 col-end-4 row-start-3 row-end-4">
                <label className="text-gray-700 text-md font-medium mb-1">Street Address</label>
                <input
                   name="address"
@@ -40,7 +51,7 @@ const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
                   onChange={handleOrgDataChange}
                />
             </div>
-            <div className="flex flex-col mb-4 col-start-4 col-end-5 row-start-2 row-end-3">
+            <div className="flex flex-col mb-4 col-start-4 col-end-5 row-start-3 row-end-4">
                <label className="text-gray-700 text-md font-medium mb-1">City</label>
                <input
                   name="city"
@@ -51,7 +62,7 @@ const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
                   onChange={handleOrgDataChange}
                />
             </div>
-            <div className="flex flex-col mb-4 col-start-1 col-end-3 row-start-3 row-end-4">
+            <div className="flex flex-col mb-4 col-start-1 col-end-3 row-start-4 row-end-5">
                <label className="text-gray-700 text-md font-medium mb-1">Country</label>
                <input
                   name="contry"
@@ -62,7 +73,7 @@ const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
                   onChange={handleOrgDataChange}
                />
             </div>
-            <div className="flex flex-col mb-4 col-start-3 col-end-5 row-start-3 row-end-4">
+            <div className="flex flex-col mb-4 col-start-3 col-end-5 row-start-4 row-end-5">
                <label className="text-gray-700 text-md font-medium mb-1">Zipcode</label>
                <input
                   name="zip"

@@ -21,12 +21,15 @@ export const createRelationBatch = (req, res) => {
 
 export const getRelations = (req, res) => {
    const query = `
-      SELECT d.* 
-      FROM campaign_designations cd
-      JOIN designations d ON cd.designation_id = d.id
-      WHERE cd.campaign_id = ?
+      SELECT designations.*
+      FROM campaign_designations
+      JOIN designations ON campaign_designations.designation_id = designations.id
+      WHERE campaign_designations.campaign_id = ?
    `
+
    const value = req.params.id
+
+
 
    db.query(query, value, (err, data) => {
       if (err) return res.json(err)

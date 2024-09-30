@@ -1,26 +1,34 @@
 
 
-const Checkout = ({page, setPage}) => {
+const Checkout = ({page, setPage, gifts, setGifts}) => {
+
+   const handleRemove = (id) => {
+      setGifts(gifts.filter(item => item.id !== id))
+   }
    
 
    return (
-      <div className="w-1/2 mx-auto bg-white p-4 pb-16">
-         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Review</h2>
+      <div className="w-1/2 mx-auto p-4 pb-16">
+         <h1 className="text-5xl font-bold text-gray-800 mb-12 text-center">Donation Details</h1>
 
-         <div className="space-y-4 min-h-36">
-            <div className="flex justify-between items-center border-b pb-4">
-               <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Item Name 1</h3>
-                  <div className="flex flex-row w-full justify-between text-sm text-gray-600">
-                     <p>Edit</p>
-                     <p>Remove</p>
+         {gifts[0].designationTitle != "" ? <div className="space-y-4 min-h-36">
+            {gifts.map(item => {
+               return (
+                  <div className="flex justify-between items-center border-b pb-4">
+                     <div>
+                        <h3 className="text-lg font-semibold text-gray-700">{item.designationTitle}</h3>
+                        <div className="flex flex-row w-full justify-between text-sm text-gray-600">
+                           <button onClick={() => handleRemove(item.id)}>Remove</button>
+                        </div>
+                        
+                     </div>
+                     <p className="text-lg font-semibold text-gray-700">{item.amount}</p>
                   </div>
-                  
-               </div>
-               <p className="text-lg font-semibold text-gray-700">$100</p>
-            </div>
+               )
+            })}
 
-         </div>
+
+         </div> : <div className="text-center ">No Gifts Added</div>}
 
          <div className="mt-6 pt-4 flex justify-end">
             <h3 className="text-xl font-semibold text-gray-800 mr-4">Subtotal:</h3>

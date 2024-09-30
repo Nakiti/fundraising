@@ -69,6 +69,23 @@ export const getActive = (req, res) => {
    })
 }
 
+export const getFiltered = (req, res) => {
+   let query = "SELECT * FROM campaigns WHERE `organization_id` = ? AND `status` = ?"
+   const status = req.query.status
+   const id = req.params.id
+
+   console.log(status)
+
+   if (status == "all") {
+      query = "SELECT * FROM campaigns WHERE `organization_id` = ?"
+   }
+
+   db.query(query, [id, status], (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data)
+   })
+}
+
 export const updateCampaign = (req, res) => {
    const query = "UPDATE campaigns SET `title` = ?, `description` = ?, `goal` = ?, `status` = ?, `updated_at` = ?, `updated_by` = ?, `url` = ? WHERE `id` = ?"
 

@@ -2,6 +2,7 @@
 import { useContext, useEffect } from "react"
 import { AuthContext } from "../context/authContext"
 import { useRouter } from "next/navigation"
+import Header from "../components/header"
 
 const OrgLayout = ({children}) => {
    const {currentUser} = useContext(AuthContext)
@@ -15,7 +16,10 @@ const OrgLayout = ({children}) => {
    
    return (
       <div>
-         {currentUser && children}
+         <Header />
+         <div style={{height: "90vh"}}>
+            {currentUser && children}
+         </div>
       </div>
    )
 }

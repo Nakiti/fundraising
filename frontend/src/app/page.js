@@ -1,5 +1,9 @@
+import Header from "./components/header";
+
 const LandingPage = () => {
    return (
+      <div>
+      <Header />
       <div className="p-6 m-4 overflow-y-hidden" style={{ height: 'calc(100vh - 110px)' }}>
          <div className="flex justify-between items-center">
             {/* Text Section */}
@@ -20,6 +24,7 @@ const LandingPage = () => {
                <img src="image3.jpg" alt="Image 3" className="rounded-lg bg-gray-200" style={{width: "500px", height: "150px"}}/>
             </div>
          </div>
+      </div>
       </div>
    );
 }

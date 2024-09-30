@@ -12,6 +12,7 @@ const CampaignInfo = () => {
 
    const [info, handleInfoChange, setInfo] = useFormInput({
       name: "",
+      url: "",
       address: "",
       city: "",
       state: "",
@@ -57,6 +58,18 @@ const CampaignInfo = () => {
                   name="name"
                   placeholder="Name"
                   value={info.name}
+                  className="w-full bg-gray-50 px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  required
+                  onChange={handleInfoChange}
+               />
+            </div>
+            <div className="flex flex-col">
+               <label className="text-gray-700 text-sm font-semibold mb-1">Organization URL</label>
+               <input
+                  type="text"
+                  name="url"
+                  placeholder="Name"
+                  value={info.url}
                   className="w-full bg-gray-50 px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   required
                   onChange={handleInfoChange}

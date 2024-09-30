@@ -1,5 +1,5 @@
 import Address from "./address"
-import CampaignInfo from "./campaignInfo"
+import CampaignInfo from "./organizationInfo"
 import Designations from "./designations"
 import UserManagement from "./userManagement"
 
