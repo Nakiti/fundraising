@@ -1,8 +1,11 @@
 import { getCampaignDesignations } from "@/app/services/fetchService"
 import { useEffect, useState } from "react"
+import ErrorModal from "@/app/components/errorModal"
 
 const CampaignInfo = ({setPage, setGifts, campaignInfo, handleCampaignInfoChange, setCampaignInfo, campaignId, designations}) => {
    const [data, setData] = useState(null)
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("Please fill all fields")
 
    const handleAdd = () => {
       setGifts((prev) => [...prev, campaignInfo])
@@ -13,10 +16,14 @@ const CampaignInfo = ({setPage, setGifts, campaignInfo, handleCampaignInfoChange
          designationTitle: "",
       })
    }
-
+ 
    const handleContinue = () => {
-      setGifts(prev => [...prev, campaignInfo])
-      setPage(2)
+      if (campaignInfo.amount == 0 || campaignInfo.designationId == 0) {
+         setError(true)
+      } else {
+         setGifts(prev => [...prev, campaignInfo])
+         setPage(2)
+      }
    }
 
    const amounts = [10, 25, 50, 75, 100, 150, 200, 500];
@@ -32,6 +39,7 @@ const CampaignInfo = ({setPage, setGifts, campaignInfo, handleCampaignInfoChange
 
    return (
       <div className="w-1/2 p-4 mx-auto">
+         {error && <ErrorModal message={errorMessage} setError={setError}/>}
          <h1 className="text-5xl font-bold text-gray-800 mb-12 text-center">Donation Details</h1>
 
          <div className="">

@@ -16,7 +16,7 @@ export const createPreview = (req, res) => {
          return res.status(500).json({ error: "Image upload failed" });
       } 
 
-      const query = "INSERT INTO previews (`campaign_id`, `title`, `message`, `image`, `heading`, `bg_color`, `p_color`, `s_color`, `h_color`) VALUES (?)"
+      const query = "INSERT INTO previews (`campaign_id`, `title`, `message`, `image`, `heading`, `bg_color`, `p_color`, `s_color`, `h_color`, `ht_color`, `b1_color`, `b2_color`, `b3_color`, `m_color`) VALUES (?)"
 
       const values = [
          req.body.campaign_id,
@@ -27,7 +27,12 @@ export const createPreview = (req, res) => {
          req.body.bg_color,
          req.body.p_color,
          req.body.s_color,
-         req.body.h_color
+         req.body.h_color,
+         req.body.ht_color,
+         req.body.b1_color,
+         req.body.b2_color,
+         req.body.b3_color,
+         req.body.m_color,
       ]
 
       // console.log(values)

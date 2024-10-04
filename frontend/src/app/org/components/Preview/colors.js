@@ -25,12 +25,13 @@ const ColorInputs = () => {
       <div className="bg-white shadow-md p-6 rounded-md w-full max-w-6xl mx-auto mt-4">
          <div className="flex flex-row justify-between">
             <h1 className="text-xl font-bold">Configure Display</h1>
-            <button onClick={() => setOpen(!open)}>
+            {/* <button onClick={() => setOpen(!open)}>
                {open ? <FaAngleDown /> : <FaAngleUp />}
-            </button>
+            </button> */}
          </div>
+         <p className="text-md mt-4">To style an element, simply click on it</p>
 
-         {open && <div className="w-full grid grid-cols-4 gap-4 mt-4">
+         {/* {open && <div className="w-full grid grid-cols-4 gap-4 mt-4">
             {colors.map((item, index) => {
                return (
                   <div className="flex items-center space-x-2 justify-center">
@@ -52,7 +53,7 @@ const ColorInputs = () => {
                )
             })}
 
-         </div>}
+         </div>} */}
       </div>
    )
 

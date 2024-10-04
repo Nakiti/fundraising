@@ -11,7 +11,7 @@ const SidebarItem = ({ icon, text, isCollapsed, link }) => {
                {icon} 
             </div>
             {!isCollapsed && (
-               <span className="text-black ml-2 text-lg font-semibold">{text}</span> 
+               <span className="text-black ml-2 text-md font-semibold">{text}</span> 
             )}
          </div>
       </Link>

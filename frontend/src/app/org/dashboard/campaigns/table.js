@@ -66,7 +66,7 @@ const Table = () => {
 
    return (
       <div className="px-8 mt-4 mb-4">
-         <div className="mb-8">
+         <div className="mb-4">
             <select
                className="bg-gray-50 text-black px-4 py-1 text-sm rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                defaultValue="all"
@@ -89,7 +89,7 @@ const Table = () => {
                            {column.sortable &&
                            <div className="h-full flex items-center justify-center cursor-pointer">
                               {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? 
-                                 (<FaSortUp className="ml-2 text-gray-600" />) : (<FaSortDown className="ml-2 text-gray-600" />)
+                                 (<FaSortUp className="ml-2 text-blue-700" />) : (<FaSortDown className="ml-2 text-blue-700" />)
                               }
                            </div>
                            }
@@ -106,15 +106,15 @@ const Table = () => {
                      <td className="px-4 py-2 text-center text-sm">
                         <div className="flex items-center justify-center space-x-2">
                            <Link href={`/org/campaign/edit/${row.id}`}>
-                              <FaEdit className="text-lg" />
+                              <FaEdit className="text-md" />
                            </Link>
                            <div className="border-r border-gray-400 h-6" />
                            <Link href={`/org/campaign/view/${row.id}`}>
-                              <GrView className="text-lg" />
+                              <GrView className="text-md" />
                            </Link>
                            <div className="border-r border-gray-400 h-6" />
                            <Link href={`/organization/${organizationId}/campaign/${row.id}`}>
-                              <IoMdOpen className="text-lg" />
+                              <IoMdOpen className="text-md" />
                            </Link>
                         </div>
                      </td>
@@ -125,7 +125,7 @@ const Table = () => {
                      <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
                      <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
                      <td className="px-4 py-2 text-xs text-center">
-                        <label className={`px-2 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-600" : "bg-green-600"}`}>{row.status.toUpperCase()}</label>
+                        <label className={`px-2 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-700" : "bg-green-700"}`}>{row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}</label>
                      </td>
                   </tr>
                ))}

@@ -16,10 +16,16 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
       message: '',
       image: '',
       heading: '',
-      bg_color: '',
-      p_color: '',
-      s_color: '',
-      h_color: ''
+      bg_color: '', //background color
+      p_color: '', //primary text color
+      s_color: '', //secondary text color
+      h_color: '', //header background color
+      ht_color: '', //header text color
+      b1_color: '', //button one color (donate)
+      b2_color: '', //button two color (share)
+      b3_color: '', //button three color (money)
+      m_color: '', //modal color
+
    })
 
    const [settingsInputs, handleSettingsInputsChange, setSettingsInputs] = useFormInput({
@@ -56,7 +62,12 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                   bg_color: previewResponse.bg_color,
                   p_color: previewResponse.p_color,
                   s_color: previewResponse.s_color,
-                  h_color: previewResponse.h_color
+                  h_color: previewResponse.h_color,
+                  ht_color: previewResponse.ht_color, //header text color
+                  b1_color: previewResponse.b1_color, //button one color (donate)
+                  b2_color: previewResponse.b2_color, //button two color (share)
+                  b3_color: previewResponse.b3_color, //button three color (money)
+                  m_color: previewResponse.m_color, //modal color
                })
 
                const selectedDesignationsResponse = await getCampaignDesignations(campaignId)

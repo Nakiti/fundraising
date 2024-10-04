@@ -18,7 +18,7 @@ const Card = ({title, description, raised, goal, donations, date, id, organizati
                <div className="w-full flex flex-col items-end space-y-2">
                   <Link 
                      href={`/organization/${organizationId}/campaign/${id}`}
-                     className="px-4 w-24 py-1 bg-blue-600 rounded-sm text-white text-sm" 
+                     className="px-4 w-24 py-1 bg-blue-600 rounded-sm text-white text-sm text-center" 
                   >Donate
                   </Link>
                   <button className="px-4 w-24 py-1 bg-gray-200 rounded-sm text-sm">Share</button>

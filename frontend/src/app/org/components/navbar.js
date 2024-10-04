@@ -45,7 +45,7 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
                   Save
                </button> :
                <button 
-                  className="border-2 border-red-300 hover:bg-gray-100 py-1 px-4 rounded-md"
+                  className="border-2 border-red-700 hover:bg-gray-100 py-1 px-4 rounded-md"
                   onClick={handleDeactivate}
                >
                   Deactivate
