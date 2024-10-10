@@ -22,7 +22,7 @@ const ColorInputs = () => {
    ]
 
    return (
-      <div className="bg-white shadow-md p-6 rounded-md w-full max-w-6xl mx-auto mt-4">
+      <div className="bg-white shadow-sm p-6 rounded-md w-full max-w-6xl mx-auto mt-4">
          <div className="flex flex-row justify-between">
             <h1 className="text-xl font-bold">Configure Display</h1>
             {/* <button onClick={() => setOpen(!open)}>

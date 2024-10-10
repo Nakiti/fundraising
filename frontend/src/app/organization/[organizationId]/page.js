@@ -80,7 +80,7 @@ const Organization = ({ params }) => {
             {/* Active Campaigns */}
             <div id="campaigns" className="mt-12" ref={campaignsRef}>
                <h2 className="text-3xl font-semibold mb-8 text-gray-800">Active Campaigns:</h2>
-               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {campaigns ? (
                   campaigns.map((campaign) => (
                      <Card key={campaign.id} {...campaign} organizationId={organizationId} />

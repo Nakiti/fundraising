@@ -6,7 +6,7 @@ import UserManagement from "./userManagement"
 
 const Settings = () => {
    return (
-      <div className="bg-white w-full h-full bg-gray-50 flex flex-col p-8 overflow-y-auto">
+      <div className="bg-white w-full h-full bg-gray-50 flex flex-col p-8 overflow-y-auto rounded-md">
          <h1 className="text-2xl font-bold mb-8">Settings</h1>
 
          <CampaignInfo />

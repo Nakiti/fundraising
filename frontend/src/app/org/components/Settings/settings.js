@@ -7,7 +7,7 @@ const Settings = () => {
    const {settingsInputs, handleSettingsInputsChange} = useContext(CampaignContext)
 
    return (
-      <div className="p-6 bg-white m-8">
+      <div className="p-6 bg-white m-8 rounded-md shadow-sm">
          {/* Grid layout with two columns */}
          <h1 className="text-2xl font-bold mb-4">Campaign Settings</h1>
          <div className="h-full grid grid-cols-2 gap-4 grid-rows-3">

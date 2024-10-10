@@ -42,7 +42,7 @@ const Display = () => {
    const amounts = [10, 25, 50, 75, 100, 150];
 
    return (
-      <div className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-lg shadow-md mt-6 overflow-y-auto">
+      <div className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-lg shadow-sm mt-6 overflow-y-auto">
          {showModal && <Modal label={label} value={value} setModal={setShowModal} position={modalPosition}/>}
          <div 
             className="text-xl font-bold text-start text-white px-4 py-2 bg-gray-800" 

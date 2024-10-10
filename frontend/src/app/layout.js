@@ -11,8 +11,9 @@ export default function RootLayout({ children }) {
 
    return (
       <html lang="en">
+         
          <AuthContextProvider>
-            <body className="bg-gray-50">
+            <body className="bg-gray-50 font-lato">
                {/* <Header /> */}
                {/* <div style={{height: "90vh"}}> */}
                   {children}

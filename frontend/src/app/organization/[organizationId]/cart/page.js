@@ -1,5 +1,5 @@
 "use client"
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { DonationContext } from "@/app/context/donationContext";
 import Link from "next/link";
 import { IoIosClose } from "react-icons/io";
@@ -8,6 +8,7 @@ import { IoIosClose } from "react-icons/io";
 const Cart = ({params}) => {
    const {donations, setDonations} = useContext(DonationContext)
    const organizationId = params.organizationId
+   let subtotal = 0
 
    const handleDelete = (id) => {
       setDonations(donations.filter(item => item.id !== id))
@@ -15,10 +16,13 @@ const Cart = ({params}) => {
 
    return (
       <div className="flex flex-col items-center p-4 bg-white min-h-screen">
-         <h1 className="text-5xl font-bold mb-12 mt-6">Your Donations</h1>
-         <div className="w-full max-w-4xl bg-white p-4">
+         <h1 className="text-3xl font-bold mb-6 mt-6 px-12 text-start w-full">Your Donations:</h1>
 
-            <div className="space-y-8">
+         {/* Container for donations list and summary */}
+         <div className="w-full max-w-6xl bg-white p-4 flex justify-between">
+
+            {/* Left side - Donation Items */}
+            <div className="w-7/12 space-y-8">
                {donations && donations.map(item => {
                   return (
                      <div className="flex justify-between items-center border-b pb-4">
@@ -47,25 +51,32 @@ const Cart = ({params}) => {
                )}
             </div>
 
+            {/* Right side - Summary and Checkout */}
+            <div className="w-4/12 bg-gray-50 p-6 rounded-sm">
+               <div className="mb-4">
+                  <div className="flex justify-between">
+                     <span className="text-lg font-semibold">Subtotal</span>
+                     <span className="text-lg font-semibold">${donations.map((item) =>  {
+                        subtotal += Number(item.amount);
+                        return subtotal
+                     })}</span>
+                  </div>
+                  <div className="flex justify-between mt-2">
+                     <span className="text-sm text-gray-500">Transaction Fees</span>
+                     <span className="text-sm text-gray-500">${subtotal * .05}</span>
+                  </div>
+                  <div className="flex justify-between mt-4 border-t pt-4">
+                     <span className="text-xl font-bold">Total</span>
+                     <span className="text-xl font-bold">${subtotal + subtotal * .05}</span>
+                  </div>
+               </div>
 
-            <div className="mt-6 p-4 rounded-lg">
-               <div className="flex justify-between">
-                  <span className="text-lg font-semibold">Subtotal</span>
-                  <span className="text-lg font-semibold">$89.97</span>
-               </div>
-               <div className="flex justify-between mt-2">
-                  <span className="text-sm text-gray-500">Transaction Fees</span>
-                  <span className="text-sm text-gray-500">$5.00</span>
-               </div>
-               <div className="flex justify-between mt-4 border-t pt-4">
-                  <span className="text-xl font-bold">Total</span>
-                  <span className="text-xl font-bold">$94.97</span>
-               </div>
-               <div className="w-5/12 mx-auto mt-6 flex flex-row justify-between">
-                  <Link href={`/organization/${organizationId}`} className="bg-blue-700 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+               {/* Action buttons */}
+               <div className="flex flex-col space-y-4">
+                  <Link href={`/organization/${organizationId}`} className="bg-blue-700 text-white py-2 px-4 rounded-md hover:bg-blue-600 text-center">
                      Add More Gifts
                   </Link>
-               
+
                   <button className="bg-blue-700 text-white py-2 px-4 rounded-md hover:bg-blue-600">
                      Proceed to Checkout
                   </button>

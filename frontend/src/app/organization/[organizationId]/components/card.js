@@ -3,11 +3,11 @@ import Link from "next/link"
 const Card = ({title, description, raised, goal, donations, date, id, organizationId}) => {
 
    return (
-      <div className="shadow-md rounded-lg w-full h-full cursor pointer">
+      <div className="shadow-sm rounded-sm w-full h-full cursor pointer">
          <img 
             src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
             className="object-cover w-full"
-            style={{height: "200px"}}
+            style={{height: "150px"}}
          />
          <div className="p-4">
             <div className="flex flex-row justify-between">
@@ -18,10 +18,10 @@ const Card = ({title, description, raised, goal, donations, date, id, organizati
                <div className="w-full flex flex-col items-end space-y-2">
                   <Link 
                      href={`/organization/${organizationId}/campaign/${id}`}
-                     className="px-4 w-24 py-1 bg-blue-600 rounded-sm text-white text-sm text-center" 
+                     className="px-2 w-20 py-1 bg-blue-600 rounded-sm text-white text-sm text-center" 
                   >Donate
                   </Link>
-                  <button className="px-4 w-24 py-1 bg-gray-200 rounded-sm text-sm">Share</button>
+                  <button className="px-4 w-20 py-1 bg-gray-200 rounded-sm text-sm">Share</button>
                </div>
             </div>
             {/* <div className="w-full flex flex-row justify-between items-center mt-4">

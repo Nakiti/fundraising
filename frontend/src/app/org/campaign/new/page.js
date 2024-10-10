@@ -60,7 +60,7 @@ const NewCampaign = () => {
       
       <div className="w-full bg-gray-50">
          {error && <ErrorModal message={errorMessage} setError={setError} />}
-         <Navbar active={active} handleActiveChange={handleActiveChange} handlePublish={handlePublish} handleSave={handleSave}/>
+         {/* <Navbar active={active} title={"New Campaign"} handleActiveChange={handleActiveChange} handlePublish={handlePublish} handleSave={handleSave}/> */}
          {active == "settings" ?  <Settings /> : <Preview />}
       </div>
    )

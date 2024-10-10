@@ -56,7 +56,7 @@ const EditCampaign = ({params}) => {
 
    return (
       <div className="w-full bg-gray-50">
-         <Navbar active={active} handleActiveChange={handleActiveChange} handlePublish={handlePublish} handleSave={handleSave} handleDeactivate={handleDeactivate}/>
+         <Navbar active={active} title={"Edit Campaign"} handleActiveChange={handleActiveChange} handlePublish={handlePublish} handleSave={handleSave} handleDeactivate={handleDeactivate}/>
 
          {active == "settings" ?  <Settings /> : <Preview />}
       </div>
