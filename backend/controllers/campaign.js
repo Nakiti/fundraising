@@ -1,19 +1,18 @@
 import { db } from "../db.js"
 
 export const createCampaign = (req, res) => {
-
    const q = "SELECT * FROM campaigns WHERE url = ?"
 
    db.query(q, [req.body.url], (err, data) => {
       if (err) return res.status(500).json(err)
       if (data.length > 0) return res.status(409).json("Short URL already in use")
 
-      const query = "INSERT INTO campaigns (`organization_id`, `title`, `description`, `goal`, `raised`, `donations`, `visits`, `status`, `created_at`, `updated_at`, `created_by`, `updated_by`, `url`) VALUES (?)"
+      const query = "INSERT INTO campaigns (`organization_id`, `campaign_name`, `internal_name`, `goal`, `raised`, `donations`, `visits`, `status`, `created_at`, `updated_at`, `created_by`, `updated_by`, `url`) VALUES (?)"
 
       const values = [
          req.body.organization_id,
-         req.body.title,
-         req.body.description,
+         req.body.campaignName,
+         req.body.internalName,
          req.body.goal,
          0,
          0,
@@ -25,9 +24,7 @@ export const createCampaign = (req, res) => {
          req.body.created_by,
          req.body.url
       ]
-   
-      // console.log(values)
-      
+         
       db.query(query, [values], (err, data) => {
          if (err) return res.json(err)
          console.log(data)
@@ -38,7 +35,6 @@ export const createCampaign = (req, res) => {
 
 export const getCampaign = (req, res) => {
    const query = "SELECT * FROM campaigns WHERE `id` = ?"
-
    const value = req.params.id
 
    db.query(query, value, (err, data) => {
@@ -49,7 +45,6 @@ export const getCampaign = (req, res) => {
 
 export const getCampaignsByOrg = (req, res) => {
    const query = "SELECT * FROM campaigns WHERE `organization_id` = ?"
-
    const value = req.params.id
 
    console.log("campaign", value)
@@ -87,11 +82,11 @@ export const getFiltered = (req, res) => {
 }
 
 export const updateCampaign = (req, res) => {
-   const query = "UPDATE campaigns SET `title` = ?, `description` = ?, `goal` = ?, `status` = ?, `updated_at` = ?, `updated_by` = ?, `url` = ? WHERE `id` = ?"
+   const query = "UPDATE campaigns SET `campaign_name` = ?, `internal_name` = ?, `goal` = ?, `status` = ?, `updated_at` = ?, `updated_by` = ?, `url` = ? WHERE `id` = ?"
 
    const values = [
-      req.body.title,
-      req.body.description,
+      req.body.campaignName,
+      req.body.internalName,
       req.body.goal,
       req.body.status,
       (new Date()).toISOString().slice(0, 19).replace('T', ' '),

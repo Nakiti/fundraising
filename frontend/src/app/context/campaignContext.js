@@ -12,10 +12,10 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
    const organization_id = currentUser.organization_id
 
    const [previewInputs, handlePreviewInputsChange, setPreviewInputs] = useFormInput({
-      title: '',
-      message: '',
+      headline: '',
+      description: '',
       image: '',
-      heading: '',
+      // heading: '',
       bg_color: '', //background color
       p_color: '', //primary text color
       s_color: '', //secondary text color

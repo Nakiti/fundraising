@@ -18,3 +18,12 @@ export const createUser = async(data) => {
       console.log(err)
    }
 }
+
+export const createCustomQuestion = async(data) => {
+
+   try {
+      await axios.post(`${API_BASE_URL}/campaign_question/create`, data)
+   } catch (err) {
+      console.log(err)
+   }
+}

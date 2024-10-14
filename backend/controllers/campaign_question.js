@@ -1,14 +1,16 @@
-import { db } from "../db";
+import { db } from "../db.js";
 
 export const createCustomQuestion = (req, res) => {
 
-   const query = "INSERT INTO campaign_questions (`campaign_id`, `question`, `type`) VALUES (?)"
-   const values = [
-      req.body.campaign_id,
-      req.body.question,
-      req.body.type
-   ]
-
+   const query = "INSERT INTO campaign_questions (`campaign_id`, `question`, `type`, `created_at`) VALUES (?)"
+   
+   const values = req.body.map(question => {
+      Number(req.params.id),
+      question.question,
+      question.type
+      (new Date()).toISOString().slice(0, 19).replace('T', ' ')
+   })
+   
    db.query(query, values, (err, data) => {
       if (err) return res.json(err)
       return res.status(200).json(data)

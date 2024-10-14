@@ -64,11 +64,11 @@ const Display = () => {
             <div className="flex flex-col px-6 py-4 col-start-1 col-end-8">
                <h1 
                   className="text-2xl p-2 mb-2 font-semibold "
-                  name="title"
+                  name="headline"
                   style={{backgroundColor: previewInputs.bg_color || "#FFF", color: previewInputs.p_color || "black"}}
 
                >
-                  {previewInputs.heading }
+                  {previewInputs.headline }
                </h1>
                {previewInputs.image == "" ?
                <label className="w-full h-48 flex items-center justify-center border border-dashed border-gray-400 rounded-md bg-gray-50 cursor-pointer">
@@ -106,7 +106,7 @@ const Display = () => {
                   >
                      {previewInputs.description}
                   </p>
-               </div>
+               </div> 
                {/* <p 
                   className="text-gray-400 text-sm px-4 py-2" 
                   style={{color: previewInputs.s_color || "#000"}}

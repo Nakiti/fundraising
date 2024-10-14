@@ -41,13 +41,13 @@ const ElementInputs = () => {
             /> */}
          </div>
          <div className="mb-4">
-            <p className="text-sm font-bold text-gray-600 mb-2">Enter Heading</p>
+            <p className="text-sm font-bold text-gray-600 mb-2">Enter Headline</p>
             <textarea 
                className="text-black text-xl w-full h-full border border border-gray-400 p-2 rounded-md resize-none"
                rows={2}
                placeholder="Enter a Headline "
-               name="heading"
-               value={previewInputs.heading}
+               name="headline"
+               value={previewInputs.headline}
                onChange={handlePreviewInputsChange}
             />
          </div>
@@ -56,10 +56,10 @@ const ElementInputs = () => {
             <textarea 
                className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-md resize-none"
                rows={5}
-               placeholder="Enter a Description "
+               placeholder="Enter a Description"
                name="description"
                value={previewInputs.description}
-               onChange={handlePreviewInputsChange}
+               onChange={handlePreviewInputsChange} 
             />
          </div>
 
