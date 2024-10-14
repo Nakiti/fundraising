@@ -15,7 +15,7 @@ import { getCampaignsFiltered } from "@/app/services/fetchService";
 const Table = () => {
    const columns = [
       { id: 'actions', label: 'Actions', sortable: false},
-      { id: 'title', label: 'Title', sortable: false },
+      { id: 'campaignName', label: 'Campaign Name', sortable: false },
       { id: 'date', label: 'Date', sortable: false },
       { id: 'raised', label: 'Raised', sortable: true},
       { id: 'goal', label: 'Goal', sortable: true },
@@ -103,14 +103,14 @@ const Table = () => {
             <tbody>
                {data && data.map((row, index) => (
                   <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                     <td className="px-4 py-2 text-center text-sm">
+                     <td className=" py-2 text-center text-sm border-r">
                         <div className="flex items-center justify-center space-x-2">
                            <Link href={`/org/dashboard/campaigns/${row.id}`}>
                               <IoMdOpen className="text-md" />
                            </Link>
                         </div>
                      </td>
-                     <td className="px-4 py-2 text-sm text-center">{row.title}</td>
+                     <td className="px-4 py-2 text-sm text-center">{row.campaign_name}</td>
                      <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString("en-US")}</td>
                      <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
                      <td className="px-4 py-2 text-sm text-center">{row.goal}</td>

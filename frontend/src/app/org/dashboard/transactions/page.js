@@ -52,57 +52,59 @@ const Transactions = () => {
    }, [])
 
    return (
-      <div className="bg-white w-full h-full">
-         <h2 className="text-3xl font-bold p-6">Transactions</h2>
+      <div className="w-full h-full p-4">
+         <div className="bg-white w-full h-full overflow-y-auto rounded-sm">
+            <h2 className="text-3xl font-bold p-6">Transactions</h2>
 
-         <div className="px-8">
-            <table className="min-w-full bg-white  border-gray-300 rounded-md">
-               {/* Table Header */}
-               <thead className="border-b border-gray-300">
-                  <tr>
-                     {columns.map((column, index) => (
-                        <th key={index} className="px-4 py-2 text-left text-gray-600 text-sm font-semibold" onClick={() => sortData(column.id)}>
-                           <div className="flex flex-row items-center justify-center">
-                              {column.label}
-                              {column.sortable &&
-                              <div className="h-full flex items-center justify-center cursor-pointer">
-                                 {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? 
-                                    (<FaSortUp className="ml-2 text-gray-600" />) : (<FaSortDown className="ml-2 text-gray-600" />)
+            <div className="px-8">
+               <table className="min-w-full bg-white  border-gray-300 rounded-md">
+                  {/* Table Header */}
+                  <thead className="border-b border-gray-300">
+                     <tr>
+                        {columns.map((column, index) => (
+                           <th key={index} className="px-4 py-2 text-left text-gray-600 text-sm font-semibold" onClick={() => sortData(column.id)}>
+                              <div className="flex flex-row items-center justify-center">
+                                 {column.label}
+                                 {column.sortable &&
+                                 <div className="h-full flex items-center justify-center cursor-pointer">
+                                    {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? 
+                                       (<FaSortUp className="ml-2 text-gray-600" />) : (<FaSortDown className="ml-2 text-gray-600" />)
+                                    }
+                                 </div>
                                  }
                               </div>
-                              }
-                           </div>
-                        </th>
-                     ))}
-                  </tr>
-               </thead>
-               
-               {/* Table Body */}
-               <tbody>
-                  {data && data.map((row, index) => (
-                     <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                        <td className="px-4 py-2 text-center text-sm">
-                           <div className="flex items-center justify-center space-x-2">
-                              <Link href="/org/campaign/edit">
-                                 <FaEdit className="text-lg mr-2" />
-                              </Link>
-                              <div className="border-r border-gray-400 h-6" />
-                              <Link href="/org/campaign/view">
-                                 <IoMdOpen className="text-lg ml-2" />
-                              </Link>
-                           </div>
-                        </td>
-                        <td className="px-4 py-2 text-sm text-center">{row.name}</td>
-                        <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.status}</td>
+                           </th>
+                        ))}
                      </tr>
-                  ))}
-               </tbody>
-            </table>
+                  </thead>
+                  
+                  {/* Table Body */}
+                  <tbody>
+                     {data && data.map((row, index) => (
+                        <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
+                           <td className="px-4 py-2 text-center text-sm">
+                              <div className="flex items-center justify-center space-x-2">
+                                 <Link href="/org/campaign/edit">
+                                    <FaEdit className="text-lg mr-2" />
+                                 </Link>
+                                 <div className="border-r border-gray-400 h-6" />
+                                 <Link href="/org/campaign/view">
+                                    <IoMdOpen className="text-lg ml-2" />
+                                 </Link>
+                              </div>
+                           </td>
+                           <td className="px-4 py-2 text-sm text-center">{row.name}</td>
+                           <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString()}</td>
+                           <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
+                           <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
+                           <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
+                           <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
+                           <td className="px-4 py-2 text-sm text-center">{row.status}</td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
          </div>
       </div>
    )

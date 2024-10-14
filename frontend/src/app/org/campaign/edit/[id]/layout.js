@@ -9,7 +9,7 @@ import { AuthContext } from "@/app/context/authContext"
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
    const router = useRouter()
-   const {previewInputs, aboutInputs, selectedDesignations, customQuestions} = useContext(CampaignContext)
+   const {previewInputs, aboutInputs, selectedDesignations, customQuestions, amountInputs} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
 
    const links = [
@@ -20,7 +20,7 @@ const EditLayout = ({params, children}) => {
    const handlePublish = async() => {
       try {
          await updateCampaign(campaignId, aboutInputs, "active", currentUser)
-         await updatePreview(campaignId, previewInputs)
+         await updatePreview(campaignId, previewInputs, amountInputs)
          await deleteCampaignDesignation(campaignId)
          await createCampaignDesignation(campaignId, selectedDesignations)
          await deleteCustomQuestion(campaignId)

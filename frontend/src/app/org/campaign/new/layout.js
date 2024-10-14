@@ -14,7 +14,7 @@ const NewLayout = ({children}) => {
 
    const links = [
       "/org/campaign/new/details/about",
-      "/org/campaign/new/donation-page/"
+      "/org/campaign/new/donation-page"
    ]
 
    const handlePublish = async() => {
@@ -46,7 +46,7 @@ const NewLayout = ({children}) => {
 
    return (
       <div >
-         <Navbar links={links} handlePublish={handlePublish} handleSave={handleSave}/>
+         <Navbar links={links} handlePublish={handlePublish} handleSave={handleSave} mode={"new"}/>
          <div className="py-8">
             {children}
          </div>

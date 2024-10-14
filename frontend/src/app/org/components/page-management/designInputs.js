@@ -49,6 +49,25 @@ const DesignInputs = () => {
                   />
                </div>
             </div>
+
+            <div className="mb-4">
+               <p className="text-xs font-bold text-gray-600 mb-2">Amount Button Text Color</p>
+               
+               <div className="relative">
+                  <input 
+                     type="color" 
+                     className="opacity-0 absolute inset-0 w-4 h-4 cursor-pointer"
+                     name="s_color"
+                     value={previewInputs.s_color}
+                     onChange={handlePreviewInputsChange}
+                  />
+                  <div 
+                     className="w-6 h-6 rounded-full border border-gray-800 cursor-pointer"
+                     style={{ backgroundColor: previewInputs.s_color }}  
+   
+                  />
+               </div>
+            </div>
          </div>
 
          <div className="mb-8">

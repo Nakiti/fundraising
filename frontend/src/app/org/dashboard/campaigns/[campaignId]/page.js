@@ -27,7 +27,7 @@ const CampaignPage = ({params}) => {
          <div className="bg-white rounded-lg p-6 shadow-md">
             <div className="flex flex-row w-full justify-between items-center mb-8">
                <p className="text-2xl  text-gray-800">Campaign Details:</p>
-               <Link href={`/organization/${organizationId}/campaign/${campaignId}`} className="bg-sky-800 text-white py-3 px-6 rounded-md text-sm font-semibold">Open Campaign Page</Link>
+               <Link href={`/organization/${organizationId}/campaign/${campaignId}`} className="bg-blue-900 text-white py-3 px-6 rounded-md text-sm font-semibold">Open Campaign Page</Link>
             </div>
 
             {campaign && <div className="grid grid-cols-2 w-full gap-8">

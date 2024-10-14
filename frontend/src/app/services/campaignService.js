@@ -113,6 +113,9 @@ export const createCampaignDesignation = async(campaignId, designations) => {
 }
 
 export const createCustomQuestion = async(campaignId, questions) => {
+
+   console.log(questions)
+
    try {
       await axios.post(`${API_BASE_URL}/campaign_question/create/${campaignId}`, questions)
    } catch (err) {

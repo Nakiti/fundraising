@@ -49,7 +49,7 @@ const CampaignInfo = () => {
 
    return (
       <div>
-         <h1 className="text-lg font-semibold mb-4 text-gray-800">Campaign Details</h1>
+         <h1 className="text-lg font-semibold mb-4 text-gray-800">Organization Details</h1>
          <div className="w-5/6 grid grid-cols-4 gap-4 text-sm">
             <div className="flex flex-col">
                <label className="text-gray-700 text-sm font-semibold mb-1">Organization Name</label>

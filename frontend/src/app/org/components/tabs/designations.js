@@ -29,13 +29,13 @@ const DesignationsComponent = () => {
 
    return (
       <div className="w-full">
-         <h1 className="text-4xl mb-4 font-light">Designations</h1>
+         <h1 className="text-3xl mb-2 font-light">Designations</h1>
          <h3 className="text-md text-gray-600 mb-8">Select the designations that users will be able to delegate their donation to:</h3>
       
-         <div className="border-b border-gray-300 mb-2"/>
+         <div className="border-b border-gray-300 my-2"/>
 
-         <div className="flex flex-row py-4 w-full items-center px-2">
-            <div className="flex flex-col w-1/3 py-4">
+         <div className="flex flex-row py-2 w-full items-center px-2 py-4">
+            <div className="flex flex-col w-1/3">
                <h1 className="text-xl mb-2">Default</h1>
                <p className="text-sm">Select the default desingation that users will donate to</p>
             </div>
@@ -51,10 +51,10 @@ const DesignationsComponent = () => {
 
          </div>
 
-         <div className="border-b border-gray-300 mb-2"/>
+         <div className="border-b border-gray-300 my-2"/>
 
-         <div className="p-2">
-            <h1 className="text-lg mb-2">Active Designations</h1>
+         <div className="px-2 py-4">
+            <h1 className="text-xl mb-2">Active Designations</h1>
             <p className="text-sm w-1/2 mb-4">These are the designations that users will be able to direct their donations towards for this campaign</p>
          
             {selectedDesignations.map((item, index) => {
@@ -69,10 +69,10 @@ const DesignationsComponent = () => {
             })}
          </div>
 
-         <div className="border-b border-gray-300 mb-2"/>
+         <div className="border-b border-gray-300 my-2"/>
 
-         <div className="p-2">
-            <h1 className="text-lg mb-2">All Designations</h1>
+         <div className="px-2 py-4">
+            <h1 className="text-xl mb-2">All Designations</h1>
             <p className="text-sm w-1/2 mb-4">These are all active designations in your organization</p>
 
             <div className="px-6">

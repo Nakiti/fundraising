@@ -7,8 +7,8 @@ const AboutComponent = () => {
 
    return (
       <div className="w-full">
-         <h1 className="text-4xl mb-4 font-light">About</h1>
-         <h3 className="text-lg text-gray-600 mb-8">Set up Campaign Details</h3>
+         <h1 className="text-3xl mb-2 font-light">About</h1>
+         <h3 className="text-md text-gray-600 mb-8">Set up Campaign Details</h3>
 
 
          <div className="grid grid-cols-2 gap-8 w-5/6">

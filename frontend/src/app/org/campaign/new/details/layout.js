@@ -16,14 +16,14 @@ const DetailsLayout = ({children}) => {
 
    return (
       <div className="bg-white rounded-sm shadow-sm w-11/12 mx-auto flex flex-row">
-         <div className="flex flex-col border-r-4 border-gray-100 w-1/4 p-8 text-lg text-gray-600">
+         <div className="flex flex-col border-r-4 border-gray-100 w-1/4 py-8 text-md text-gray-600">
             {links.map((item, index) => {
                return (
                   <Link 
                      key={index} 
                      href={item.path} 
-                     className={`p-4 mb-8 border-b-2 hover:bg-gray-100 ${
-                        pathName == item.path ? "border-blue-700" : "border-gray-300"}
+                     className={`p-4 mb-4 border-l-2 hover:bg-gray-100 ${
+                        pathName == item.path ? "border-blue-700" : "border-transparent"}
                      `}
                   >
                      <p>{item.title}</p>
