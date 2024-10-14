@@ -14,7 +14,7 @@ const Campaigns = () => {
 
             <div className="flex flex-row p-6 w-full justify-between">
                <h1 className="text-3xl font-bold">Campaigns</h1>
-               <Link href="/org/campaign/new" className="bg-blue-700 py-2 px-4 rounded-md text-sm font-semibold text-white">Create New Campaign</Link>
+               <Link href="/org/campaign/new/details/about" className="bg-blue-700 py-2 px-4 rounded-md text-sm font-semibold text-white">Create New Campaign</Link>
             </div>
 
             <Summary />

@@ -7,6 +7,7 @@ import transactionRoutes from "./routes/transactionRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import designationRoutes from "./routes/designationRoutes.js"
 import campaign_designationRoutes from "./routes/campaign_designationRoutes.js"
+import custom_questionRoutes from "./routes/campaign_questionRoutes.js"
 
 const app = express()
 
@@ -25,7 +26,7 @@ app.use("/api/transaction", transactionRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/designation", designationRoutes)
 app.use("/api/campaign_designation", campaign_designationRoutes)
-
+app.use("/api/campaign_question", custom_questionRoutes)
 
 const port = 4000
 

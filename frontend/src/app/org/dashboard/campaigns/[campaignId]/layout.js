@@ -27,7 +27,7 @@ const CampaignPageLayout = ({children, params}) => {
                <h1 className="text-3xl">Title</h1>
 
                <div className="w-1/5 flex flex-row justify-between">
-                  <Link href="/org/campaign/new" className="bg-white text-sky-800 py-3 px-6 rounded-md text-md font-semibold">Edit Campaign</Link>
+                  <Link href={`/org/campaign/edit/${campaignId}/details/about`} className="bg-white text-sky-800 py-3 px-6 rounded-md text-md font-semibold">Edit Campaign</Link>
                   <button>
                      <SlOptionsVertical className="h-6 w-6"/>
                   </button>

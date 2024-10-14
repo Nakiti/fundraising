@@ -1,12 +1,10 @@
 "use client"
-import Navbar from "../../../components/navbar"
-import Preview from "../../../components/Preview/preview"
-import Settings from "../../../components/Settings/settings"
 import { useContext, useEffect, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
 import { createCampaignDesignation, deleteCampaignDesignation, updateCampaign, updatePreview } from "@/app/services/campaignService"
 import { useRouter } from "next/navigation"
+import NewLayout from "../../new/layout"
 
 const EditCampaign = ({params}) => {
    const [active, setActive] = useState("preview")
@@ -55,11 +53,14 @@ const EditCampaign = ({params}) => {
    }
 
    return (
-      <div className="w-full bg-gray-50">
-         <Navbar active={active} title={"Edit Campaign"} handleActiveChange={handleActiveChange} handlePublish={handlePublish} handleSave={handleSave} handleDeactivate={handleDeactivate}/>
+      <NewLayout>
+         {campaignId}
+      </NewLayout>
+      // <div className="w-full bg-gray-50">
+      //    <Navbar active={active} title={"Edit Campaign"} handleActiveChange={handleActiveChange} handlePublish={handlePublish} handleSave={handleSave} handleDeactivate={handleDeactivate}/>
 
-         {active == "settings" ?  <Settings /> : <Preview />}
-      </div>
+      //    {active == "settings" ?  <Settings /> : <Preview />}
+      // </div>
    )
 }
 

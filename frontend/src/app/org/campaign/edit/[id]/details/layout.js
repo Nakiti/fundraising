@@ -2,20 +2,20 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-const DetailsLayout = ({children}) => {
-
+const DetailsLayout = ({params, children}) => {
+   const campaignId = params.id
    const pathName = usePathname()
 
    console.log(pathName)
 
    const links = [
-      {title: "About", path: "/org/campaign/new/details/about"},
-      {title: "Designations", path: "/org/campaign/new/details/designations"},
-      {title: "Questions", path: "/org/campaign/new/details/questions"},
+      {title: "About", path: `/org/campaign/edit/${campaignId}/details/about`},
+      {title: "Designations", path: `/org/campaign/edit/${campaignId}/details/designations`},
+      {title: "Questions", path: `/org/campaign/edit/${campaignId}/details/questions`},
    ]
 
    return (
-      <div className="bg-white rounded-sm shadow-sm w-11/12 mx-auto flex flex-row">
+      <div className="bg-white rounded-sm shadow-sm px-8 w-11/12 mx-auto flex flex-row">
          <div className="flex flex-col border-r-4 border-gray-100 w-1/4 p-8 text-lg text-gray-600">
             {links.map((item, index) => {
                return (

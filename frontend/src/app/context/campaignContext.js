@@ -25,7 +25,6 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
       b2_color: '', //button two color (share)
       b3_color: '', //button three color (money)
       m_color: '', //modal color
-
    })
 
    const [settingsInputs, handleSettingsInputsChange, setSettingsInputs] = useFormInput({
@@ -34,6 +33,32 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
       goal: '',
       url: ''
    })
+
+   const [amountInputs, handleAmountInputsChange, setAmountInputs] = useFormInput({
+      button1: 0,
+      button2: 0,
+      button3: 0,
+      button4: 0,
+      button5: 0,
+      button6: 0,
+   })
+
+   const [aboutInputs, handleAboutInputsChange, setAboutInputs] = useFormInput({
+      campaignName: "",
+      internalName: "",
+      goal: "",
+      shortUrl: ""
+   })
+
+   const [questionInputs, handleQuestionInputsChange, setQuestionInputs] = useFormInput({
+      phoneNumber: false,
+      title: false,
+      suffix: false,
+      companyName: false,
+      websiteUrl: false
+   })
+
+   const [customQuestions, setCustomQuestions] = useState([])
 
    const [selectedDesignations, setSelectedDesignations] = useState([]);
    const [designations, setDesignations] = useState([])
@@ -73,6 +98,8 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
                setSelectedDesignations(selectedDesignationsResponse)
                console.log(selectedDesignationsResponse)
+
+               
             }
 
             const designationResponse = await getActiveDesignations(organization_id)
@@ -87,7 +114,12 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
    }, []);
 
    return (
-      <CampaignContext.Provider value={{status, previewInputs, settingsInputs, handlePreviewInputsChange, handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, designations}}>
+      <CampaignContext.Provider value={{
+         status, previewInputs, settingsInputs, handlePreviewInputsChange, 
+         handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, 
+         designations, customQuestions, setCustomQuestions, aboutInputs, handleAboutInputsChange,
+         questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange
+      }}>
          {children}
       </CampaignContext.Provider>
    );

@@ -4,20 +4,20 @@ import { CampaignContext } from "@/app/context/campaignContext";
 import { useState, useContext } from "react";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { usePathname } from "next/navigation";
 
 
-const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDeactivate, title}) => {
+const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDeactivate, title, links, mode}) => {
    const {status} = useContext(CampaignContext)
+   const pathName = usePathname()
 
    return (
-      <div className="p-2 border-b border-gray-100 shadow-sm bg-white text-black">
-         <div className="flex items-center justify-between w-11/12 mx-auto mt-4">
-            {/* Button on the left */}
-            {/* <div className="flex flex-row">
-               <Link href="/org/dashboard/campaigns" className="px-4 flex items-center"> <IoMdArrowRoundBack className="text-xl"/></Link>
-               <div className="border-r h-8 border-gray-300"/>
-            </div> */}
-
+      <div className="border-b border-gray-100 shadow-sm bg-white text-black">
+         <div className="flex flex-row py-2">
+            <Link href="/org/dashboard/campaigns" className="px-4 flex items-center"> <IoMdArrowRoundBack className="text-xl"/></Link>
+            {/* <div className="border-r h-8 border-gray-300"/> */}
+         </div>
+         <div className="flex items-center justify-between w-11/12 mx-auto py-4">
             <div className="flex flex-row items-center">
                <img 
                   src="404image"
@@ -25,7 +25,7 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
                />
                <div className="flex flex-col">
                   <p className="text-sm text-gray-600">Donation Page</p>
-                  <h1 className="text-3xl font-bold">New Campaign</h1>
+                  <h1 className="text-3xl font-bold">{mode == "new" ? "New Campaign" : "Edit Campaign"}</h1>
                </div>
             </div>
 
@@ -55,18 +55,34 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
          </div>
 
          <div className="flex flex-row space-x-8 w-11/12 mx-auto mt-8">
-            <h1
-               onClick={() => handleActiveChange('settings')}
-               className={`cursor-pointer text-md font-semibold ${active === 'settings' ? 'border-b-2 border-blue-600': ''}`}
+            {mode == "new" ? <Link
+               className={`cursor-pointer text-md font-semibold border-b-2 ${pathName.split("/")[4] == links[0].split("/")[4] ? "border-blue-700" : "border-transparent"}`}
+               href={links[0]}
             >
                Details
-            </h1>
-            <h1
-               onClick={() => handleActiveChange('preview')}
-               className={`cursor-pointer text-md font-semibold ${active === 'preview' ? 'border-b-2 border-blue-600': ''}`}
+            </Link> 
+            :
+            <Link
+               className={`cursor-pointer text-md font-semibold border-b-2 ${pathName.split("/")[5] == links[0].split("/")[5] ? "border-blue-700" : "border-transparent"}`}
+               href={links[0]}
+            >
+               Details
+            </Link> 
+            }
+            {mode == "new" ? <Link
+               className={`cursor-pointer text-md font-semibold border-b-2 ${pathName.split("/")[4] == links[1].split("/")[4] ? "border-blue-700" : "border-transparent"}`}
+               href={links[1]}
             >
                Pages
-            </h1>
+            </Link> :
+
+            <Link
+               className={`cursor-pointer text-md font-semibold border-b-2 ${pathName.split("/")[5] == links[1].split("/")[5] ? "border-blue-700" : "border-transparent"}`}
+               href={links[1]}
+            >
+               Pages
+            </Link>
+            }
          </div>
       </div>
    )

@@ -1,10 +1,16 @@
+"use client"
+import DesignationsComponent from "@/app/org/components/tabs/designations";
+import { FaTrash } from "react-icons/fa"
 
 const Designations = () => {
 
-   return (
-      <div>
+   const columns = [
+      { id: 'title', label: 'Title'},
+      { id: 'raised', label: 'Raised'},
+   ];
 
-      </div>
+   return (
+      <DesignationsComponent />
    )
 }
 
