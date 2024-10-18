@@ -18,6 +18,8 @@ export const createPreview = (req, res) => {
 
       const query = "INSERT INTO previews (`campaign_id`, `headline`, `description`, `image`, `bg_color`, `p_color`, `s_color`, `b1_color`, `b2_color`, `b3_color`, `button1`, `button2`, `button3`, `button4`, `button5`, `button6`) VALUES (?)"
 
+      console.log(req.body.campaign_id)
+
       const values = [
          req.body.campaign_id,
          req.body.headline,

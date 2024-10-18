@@ -5,13 +5,17 @@ const API_BASE_URL = 'http://localhost:4000/api';
 export const updateCampaign = async (campaignId, aboutInputs, status, currentUser) => {
    try {
       await axios.put(`${API_BASE_URL}/campaign/update/${campaignId}`, {
-         ...aboutInputs,
+         campaignName: aboutInputs.campaignName,
+         internalName: aboutInputs.internalName,
+         goal: aboutInputs.goal,
+         url: aboutInputs.shortUrl,
+         defaultDesignation: aboutInputs.defaultDesignation,
          status: status,
          updated_by: currentUser.id
       });
    } catch (err) {
       console.error('Error updating campaign:', err);
-      throw err;
+      return err.response.data
    }
 };
 
@@ -58,9 +62,11 @@ export const createCampaign = async(status, aboutInputs, currentUser) => {
          created_by: currentUser.id
       })
       
-      return campaignId.data
+      console.log("camapignid", campaignId.data)
+      return {id: campaignId.data, error: ""}
    } catch (err) {
       console.log(err)
+      return {id: null, error: err.response.data}
    }
 }
 

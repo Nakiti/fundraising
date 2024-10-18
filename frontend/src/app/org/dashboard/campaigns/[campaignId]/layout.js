@@ -18,7 +18,7 @@ const CampaignPageLayout = ({children, params}) => {
 
    return (
       <div className="overflow-y-auto h-screen">
-         <div className="bg-blue-900 w-full px-6 pt-6 text-white">
+         <div className="bg-blue-700 w-full px-6 pt-6 text-white">
             <Link href="/org/dashboard/campaigns" className="flex flex-row px-2 py-2 items-center cursor-pointer">
                <FaArrowLeft />
                <p className="ml-2 text-sm font-semibold">Campaigns</p>
@@ -27,7 +27,7 @@ const CampaignPageLayout = ({children, params}) => {
                <h1 className="text-3xl">Title</h1>
 
                <div className="w-1/5 flex flex-row justify-between">
-                  <Link href={`/org/campaign/edit/${campaignId}/details/about`} className="bg-white text-blue-900 py-3 px-6 rounded-md text-md font-semibold">Edit Campaign</Link>
+                  <Link href={`/org/campaign/edit/${campaignId}/details/about`} className="bg-white text-blue-700 py-3 px-6 rounded-md text-md font-semibold">Edit Campaign</Link>
                   <button>
                      <SlOptionsVertical className="h-6 w-6"/>
                   </button>
@@ -40,7 +40,7 @@ const CampaignPageLayout = ({children, params}) => {
                      <Link 
                         key={index} 
                         href={item.pathName} 
-                        className={`p-2 text-md border-b-4 ${
+                        className={`px-8 py-1 text-md border-b-4 ${
                            pathname == item.pathName ? "border-white" : "border-transparent"
                         }`}
                      >                           

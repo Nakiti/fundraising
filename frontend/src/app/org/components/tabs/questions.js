@@ -13,13 +13,17 @@ const QuestionsComponent = () => {
    })
 
    const handleAdd = () => {
-      setCustomQuestions((prev) => [
-         ...prev,
-         newQuestion
-      ])
 
-      setNewQuestion({id: new Date(), question: "", type: ""})
-      console.log(customQuestions)
+      if (newQuestion.question != "" && newQuestion.type != "") {
+         setCustomQuestions((prev) => [
+            ...prev,
+            newQuestion
+         ])
+   
+         setNewQuestion({id: new Date(), question: "", type: ""})
+         console.log(customQuestions)
+      }
+
    }
 
    const handleDelete = (id) => {

@@ -48,7 +48,7 @@ const Summary = () => {
          <Box text={"Total Donations: " + summary.totalDonations}/>
          <Box text={"Total Visits: " + summary.totalVisits}/>
          <Box text={"Average Raised: " + summary.averageRaised}/>
-         <Box text={"Average Conversion Rate: " + summary.averageConversionRate}/>
+         {/* <Box text={"Average Conversion Rate: " + summary.averageConversionRate}/> */}
       </div>
    )
 }

@@ -13,19 +13,19 @@ const DonationPageLayout = ({children}) => {
 
    return (
       <div className="w-full">
-         <div className="border-b border-gray-400 p-2 w-11/12 mx-auto mb-8 flex flex-row justify-between">
+         <div className="border-b border-gray-400 py-6 w-11/12 mx-auto mb-8 flex flex-row justify-between">
             <h1 className="text-3xl">Configure Donation Page</h1>
-            <div className="space-x-4">
+            <div className="space-x-4 text-lg">
                <Link 
                   href={links[0]}
-                  className={`px-4 py-2 border-b-2 ${
+                  className={`px-8 py-4 border-b-2 ${
                      links[0] == pathname ? "border-blue-700" : "border-gray-600"}`}
                >
                   Elements
                </Link>
                <Link 
                   href={links[1]}
-                  className={`px-4 py-2 border-b-2 ${
+                  className={`px-8 py-4 border-b-2 ${
                      links[1] == pathname ? "border-blue-700" : "border-gray-600"}`}               
                >
                   Design

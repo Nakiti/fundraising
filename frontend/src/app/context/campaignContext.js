@@ -3,7 +3,7 @@ import axios from "axios"
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
-import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview } from "../services/fetchService.js";
+import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCustomQuestions } from "../services/fetchService.js";
 
 export const CampaignContext = createContext();
 
@@ -16,15 +16,15 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
       description: '',
       image: '',
       // heading: '',
-      bg_color: '', //background color
-      p_color: '', //primary text color
-      s_color: '', //secondary text color
+      bg_color: '#FFF', //background color
+      p_color: '#000', //primary text color
+      s_color: '#b3b3b3', //secondary text color
       h_color: '', //header background color
       ht_color: '', //header text color
-      b1_color: '', //button one color (donate)
-      b2_color: '', //button two color (share)
-      b3_color: '', //button three color (money)
-      m_color: '', //modal color
+      b1_color: '#045991', //button one color (donate)
+      b2_color: '#989c9e', //button two color (share)
+      b3_color: '#045991', //button three color (money)
+      m_color: '#f9fafb', //modal color
    })
 
    const [settingsInputs, handleSettingsInputsChange, setSettingsInputs] = useFormInput({
@@ -35,19 +35,20 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
    })
 
    const [amountInputs, handleAmountInputsChange, setAmountInputs] = useFormInput({
-      button1: 0,
-      button2: 0,
-      button3: 0,
-      button4: 0,
-      button5: 0,
-      button6: 0,
+      button1: 10,
+      button2: 25,
+      button3: 50,
+      button4: 75,
+      button5: 100,
+      button6: 200
    })
 
    const [aboutInputs, handleAboutInputsChange, setAboutInputs] = useFormInput({
       campaignName: "",
       internalName: "",
-      goal: "",
-      shortUrl: ""
+      goal: 0,
+      shortUrl: "",
+      defaultDesignation: 0,
    })
 
    const [questionInputs, handleQuestionInputsChange, setQuestionInputs] = useFormInput({
@@ -73,7 +74,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                   campaignName: settingsResponse.campaign_name,
                   internalName: settingsResponse.internal_name,
                   goal: settingsResponse.goal,
-                  url: settingsResponse.url
+                  shortUrl: settingsResponse.url
                })
 
                setStatus(settingsResponse.status)
@@ -108,7 +109,8 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                setSelectedDesignations(selectedDesignationsResponse)
                console.log(selectedDesignationsResponse)
 
-               
+               const questionResponse = await getCustomQuestions(campaignId)
+               setCustomQuestions(questionResponse)
             }
 
             const designationResponse = await getActiveDesignations(organization_id)

@@ -82,23 +82,32 @@ export const getFiltered = (req, res) => {
 }
 
 export const updateCampaign = (req, res) => {
-   const query = "UPDATE campaigns SET `campaign_name` = ?, `internal_name` = ?, `goal` = ?, `status` = ?, `updated_at` = ?, `updated_by` = ?, `url` = ? WHERE `id` = ?"
+   const q = "SELECT * FROM campaigns WHERE url = ?"
+   console.log(req.body.url)
 
-   const values = [
-      req.body.campaignName,
-      req.body.internalName,
-      req.body.goal,
-      req.body.status,
-      (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-      req.body.updated_by,
-      req.body.url,
-      req.params.id 
-   ]
+   db.query(q, [req.body.url], (err, data) => {
+      if (err) return res.status(500).json(err)
+      console.log("data", data)
+      if (data.length > 0) return res.status(409).json("Short URL already in use")
+
+      const query = "UPDATE campaigns SET `campaign_name` = ?, `internal_name` = ?, `goal` = ?, `status` = ?, `updated_at` = ?, `updated_by` = ?, `url` = ? WHERE `id` = ?"
+
+      const values = [
+         req.body.campaignName,
+         req.body.internalName,
+         req.body.goal,
+         req.body.status,
+         (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+         req.body.updated_by,
+         req.body.url,
+         req.params.id 
+      ]
 
 
-   db.query(query, values, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
+      db.query(query, values, (err, data) => {
+         if (err) return res.json(err)
+         return res.status(200).json(data)
+      })
    })
 }
 

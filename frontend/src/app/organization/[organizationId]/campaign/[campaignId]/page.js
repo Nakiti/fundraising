@@ -86,10 +86,10 @@ const CampaignPage = ({params}) => {
       <div className="w-full h-full mx-auto bg-white rounded-lg shadow-md overflow-y-auto">
          {error && <ErrorModal setError={setError} message={errorMessage}/>}
 
-         {campaign && display && <div className="grid grid-cols-11 gap-4 mx-8 mt-4">
-            <div className="flex flex-col px-6 py-4 col-start-1 col-end-8">
+         {campaign && display && <div className="grid grid-cols-11 gap-2 mx-8 mt-4">
+            <div className="flex flex-col px-6 py-4 col-start-1 col-end-7">
  
-               <h1 className="text-3xl p-2 rounded-md mb-4 font-semibold ">{campaign.title}</h1>
+               <h1 className="text-3xl p-2 rounded-md mb-4 font-semibold ">{display.headline}</h1>
 
                <img
                   src={display.image}
@@ -106,7 +106,7 @@ const CampaignPage = ({params}) => {
                      className="text-gray-500 text-sm w-full h-full p-2 rounded-md"
                      name="description"
                   >
-                  
+                     {display.description}
                   </p>
                </div>
                <p className="text-gray-400 text-sm px-4 py-2">Created on {new Date(campaign.created_at).toLocaleDateString("en-US")}</p>

@@ -10,6 +10,10 @@ import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
 import { getCampaignsFiltered } from "@/app/services/fetchService";
+import { IoIosSearch } from "react-icons/io";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+
+
 
 
 const Table = () => {
@@ -66,9 +70,18 @@ const Table = () => {
 
    return (
       <div className="px-8 mt-4 mb-4">
-         <div className="mb-4">
+         <div className="mb-4 flex flex-row items-center space-x-4">
+            <div className="relative w-1/2">
+               <input 
+                  type="text"
+                  placeholder="Search for a Campaign"
+                  className="px-4 py-2 pr-10 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500"
+               />
+               <IoIosSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
+
             <select
-               className="bg-gray-50 text-black px-4 py-1 text-sm rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+               className="bg-gray-50 text-black px-4 py-2 text-md rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                defaultValue="all"
                onChange={handleFilter}
             >
@@ -76,6 +89,7 @@ const Table = () => {
                <option value="active">Active</option>
                <option value="inactive">Inactive</option>
             </select>
+
          </div>
 
          <table className="min-w-full bg-white  border-gray-300 rounded-md">
@@ -103,26 +117,49 @@ const Table = () => {
             <tbody>
                {data && data.map((row, index) => (
                   <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                     <td className=" py-2 text-center text-sm border-r">
+                     <td className=" py-2 text-center text-md border-r">
                         <div className="flex items-center justify-center space-x-2">
                            <Link href={`/org/dashboard/campaigns/${row.id}`}>
-                              <IoMdOpen className="text-md" />
+                              <IoMdOpen className="text-md w-6 h-4" />
                            </Link>
                         </div>
                      </td>
-                     <td className="px-4 py-2 text-sm text-center">{row.campaign_name}</td>
-                     <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString("en-US")}</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
-                     <td className="px-4 py-2 text-xs text-center">
-                        <label className={`px-2 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-700" : "bg-green-700"}`}>{row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}</label>
+                     <td className="px-4 py-4 text-md text-center">{row.campaign_name}</td>
+                     <td className="px-4 py-2 text-md text-center">{new Date(row.created_at).toLocaleDateString("en-US")}</td>
+                     <td className="px-4 py-2 text-md text-center">{row.raised}</td>
+                     <td className="px-4 py-2 text-md text-center">{row.goal}</td>
+                     <td className="px-4 py-2 text-md text-center">{row.donations}</td>
+                     <td className="px-4 py-2 text-md text-center">{row.visits}</td>
+                     <td className="px-4 py-2 text-sm text-center">
+                        <label className={`px-4 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-700" : "bg-green-700"}`}>{row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}</label>
                      </td>
                   </tr>
                ))}
             </tbody>
          </table>
+
+         <div className="w-full flex justify-end items-center space-x-4 mt-6 text-sm">
+            <button className="px-4 py-2 text-gray-700 rounded-md hover:bg-gray-300">
+               <FaAngleLeft />
+            </button>
+{/* 
+         Page numbers
+            <div className="flex space-x-2">
+               <button className="px-4 py-1 bg-blue-500 text-white rounded-md">1</button>
+               <button className="px-4 py-1 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-300">
+                  2
+               </button>
+               <span className="px-4 py-1 text-gray-500">...</span>
+               <button className="px-4 py-1 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-300">
+                  10
+               </button>
+            </div> */}
+
+            <button className="px-4 py-2 text-gray-700 rounded-md hover:bg-gray-300">
+               <FaAngleRight />
+            </button>
+         </div>
+
       </div>
    );
 };

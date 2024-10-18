@@ -1,5 +1,5 @@
 "use client"
-import { getAllCampaigns, getOrganization } from "@/app/services/fetchService.js";
+import { getAllCampaigns, getCampaignsFiltered, getOrganization } from "@/app/services/fetchService.js";
 import { useEffect, useState, useRef } from "react";
 import Card from "./components/card";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -26,8 +26,10 @@ const Organization = ({ params }) => {
         const organizationResponse = await getOrganization(organizationId);
         setOrganization(organizationResponse);
 
-        const campaignResponse = await getAllCampaigns(organizationId);
+        const campaignResponse = await getCampaignsFiltered(organizationId, "active");
         setCampaigns(campaignResponse);
+
+        console.log(campaignResponse)
       } catch (err) {
         console.log(err);
       }
@@ -40,7 +42,7 @@ const Organization = ({ params }) => {
       <div className="bg-white min-h-screen">
          <div className="container mx-auto px-12 py-12">
             {/* Heading */}
-            <h1 className="text-5xl font-bold text-gray-800 text-center mb-6">My Organization Name</h1>
+            {organization && <h1 className="text-5xl font-bold text-gray-800 text-center mb-6">{organization.name}</h1>}
 
             {/* Description */}
             <p className="text-lg text-gray-600 text-center mb-8 w-full md:w-2/3 lg:w-1/2 mx-auto">

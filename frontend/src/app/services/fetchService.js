@@ -32,6 +32,15 @@ export const getAllCampaigns = async(organizationId) => {
    }
 }
 
+// export const getActiveCampaigns = async(organizationId) => {
+//    try {
+//       const response = await axios.get(`${API_BASE_URL}/campaign/getActive/${organizationId}`)
+//       return response.data
+//    } catch (err) {
+//       console.log(err)
+//    }
+// }
+
 export const getCampaignsFiltered = async(organizationId, status) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/campaign/getFiltered/${organizationId}`, {
@@ -119,3 +128,12 @@ export const getTransactionsByCampaign = async (campaignId) => {
 }
 
 //Custom Questions
+
+export const getCustomQuestions = async (campaignId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/campaign_question/get/${campaignId}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}

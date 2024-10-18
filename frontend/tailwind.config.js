@@ -15,6 +15,8 @@ module.exports = {
          fontFamily: {
             roboto: ['Roboto', 'sans-serif'],
             lato: ['Lato', 'sans-serif']
+         }, colors: {
+            "background": ""
          }
       },
    },

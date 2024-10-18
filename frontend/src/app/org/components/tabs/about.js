@@ -13,7 +13,9 @@ const AboutComponent = () => {
 
          <div className="grid grid-cols-2 gap-8 w-5/6">
             <div className="flex flex-col">
-               <label className="text-gray-500 text-sm font-bold mb-1">Campaign Name</label>
+               <label className="text-gray-500 text-sm font-bold mb-1">
+                  Campaign Name <span className="text-red-500">*</span>
+               </label>
                <input
                   name="campaignName"
                   type="text"
@@ -24,7 +26,9 @@ const AboutComponent = () => {
                />
             </div>
             <div className="flex flex-col">
-               <label className="text-gray-500 text-sm font-bold mb-1">Internal Campaign Name</label>
+               <label className="text-gray-500 text-sm font-bold mb-1">
+                  Internal Campaign Name <span className="text-red-500">*</span>
+               </label>
                <input
                   name="internalName"
                   type="text"
@@ -35,7 +39,9 @@ const AboutComponent = () => {
                />
             </div>
             <div className="flex flex-col">
-               <label className="text-gray-500 text-sm font-bold mb-1">Fundraising Goal</label>
+               <label className="text-gray-500 text-sm font-bold mb-1">
+                  Fundraising Goal <span className="text-red-500">*</span>
+               </label>
                <input
                   name="goal"
                   type="number"
@@ -47,7 +53,9 @@ const AboutComponent = () => {
                />
             </div>
             <div className="flex flex-col col-start-1 col-end-3">
-               <label className="text-gray-500 text-sm font-bold mb-1">Short URL</label>
+               <label className="text-gray-500 text-sm font-bold mb-1">
+                  Short URL <span className="text-red-500">*</span>
+               </label>               
                <input
                   name="shortUrl"
                   type="text"

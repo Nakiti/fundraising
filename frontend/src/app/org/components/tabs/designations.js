@@ -4,7 +4,7 @@ import { CampaignContext } from "@/app/context/campaignContext"
 
 
 const DesignationsComponent = () => {
-   const {designations, selectedDesignations, setSelectedDesignations} = useContext(CampaignContext)
+   const {designations, selectedDesignations, setSelectedDesignations, aboutInputs, handleAboutInputsChange} = useContext(CampaignContext)
 
    const handleChange= (designation, isChecked) => {
       setSelectedDesignations(prev => {
@@ -36,12 +36,18 @@ const DesignationsComponent = () => {
 
          <div className="flex flex-row py-2 w-full items-center px-2 py-4">
             <div className="flex flex-col w-1/3">
-               <h1 className="text-xl mb-2">Default</h1>
+               <h1 className="text-xl mb-2">Default<span className="text-red-500"> *</span></h1>
                <p className="text-sm">Select the default desingation that users will donate to</p>
             </div>
 
             <div className="p-4 w-2/3">
-               <select className="w-full h-1/2 p-3 border border-gray-600 rounded-md" default="">
+               <select 
+                  className="w-full h-1/2 p-3 border border-gray-600 rounded-md" 
+                  defaultValue=""
+                  value={aboutInputs.defaultDesignation}
+                  name="defaultDesignation"
+                  onChange={handleAboutInputsChange}
+               >
                   <option value="" disabled>Select an Option</option>
                   {designations.map(item => {
                      return <option value={item.id}>{item.title}</option>

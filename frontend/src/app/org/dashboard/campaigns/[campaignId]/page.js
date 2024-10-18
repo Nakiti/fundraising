@@ -24,43 +24,56 @@ const CampaignPage = ({params}) => {
 
    return (
       <div className="w-full p-8">
-         <div className="bg-white rounded-lg p-6 shadow-md">
-            <div className="flex flex-row w-full justify-between items-center mb-8">
-               <p className="text-2xl  text-gray-800">Campaign Details:</p>
-               <Link href={`/organization/${organizationId}/campaign/${campaignId}`} className="bg-blue-900 text-white py-3 px-6 rounded-md text-sm font-semibold">Open Campaign Page</Link>
-            </div>
+         <div className="flex flex-row space-x-6 w-full">
+            <div className="w-3/4 bg-white rounded-lg  shadow-md ">
+               <div className="flex flex-row w-full justify-between items-center p-6 border-b border-gray-300">
+                  <p className="text-2xl  text-gray-800">Campaign Details:</p>
+               </div>
 
-            {campaign && <div className="grid grid-cols-2 w-full gap-8">
-               <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-500 mb-2">Camapign ID</label>
-                  <p className="text-md text-gray-800">{campaignId}</p>
+               {campaign && <div className="grid grid-cols-2 w-full gap-8 px-6 pt-2 pb-6">
+                  <div className="flex flex-col">
+                     <label className="text-sm font-bold text-gray-500 mb-2">Camapign ID</label>
+                     <p className="text-md text-gray-800">{campaignId}</p>
+                  </div>
+                  <div className="flex flex-col">
+                     <label className="text-sm font-bold text-gray-500 mb-2">Status</label>
+                     <p 
+                        className={`px-2 py-1 rounded-sm text-white text-sm w-1/4 text-center 
+                        ${campaign.status == "inactive" ? " bg-red-700" : "bg-green-700"}`}
+                     >
+                        {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1).toLowerCase()}
+                     </p>
+                  </div>
+                  <div className="flex flex-col">
+                     <label className="text-sm font-bold text-gray-500 mb-2">Last Updated At</label>
+                     <p className="text-md text-gray-800">{new Date(campaign.updated_at).toLocaleDateString("en-us")}</p>
+                  </div>
+                  <div className="flex flex-col">
+                     <label className="text-sm font-bold text-gray-500 mb-2">Last Updated By</label>
+                     <p className="text-md text-gray-800">{campaign.updated_by}</p>
+                  </div>
+                  <div className="flex flex-col">
+                     <label className="text-sm font-bold text-gray-500 mb-2">Created At</label>
+                     <p className="text-md text-gray-800">{new Date(campaign.created_at).toLocaleDateString("en-us")}</p>
+                  </div>
+                  <div className="flex flex-col">
+                     <label className="text-sm font-bold text-gray-500 mb-2">Created By</label>
+                     <p className="text-md text-gray-800">{campaign.created_by}</p>
+                  </div>
+               </div>}
+            </div>
+            <div className="bg-white rounded-lg shadow-md w-1/4 space-y-4">
+               <div className="p-6 border-b border-gray-300">
+                  <p className="text-2xl text-gray-800 ">Quick Actions:</p>
                </div>
-               <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-500 mb-2">Status</label>
-                  <p 
-                     className={`px-2 py-1 rounded-sm text-white text-sm w-1/4 text-center 
-                     ${campaign.status == "inactive" ? " bg-red-700" : "bg-green-700"}`}
-                  >
-                     {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1).toLowerCase()}
-                  </p>
+
+               <div className="px-6 pb-6 py-2 space-y-4">
+                  <Link href={`/organization/${organizationId}/campaign/${campaignId}`} >
+                     <p className="bg-blue-700 text-center text-white py-3 px-4 rounded-md text-sm font-semibold w-full">Open Campaign Page</p>
+                  </Link>
+                  <button className="bg-blue-700 text-white py-3 px-4 rounded-md text-sm font-semibold w-full">Deactivate Campaign</button>
                </div>
-               <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-500 mb-2">Last Updated At</label>
-                  <p className="text-md text-gray-800">0</p>
-               </div>
-               <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-500 mb-2">Last Updated By</label>
-                  <p className="text-md text-gray-800">Value</p>
-               </div>
-               <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-500 mb-2">Created At</label>
-                  <p className="text-md text-gray-800">Value</p>
-               </div>
-               <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-500 mb-2">Created By</label>
-                  <p className="text-md text-gray-800">Value</p>
-               </div>
-            </div>}
+            </div>
          </div>
       </div>
    )

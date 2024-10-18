@@ -2,7 +2,7 @@ import { db } from "../db.js";
 
 export const createCustomQuestion = (req, res) => {
 
-   const query = "INSERT INTO campaign_questions (`campaign_id`, `question`, `type`, `created_at`) VALUES (?)"
+   const query = "INSERT INTO campaign_questions (`campaign_id`, `question`, `type`, `created_at`) VALUES ?"
    
    console.log(req.body)
 
@@ -15,7 +15,7 @@ export const createCustomQuestion = (req, res) => {
 
    console.log(values)
    
-   db.query(query, values, (err, data) => {
+   db.query(query, [values], (err, data) => {
       if (err) return console.log(err)
       return res.status(200).json(data)
    })

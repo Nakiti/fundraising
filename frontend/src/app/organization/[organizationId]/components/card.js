@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-const Card = ({title, description, raised, goal, donations, date, id, organizationId}) => {
+const Card = ({campaign_name, raised, goal, donations, date, id, organizationId}) => {
 
    return (
       <div className="shadow-sm rounded-sm w-full h-full cursor pointer">
@@ -12,8 +12,8 @@ const Card = ({title, description, raised, goal, donations, date, id, organizati
          <div className="p-4">
             <div className="flex flex-row justify-between">
                <div className="flex flex-col">
-                  <h1 className="text-lg font-bold">{title}</h1>
-                  <h3 className="text-sm">{description}</h3>
+                  <h1 className="text-lg font-bold">{campaign_name}</h1>
+                  {/* <h3 className="text-sm">{description}</h3> */}
                </div>
                <div className="w-full flex flex-col items-end space-y-2">
                   <Link 
