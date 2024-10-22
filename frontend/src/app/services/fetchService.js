@@ -41,6 +41,15 @@ export const getAllCampaigns = async(organizationId) => {
 //    }
 // }
 
+export const getCampaignSearch = async (query, organizationId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/campaign/search/${organizationId}?q=${query}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const getCampaignsFiltered = async(organizationId, status) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/campaign/getFiltered/${organizationId}`, {
@@ -68,6 +77,7 @@ export const getOrganization = async(organizationId) => {
 export const getCampaignDesignations = async (campaignId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/campaign_designation/get/${campaignId}`);
+      console.log(response.data)
       return response.data;
    } catch (err) {
       console.error('Error fetching campaign designations:', err);

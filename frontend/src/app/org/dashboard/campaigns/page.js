@@ -13,10 +13,10 @@ const Campaigns = () => {
          <div className="w-full h-full bg-white overflow-y-auto rounded-md p-4">
 
             <div className="flex flex-row p-6 w-full justify-between items-center">
-               <h1 className="text-4xl font-bold">Campaigns</h1>
+               <h1 className="text-4xl">Campaigns</h1>
                <Link href="/org/campaign/new/details/about" >
                   
-                  <p className="bg-blue-700 py-3 px-8 rounded-md text-md font-semibold text-white">Create New Campaign</p>
+                  <p className="bg-blue-700 py-3 px-8 rounded-md text-md text-white">Create New Campaign</p>
                </Link>
             </div>
 

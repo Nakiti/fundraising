@@ -63,6 +63,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
 
    const [selectedDesignations, setSelectedDesignations] = useState([]);
    const [designations, setDesignations] = useState([])
+   const [defaultDesignation, setDefaultDesignation] = useState(0)
    const [status, setStatus] = useState("inactive")
 
    useEffect(() => {
@@ -74,7 +75,8 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                   campaignName: settingsResponse.campaign_name,
                   internalName: settingsResponse.internal_name,
                   goal: settingsResponse.goal,
-                  shortUrl: settingsResponse.url
+                  shortUrl: settingsResponse.url,
+                  defaultDesignation: settingsResponse.default_designation
                })
 
                setStatus(settingsResponse.status)
@@ -107,7 +109,6 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
 
                const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
                setSelectedDesignations(selectedDesignationsResponse)
-               console.log(selectedDesignationsResponse)
 
                const questionResponse = await getCustomQuestions(campaignId)
                setCustomQuestions(questionResponse)
@@ -129,7 +130,8 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
          status, previewInputs, settingsInputs, handlePreviewInputsChange, 
          handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, 
          designations, customQuestions, setCustomQuestions, aboutInputs, handleAboutInputsChange,
-         questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange
+         questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange, 
+         defaultDesignation, setDefaultDesignation
       }}>
          {children}
       </CampaignContext.Provider>

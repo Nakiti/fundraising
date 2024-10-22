@@ -29,10 +29,9 @@ export const getRelations = (req, res) => {
 
    const value = req.params.id
 
-
-
    db.query(query, value, (err, data) => {
       if (err) return res.json(err)
+      console.log(data)
       return res.status(200).json(data)
    })
 }

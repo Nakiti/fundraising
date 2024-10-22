@@ -27,3 +27,11 @@ export const createCustomQuestion = async(data) => {
       console.log(err)
    }
 }
+
+export const createLandingPage = async (data, organizationId) => {
+   try {
+      await axios.post(`${API_BASE_URL}/landing_pageRoutes/create`, {organization_id: organizationId, ...data})
+   } catch (err) {
+      console.log(err)
+   }
+}

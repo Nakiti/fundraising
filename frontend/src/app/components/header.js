@@ -17,7 +17,6 @@ const Header = () => {
       <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-sm" style={{height: "10vh"}}>
          <Link href="/" className="text-xl font-bold">Title</Link>
          {isClient && <Link href={!currentUser ? "/login" : "/org/dashboard/campaigns"} className="text-black font-semibold mr-4 hover:text-gray-700">{!currentUser ? "Login" : "Dashboard"}</Link>}
-         
       </div>
    );
 }

@@ -5,6 +5,7 @@ const API_BASE_URL = 'http://localhost:4000/api';
 export const updateCampaign = async (campaignId, aboutInputs, status, currentUser) => {
    try {
       await axios.put(`${API_BASE_URL}/campaign/update/${campaignId}`, {
+         defaultDesignation: aboutInputs.defaultDesignation,
          campaignName: aboutInputs.campaignName,
          internalName: aboutInputs.internalName,
          goal: aboutInputs.goal,
@@ -53,6 +54,7 @@ export const updatePreview = async (campaignId, previewInputs, buttonInputs) => 
 export const createCampaign = async(status, aboutInputs, currentUser) => {
    try {
       const campaignId = await axios.post(`${API_BASE_URL}/campaign/create`, {
+         defaultDesignation: aboutInputs.defaultDesignation,
          campaignName: aboutInputs.campaignName,
          internalName: aboutInputs.internalName,
          goal: aboutInputs.goal,

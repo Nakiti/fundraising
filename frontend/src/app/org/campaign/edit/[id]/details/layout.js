@@ -6,8 +6,6 @@ const DetailsLayout = ({params, children}) => {
    const campaignId = params.id
    const pathName = usePathname()
 
-   console.log(pathName)
-
    const links = [
       {title: "About", path: `/org/campaign/edit/${campaignId}/details/about`},
       {title: "Designations", path: `/org/campaign/edit/${campaignId}/details/designations`},

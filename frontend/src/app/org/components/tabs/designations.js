@@ -43,14 +43,14 @@ const DesignationsComponent = () => {
             <div className="p-4 w-2/3">
                <select 
                   className="w-full h-1/2 p-3 border border-gray-600 rounded-md" 
-                  defaultValue=""
-                  value={aboutInputs.defaultDesignation}
+                  // defaultValue=""
+                  value={aboutInputs.defaultDesignation == 0 ? "" : aboutInputs.defaultDesignation}
                   name="defaultDesignation"
                   onChange={handleAboutInputsChange}
                >
                   <option value="" disabled>Select an Option</option>
                   {designations.map(item => {
-                     return <option value={item.id}>{item.title}</option>
+                     return <option value={item.id} key={item.id}>{item.title}</option>
                   })}
                </select>
             </div>
@@ -105,7 +105,12 @@ const DesignationsComponent = () => {
                         return (
                            <tr className="border border-gray-300 hover:bg-gray-50" key={index}>
                               <td className="px-4 py-2 text-sm text-center border-r">
-                                 <input type="checkbox" value={item.id} onChange={(e) => handleChange(item, e.target.checked)}/>
+                                 <input 
+                                    type="checkbox" 
+                                    value={item.id} 
+                                    onChange={(e) => handleChange(item, e.target.checked)}
+                                    checked={selectedDesignations.some(designation => designation.id == item.id)}
+                                 />
                               </td>
                               <td className="px-4 py-2 text-sm text-start">{item.title}</td>
                            </tr>

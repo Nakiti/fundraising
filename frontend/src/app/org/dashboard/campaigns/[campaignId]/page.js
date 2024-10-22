@@ -4,6 +4,8 @@ import { getCampaignDetails } from "@/app/services/fetchService"
 import { useState, useEffect, useContext } from "react"
 import Link from "next/link"
 import { AuthContext } from "@/app/context/authContext"
+import { updateCampaign } from "@/app/services/campaignService"
+import { deactivateCampaign } from "@/app/services/updateServices"
 
 const CampaignPage = ({params}) => {
    const campaignId = params.campaignId
@@ -12,15 +14,23 @@ const CampaignPage = ({params}) => {
    const {currentUser} = useContext(AuthContext)
    const organizationId = currentUser.organization_id
 
-   useEffect(() => {
-      const fetchData = async() => {
-         const campaignResponse = await getCampaignDetails(campaignId)
-         setCampaign(campaignResponse)
+   const handleDeactivate = async () => {
+      try {
+         await deactivateCampaign(campaignId, currentUser.id)
+         fetchData()
+      } catch (err) {
+         console.log(err)
       }
+   }
 
-
+   useEffect(() => {
       fetchData()
    }, [])
+
+   const fetchData = async() => {
+      const campaignResponse = await getCampaignDetails(campaignId)
+      setCampaign(campaignResponse)
+   }
 
    return (
       <div className="w-full p-8">
@@ -69,9 +79,14 @@ const CampaignPage = ({params}) => {
 
                <div className="px-6 pb-6 py-2 space-y-4">
                   <Link href={`/organization/${organizationId}/campaign/${campaignId}`} >
-                     <p className="bg-blue-700 text-center text-white py-3 px-4 rounded-md text-sm font-semibold w-full">Open Campaign Page</p>
+                     <p className="bg-blue-900 text-center text-white py-3 px-4 rounded-md text-sm font-semibold w-full">Open Campaign Page</p>
                   </Link>
-                  <button className="bg-blue-700 text-white py-3 px-4 rounded-md text-sm font-semibold w-full">Deactivate Campaign</button>
+                  {campaign && campaign.status == "active" && <button 
+                     className="bg-blue-900 text-white py-3 px-4 rounded-md text-sm font-semibold w-full"
+                     onClick={handleDeactivate}
+                  >
+                     Deactivate Campaign
+                  </button>}
                </div>
             </div>
          </div>

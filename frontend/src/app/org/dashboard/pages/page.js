@@ -6,11 +6,11 @@ const Pages = () => {
       <div className="w-full h-full p-4">
          <div className="w-full h-full overflow-y-auto rounded-md p-8">
             <div className="flex flex-row w-full justify-between mb-8">
-               <h1 className="text-2xl font-bold">Manage Organization Pages</h1>
+               <h1 className="text-4xl">Manage Organization Pages</h1>
             </div>
 
             <div className="mt-8 grid grid-cols-2 gap-8 w-full">
-               <Link href="/org/dashboard/pages/landing" className="w-full bg-white rounded-md shadow-md p-8 h-48 hover:bg-gray-100 cursor-pointer">
+               <Link href="/org/page/landing" className="w-full bg-white rounded-md shadow-md p-8 h-48 hover:bg-gray-100 cursor-pointer">
                   <p className="text-xl text-black mb-4">Landing Page</p>
                   <p className="text-sm text-gray-700">Edit the landing page for your organization</p>
                </Link>

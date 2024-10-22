@@ -43,7 +43,7 @@ const Summary = () => {
    }, [])
 
    return (
-      <div className="flex justify-between items-center gap-4 p-6">
+      <div className="flex justify-between items-center gap-4 p-8">
          <Box text={"Total Raised: " + summary.totalRaised}/>
          <Box text={"Total Donations: " + summary.totalDonations}/>
          <Box text={"Total Visits: " + summary.totalVisits}/>

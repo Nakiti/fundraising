@@ -89,7 +89,7 @@ const CampaignPage = ({params}) => {
          {campaign && display && <div className="grid grid-cols-11 gap-2 mx-8 mt-4">
             <div className="flex flex-col px-6 py-4 col-start-1 col-end-7">
  
-               <h1 className="text-3xl p-2 rounded-md mb-4 font-semibold ">{display.headline}</h1>
+               <h1 className="text-3xl p-2 rounded-md mb-8 font-semibold ">{display.headline}</h1>
 
                <img
                   src={display.image}
@@ -112,7 +112,7 @@ const CampaignPage = ({params}) => {
                <p className="text-gray-400 text-sm px-4 py-2">Created on {new Date(campaign.created_at).toLocaleDateString("en-US")}</p>
             </div>
 
-            <div className="bg-gray-50 p-8 rounded-md shadow-md col-start-8 col-end-12 mt-6 mb-8">
+            <div className="bg-gray-50 p-8 rounded-md shadow-md col-start-8 col-end-12 mt-12 mb-8">
                <p className="text-xl font-medium mb-2">{campaign.raised} of {campaign.goal} raised</p>
 
                <div className="w-full bg-gray-300 rounded-full h-2 mb-1">
@@ -141,24 +141,27 @@ const CampaignPage = ({params}) => {
 
                <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-700 mb-4">I would like to give:</h3>
-                  <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto px-4">
+                  <div className="grid grid-cols-3 gap-x-4 gap-y-2 max-w-sm mx-auto px-4">
                      {amounts.map((amount, index) => (
                         <button
                            key={index}
-                           className="w-full text-sm py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           className="w-full text-sm py-2 bg-blue-800 text-white rounded-sm shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                            value={amount}
                            onClick={handleAmount}
                         >
                         ${amount}
                         </button>
                      ))}
-                     <input 
-                        placeholder="Enter Custom Amount" 
-                        type="number" 
-                        className="w-full col-start-1 text-sm rounded-md col-end-3 py-2 px-4 bg-white border border-blue-600 text-black shadow focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                        onChange={handleAmount}
-                        value={donationInfo.amount}
-                     />
+                     <div className="col-start-1 col-end-3 mt-2">
+                        <label className="text-sm font-semibold text-gray-600 mb-1">Enter Custom Amount</label>
+                        <input 
+                           placeholder="Enter Custom Amount" 
+                           type="number" 
+                           className="w-full  text-sm rounded-md  py-2 px-4 bg-white border border-blue-600 text-black shadow focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           onChange={handleAmount}
+                           value={donationInfo.amount}
+                        />
+                     </div>
 
                   </div>
                </div>

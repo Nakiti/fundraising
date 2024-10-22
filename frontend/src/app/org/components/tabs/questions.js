@@ -162,7 +162,7 @@ const QuestionsComponent = () => {
             <div>
                {customQuestions.map((item, index) => { 
                   return (
-                     <div className="bg-gray-100" key={index}>
+                     <div className="bg-gray-100 mb-2" key={index}>
                         <div className="w-full flex flex-row justify-between bg-gray-300 p-3">
                            <p>Question {index + 1}</p>
                            <button onClick={() => handleDelete(item.id)}>

@@ -10,7 +10,7 @@ import ErrorModal from "@/app/components/errorModal"
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
    const router = useRouter()
-   const {previewInputs, aboutInputs, selectedDesignations, customQuestions, amountInputs} = useContext(CampaignContext)
+   // const {previewInputs, aboutInputs, selectedDesignations, customQuestions, amountInputs} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")

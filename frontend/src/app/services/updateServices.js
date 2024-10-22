@@ -26,3 +26,37 @@ export const updateUser = async(id, data) => {
       console.log(err)
    }
 }
+
+export const updateLandingPage = async(id, data) => {
+   const formData = new FormData()
+
+   formData.append("title", data.title)
+   formData.append("description", data.description)
+   formData.append("bgImage", data.image)
+   formData.append("aboutImage", data.bg_color)
+   formData.append("about", data.bg_color)
+   formData.append("p_color", data.p_color)
+   formData.append("s_color", data.s_color)
+   formData.append("c_color", data.b1_color)
+   formData.append("ct_color", data.b2_color)
+   formData.append("b_color", data.b3_color)
+   formData.append("bt_color", data.b3_color)
+
+   try {
+      await axios.put(`${API_BASE_URL}/landing_page/update/${id}`, formData, {
+         headers: {
+           'Content-Type': 'multipart/form-data',
+         },
+      })
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const deactivateCampaign = async(campaignId, userId) => {
+   try {
+      await axios.put(`${API_BASE_URL}/campaign/deactivate/${campaignId}`, {updatedBy: userId})
+   } catch (err) {
+      console.log(err)
+   }
+}

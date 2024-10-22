@@ -14,11 +14,12 @@ const OrgLayout = ({children}) => {
       }
    }, [currentUser])
    
+   //have to check that user is logged in
    return (
       <div>
          <Header />
-         <div style={{height: "90vh"}}>
-            {currentUser && children}
+         <div style={{height: "90vh"}}> 
+            {children} 
          </div>
       </div>
    )
