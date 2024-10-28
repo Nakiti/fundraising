@@ -73,3 +73,13 @@ export const updateLandingPage = (req, res) => {
       })
    })
 }
+
+export const getLandingPage = (req, res) => {
+   const query = "SELECT * FROM landing_pages WHERE organization_id = ?"
+
+   db.query(query, [req.params.id], (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data)
+   })
+
+}

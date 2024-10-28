@@ -12,11 +12,12 @@ import { GrView } from "react-icons/gr";
 import { getCampaignSearch, getCampaignsFiltered } from "@/app/services/fetchService";
 import { IoIosSearch } from "react-icons/io";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import debounce from "lodash/debounce"
 
 
 const Table = () => {
    const columns = [
-      { id: 'open', label: 'Open', sortable: false},
+      { id: '', label: '', sortable: false},
       { id: 'campaignName', label: 'Campaign Name', sortable: false },
       { id: 'date', label: 'Date Created', sortable: false },
       { id: 'raised', label: 'Raised', sortable: true},
@@ -83,8 +84,18 @@ const Table = () => {
       }
    }
 
+   const debouncedSearch = debounce(async (query) => {
+      try {
+         const response = await getCampaignSearch(query, organizationId);
+         setData(response)
+      } catch (err) {
+         console.error(err);
+      }
+   }, 300);
+
    const handleInputsChange = async (e) => {
       setQuery(e.target.value)
+      debouncedSearch(e.target.value)
    }
 
    useEffect(() => {
@@ -103,12 +114,12 @@ const Table = () => {
 
    return (
       <div className="px-8 mt-4 mb-4">
-         <div className="mb-4 flex flex-row items-center space-x-2">
-            <div className="relative w-1/2">
+         <div className="mb-4 flex flex-col">
+            <div className="relative w-3/4">
                <input 
                   type="text"
                   placeholder="Search for a Campaign"
-                  className="px-4 py-2 pr-10 border border-gray-300 rounded-sm w-full focus:outline-none focus:border-blue-500"
+                  className="px-4 py-2 pr-10 border-b border-gray-300 rounded-sm w-full focus:outline-none focus:border-blue-500"
                   value={query}
                   onChange={handleInputsChange}
                   onKeyDown={(e) => {
@@ -118,20 +129,40 @@ const Table = () => {
                   }}
                />
                <IoIosSearch 
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" 
+                  className="absolute right-3 w-5 h-5 top-1/2 transform -translate-y-1/2 text-gray-400" 
                   onClick={handleSearch}
                />
             </div>
 
-            <select
-               className="bg-gray-50 text-black px-4 py-2 text-md rounded-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-               defaultValue="all"
-               onChange={handleFilter}
-            >
-               <option value="all">All</option>
-               <option value="active">Active</option>
-               <option value="inactive">Inactive</option>
-            </select>
+            <div className="flex flex-row mt-4 space-x-4">
+               <select
+                  className="text-black px-4 py-2 text-sm rounded-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  defaultValue="all"
+                  onChange={handleFilter}
+               >
+                  <option value="all">All</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+               </select>
+               <select
+                  className="text-black px-4 py-1 text-sm rounded-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  defaultValue="all"
+                  onChange={handleFilter}
+               >
+                  <option value="all">All</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+               </select>
+               <select
+                  className="text-black px-4 py-1 text-sm rounded-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  defaultValue="all"
+                  onChange={handleFilter}
+               >
+                  <option value="all">All</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+               </select>
+            </div>
 
          </div>
 
@@ -140,7 +171,7 @@ const Table = () => {
             <thead className="border-b border-gray-300">
                <tr>
                   {columns.map((column, index) => (
-                     <th key={index} className="px-4 py-2 text-left text-gray-600 text-sm font-semibold" onClick={() => sortData(column.id)}>
+                     <th key={index} className="px-4 py-2 text-left text-gray-700 text-sm font-semibold" onClick={() => sortData(column.id)}>
                         <div className="flex flex-row items-center justify-center">
                            {column.label}
                            {column.sortable &&

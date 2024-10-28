@@ -87,17 +87,17 @@ const CampaignPage = ({params}) => {
          {error && <ErrorModal setError={setError} message={errorMessage}/>}
 
          {campaign && display && <div className="grid grid-cols-11 gap-2 mx-8 mt-4">
-            <div className="flex flex-col px-6 py-4 col-start-1 col-end-7">
+            <div className="flex flex-col px-6 py-4 col-start-1 col-end-8">
  
-               <h1 className="text-3xl p-2 rounded-md mb-8 font-semibold ">{display.headline}</h1>
+               <h1 className="text-4xl p-2 rounded-md mb-2 font-semibold ">{display.headline}</h1>
 
                <img
                   src={display.image}
                   alt="image"
-                  className="w-full h-64 object-cover rounded-md bg-gray-50"
+                  className="w-full h-96 object-contain border border-gray-400 shadow-md rounded-md bg-gray-50"
                />
                
-               <div className="flex flex-row items-center px-4 py-2 border-b text-sm">
+               <div className="flex flex-row items-center px-4 py-4 border-b text-sm">
                   <CgProfile className="h-6 w-6"/>
                   <p className="text-gray-600 font-medium ml-4">Created by John Doe</p>
                </div>

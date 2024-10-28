@@ -10,7 +10,7 @@ const useFormInput = (initialState = {}) => {
          [name]: value,
       }));
 
-      console.log(value)
+      console.log(inputs)
    };
 
    return [inputs, handleInputChange, setInputs];

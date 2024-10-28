@@ -147,3 +147,15 @@ export const getCustomQuestions = async (campaignId) => {
       console.log(err)
    }
 }
+
+//landing page
+
+export const getLandingPage = async(organizationId) => {
+
+   try {
+      const response = await axios.get(`${API_BASE_URL}/landing_page/get/${organizationId}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}

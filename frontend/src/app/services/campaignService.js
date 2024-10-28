@@ -61,7 +61,7 @@ export const createCampaign = async(status, aboutInputs, currentUser) => {
          url: aboutInputs.shortUrl,
          status: status,
          organization_id: currentUser.organization_id,
-         created_by: currentUser.id
+         created_by: currentUser.id 
       })
       
       console.log("camapignid", campaignId.data)

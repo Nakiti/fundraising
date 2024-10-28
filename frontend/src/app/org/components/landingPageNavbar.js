@@ -1,9 +1,12 @@
 import Link from "next/link"
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
+import { useContext } from "react";
+import { LandingPageContext } from "@/app/context/landingPageContext";
 
 const LandingPageNavbar = () => {
    const pathName = usePathname()
+   const {inputs} = useContext(LandingPageContext)
 
    const links = [
       "/org/page/landing",

@@ -3,7 +3,7 @@
 const Insights = () => {
 
    return (
-      <div className="p-12 w-full grid grid-cols-4 gap-4 grid-rows-3">
+      <div className="p-8 w-full grid grid-cols-4 gap-4 grid-rows-3">
          
          <div className="bg-white rounded-lg shadow-md col-start-1 p-8 col-end-4 row-start-1 row-end-2">
             <h1 className="text-2xl mb-6 text-gray-800">Raised:</h1>

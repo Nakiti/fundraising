@@ -35,11 +35,14 @@ export const createCampaign = (req, res) => {
 }
 
 export const getCampaign = (req, res) => {
-   const query = "SELECT * FROM campaigns WHERE `id` = ?"
+   // const query = "SELECT * FROM campaigns WHERE `id` = ?"
+
+   const query = "SELECT campaigns.*, users.first_name, users.last_name FROM campaigns INNER JOIN users on campaigns.updated_by = users.id"
+
    const value = req.params.id
 
    db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
+      if (err) return console.log(err)
       return res.status(200).json(data)
    })
 }
@@ -48,7 +51,7 @@ export const searchCampaigns = (req, res) => {
    const query = "SELECT * FROM campaigns WHERE campaign_name LIKE ? AND organization_id = ?"
 
    const values = [
-      req.query.q,
+      `%${req.query.q}%`,
       req.params.id
    ]
 
@@ -139,5 +142,15 @@ export const deactivateCampaign = (req, res) => {
       if (err) return res.json(err)
       return res.status(200).json(data)
    })
+
+}
+
+export const sumDonations = (req, res) => {
+   const query = "SELECT SUM(donations) FROM campaigns WHERE campaign_id = ? AND "
+
+}
+
+export const sumRaised = () => {
+
 
 }

@@ -30,13 +30,14 @@ const CampaignPage = ({params}) => {
    const fetchData = async() => {
       const campaignResponse = await getCampaignDetails(campaignId)
       setCampaign(campaignResponse)
+      console.log(campaignResponse)
    }
 
    return (
       <div className="w-full p-8">
          <div className="flex flex-row space-x-6 w-full">
             <div className="w-3/4 bg-white rounded-lg  shadow-md ">
-               <div className="flex flex-row w-full justify-between items-center p-6 border-b border-gray-300">
+               <div className="flex flex-row w-full justify-between items-center px-6 py-4 border-b border-gray-300">
                   <p className="text-2xl  text-gray-800">Campaign Details:</p>
                </div>
 
@@ -60,7 +61,7 @@ const CampaignPage = ({params}) => {
                   </div>
                   <div className="flex flex-col">
                      <label className="text-sm font-bold text-gray-500 mb-2">Last Updated By</label>
-                     <p className="text-md text-gray-800">{campaign.updated_by}</p>
+                     <p className="text-md text-gray-800">{campaign.first_name} {campaign.last_name}</p>
                   </div>
                   <div className="flex flex-col">
                      <label className="text-sm font-bold text-gray-500 mb-2">Created At</label>
@@ -73,16 +74,19 @@ const CampaignPage = ({params}) => {
                </div>}
             </div>
             <div className="bg-white rounded-lg shadow-md w-1/4 space-y-4">
-               <div className="p-6 border-b border-gray-300">
+               <div className="px-6 py-4 border-b border-gray-300">
                   <p className="text-2xl text-gray-800 ">Quick Actions:</p>
                </div>
 
                <div className="px-6 pb-6 py-2 space-y-4">
                   <Link href={`/organization/${organizationId}/campaign/${campaignId}`} >
-                     <p className="bg-blue-900 text-center text-white py-3 px-4 rounded-md text-sm font-semibold w-full">Open Campaign Page</p>
+                     <p className="bg-blue-800 text-center text-white py-3 px-4 rounded-sm text-sm font-semibold w-full">Open Campaign Page</p>
+                  </Link>
+                  <Link href={``} >
+                     <p className="bg-blue-800 text-center text-white py-3 px-4 rounded-sm text-sm font-semibold w-full mt-4">Preview Campaign</p>
                   </Link>
                   {campaign && campaign.status == "active" && <button 
-                     className="bg-blue-900 text-white py-3 px-4 rounded-md text-sm font-semibold w-full"
+                     className="bg-red-800 text-white py-3 px-4 rounded-sm text-sm font-semibold w-full"
                      onClick={handleDeactivate}
                   >
                      Deactivate Campaign

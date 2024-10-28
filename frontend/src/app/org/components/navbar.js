@@ -6,11 +6,13 @@ import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
 import { createCampaignDesignation, deleteCampaignDesignation, updateCampaign, updatePreview } from "@/app/services/campaignService"
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 
 const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDeactivate, title, links, mode}) => {
    const {status} = useContext(CampaignContext)
    const pathName = usePathname()
+   const [showDropdown, setShowDropdown] = useState(false)
 
    return (
       <div className="border-b border-gray-100 bg-gray-700 shadow-sm text-black">
@@ -26,7 +28,7 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
                />
                <div className="flex flex-col text-gray-100">
                   <p className="text-sm">Donation Page</p>
-                  <h1 className="text-3xl font-bold ">{mode == "new" ? "New Campaign" : "Edit Campaign"}</h1>
+                  <h1 className="text-3xl ">{mode == "new" ? "New Campaign" : "Edit Campaign"}</h1>
                </div>
             </div>
 
@@ -34,20 +36,20 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
             <div className="flex space-x-4 text-md">
                {status == "inactive" ? 
                   <button 
-                     className="bg-blue-700 hover:bg-blue-600 py-2 px-10 rounded-md text-gray-100"
+                     className="bg-blue-800 hover:bg-blue-600 py-2 px-10 rounded-sm text-gray-100"
                      onClick={handleSave}
                   >
                      Save
                   </button> :
                   <button 
-                     className="bg-blue-700 hover:bg-blue-600 py-2 px-10 rounded-md text-gray-100"
+                     className="bg-blue-800 hover:bg-blue-600 py-2 px-10 rounded-sm text-gray-100"
                      onClick={handleDeactivate}
                   >
                      Deactivate
                   </button>
                }
                <button 
-                  className=" bg-blue-700 hover:bg-blue-600 py-1 px-8 rounded-md text-gray-100"
+                  className=" bg-blue-800 hover:bg-blue-600 py-1 px-8 rounded-sm text-gray-100"
                   onClick={handlePublish}
                >
                   Publish
@@ -59,6 +61,7 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
             {mode == "new" ? <Link
                className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName.split("/")[4] == links[0].split("/")[4] ? "border-white" : "border-transparent"}`}
                href={links[0]}
+               onClick={() => setShowDropdown(false)}
             >
                Details
             </Link> 
@@ -66,11 +69,19 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
             <Link
                className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName.split("/")[5] == links[0].split("/")[5] ? "border-white" : "border-transparent"}`}
                href={links[0]}
+               onClick={() => setShowDropdown(false)}
             >
                Details
             </Link> 
             }
-            {mode == "new" ? <Link
+               <button 
+                  className="cursor-pointer text-md py-1 px-8 flex flex-row items-center"
+                  onClick={() => setShowDropdown(!showDropdown)}
+               >
+                  Pages
+                  {showDropdown ? <IoIosArrowUp className="ml-2"/> : <IoIosArrowDown className="ml-2"/>}
+               </button>
+            {/* {mode == "new" ? <Link
                className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName.split("/")[4] == links[1].split("/")[4] ? "border-white" : "border-transparent"}`}
                href={links[1]}
             >
@@ -83,8 +94,28 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
             >
                Pages
             </Link>
-            }
+            } */}
          </div>
+         {showDropdown && <div className="border-t border-gray-400 px-4 w-11/12 mx-auto mt-2 py-4 ">
+            <div className="w-1/2 mx-auto flex flex-row justify-between">
+               <div className="flex flex-col w-48">
+                  <Link 
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[5] == links[1].split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
+                     href={links[1]}
+                  >
+
+                  </Link>
+                  <p className="text-center text-white text-sm mt-1">Donation Page</p>
+               </div>
+
+               <div className="flex flex-col w-48">
+                  <div className="border-2 border-gray-400 w-48 h-28">
+
+                  </div>
+                  <p className="text-center text-white text-sm mt-1">Thank You Page</p>
+               </div>
+            </div>
+         </div>}
       </div>
    )
 }

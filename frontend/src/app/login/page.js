@@ -18,13 +18,13 @@ const Login = () => {
    const handleSubmit = (e) => {
       e.preventDefault()
       login(inputs)
-      router.push("/org/dashboard/campaigns")
+      router.push("/org/dashboard/home")
    }
 
    useEffect(() => {
 
       if (currentUser) {
-         router.push("/org/dashboard/campaigns")
+         router.push("/org/dashboard/home")
       }
 
    }, [])

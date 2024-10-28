@@ -4,13 +4,36 @@ import Link from "next/link"
 import LandingPageDisplay from "../../components/landingPageDisplay"
 import { LandingPageContextProvider } from "@/app/context/landingPageContext"
 import LandingPageNavbar from "../../components/landingPageNavbar"
+import { useContext, useState } from "react"
+import { LandingPageContext } from "@/app/context/landingPageContext"
+import { updateLandingPage } from "@/app/services/updateServices"
+import { AuthContext } from "@/app/context/authContext"
 
 const EditLandingLayout = ({children}) => {
    const pathname = usePathname()
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
+   // const {inputs, setInputs} = useContext(LandingPageContext)
+   const {currentUser} = useContext(AuthContext)
+   const organizationId = currentUser.organiztion_id
+
    const links = [
       "/org/page/landing",
       "/org/page/landing/design"
    ]
+
+   // const handleSave = async() => {
+   //    if (inputs.title == "" || inputs.description == "" || inputs.bgImage == "" || inputs.aboutImage == "" || inputs.about == "") {
+
+   //    }
+
+   //    try {
+   //       await updateLandingPage(organizationId, inputs)
+
+   //    } catch (err) {
+   //       console.log(err)
+   //    }
+   // }
 
    return (
       <LandingPageContextProvider>

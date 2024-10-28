@@ -3,7 +3,7 @@
 const Transactions = () => {
    
    return (
-      <div className="p-12 w-full min-h-full">
+      <div className="p-8 w-full min-h-full">
          <div className="bg-white rounded-lg shadow-md p-8 min-h-96 mb-4">
             <p className="text-2xl mb-6 text-gray-800">Transactions</p>
             <table className="min-w-full bg-white  border-gray-300 rounded-md">

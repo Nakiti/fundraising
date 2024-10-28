@@ -6,40 +6,7 @@ import { IoIosClose } from "react-icons/io";
 
 const Display = () => {
    const {previewInputs, handlePreviewInputsChange, setPreviewInputs, amountInputs} = useContext(CampaignContext)
-   const [label, setLabel] = useState("")
-   const [value, setValue] = useState("")
-   const [showModal, setShowModal] = useState(false)
-   const [modalPosition, setModalPosition] = useState({top: 0, left: 0})
-
-   const handleImageUpload = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-         const reader = new FileReader();
-         reader.onloadend = () => {
-            handlePreviewInputsChange({ target: { name: 'image', value: reader.result } });
-         };
-         reader.readAsDataURL(file); // Convert the file to base64
-      }
-   }
-
-   const handleClose = () => {
-      setPreviewInputs(inputs => ({...inputs, image: ""}))
-   }
-
-   const handleClick = (label, value, event) => {
-      event.stopPropagation()
-      
-      setLabel(label)
-      setValue(value)
-
-      const { clientX, clientY } = event;
-      setModalPosition({ top: clientY, left: clientX });
-      console.log(clientX, clientY)
-      setShowModal(true)
-   }
-
-   const amounts = [10, 25, 50, 75, 100, 150];
-
+   
    return (
       <div className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-sm shadow-md mt-6 overflow-y-auto">
          <div 

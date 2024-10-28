@@ -18,7 +18,7 @@ const DashboardLayout = ({ children }) => {
         {isClient && <Sidebar />} {/* Render a placeholder on the server */}
 
       {/* Main Content */}
-      <div className="flex-1 bg-gray-100">
+      <div className="flex-1 bg-gray-50">
         {isClient && children} {/* Placeholder for children on the server */}
       </div>
     </div>

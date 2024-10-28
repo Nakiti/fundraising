@@ -5,6 +5,7 @@ import axios from "axios"
 import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
 import { AuthContext } from "@/app/context/authContext";
+import { IoIosSearch } from "react-icons/io";
 
 const Transactions = () => {
    const [data, setData] = useState(null)
@@ -53,9 +54,28 @@ const Transactions = () => {
 
    return (
       <div className="w-full h-full p-4">
-         <div className="bg-white w-full h-full overflow-y-auto rounded-sm">
-            <h2 className="text-3xl font-bold p-6">Transactions</h2>
+         <div className="bg-white w-full h-full overflow-y-auto rounded-sm p-4">
+            <h2 className="text-4xl p-6">Transactions</h2>
 
+
+            <div className="relative w-2/3 px-8 mt-8 mb-4">
+               <input 
+                  type="text"
+                  placeholder="Search Transactions by name, email, id"
+                  className="px-4 py-2 pr-10 border border-gray-300 rounded-sm w-full focus:outline-none focus:border-blue-500"
+                  // value={query}
+                  // onChange={handleInputsChange}
+                  // onKeyDown={(e) => {
+                  //    if (e.key == "Enter") {
+                  //       handleSearch()
+                  //    }
+                  // }}
+               />
+               <IoIosSearch 
+                  className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400" 
+                  // onClick={handleSearch}
+               />
+            </div>
             <div className="px-8">
                <table className="min-w-full bg-white  border-gray-300 rounded-md">
                   {/* Table Header */}
