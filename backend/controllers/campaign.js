@@ -11,7 +11,7 @@ export const createCampaign = (req, res) => {
 
       const values = [
          req.body.organization_id,
-         req.body.defualtDesignation,
+         req.body.defaultDesignation,
          req.body.campaignName,
          req.body.internalName,
          req.body.goal,

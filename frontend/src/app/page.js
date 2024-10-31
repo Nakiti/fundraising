@@ -1,4 +1,5 @@
 import Header from "./components/header";
+import Link from "next/link";
 
 const LandingPage = () => {
    return (
@@ -12,9 +13,9 @@ const LandingPage = () => {
                <h3 className="text-xl mb-6 mt-8">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
                </h3>
-               <button className="bg-blue-700 text-white px-6 py-3 rounded-sm text-md mt-8">
+               <Link href="/register" className="bg-blue-700 text-white px-6 py-3 rounded-sm text-md mt-8">
                   Get Started
-               </button>
+               </Link>
             </div>
 
             {/* Image Section */}

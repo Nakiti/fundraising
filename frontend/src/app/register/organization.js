@@ -3,97 +3,120 @@
 const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
 
    return (
-      <div className="w-full max-w-2xl bg-white rounded-sm shadow-md p-12">
-         <h1 className="text-2xl mb-8">Register an Organization:</h1>
+<div className="max-w-xl bg-white rounded-lg shadow-lg p-10 mx-auto">
+   <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Register an Organization</h1>
 
-         <div className="w-full grid grid-cols-4 grid-rows-5 gap-x-4 mt-4">
-            <div className="flex flex-col mb-4 col-start-1 col-end-4 row-start-1 row-end-2">
-               <label className="text-gray-700 text-sm font-medium mb-1">Organization Name</label>
-               <input
-                  name="name"
-                  type="text"
-                  placeholder="Enter an Organization Name"
-                  className="p-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={orgData.name}
-                  onChange={handleOrgDataChange}
-               />
-            </div>
-            <div className="flex flex-col mb-4 col-start-1 col-end-5 row-start-3 row-end-4">
-               <label className="text-gray-700 text-sm font-medium mb-1">Organization Email</label>
-               <input
-                  name="email"
-                  type="text"
-                  placeholder="Enter an Organization Email"
-                  className="p-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={orgData.email}
-                  onChange={handleOrgDataChange}
-               />
-            </div>
-            <div className="flex flex-col mb-4 col-start-1 col-end-4 row-start-2 row-end-3">
-               <label className="text-gray-700 text-sm font-medium mb-1">Organization URL</label>
-               <input
-                  name="url"
-                  type="text"
-                  placeholder="Enter an Organization URL"
-                  className="p-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={orgData.url}
-                  onChange={handleOrgDataChange}
-               />
-            </div>
-            <div className="flex flex-col mb-4 col-start-1 col-end-4 row-start-4 row-end-5">
-               <label className="text-gray-700 text-sm font-medium mb-1">Street Address</label>
-               <input
-                  name="address"
-                  type="text"
-                  placeholder="Enter Street Address"
-                  className="p-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={orgData.address}
-                  onChange={handleOrgDataChange}
-               />
-            </div>
-            <div className="flex flex-col mb-4 col-start-4 col-end-5 row-start-4 row-end-5">
-               <label className="text-gray-700 text-sm font-medium mb-1">City</label>
-               <input
-                  name="city"
-                  type="text"
-                  placeholder="Enter City"
-                  className="p-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={orgData.city}
-                  onChange={handleOrgDataChange}
-               />
-            </div>
-            <div className="flex flex-col mb-4 col-start-1 col-end-3 row-start-5 row-end-6">
-               <label className="text-gray-700 text-sm font-medium mb-1">Country</label>
-               <input
-                  name="contry"
-                  type="text"
-                  placeholder="Enter Country"
-                  className="p-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={orgData.country}
-                  onChange={handleOrgDataChange}
-               />
-            </div>
-            <div className="flex flex-col mb-4 col-start-3 col-end-5 row-start-5 row-end-6">
-               <label className="text-gray-700 text-sm font-medium mb-1">Zipcode</label>
-               <input
-                  name="zip"
-                  type="text"
-                  placeholder="Enter Zipcode"
-                  className="p-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={orgData.zip}
-                  onChange={handleOrgDataChange}
-               />
-            </div>
-         </div>
-         <div className="w-full flex items-center justify-center mt-8">
-            <button 
-               className="p-2 bg-blue-700 rounded-md text-white w-1/4"
-               onClick={() => setTab(2)}
-            >
-               Next
-            </button>
-         </div>
+   <div className="grid grid-cols-1 gap-y-6 gap-x-4 md:grid-cols-2">
+      {/* Organization Name */}
+      <div className="col-span-2">
+         <label className="block text-gray-700 text-sm font-medium mb-2">Organization Name</label>
+         <input
+            name="name"
+            type="text"
+            placeholder="Enter an Organization Name"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.name}
+            onChange={handleOrgDataChange}
+         />
       </div>
+
+      {/* Organization URL */}
+      <div className="col-span-2">
+         <label className="block text-gray-700 text-sm font-medium mb-2">Organization URL</label>
+         <input
+            name="url"
+            type="text"
+            placeholder="Enter an Organization URL"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.url}
+            onChange={handleOrgDataChange}
+         />
+      </div>
+
+      {/* Organization Email */}
+      <div className="col-span-2">
+         <label className="block text-gray-700 text-sm font-medium mb-2">Organization Email</label>
+         <input
+            name="email"
+            type="email"
+            placeholder="Enter an Organization Email"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.email}
+            onChange={handleOrgDataChange}
+         />
+      </div>
+
+      {/* Address Group */}
+      <div className="col-span-2 md:col-span-1">
+         <label className="block text-gray-700 text-sm font-medium mb-2">Street Address</label>
+         <input
+            name="address"
+            type="text"
+            placeholder="Enter Street Address"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.address}
+            onChange={handleOrgDataChange}
+         />
+      </div>
+      <div className="col-span-1">
+         <label className="block text-gray-700 text-sm font-medium mb-2">City</label>
+         <input
+            name="city"
+            type="text"
+            placeholder="Enter City"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.city}
+            onChange={handleOrgDataChange}
+         />
+      </div>
+      <div className="col-span-1">
+         <label className="block text-gray-700 text-sm font-medium mb-2">State</label>
+         <input
+            name="state"
+            type="text"
+            placeholder="Enter State"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.state}
+            onChange={handleOrgDataChange}
+         />
+      </div>
+
+      {/* Country and Zipcode */}
+      <div className="col-span-1">
+         <label className="block text-gray-700 text-sm font-medium mb-2">Country</label>
+         <input
+            name="country"
+            type="text"
+            placeholder="Enter Country"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.country}
+            onChange={handleOrgDataChange}
+         />
+      </div>
+      <div className="col-span-1">
+         <label className="block text-gray-700 text-sm font-medium mb-2">Zipcode</label>
+         <input
+            name="zip"
+            type="number"
+            placeholder="Enter Zipcode"
+            className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            value={orgData.zip}
+            onChange={handleOrgDataChange}
+         />
+      </div>
+   </div>
+
+   {/* Submit Button */}
+   <div className="flex items-center justify-center mt-8">
+      <button 
+         className="py-3 px-6 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition w-full md:w-1/2"
+         onClick={() => setTab(2)}
+      >
+         Next
+      </button>
+   </div>
+</div>
+
    )
 
 }

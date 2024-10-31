@@ -6,11 +6,13 @@ import UserCard from "./user"
 import useFormInput from "../hooks/useFormInput"
 import axios from "axios"
 import ErrorModal from "../components/errorModal"
+import { useRouter } from "next/navigation"
 
 const Register = () => {
    const [tab, setTab] = useState(1)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
+   const router = useRouter()
 
    const [orgData, handleOrgDataChange, setOrgData] = useFormInput({
       name: "",
@@ -20,7 +22,7 @@ const Register = () => {
       city: "",
       state: "",
       country: "",
-      zip: ""
+      zip: 0
    })
 
    const [userData, handleUserDataChange, setUserData] = useFormInput({
@@ -33,7 +35,7 @@ const Register = () => {
    const handleRegister = async () => {
       if (orgData.name == "" || orgData.email == "" || orgData.url == "" || orgData.address == "" || orgData.city == "" 
          || orgData.state == "" || orgData.country == "" || orgData.zip == "") {
-
+            console.log(orgData)
             setError(true)
             setErrorMessage("Please fill all organization fields.")
       } else if (userData.name == "" || userData.lastName == "" || userData.email == "" || userData.password == "") {
@@ -42,13 +44,15 @@ const Register = () => {
       } else {
 
          try {
-            const response = await axios.post("http://localhost:4000/api/organization/create", orgData)
+            const response = await axios.post("http://localhost:4000/api/organization/register", orgData)
 
             await axios.post("http://localhost:4000/api/user/create", {
                ...userData,
                organization_id: response.data,
                role: "admin"
             })
+
+            router.push("/login")
 
          } catch (err) {
             console.log(err)
@@ -57,7 +61,7 @@ const Register = () => {
    }
 
    return (
-      <div className="flex items-start justify-center mt-16 bg-gray-50">
+      <div className="flex items-start justify-center p-12 t-16 bg-gray-50">
          {error && <ErrorModal message={errorMessage} setError={setError}/>}
          {tab == 1 ? 
             <OrganzationCard orgData={orgData} handleOrgDataChange={handleOrgDataChange} setTab={setTab}/> : 
