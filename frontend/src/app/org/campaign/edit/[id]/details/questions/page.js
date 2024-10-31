@@ -1,5 +1,5 @@
 "use client"
-import QuestionsComponent from "@/app/org/components/tabs/questions"
+import QuestionsComponent from "@/app/org/campaign/components/details/questions"
 
 
 const Questions = () => {

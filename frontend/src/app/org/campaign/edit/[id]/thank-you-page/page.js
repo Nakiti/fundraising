@@ -1,11 +1,11 @@
 import ElementInputs from "@/app/org/campaign/components/previews/donationPage/elementInputs"
 
 
-const DonationPage = () => {
+const ThankYouPage = () => {
 
    return (
       <ElementInputs />
    )
 }
 
-export default DonationPage
+export default ThankYouPage

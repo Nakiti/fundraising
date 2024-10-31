@@ -58,7 +58,7 @@ const Register = () => {
 
    return (
       <div className="flex items-start justify-center mt-16 bg-gray-50">
-         {error && <ErrorModal message={errorMessage}/>}
+         {error && <ErrorModal message={errorMessage} setError={setError}/>}
          {tab == 1 ? 
             <OrganzationCard orgData={orgData} handleOrgDataChange={handleOrgDataChange} setTab={setTab}/> : 
             <UserCard userData={userData} handleUserDataChange={handleUserDataChange} setTab={setTab} handleRegister={handleRegister}/>

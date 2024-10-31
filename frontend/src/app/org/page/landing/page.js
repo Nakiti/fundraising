@@ -2,8 +2,8 @@
 import { useContext, useState } from "react"
 import { LandingPageContext } from "@/app/context/landingPageContext"
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import BannerSection from "./components/bannerSection";
-import AboutSection from "./components/aboutSection";
+import BannerSection from "./components/sections/bannerSection";
+import AboutSection from "./components/sections/aboutSection";
 import SectionManager from "@/app/components/sectionManager";
 
 

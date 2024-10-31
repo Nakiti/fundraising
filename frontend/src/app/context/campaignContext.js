@@ -4,12 +4,22 @@ import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
 import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCustomQuestions } from "../services/fetchService.js";
+import BannerSection from "../org/campaign/components/previews/donationPage/sections/bannerSection";
+import DescSection from "../org/campaign/components/previews/donationPage/sections/descSection";
+import DonateSection from "../org/campaign/components/previews/donationPage/sections/donateSection";
 
 export const CampaignContext = createContext();
 
 export const CampaignContextProvider = ({ children, campaignId }) => {
    const {currentUser} = useContext(AuthContext)
    const organization_id = currentUser.organization_id
+
+   const [sections, setSections] = useState([
+      {name: "banner", displayText: "Banner Section", active: true, dropdown: false, content: <BannerSection />},
+      {name: "desc", displayText: "Description Section", active: true, dropdown: false, content: <DescSection />},
+      {name: "donate", displayText: "Donate Section", active: true, dropdown: false, content: <DonateSection />},
+
+   ])
 
    const [previewInputs, handlePreviewInputsChange, setPreviewInputs] = useFormInput({
       headline: '',
@@ -131,7 +141,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
          handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, 
          designations, customQuestions, setCustomQuestions, aboutInputs, handleAboutInputsChange,
          questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange, 
-         defaultDesignation, setDefaultDesignation
+         defaultDesignation, setDefaultDesignation, sections, setSections
       }}>
          {children}
       </CampaignContext.Provider>

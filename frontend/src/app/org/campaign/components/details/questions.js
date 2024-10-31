@@ -33,7 +33,7 @@ const QuestionsComponent = () => {
 
    return (
       <div className="w-full">
-         <h1 className="text-3xl mb-2">Questions</h1>
+         <h1 className="text-3xl mb-2 font-light">Questions</h1>
          <h3 className="text-md text-gray-600 mb-8">Create Questions to Ask Donors:</h3>
 
          <div className="w-full mb-12 ">

@@ -2,9 +2,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "./authContext";
 import useFormInput from "../hooks/useFormInput";
 import { getLandingPage } from "../services/fetchService";
-import BannerSection from "../org/page/landing/components/bannerSection";
-import AboutSection from "../org/page/landing/components/aboutSection";
-import ImpactSection from "../org/page/landing/components/impactSection";
+import BannerSection from "../org/page/landing/components/sections/bannerSection";
+import AboutSection from "../org/page/landing/components/sections/aboutSection";
+import ImpactSection from "../org/page/landing/components/sections/impactSection";
 
 export const LandingPageContext = createContext()
 

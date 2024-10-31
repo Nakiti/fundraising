@@ -1,5 +1,5 @@
 "use client"
-import Navbar from "@/app/org/components/navbar"
+import Navbar from "@/app/org/campaign/components/navbar"
 import { createCampaignDesignation, createCustomQuestion, deleteCampaignDesignation, deleteCustomQuestion, updateCampaign, updatePreview } from "@/app/services/campaignService"
 import { useRouter } from "next/navigation"
 import { useContext, useState } from "react"
@@ -17,7 +17,8 @@ const EditLayout = ({params, children}) => {
 
    const links = [
       `/org/campaign/edit/${campaignId}/details/about`,
-      `/org/campaign/edit/${campaignId}/donation-page/`
+      `/org/campaign/edit/${campaignId}/donation-page/`,
+      `/org/campaign/edit/${campaignId}/thank-you-page/`
    ]
 
    const handlePublish = async() => {

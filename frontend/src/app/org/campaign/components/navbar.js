@@ -99,19 +99,37 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
          {showDropdown && <div className="border-t border-gray-400 px-4 w-11/12 mx-auto mt-2 py-4 ">
             <div className="w-1/2 mx-auto flex flex-row justify-between">
                <div className="flex flex-col w-48">
+                  {mode == "new" ? 
+                  <Link 
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[4] == links[1].split("/")[4] ? "border-blue-800" : "border-gray-400"}`}
+                     href={links[1]}
+                  >
+
+                  </Link> :
                   <Link 
                      className={`border-2 w-48 h-28 ${pathName.split("/")[5] == links[1].split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
                      href={links[1]}
                   >
 
                   </Link>
+                  }
                   <p className="text-center text-white text-sm mt-1">Donation Page</p>
                </div>
 
                <div className="flex flex-col w-48">
-                  <div className="border-2 border-gray-400 w-48 h-28">
+                  {mode == "new" ? <Link 
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[4] == links[2].split("/")[4] ? "border-blue-800" : "border-gray-400"}`}
+                     href={links[2]}
+                  >
 
-                  </div>
+                  </Link> :
+                  <Link 
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[5] == links[2].split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
+                     href={links[2]}
+                  >
+
+                  </Link>
+               }
                   <p className="text-center text-white text-sm mt-1">Thank You Page</p>
                </div>
             </div>

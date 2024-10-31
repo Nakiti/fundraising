@@ -1,6 +1,6 @@
 "use client"
 import { createCampaign, createCampaignDesignation, createCustomQuestion, createPreview } from "@/app/services/campaignService"
-import Navbar from "../../components/navbar"
+import Navbar from "../components/navbar"
 import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
@@ -17,7 +17,8 @@ const NewLayout = ({children}) => {
 
    const links = [
       "/org/campaign/new/details/about",
-      "/org/campaign/new/donation-page"
+      "/org/campaign/new/donation-page",
+      "/org/campaign/new/thank-you-page"
    ]
 
    const handlePublish = async() => {

@@ -38,7 +38,7 @@ const SectionManager = ({setSections, sections, section}) => {
                   className={`ml-4 underline ${!section.active ? 'cursor-not-allowed opacity-50' : ''}`}
                   disabled={!section.active}
                >
-               {section.dropdown ? <IoIosArrowDown /> : <IoIosArrowUp />}
+               {section.dropdown ? <IoIosArrowUp /> : <IoIosArrowDown /> }
                </button>
             </div>
          </div>

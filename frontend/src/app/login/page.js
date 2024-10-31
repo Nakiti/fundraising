@@ -21,13 +21,13 @@ const Login = () => {
       router.push("/org/dashboard/home")
    }
 
-   useEffect(() => {
+   // useEffect(() => {
 
-      if (currentUser) {
-         router.push("/org/dashboard/home")
-      }
+   //    if (currentUser) {
+   //       router.push("/org/dashboard/home")
+   //    }
 
-   }, [])
+   // }, [])
 
    return (
       <div>

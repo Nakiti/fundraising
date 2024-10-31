@@ -13,11 +13,12 @@ import { getCampaignSearch, getCampaignsFiltered } from "@/app/services/fetchSer
 import { IoIosSearch } from "react-icons/io";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import debounce from "lodash/debounce"
+import { useRouter } from "next/navigation";
 
 
 const Table = () => {
    const columns = [
-      { id: '', label: '', sortable: false},
+      // { id: '', label: '', sortable: false},
       { id: 'campaignName', label: 'Campaign Name', sortable: false },
       { id: 'date', label: 'Date Created', sortable: false },
       { id: 'raised', label: 'Raised', sortable: true},
@@ -28,7 +29,8 @@ const Table = () => {
    ];
    
    const {currentUser} = useContext(AuthContext)
-   const organizationId = currentUser.organization_id
+   const organizationId = currentUser && currentUser.organization_id
+   const router = useRouter()
    
    const [data, setData] = useState(null)
    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
@@ -96,6 +98,10 @@ const Table = () => {
    const handleInputsChange = async (e) => {
       setQuery(e.target.value)
       debouncedSearch(e.target.value)
+   }
+
+   const handleClick = (id) => {
+      router.push(`/org/dashboard/campaigns/${id}`)
    }
 
    useEffect(() => {
@@ -166,7 +172,7 @@ const Table = () => {
 
          </div>
 
-         <table className="min-w-full bg-white  border-gray-300 rounded-md">
+         <table className="min-w-full bg-white border-gray-300 rounded-md">
             {/* Table Header */}
             <thead className="border-b border-gray-300">
                <tr>
@@ -190,14 +196,14 @@ const Table = () => {
             {/* Table Body */}
             <tbody>
                {currentRows && currentRows.map((row, index) => (
-                  <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                     <td className=" py-2 text-center text-md border-r">
+                  <tr key={index} className="border-b border-gray-300 hover:bg-gray-50 cursor-pointer" onClick={() => handleClick(row.id)}>
+                     {/* <td className=" py-2 text-center text-md border-r">
                         <div className="flex items-center justify-center space-x-2">
                            <Link href={`/org/dashboard/campaigns/${row.id}`}>
                               <IoMdOpen className="text-md w-6 h-4" />
                            </Link>
                         </div>
-                     </td>
+                     </td> */}
                      <td className="px-4 py-3 text-md text-center">{row.campaign_name}</td>
                      <td className="px-4 py-2 text-md text-center">{new Date(row.created_at).toLocaleDateString("en-US")}</td>
                      <td className="px-4 py-2 text-md text-center">{row.raised}</td>
@@ -205,7 +211,7 @@ const Table = () => {
                      <td className="px-4 py-2 text-md text-center">{row.donations}</td>
                      <td className="px-4 py-2 text-md text-center">{row.visits}</td>
                      <td className="px-4 py-2 text-sm text-center">
-                        <label className={`px-4 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-700" : "bg-green-700"}`}>{row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}</label>
+                        <label className={`px-4 py-1 w-32 text-center rounded-sm text-white ${row.status == "inactive" ? " bg-red-800" : "bg-green-800"}`}>{row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}</label>
                      </td>
                   </tr>
                ))}

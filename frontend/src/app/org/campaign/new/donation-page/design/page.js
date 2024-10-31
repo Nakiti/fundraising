@@ -1,4 +1,4 @@
-import DesignInputs from "@/app/org/components/page-management/designInputs"
+import DesignInputs from "@/app/org/campaign/components/previews/donationPage/designInputs"
 
 
 const Design = () => {

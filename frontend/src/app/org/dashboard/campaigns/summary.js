@@ -7,6 +7,7 @@ import Box from "./box"
 
 const Summary = () => {
    const {currentUser} = useContext(AuthContext)
+   const organizationId = currentUser && currentUser.organization_id
 
    const [data, setData] = useState(null)
    const [summary, setSummary] = useState({
@@ -19,7 +20,7 @@ const Summary = () => {
 
 
    useEffect(() => {
-      const campaigns = getAllCampaigns(currentUser.organization_id);
+      const campaigns = getAllCampaigns(organizationId);
       setData(campaigns);
 
       if (campaigns && campaigns.length > 0) {

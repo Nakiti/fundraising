@@ -1,6 +1,6 @@
 "use client"
 
-import DesignationsComponent from "@/app/org/components/tabs/designations"
+import DesignationsComponent from "@/app/org/campaign/components/details/designations"
 
 
 const Desingations = () => {

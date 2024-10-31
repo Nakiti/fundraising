@@ -1,4 +1,4 @@
-import ElementInputs from "@/app/org/components/page-management/elementInputs"
+import ElementInputs from "@/app/org/campaign/components/previews/donationPage/elementInputs"
 
 
 const DonationPage = () => {

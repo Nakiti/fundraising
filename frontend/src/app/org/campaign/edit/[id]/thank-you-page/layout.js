@@ -1,22 +1,20 @@
 "use client"
-import Display from "@/app/org/campaign/components/previews/donationPage/display"
 import { usePathname } from "next/navigation"
-import Link from "next/link"
 import PreviewNavbar from "../../../components/previews/previewNavbar"
+import Display from "../../../components/previews/thankPage/display"
 
-
-const DonationPageLayout = ({params, children}) => {
+const ThankYouPageLayout = ({params, children}) => {
    const campaignId = params.id
    const pathname = usePathname()
 
    const links = [
-      `/org/campaign/edit/${campaignId}/donation-page`,
-      `/org/campaign/edit/${campaignId}/donation-page/design`
+      `/org/campaign/edit/${campaignId}/thank-you-page`,
+      `/org/campaign/edit/${campaignId}/thank-you-page/design`
    ]
 
    return (
       <div className="w-full">
-         <PreviewNavbar heading={"Configure Donation Page"} links={links}/>
+         <PreviewNavbar heading={"Configure Thank You Page"} links={links}/>
          <div className="flex flex-row space-x-4 w-11/12 mx-auto">
             <div className="w-1/3">
                {children}
@@ -29,4 +27,4 @@ const DonationPageLayout = ({params, children}) => {
    )
 }
 
-export default DonationPageLayout
+export default ThankYouPageLayout

@@ -1,16 +1,17 @@
 "use client"
-import Display from "@/app/org/campaign/components/previews/donationPage/display"
 import PreviewNavbar from "../../components/previews/previewNavbar"
+import Display from "../../components/previews/thankPage/display"
 
-const DonationPageLayout = ({children}) => {
+const ThankYouPageLayout = ({children}) => {
    const links = [
       "/org/campaign/new/donation-page",
       "/org/campaign/new/donation-page/design"
    ]
 
+
    return (
       <div className="w-full">
-         <PreviewNavbar heading={"Configure Donation Page"} links={links}/>
+         <PreviewNavbar heading={"Configure Thank You Page"} links={links}/>
          <div className="flex flex-row space-x-4 w-11/12 mx-auto">
             <div className="w-1/3">
                {children}
@@ -23,4 +24,4 @@ const DonationPageLayout = ({children}) => {
    )
 }
 
-export default DonationPageLayout
+export default ThankYouPageLayout

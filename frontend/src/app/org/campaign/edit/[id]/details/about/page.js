@@ -1,5 +1,5 @@
 "use client"
-import AboutComponent from "@/app/org/components/tabs/about"
+import AboutComponent from "@/app/org/campaign/components/details/about"
 
 
 const About = () => {
