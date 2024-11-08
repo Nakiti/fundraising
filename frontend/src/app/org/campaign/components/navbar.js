@@ -10,7 +10,7 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 
 const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDeactivate, title, links, mode}) => {
-   const {status} = useContext(CampaignContext)
+   const {status, aboutInputs} = useContext(CampaignContext)
    const pathName = usePathname()
    const [showDropdown, setShowDropdown] = useState(false)
 
@@ -27,8 +27,8 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
                   className="h-16 w-16 mr-4"
                />
                <div className="flex flex-col text-gray-100">
-                  <p className="text-sm">Donation Page</p>
-                  <h1 className="text-3xl ">{mode == "new" ? "New Campaign" : "Edit Campaign"}</h1>
+                  <p className="text-sm">{mode == "new" ? "New Campaign" : "Edit Campaign"}</p>
+                  <h1 className="text-3xl ">{aboutInputs.internalName || "Internal Campaign Name"}</h1>
                </div>
             </div>
 

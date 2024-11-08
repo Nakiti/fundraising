@@ -1,6 +1,36 @@
+"use client"
+import { getTransactionsByCampaign } from "@/app/services/fetchService"
+import { useState, useEffect } from "react"
 
+const Transactions = ({params}) => {
 
-const Transactions = () => {
+   const campaignId = params.campaignId
+   const [data, setData] = useState(null)
+
+   const columns = [
+      { id: 'name', label: 'Name', sortable: false },
+      { id: 'email', label: 'Email', sortable: false },
+      { id: 'date', label: 'Date', sortable: true},
+      { id: 'amount', label: 'Amount', sortable: true },
+      // { id: 'campaign', label: 'Campaign', sortable: false },
+      { id: 'method', label: 'Method', sortable: false },
+      { id: 'status', label: 'Status', sortable: false },
+   ];
+
+   useEffect(() => {
+
+      const fetchData = async() => {
+         try {
+            const response = await getTransactionsByCampaign(campaignId)
+            setData(response)
+         } catch (err) {
+            console.log(err)
+         }
+      }
+
+      fetchData()
+
+   }, [])
    
    return (
       <div className="p-8 w-full min-h-full">
@@ -8,37 +38,26 @@ const Transactions = () => {
             <p className="text-2xl mb-6 text-gray-800">Transactions</p>
             <table className="min-w-full bg-white  border-gray-300 rounded-md">
                <thead className="border-b border-gray-300">
-                  <tr>
-                     <th className="px-4 py-2 text-left text-gray-600 text-sm font-semibold">First Name</th>
-                     <th className="px-4 py-2 text-left text-gray-600 text-sm font-semibold">Last Name</th>
-                     <th className="px-4 py-2 text-left text-gray-600 text-sm font-semibold">Email</th>
-                     <th className="px-4 py-2 text-left text-gray-600 text-sm font-semibold">Amount</th>
-                     <th className="px-4 py-2 text-left text-gray-600 text-sm font-semibold">Method</th>
-                  </tr>
+                  {columns.map((column, index) => (
+                     <th key={index} className="px-4 py-2 text-left text-gray-600 text-sm font-semibold" >
+                        <div className="flex flex-row items-center justify-center">
+                           {column.label}
+                        </div>
+                     </th>
+                  ))}
                </thead>
                <tbody>
-                  {/* {transactions && transactions.map((row, index) => (
+                  {data && data.map((row, index) => (
                      <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                        <td className="px-4 py-2 text-center text-sm">
-                           <div className="flex items-center justify-center space-x-2">
-                              <Link href={`/org/campaign/edit/${row.id}`}>
-                                 <FaEdit className="text-lg mr-2" />
-                              </Link>
-                              <div className="border-r border-gray-400 h-6" />
-                              <Link href={`/org/campaign/view/${row.id}`}>
-                                 <IoMdOpen className="text-lg ml-2" />
-                              </Link>
-                           </div>
-                        </td>
-                        <td className="px-4 py-2 text-sm text-center">{row.title}</td>
-                        <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
+                        <td className="px-4 py-2 text-sm text-center">{row.first_name} {row.last_name}</td>
+                        <td className="px-4 py-2 text-sm text-center"></td>
+                        <td className="px-4 py-2 text-sm text-center">{new Date(row.date).toLocaleDateString()}</td>
+                        <td className="px-4 py-2 text-sm text-center">{row.amount}</td>
+                        {/* <td className="px-4 py-2 text-sm text-center">{row.campaign_name}</td> */}
+                        <td className="px-4 py-2 text-sm text-center">{row.method}</td>
                         <td className="px-4 py-2 text-sm text-center">{row.status}</td>
                      </tr>
-                  ))} */}
+                  ))}
                </tbody>
             </table>
          </div>

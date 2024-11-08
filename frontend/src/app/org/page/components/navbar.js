@@ -1,17 +1,9 @@
 import Link from "next/link"
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
-import { useContext } from "react";
-import { LandingPageContext } from "@/app/context/landingPageContext";
 
-const LandingPageNavbar = () => {
+const Navbar = ({links, title}) => {
    const pathName = usePathname()
-   const {inputs} = useContext(LandingPageContext)
-
-   const links = [
-      "/org/page/landing",
-      "/org/page/landing/design"
-   ]
 
    return (
       <div className="border-b border-gray-100 bg-gray-700 shadow-sm text-black">
@@ -26,8 +18,8 @@ const LandingPageNavbar = () => {
                   className="h-16 w-16 mr-4"
                />
                <div className="flex flex-col text-gray-100">
-                  <p className="text-sm">Landing Page</p>
-                  <h1 className="text-3xl font-bold ">Configure Landing Page</h1>
+                  <p className="text-sm">{title}</p>
+                  <h1 className="text-3xl font-bold ">Configure {title}</h1>
                </div>
             </div>
 
@@ -44,14 +36,14 @@ const LandingPageNavbar = () => {
          <div className="flex flex-row space-x-8 w-11/12 mx-auto mt-4 text-white mb-1">
             <Link
                className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName == links[0] ? "border-white" : "border-transparent"}`}
-               href="/org/page/landing"
+               href={links[0]}
             >
                Elements
             </Link> 
             
             <Link
                className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName == links[1] ? "border-white" : "border-transparent"}`}
-               href="/org/page/landing/design"
+               href={links[1]}
             >
                Design
             </Link> 
@@ -60,4 +52,4 @@ const LandingPageNavbar = () => {
    )
 }
 
-export default LandingPageNavbar
+export default Navbar

@@ -1,14 +1,10 @@
 "use client"
 import { useContext, useState } from "react"
 import { LandingPageContext } from "@/app/context/landingPageContext"
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import BannerSection from "./components/sections/bannerSection";
-import AboutSection from "./components/sections/aboutSection";
 import SectionManager from "@/app/components/sectionManager";
 
-
 const Landing = () => {
-   const {inputs, handleInputsChange, sections, setSections} = useContext(LandingPageContext)
+   const {sections, setSections} = useContext(LandingPageContext)
 
    return (
       <div className="w-full">

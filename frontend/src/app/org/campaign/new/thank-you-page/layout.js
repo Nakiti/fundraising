@@ -4,8 +4,8 @@ import Display from "../../components/previews/thankPage/display"
 
 const ThankYouPageLayout = ({children}) => {
    const links = [
-      "/org/campaign/new/donation-page",
-      "/org/campaign/new/donation-page/design"
+      "/org/campaign/new/thank-you-page",
+      "/org/campaign/new/thank-you-page/design"
    ]
 
 

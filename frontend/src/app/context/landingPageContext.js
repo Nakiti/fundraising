@@ -17,7 +17,9 @@ export const LandingPageContextProvider = ({children}) => {
       description: "",
       bgImage: "",
       aboutImage: "",
-      about: "",
+      aboutText: "",
+      impactImage: "",
+      impactText: "",
       bg_color: "#FFFFFF",
       p_color: "#000000",
       s_color: "gray",
@@ -29,11 +31,10 @@ export const LandingPageContextProvider = ({children}) => {
    })
 
    const [sections, setSections] = useState([
-      {name: "banner", displayText: "Banner Section", active: true, dropdown: false, content: <BannerSection />},
-      {name: "about", displayText: "About Section", active: false, dropdown: false, content: <AboutSection />},
-      {name: "impact", displayText: "Impact Section", active: false, dropdown: false, content: <ImpactSection />},
-      {name: "featured", displayText: "Featured Campaign", active: false, dropdown: false, content: <ImpactSection />}
-
+      {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
+      {name: "about", displayText: "About Section", active: false, required: false, dropdown: false, content: <AboutSection />},
+      {name: "impact", displayText: "Impact Section", active: false, required: false, dropdown: false, content: <ImpactSection />},
+      {name: "featured", displayText: "Featured Campaign", active: false, required: false, dropdown: false, content: <ImpactSection />}
    ])
 
    // useEffect(() => {

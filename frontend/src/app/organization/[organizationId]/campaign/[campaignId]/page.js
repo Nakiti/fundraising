@@ -181,6 +181,9 @@ const CampaignPage = ({params}) => {
                </div>
             </div>
          </div>}
+         {
+            !campaign && !display && <p>Campaign not found/inactive</p>
+         }
       </div>
    );
 }

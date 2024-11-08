@@ -1,5 +1,4 @@
-import ElementInputs from "@/app/org/campaign/components/previews/donationPage/elementInputs"
-
+import ElementInputs from "../../../components/previews/thankPage/elementInputs"
 
 const ThankYouPage = () => {
 

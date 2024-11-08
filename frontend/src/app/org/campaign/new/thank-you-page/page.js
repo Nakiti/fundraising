@@ -1,11 +1,9 @@
-
+import ElementInputs from "../../components/previews/thankPage/elementInputs"
 
 const ThankYouPage = () => {
 
    return (
-      <div>
-
-      </div>
+      <ElementInputs />
    )
 }
 

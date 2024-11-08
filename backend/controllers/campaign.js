@@ -87,7 +87,7 @@ export const getFiltered = (req, res) => {
    const status = req.query.status
    const id = req.params.id
 
-   console.log(status)
+   console.log(id)
 
    if (status == "all") {
       query = "SELECT * FROM campaigns WHERE `organization_id` = ?"
@@ -97,6 +97,24 @@ export const getFiltered = (req, res) => {
       if (err) return res.json(err)
       return res.status(200).json(data)
    })
+}
+
+export const getDateRange = (req, res) => {
+   const query = "SELECT * FROM campaigns WHERE `created_at` BETWEEN ? AND ? AND `organization_id` = ?" 
+
+   const values = [
+      req.query.start,
+      req.query.end,
+      req.params.id
+   ]
+
+   console.log(values)
+
+   db.query(query, values, (err, data) => {
+      if (err) return console.log(err)
+      return res.status(200).json(data)
+   })
+
 }
 
 export const updateCampaign = (req, res) => {

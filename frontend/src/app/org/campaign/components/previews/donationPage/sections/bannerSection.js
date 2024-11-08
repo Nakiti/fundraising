@@ -39,7 +39,7 @@ const BannerSection = () => {
                className="w-full h-36 object-cover border border-dashed border-gray-400 rounded-md bg-gray-50"
             /> */}
          </div>
-         <div className="mb-4">
+         {/* <div className="mb-4">
             <p className="text-sm font-bold text-gray-600 mb-2">
                Enter Headline <span className="text-red-500">*</span>
             </p>
@@ -51,7 +51,7 @@ const BannerSection = () => {
                value={previewInputs.headline}
                onChange={handlePreviewInputsChange}
             />
-         </div>
+         </div> */}
       </div>
    )
 }

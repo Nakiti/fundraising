@@ -26,8 +26,8 @@ const AboutSection = () => {
                className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                rows={5}
                placeholder="Enter about text"
-               name="about"
-               value={inputs.about}
+               name="aboutText"
+               value={inputs.aboutText}
                onChange={handleInputsChange} 
             />
          </div>

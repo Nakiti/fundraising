@@ -20,8 +20,8 @@ const Pages = () => {
                   <p className="text-sm text-gray-700">Edit the cart page for your organization</p>
                </Link>
 
-               <Link href="/org/page/landing" className="w-full bg-white rounded-md shadow-md p-8 h-48 hover:bg-gray-100 cursor-pointer">
-                  <p className="text-xl text-black mb-4">About Page (todo)</p>
+               <Link href="/org/page/about" className="w-full bg-white rounded-md shadow-md p-8 h-48 hover:bg-gray-100 cursor-pointer">
+                  <p className="text-xl text-black mb-4">About Page</p>
                   <p className="text-sm text-gray-700">Edit the about page for your organization</p>
                </Link>
 

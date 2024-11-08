@@ -7,6 +7,9 @@ import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, get
 import BannerSection from "../org/campaign/components/previews/donationPage/sections/bannerSection";
 import DescSection from "../org/campaign/components/previews/donationPage/sections/descSection";
 import DonateSection from "../org/campaign/components/previews/donationPage/sections/donateSection";
+import TitleSection from "../org/campaign/components/previews/donationPage/sections/titleSection";
+import BackgroundSection from "../org/campaign/components/previews/thankPage/sections/backgroundSection";
+import MessageSection from "../org/campaign/components/previews/thankPage/sections/messageSection";
 
 export const CampaignContext = createContext();
 
@@ -15,10 +18,15 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
    const organization_id = currentUser.organization_id
 
    const [sections, setSections] = useState([
-      {name: "banner", displayText: "Banner Section", active: true, dropdown: false, content: <BannerSection />},
-      {name: "desc", displayText: "Description Section", active: true, dropdown: false, content: <DescSection />},
-      {name: "donate", displayText: "Donate Section", active: true, dropdown: false, content: <DonateSection />},
+      {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
+      {name: "title", displayText: "Title Section", active: true, required: true, dropdown: false, content: <TitleSection />},
+      {name: "desc", displayText: "Description Section", active: true, required: true, dropdown: false, content: <DescSection />},
+      {name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
+   ])
 
+   const [designSections, setDesignSections] = useState([
+      {name: "message", displayText: "Message Section", active: true, required: true, dropdown: false, content: <MessageSection />},
+      {name: "background", displayText: "Background Section", active: true, required: true, dropdown: false, content: <BackgroundSection />},
    ])
 
    const [previewInputs, handlePreviewInputsChange, setPreviewInputs] = useFormInput({
@@ -35,6 +43,12 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
       b2_color: '#989c9e', //button two color (share)
       b3_color: '#045991', //button three color (money)
       m_color: '#f9fafb', //modal color
+   })
+
+   const [thankInputs, handleThankInputsChange, setThankInputs] = useFormInput({
+      backgroundImage: "",
+      headline: "",
+      description: ""
    })
 
    const [settingsInputs, handleSettingsInputsChange, setSettingsInputs] = useFormInput({
@@ -141,7 +155,8 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
          handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, 
          designations, customQuestions, setCustomQuestions, aboutInputs, handleAboutInputsChange,
          questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange, 
-         defaultDesignation, setDefaultDesignation, sections, setSections
+         defaultDesignation, setDefaultDesignation, sections, setSections, designSections, setDesignSections,
+         thankInputs, handleThankInputsChange
       }}>
          {children}
       </CampaignContext.Provider>

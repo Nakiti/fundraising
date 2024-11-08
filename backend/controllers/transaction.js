@@ -31,7 +31,14 @@ export const getTransaction = (req, res) => {
 }
 
 export const getTransactionsbyCampaign = (req, res) => {
-   const query = "SELECT * FROM transactions WHERE `campaign_id` = ?"
+   // const query = "SELECT * FROM transactions WHERE `campaign_id` = ?"
+
+   const query = `
+      SELECT transactions.*, campaigns.campaign_name 
+      FROM transactions 
+      INNER JOIN campaigns ON transactions.campaign_id = campaigns.id 
+      WHERE transactions.campaign_id = ?
+   `;
 
    const value = req.params.id
 
@@ -42,7 +49,12 @@ export const getTransactionsbyCampaign = (req, res) => {
 }
 
 export const getAllTransactions = (req, res) => {
-   const query = "SELECT * FROM transactions WHERE `organization_id` = ?"
+   const query = `
+      SELECT transactions.*, campaigns.campaign_name 
+      FROM transactions 
+      INNER JOIN campaigns ON transactions.campaign_id = campaigns.id 
+      WHERE transactions.organization_id = ?
+   `;
 
    const value = req.params.id
 
@@ -54,4 +66,43 @@ export const getAllTransactions = (req, res) => {
 
 export const updateTransaction = (req, res) => {
    
+}
+
+export const getTransactionsOverTime = (req, res) => {
+   const query = `
+      SELECT 
+         COUNT(*) as transactionsCount,
+         SUM(amount) as totalRaised
+      FROM transactions 
+      WHERE date between ? and ? and organization_id = ?
+   `
+
+   const values = [
+      req.query.start,
+      req.query.end,
+      req.params.id
+   ]
+
+   db.query(query, values, (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data[0])
+   })
+}
+
+export const searchTransactions = (req, res) => {
+   const query = `
+      SELECT * FROM transactions 
+      WHERE CONCAT(first_name, ' ', last_name, ' ', id, ' ') LIKE ? 
+      AND organization_id = ?
+   `;
+
+   const values = [
+      `%${req.query.q}%`,
+      req.params.id
+   ]
+
+   db.query(query, values, (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data)
+   })
 }

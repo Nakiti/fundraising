@@ -32,7 +32,7 @@ const Sidebar = () => {
 
    return (
       <div 
-         className={`${isCollapsed ? 'w-16' : 'w-48'} h-full bg-white border-r shadow-md border-gray-200 transition-width duration-300`}
+         className={`${isCollapsed ? 'w-16' : 'w-56'} h-full bg-white border-r shadow-md border-gray-200 transition-width duration-300`}
       >
          {/* Collapse Button */}
          <button
@@ -53,7 +53,7 @@ const Sidebar = () => {
 
          </div>
 
-         <div className={`mt-40 pt-4 ${isCollapsed ? 'flex flex-col' : 'flex flex-col'}`}>
+         <div className={`mt-44 border-t border-gray-200 ${isCollapsed ? 'flex flex-col' : 'flex flex-col'}`}>
          <SidebarItem icon={<IoIosSettings className='h-full w-full'/>} text="Settings" isCollapsed={isCollapsed} link="/org/dashboard/settings"/>
          </div>
       </div>

@@ -21,7 +21,7 @@ const SectionManager = ({setSections, sections, section}) => {
          <div className="flex flex-row justify-between py-4 items-center border-b border-gray-500">
             <h2 className="text-md font-bold text-gray-600">{section.displayText}</h2>
             <div className="flex flex-row space-x-4">
-               <button
+               {!section.required && <button
                onClick={() => toggleSwitch(section.name)}
                className={`w-12 h-6 flex items-center rounded-full cursor-pointer p-1 transition-colors ${
                   section.active ? 'bg-blue-800' : 'bg-gray-300'
@@ -32,7 +32,7 @@ const SectionManager = ({setSections, sections, section}) => {
                      section.active ? 'translate-x-6' : 'translate-x-0'
                   }`}
                ></div>
-               </button>
+               </button>}
                <button
                   onClick={() => handleDropdown(section.name)}
                   className={`ml-4 underline ${!section.active ? 'cursor-not-allowed opacity-50' : ''}`}

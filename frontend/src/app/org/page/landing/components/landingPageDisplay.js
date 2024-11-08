@@ -37,10 +37,10 @@ const LandingPageDisplay = () => {
                </p>
 
                <div className="flex justify-center space-x-4">
-                  <button disabled className="bg-blue-800 text-white py-2 px-6 text-sm rounded-md transition">
+                  <button style={{backgroundColor: inputs.b_color, color: inputs.bt_color}} disabled className="bg-blue-800 text-white py-2 px-6 text-sm rounded-md transition">
                      Donate
                   </button>
-                  <button disabled className="bg-blue-800 text-white py-2 px-6 text-sm rounded-md transition">
+                  <button  disabled className="bg-blue-800 text-white py-2 px-6 text-sm rounded-md transition">
                      Share
                   </button>
                </div>
@@ -52,7 +52,7 @@ const LandingPageDisplay = () => {
                   About Our Organization
                </h2>
                <p className="text-sm text-gray-600">
-                  {inputs.about ? inputs.about : "Temporary text"}
+                  {inputs.aboutText ? inputs.aboutText : "Temporary text"}
                </p>
                <button 
                   disabled className="bg-blue-600 text-white py-2 text-xs px-6 rounded-sm">
@@ -72,7 +72,7 @@ const LandingPageDisplay = () => {
             <div className="mt-8 md:mt-0 md:w-1/2 flex justify-center">
                <img
                   className="w-full h-auto object-cover rounded-lg shadow-lg"
-                  src={inputs.aboutImage ? inputs.aboutImage : "https://via.placeholder.com/500x300"}
+                  src={inputs.impactImage ? inputs.impactImage : "https://via.placeholder.com/500x300"}
                   alt="About Us"
                />
             </div>
@@ -81,7 +81,7 @@ const LandingPageDisplay = () => {
                   Our Impact
                </h2>
                <p className="text-sm text-gray-600">
-                  {inputs.about ? inputs.about : "Temporary text"}
+                  {inputs.impactText ? inputs.impactText : "Temporary text"}
                </p>
                <button 
                   disabled className="bg-blue-600 text-white py-2 text-xs px-6 rounded-sm">
@@ -99,13 +99,13 @@ const LandingPageDisplay = () => {
                   {campaigns.map((item, index) => {
                      return (
                         <div 
-                           className="shadow-lg rounded-lg w-full h-full" 
+                           className="shadow-md rounded-sm w-full h-full" 
                            key={index}
                            style={{backgroundColor: inputs.c_color}}
                         >
                            <img 
                               src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
-                              className="object-cover w-full rounded-t-lg"
+                              className="object-cover w-full rounded-t-sm"
                               style={{height: "150px"}}
                            />
                            <div className="px-6 py-4">

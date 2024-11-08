@@ -1,8 +1,8 @@
 "use client"
-import Table from "./table"
-import Summary from "./summary"
+import Table from "./components/table"
+import Summary from "./components/summary"
 import Link from "next/link"
-import Modal from "./modal"
+import Modal from "./components/modal"
 import { useState } from "react"
 
 const Campaigns = () => {
@@ -17,7 +17,7 @@ const Campaigns = () => {
                {/* <Link href="/org/campaign/new/details/about" >
                   <p className="bg-blue-700 py-3 px-8 rounded-md text-md text-white">Create New Campaign</p>
                </Link> */}
-               <button className="bg-blue-700 py-3 px-8 rounded-md text-md text-white" onClick={() => setShowModal(true)}>
+               <button className="bg-blue-700 font-semibold py-3 px-8 rounded-md text-md text-white" onClick={() => setShowModal(true)}>
                   Create New Campaign
                </button>
             </div>

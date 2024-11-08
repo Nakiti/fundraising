@@ -8,155 +8,114 @@ const Display = () => {
    const {previewInputs, handlePreviewInputsChange, setPreviewInputs, amountInputs} = useContext(CampaignContext)
    
    return (
-      <div className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-sm shadow-md mt-6 overflow-y-auto" style={{backgroundColor: previewInputs.bg_color}}>
-         <div 
-            className="text-lg font-bold text-start text-white px-4 py-2 bg-gray-800" 
-            style={{backgroundColor: previewInputs.h_color || "#000"}}
-            // onClick={(event) => handleClick("Heading", "h_color", event)}
+<div 
+  className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-sm shadow-md mt-6 overflow-y-auto" 
+  style={{ backgroundColor: previewInputs.bg_color }}
+>
+   <div className="relative w-full">
+      {/* Header overlay */}
+      <div 
+         className="absolute top-0 left-0 w-full text-lg font-bold text-start text-gray-600 px-4 py-2 bg-white/70 backdrop-blur-sm z-10 border-b border-gray-200"
+      >
+         <h1 
+         className="px-2 py-1"
+         name="heading"
          >
-            <h1 
-               className="px-2 py-1 "
-               name="heading"
-               style={{backgroundColor: previewInputs.h_color || "#000", color: previewInputs.ht_color}}
-            >
-               Header
-            </h1>
-         </div>
-
-         <div className="relative w-full" >
-
-            <img
-               src={previewInputs.image}
-               alt="image"
-               className="w-full h-80 object-cover bg-gray-50"
-            />
-            <div className="absolute inset-0 flex flex-col items-center text-center space-y-6 bg-black bg-opacity-50">
-               <h1 
-                  className="text-4xl p-2 mb-2 font-semibold mt-8"
-                  name="headline"
-                  style={{color: previewInputs.p_color || "black"}}
-               >
-                  {previewInputs.headline || "Enter a Headline"}
-               </h1>
-
-               <div className="flex justify-center space-x-4">
-                  <button disabled className="bg-blue-800 text-white py-3 px-8 text-sm rounded-sm transition">
-                     Share
-                  </button>
-                  <button disabled className="bg-blue-800 text-white py-3 px-8  text-sm rounded-sm transition">
-                     Donate
-                  </button>
-               </div>
-            </div>
-         </div>
-
-         <div className="space-y-2 p-6 text-center">
-            <h2 className="text-2xl text-gray-800">
-               How Your Money Helps
-            </h2>
-            <p className="text-md text-gray-600 w-3/4 mx-auto">
-            {previewInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."}
-            </p>
-         </div>
-
-
-         <div className="p-6 w-11/12 mx-auto mb-12">
-            <div className="w-3/4 mx-auto">
-               <p className="text-xl mb-2 text-center" style={{color: previewInputs.p_color}}>X of 1000 raised</p>
-
-               <div className=" bg-gray-300 rounded-full h-4 mb-2">
-                  <div className="bg-blue-600 h-4 rounded-full w-1/12"></div>
-               </div>
-            </div>
-            
-            {/* <div className="border-b border-blue-800 my-8"/> */}
-
-            <div className="mt-8 flex flex-col items-center">
-               <h3 className="text-lg text-gray-700 mb-4 text-center">I would like to give to:</h3>
-               <select 
-                  className="w-1/2 border border-gray-300 rounded-sm p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  defaultValue="Select"
-                  disabled
-               >
-               </select>
-            </div>
-
-
-            <div className="mb-4 mt-4 flex flex-col items-center">
-               <h3 className="text-lg text-gray-700 mb-4">I would like to give:</h3>
-               <div className="w-1/2 grid grid-cols-3 gap-y-2 gap-x-4 max-w-sm px-4">
-                  <button
-                     key={0}
-                     className="w-full text-xs py-2 bg-blue-700 text-white rounded-sm"
-                     disabled
-                     style={{backgroundColor: previewInputs.b3_color}}
-                  >
-                     {amountInputs.button1}
-                  </button>
-                  <button
-                     key={1}
-                     className="w-full text-xs py-1 bg-blue-700 text-white rounded-sm"
-                     disabled
-                     style={{backgroundColor: previewInputs.b3_color}}
-                  >
-                     {amountInputs.button2}
-                  </button>
-                  <button
-                     key={2}
-                     className="w-full text-xs py-1 bg-blue-700 text-white rounded-sm"
-                     disabled
-                     style={{backgroundColor: previewInputs.b3_color}}
-                  >
-                     {amountInputs.button3}
-                  </button>
-                  <button
-                     key={3}
-                     className="w-full text-xs py-1 bg-blue-700 text-white rounded-sm"
-                     disabled
-                     style={{backgroundColor: previewInputs.b3_color}}
-                  >
-                     {amountInputs.button4}
-                  </button>
-                  <button
-                     key={4}
-                     className="w-full text-xs py-2 bg-blue-700 text-white rounded-sm"
-                     disabled
-                     style={{backgroundColor: previewInputs.b3_color}}
-                  >
-                     {amountInputs.button5}
-                  </button>
-                  <button
-                     key={5}
-                     className="w-full text-xs py-1 bg-blue-700 text-white rounded-sm"
-                     disabled
-                     style={{backgroundColor: previewInputs.b3_color}}
-                  >
-                     {amountInputs.button6}
-                  </button>
-                  {/* <input 
-                     placeholder="Enter Custom Amount" 
-                     type="number" 
-                     className="w-full col-start-1 text-sm rounded-md col-end-3 py-1 px-4 bg-white border border-blue-600 text-black shadow " 
-                     
-                     // onChange={handleAmount}
-                     // value={donationInfo.amount}
-                  /> */}
-               </div>
-            </div>
-
-
-            <div className="flex flex-row justify-center items-center space-x-4 text-sm">
-               <button 
-                  className="w-1/6 px-4 py-2  text-white text-center rounded-sm bg-blue-700"
-                  // onClick={(event) => handleClick("Donate Button", "b1_color", event)}
-                  // onClick={handleDonate}
-                  style={{backgroundColor: previewInputs.b1_color}}
-               >
-                  Donate
-               </button>
-            </div>
-         </div>
+         Header
+         </h1>
       </div>
+
+      {/* First Image */}
+      <img
+         src="https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"
+         alt="image"
+         className="w-full h-72 object-cover bg-gray-50"
+      />
+   </div>
+
+  {/* Content Section */}
+  <div className="w-5/6 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6">
+    <div className="w-1/3">
+      <img 
+        src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
+        className="h-48 w-48 object-cover border-4 border-white shadow-lg -mt-10 rounded-md"
+      />
+    </div>
+    <div className="w-2/3 mt-4">
+      {/* Fundraiser Info */}
+      <div className="flex flex-row justify-between mb-6">
+        <div>
+          <p className="text-gray-500 text-xs">Fundraiser</p>
+          <h1 className="text-2xl font-semibold text-gray-800">Fundraiser Name</h1>
+        </div>
+        <button className="text-xs text-blue-600 hover:underline">Share</button>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="mb-6">
+        <p className="text-sm font-medium mb-1 text-gray-700" style={{ color: previewInputs.p_color }}>X of 1000 raised</p>
+        <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
+          <div className="bg-blue-600 h-3 rounded-full w-1/12"></div>
+        </div>
+      </div>
+
+      {/* About Section */}
+      <div className="space-y-4 py-4 border-t border-gray-200">
+        <h2 className="text-xl text-gray-800 font-semibold text-center">About</h2>
+        <p className="text-sm text-gray-600 leading-relaxed">
+          {previewInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
+        </p>
+      </div>
+
+      {/* Donation Options */}
+      <div className="mt-6">
+        <h3 className="text-md text-gray-700 font-semibold mb-2">I would like to give to:</h3>
+        <select 
+          className="w-full border border-gray-300 rounded-sm p-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+          defaultValue="Select"
+          disabled
+        >
+        </select>
+      </div>
+
+      <div className="mt-6">
+        <h3 className="text-md text-gray-700 font-semibold mb-2">I would like to give:</h3>
+        <div className="grid grid-cols-3 gap-4 max-w-sm">
+          {[amountInputs.button1, amountInputs.button2, amountInputs.button3, amountInputs.button4, amountInputs.button5, amountInputs.button6].map((amount, index) => (
+            <button
+              key={index}
+              className="w-full text-xs py-2 bg-blue-700 text-white rounded-sm shadow-md hover:bg-blue-800 transition-colors duration-200"
+              disabled
+              style={{ backgroundColor: previewInputs.b3_color }}
+            >
+              {amount}
+            </button>
+          ))}
+          <input 
+            placeholder="Enter Custom Amount" 
+            type="number" 
+            disabled
+            className="col-span-2 text-sm rounded-sm py-2 px-4 bg-white border border-blue-600 text-gray-700 shadow focus:outline-none " 
+          /> 
+        </div>
+      </div>
+
+      {/* Donate Button */}
+      <div className="flex justify-center items-center mt-6">
+         <button 
+            disabled
+            className="w-1/2 py-2 text-white rounded-sm bg-blue-700 shadow-md hover:bg-blue-800 transition-colors duration-200"
+            style={{ backgroundColor: previewInputs.b1_color }}
+         >
+            Donate
+         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
    );
 }
 

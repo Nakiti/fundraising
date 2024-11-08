@@ -6,6 +6,13 @@ import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
 import { AuthContext } from "@/app/context/authContext";
 import { IoIosSearch } from "react-icons/io";
+import { getTransactionsByOrg } from "@/app/services/fetchService";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { IoMegaphoneOutline } from "react-icons/io5";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import Box from "../campaigns/components/box";
+import Searchbar from "./components/searchbar";
+import Filters from "./components/filters";
 
 const Transactions = () => {
    const [data, setData] = useState(null)
@@ -16,7 +23,10 @@ const Transactions = () => {
       { id: 'amount', label: 'Amount', sortable: true },
       { id: 'campaign', label: 'Campaign', sortable: false },
       { id: 'method', label: 'Method', sortable: false },
+      { id: 'status', label: 'Status', sortable: false },
    ];
+   const {currentUser} = useContext(AuthContext)
+   const organizationId = currentUser.organization_id
 
    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
 
@@ -34,49 +44,49 @@ const Transactions = () => {
       setSortConfig({ key, direction });
    };
 
-   const {currentUser} = useContext(AuthContext)
 
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await axios.get(`http://localhost:4000/api/transaction/getByOrg/${currentUser.organization_id}`)
-            console.log(response.data)
-            setData(response.data || [])
+            const response = await getTransactionsByOrg(organizationId)
+            console.log(response)
+            setData(response)
 
          } catch (err) {
             console.log(err)
          }
       }
 
-      // fetchData()
+      fetchData()
    }, [])
 
    return (
       <div className="w-full h-full p-4">
          <div className="bg-white w-full h-full overflow-y-auto rounded-sm p-4">
-            <h2 className="text-4xl p-6">Transactions</h2>
+            <div className="flex flex-row p-6 w-full justify-between items-center">
+               <h1 className="text-4xl">Transactions</h1>
 
-
-            <div className="relative w-2/3 px-8 mt-8 mb-4">
-               <input 
-                  type="text"
-                  placeholder="Search Transactions by name, email, id"
-                  className="px-4 py-2 pr-10 border border-gray-300 rounded-sm w-full focus:outline-none focus:border-blue-500"
-                  // value={query}
-                  // onChange={handleInputsChange}
-                  // onKeyDown={(e) => {
-                  //    if (e.key == "Enter") {
-                  //       handleSearch()
-                  //    }
-                  // }}
-               />
-               <IoIosSearch 
-                  className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400" 
-                  // onClick={handleSearch}
-               />
+               <button className="bg-blue-700 font-semibold py-3 px-8 rounded-md text-md text-white">
+                  Add Offline Transaction 
+               </button>
             </div>
+
+            <div className="flex justify-between items-center gap-6 px-8 mt-6">
+               <Box text={"Total Raised: " }/>
+               <Box text={"Total Donations: " }/>
+               <Box text={"Total Visits: " }/>
+               <Box text={"Average Raised: " }/>
+               <Box text={"Average Raised: " }/>
+
+               {/* <Box text={"Average Conversion Rate: " + summary.averageConversionRate}/> */}
+            </div>
+
             <div className="px-8">
+               <Searchbar setData={setData} organizationId={organizationId}/>
+               <Filters setData={setData} organizationId={organizationId}/>
+            </div>
+            <div className="px-8 mt-4">
                <table className="min-w-full bg-white  border-gray-300 rounded-md">
                   {/* Table Header */}
                   <thead className="border-b border-gray-300">
@@ -88,7 +98,7 @@ const Transactions = () => {
                                  {column.sortable &&
                                  <div className="h-full flex items-center justify-center cursor-pointer">
                                     {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? 
-                                       (<FaSortUp className="ml-2 text-gray-600" />) : (<FaSortDown className="ml-2 text-gray-600" />)
+                                       (<FaSortUp className="ml-2 text-blue-800" />) : (<FaSortDown className="ml-2 text-blue-800" />)
                                     }
                                  </div>
                                  }
@@ -102,24 +112,15 @@ const Transactions = () => {
                   <tbody>
                      {data && data.map((row, index) => (
                         <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                           <td className="px-4 py-2 text-center text-sm">
-                              <div className="flex items-center justify-center space-x-2">
-                                 <Link href="/org/campaign/edit">
-                                    <FaEdit className="text-lg mr-2" />
-                                 </Link>
-                                 <div className="border-r border-gray-400 h-6" />
-                                 <Link href="/org/campaign/view">
-                                    <IoMdOpen className="text-lg ml-2" />
-                                 </Link>
-                              </div>
-                           </td>
-                           <td className="px-4 py-2 text-sm text-center">{row.name}</td>
-                           <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString()}</td>
-                           <td className="px-4 py-2 text-sm text-center">{row.raised}</td>
-                           <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
-                           <td className="px-4 py-2 text-sm text-center">{row.donations}</td>
-                           <td className="px-4 py-2 text-sm text-center">{row.visits}</td>
-                           <td className="px-4 py-2 text-sm text-center">{row.status}</td>
+                           <td className="px-4 py-3 text-md text-center">{row.first_name} {row.last_name}</td>
+                           <td className="px-4 py-2 text-md text-center"></td>
+                           <td className="px-4 py-2 text-md text-center">{new Date(row.date).toLocaleDateString("en-us")}</td>
+                           <td className="px-4 py-2 text-md text-center">{row.amount}</td>
+                           <td className="px-4 py-2 text-md text-center">{row.campaign_name}</td>
+                           <td className="px-4 py-2 text-md text-center">{row.method}</td>
+                           <td className="px-4 py-2 text-sm text-center">
+                              <label className={`px-4 py-1 w-32 text-center rounded-sm text-white ${row.status == "Failed" ? " bg-red-800" : row.status == "Completed" ? "bg-green-800" : "bg-yellow-600"}`}>{row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}</label>
+                           </td>                        
                         </tr>
                      ))}
                   </tbody>

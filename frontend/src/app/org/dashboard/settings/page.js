@@ -3,6 +3,7 @@ import CampaignInfo from "./organizationInfo"
 import Designations from "./designations"
 import UserManagement from "./userManagement"
 import Link from "next/link"
+import { FiUsers } from "react-icons/fi";
 
 
 const Settings = () => {
@@ -16,6 +17,7 @@ const Settings = () => {
                <Link href="/org/dashboard/settings/organization" className="w-full bg-white rounded-md shadow-md p-8 h-48 hover:bg-gray-100 cursor-pointer">
                   <p className="text-xl text-black mb-4">Organization Information</p>
                   <p className="text-sm text-gray-700">Edit information regarding your organization</p>
+                  
                </Link>
                <Link href="/org/dashboard/settings/users" className="w-full bg-white rounded-md shadow-md p-8 h-48 hover:bg-gray-100 cursor-pointer">
                   <p className="text-xl text-black mb-4">Users</p>

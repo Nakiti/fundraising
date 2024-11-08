@@ -18,7 +18,6 @@ const Summary = () => {
       averageConversionRate: 0,
    });
 
-
    useEffect(() => {
       const campaigns = getAllCampaigns(organizationId);
       setData(campaigns);
@@ -44,11 +43,12 @@ const Summary = () => {
    }, [])
 
    return (
-      <div className="flex justify-between items-center gap-4 p-8">
+      <div className="flex justify-between items-center gap-6 p-8">
          <Box text={"Total Raised: " + summary.totalRaised}/>
          <Box text={"Total Donations: " + summary.totalDonations}/>
          <Box text={"Total Visits: " + summary.totalVisits}/>
          <Box text={"Average Raised: " + summary.averageRaised}/>
+         
          {/* <Box text={"Average Conversion Rate: " + summary.averageConversionRate}/> */}
       </div>
    )

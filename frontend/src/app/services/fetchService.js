@@ -61,6 +61,24 @@ export const getCampaignsFiltered = async(organizationId, status) => {
    }
 }
 
+export const getCampaignsDateRange = async(start, end, organizationId) => {
+
+   start = (new Date(start)).toISOString().slice(0, 19).replace('T', ' ')
+   end = (new Date(end)).toISOString().slice(0, 19).replace('T', ' ')
+
+   try {
+      const response = await axios.get(`${API_BASE_URL}/campaign/getDateRange/${organizationId}`, {
+         params: {
+            start, 
+            end
+         }
+      })
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 //Organization
 
 export const getOrganization = async(organizationId) => {
@@ -130,7 +148,43 @@ export const getTransactionsByOrg = async (organizationId) => {
 export const getTransactionsByCampaign = async (campaignId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/transaction/getByCampaign/${campaignId}`)
-      console.log(response.data)
+      // console.log(response.data)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getTransactionsOverTime = async(organizationId, start, end) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/transaction/getTimeframe/${organizationId}`, {params: {start, end}})
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getTransactionsDateRange = async(start, end, organizationId) => {
+
+   start = (new Date(start)).toISOString().slice(0, 19).replace('T', ' ')
+   end = (new Date(end)).toISOString().slice(0, 19).replace('T', ' ')
+
+   try {
+      const response = await axios.get(`${API_BASE_URL}/campaign/getDateRange/${organizationId}`, {
+         params: {
+            start, 
+            end
+         }
+      })
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getTransactionSearch = async (query, organizationId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/transaction/search/${organizationId}?q=${query}`)
       return response.data
    } catch (err) {
       console.log(err)
@@ -151,9 +205,19 @@ export const getCustomQuestions = async (campaignId) => {
 //landing page
 
 export const getLandingPage = async(organizationId) => {
-
    try {
       const response = await axios.get(`${API_BASE_URL}/landing_page/get/${organizationId}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+//about page
+
+export const getAboutPage = async(organizationId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/about_page/get/${organizationId}`)
       return response.data
    } catch (err) {
       console.log(err)
