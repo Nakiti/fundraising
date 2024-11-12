@@ -37,7 +37,7 @@ export const createCampaign = (req, res) => {
 export const getCampaign = (req, res) => {
    // const query = "SELECT * FROM campaigns WHERE `id` = ?"
 
-   const query = "SELECT campaigns.*, users.first_name, users.last_name FROM campaigns INNER JOIN users on campaigns.updated_by = users.id"
+   const query = "SELECT campaigns.*, users.first_name, users.last_name FROM campaigns INNER JOIN users on campaigns.updated_by = users.id WHERE campaigns.id = ?"
 
    const value = req.params.id
 
@@ -119,17 +119,17 @@ export const getDateRange = (req, res) => {
 
 export const updateCampaign = (req, res) => {
    const q = "SELECT * FROM campaigns WHERE url = ?"
-   console.log(req.body.url)
 
    db.query(q, [req.body.url], (err, data) => {
       if (err) return res.status(500).json(err)
-      console.log("data", data)
-      if (data.length > 0) return res.status(409).json("Short URL already in use")
+      if (data.length > 0 && data[0].id != req.params.id) return res.status(409).json("Short URL already in use")
 
       const query = "UPDATE campaigns SET `default_designation` = ?, `campaign_name` = ?, `internal_name` = ?, `goal` = ?, `status` = ?, `updated_at` = ?, `updated_by` = ?, `url` = ? WHERE `id` = ?"
 
+      console.log(req.body.status)
+
       const values = [
-         req.body.defualtDesignation,
+         req.body.defaultDesignation,
          req.body.campaignName,
          req.body.internalName,
          req.body.goal,
@@ -141,7 +141,7 @@ export const updateCampaign = (req, res) => {
       ]
 
       db.query(query, values, (err, data) => {
-         if (err) return res.json(err)
+         if (err) return console.log(err)
          return res.status(200).json(data)
       })
    })

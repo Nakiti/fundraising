@@ -1,4 +1,7 @@
+"use client"
 import { FaSortUp, FaSortDown } from "react-icons/fa";
+import { useState } from "react";
+import Modal from "./components/modal";
 
 const Templates = () => {
    const columns = [
@@ -9,15 +12,18 @@ const Templates = () => {
       { id: 'type', label: 'Type', sortable: false }
    ];
 
+   const [showModal, setShowModal] = useState(false)
+
    return (
       <div className="w-full h-full p-4">
+         {showModal && <Modal show={showModal} setShow={setShowModal}/>}
          <div className="w-full h-full bg-white overflow-y-auto rounded-md p-4">
             <div className="flex flex-row p-6 w-full justify-between items-center mb-12">
                <h1 className="text-4xl">Templates</h1>
                {/* <Link href="/org/campaign/new/details/about" >
                   <p className="bg-blue-700 py-3 px-8 rounded-md text-md text-white">Create New Campaign</p>
                </Link> */}
-               <button className="bg-blue-700 py-3 px-8 rounded-md text-md text-white">
+               <button className="bg-blue-700 py-3 px-8 rounded-md text-md text-white" onClick={() => setShowModal(true)}> 
                   Create New Template
                </button>
             </div>

@@ -38,7 +38,7 @@ const Organization = ({ params }) => {
         const landingPageResponse = await getLandingPage(organizationId)
         setLandingPageStyles(landingPageResponse)
 
-        console.log(campaignResponse)
+        console.log(landingPageResponse)
       } catch (err) {
         console.log(err);
       }
@@ -50,19 +50,19 @@ const Organization = ({ params }) => {
    return (
       <div 
          className="bg-gray-50 min-h-screen"
-         style={{backgroundColor: landingPageStyles.bg_color}}
+         style={{backgroundColor: landingPageStyles && landingPageStyles.bg_color}}
       >
-         {organization && <div className="container mx-auto">
+         {organization && landingPageStyles && <div className="container mx-auto">
             <div className="relative w-full">
                <img
                   className="w-full object-cover"
                   style={{height: "450px"}}
-                  src={landingPageStyles.bgImage}
+                  src="https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg"
                   alt="Organization"
                />
 
                <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-8 bg-black bg-opacity-50">
-                  <h1 style={{color: landingPageStyles.p_color}} className="text-6xl font-semibold text-white">{landingPageStyles.title}</h1>
+                  <h1 style={{color: landingPageStyles.p_color}} className="text-6xl font-semibold text-white">Our Organization</h1>
 
                   <p style={{color: landingPageStyles.p_color}} className="text-lg text-gray-200 w-11/12 md:w-2/3 lg:w-1/2 mx-auto">
                      {landingPageStyles.description}
@@ -79,17 +79,17 @@ const Organization = ({ params }) => {
                </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center space-x-8 justify-between w-full py-16 px-16">
+            <div className="flex flex-col md:flex-row items-center space-x-12 justify-between w-full py-20 px-24 mt-8">
                <div className="md:w-1/2 space-y-6">
-                  <h2 style={{color: landingPageStyles.s_color}} className="text-3xl text-gray-800">
+                  <h2 style={{color: landingPageStyles.s_color}} className="text-3xl text-gray-800 font-semibold">
                      About Our Organization
                   </h2>
-                  <p style={{color: landingPageStyles.s_color}} className="text-md text-gray-600">
-                     {landingPageStyles.about}
+                  <p style={{color: landingPageStyles.s_color}} className="text-lg text-gray-600">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
                   </p>
                   <button 
                      // onClick={() => router.push('/about')} 
-                     className="bg-blue-600 hover:bg-blue-700 text-white py-2 text-sm px-8 rounded-sm transition">
+                     className="bg-blue-600 hover:bg-blue-700 text-white py-3 text-md px-8 rounded-sm transition">
                      Learn More
                   </button>
                </div>
@@ -97,16 +97,41 @@ const Organization = ({ params }) => {
                <div className="mt-8 md:mt-0 md:w-1/2 flex justify-center">
                   <img
                      className="w-full h-auto object-cover rounded-lg shadow-lg"
-                     src={landingPageStyles.aboutImage}
+                     src="https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg"
                      alt="About Us"
                   />
                </div>
             </div>
 
+            <div className="flex flex-col md:flex-row items-center space-x-12 justify-between w-full px-24">
+               <div className="mt-8 md:mt-0 md:w-1/2 flex justify-center">
+                  <img
+                     className="w-full h-auto object-cover rounded-lg shadow-lg"
+                     src="https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg"
+                     alt="About Us"
+                  />
+               </div>
+               <div className="md:w-1/2 space-y-6 ">
+                  <h2 style={{color: landingPageStyles.s_color}} className="text-3xl text-gray-800 font-semibold">
+                     Our Impact
+                  </h2>
+                  <p style={{color: landingPageStyles.s_color}} className="text-lg text-gray-600">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                  </p>
+                  <button 
+                     // onClick={() => router.push('/about')} 
+                     className="bg-blue-600 hover:bg-blue-700 text-white py-3 text-md px-8 rounded-sm transition">
+                     Learn More
+                  </button>
+               </div>
 
-            <div id="campaigns" className="mt-8 mx-16 pb-12" ref={campaignsRef}>
-               <h2 className="text-3xl mb-8 text-gray-800">Active Campaigns:</h2>
-               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-12 w-5/6 mx-auto">
+
+            </div>
+
+
+            <div className="mt-24 mx-24 pb-12" ref={campaignsRef}>
+               <h2 className="text-3xl mb-8 text-gray-800 font-semibold">Active Campaigns:</h2>
+               <div className="grid grid-cols-2 gap-12">
                {campaigns && campaigns.length > 0 ? (
                   campaigns.slice(0, visibleCampaigns).map((campaign) => (
                      <Card key={campaign.id} {...campaign} organizationId={organizationId} />

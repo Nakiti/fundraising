@@ -1,5 +1,5 @@
 import express from "express"
-import { createTransaction, getAllTransactions, getTransaction, getTransactionsbyCampaign, getTransactionsOverTime, searchTransactions, updateTransaction } from "../controllers/transaction.js"
+import { createTransaction, getAllTransactions, getFiltered, getTransaction, getTransactionsbyCampaign, getTransactionsOverTime, searchTransactions, updateTransaction } from "../controllers/transaction.js"
 
 const router = express.Router()
 
@@ -10,5 +10,6 @@ router.get("/getByOrg/:id", getAllTransactions)
 router.put("/update/:id", updateTransaction)
 router.get("/getTimeframe/:id", getTransactionsOverTime)
 router.get("/search/:id", searchTransactions)
+router.get("/getFiltered/:id", getFiltered)
 
 export default router

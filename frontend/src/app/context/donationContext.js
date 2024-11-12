@@ -5,10 +5,7 @@ export const DonationContext = createContext()
 
 export const DonationContextProvider = ({children}) => {
 
-   const [donations, setDonations] = useState(() => {
-      const savedDonations = sessionStorage.getItem("donations");
-      return savedDonations ? JSON.parse(savedDonations) : [];
-   })
+   const [donations, setDonations] = useState(null)
 
    useEffect(() => {
       sessionStorage.setItem("donations", JSON.stringify(donations))

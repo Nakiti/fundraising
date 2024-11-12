@@ -24,6 +24,8 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
       {name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
    ])
 
+   const [campaignType, setCampaignType] = useState("")
+
    const [designSections, setDesignSections] = useState([
       {name: "message", displayText: "Message Section", active: true, required: true, dropdown: false, content: <MessageSection />},
       {name: "background", displayText: "Background Section", active: true, required: true, dropdown: false, content: <BackgroundSection />},
@@ -156,7 +158,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
          designations, customQuestions, setCustomQuestions, aboutInputs, handleAboutInputsChange,
          questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange, 
          defaultDesignation, setDefaultDesignation, sections, setSections, designSections, setDesignSections,
-         thankInputs, handleThankInputsChange
+         thankInputs, handleThankInputsChange, campaignType
       }}>
          {children}
       </CampaignContext.Provider>

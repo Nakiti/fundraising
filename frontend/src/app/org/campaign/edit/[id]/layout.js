@@ -10,7 +10,7 @@ import ErrorModal from "@/app/components/errorModal"
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
    const router = useRouter()
-   // const {previewInputs, aboutInputs, selectedDesignations, customQuestions, amountInputs} = useContext(CampaignContext)
+   const {previewInputs, aboutInputs, selectedDesignations, customQuestions, amountInputs} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
@@ -32,6 +32,7 @@ const EditLayout = ({params, children}) => {
       } else {
          try {
             const response = await updateCampaign(campaignId, aboutInputs, "active", currentUser)
+            console.log("asas", response)
             if (response) {
                setError(true)
                setErrorMessage(response)
@@ -41,6 +42,8 @@ const EditLayout = ({params, children}) => {
                await createCampaignDesignation(campaignId, selectedDesignations)
                await deleteCustomQuestion(campaignId)
                await createCustomQuestion(campaignId, customQuestions)
+
+               console.log("success")
                router.push("/org/dashboard/campaigns")
             }
          } catch (err) {

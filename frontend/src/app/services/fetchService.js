@@ -9,14 +9,14 @@ export const getCampaignDetails = async (campaignId) => {
       const response = await axios.get(`${API_BASE_URL}/campaign/get/${campaignId}`);
       return response.data[0];
    } catch (err) {
-      console.error('Error fetching campaign details:', err);
-      throw err;
+      console.log(err)
    }
 };
 
 export const getCampaignPreview = async (campaignId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/preview/get/${campaignId}`)
+      console.log(response)
       return response.data[0]
    } catch (err) {
       console.log(err)
@@ -179,6 +179,17 @@ export const getTransactionsDateRange = async(start, end, organizationId) => {
       return response.data
    } catch (err) {
       console.log(err)
+   }
+}
+
+export const getTransactionsFiltered = async(organizationId, status) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/transaction/getFiltered/${organizationId}`, {
+         params: { status }
+      });      
+      return response.data
+   } catch (err) {
+      console.log("err", err)
    }
 }
 

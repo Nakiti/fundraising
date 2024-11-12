@@ -91,12 +91,12 @@ const Home = () => {
                </div>
 
                <div className="bg-white rounded-xl shadow-md p-10 flex flex-col items-center">
-                  <h2 className=" text-4xl mb-2">{summaryData.supporter}</h2>
+                  <h2 className=" text-4xl mb-2">{summaryData.donation}</h2>
                   <p className="text-md">New Supporters</p>
                </div>
 
                <div className="bg-white rounded-xl shadow-md p-10 flex flex-col items-center">
-                  <h2 className="text-4xl mb-2">${summaryData.raised}</h2>
+                  <h2 className="text-4xl mb-2">${summaryData.raised || 0}</h2>
                   <p className="text-md">Raised</p>
                </div>
 

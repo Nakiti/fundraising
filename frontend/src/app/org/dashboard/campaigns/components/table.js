@@ -1,15 +1,11 @@
 "use client"
-import { useEffect, useState, useContext } from "react";
-import { AuthContext } from "@/app/context/authContext.js";
+import { useState } from "react";
 import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-import Searchbar from "./searchbar";
-import Filters from "./filters";
-import { getAllCampaigns } from "@/app/services/fetchService";
 
-const Table = () => {
+const Table = ({setData, data}) => {
    const columns = [
       // { id: '', label: '', sortable: false},
       { id: 'campaignName', label: 'Campaign Name', sortable: false },
@@ -21,11 +17,9 @@ const Table = () => {
       { id: 'active', label: 'Active', sortable: false }
    ];
    
-   const {currentUser} = useContext(AuthContext)
-   const organizationId = currentUser && currentUser.organization_id
    const router = useRouter()
    
-   const [data, setData] = useState(null)
+   // const [data, setData] = useState(null)
    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
    const [currentPage, setCurrentPage] = useState(1);
    const rowsPerPage = 10; 
@@ -66,25 +60,8 @@ const Table = () => {
       router.push(`/org/dashboard/campaigns/${id}`)
    }
 
-   useEffect(() => {
-      const fetchData = async() => {
-         try {
-            const response = await getAllCampaigns(organizationId)
-            setData(response)
-         } catch (err) {
-            console.log(err)
-         }
-      }
-
-      fetchData()
-   }, [])
-
    return (
       <div className="px-8 mt-4 mb-4">
-         <div className="mb-4 flex flex-col">
-            <Searchbar setData={setData} organizationId={organizationId}/>
-            <Filters setData={setData} organizationId={organizationId}/>
-         </div>
          <table className="min-w-full bg-white border-gray-300 rounded-md">
             <thead className="border-b border-gray-300">
                <tr>

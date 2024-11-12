@@ -106,3 +106,30 @@ export const searchTransactions = (req, res) => {
       return res.status(200).json(data)
    })
 }
+
+export const getFiltered = (req, res) => {
+   let query = `
+      SELECT transactions.*, campaigns.campaign_name 
+      FROM transactions 
+      INNER JOIN campaigns ON transactions.campaign_id = campaigns.id 
+      WHERE transactions.organization_id = ? AND transactions.status = ?
+   `
+   const status = req.query.status
+   const id = req.params.id
+
+   console.log(id)
+
+   if (status == "all") {
+      query = `
+         SELECT transactions.*, campaigns.campaign_name 
+         FROM transactions 
+         INNER JOIN campaigns ON transactions.campaign_id = campaigns.id 
+         WHERE transactions.organization_id = ?
+      `   
+   }
+
+   db.query(query, [id, status], (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data)
+   })
+}

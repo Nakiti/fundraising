@@ -1,8 +1,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 
 const PreviewNavbar = ({heading, links}) => {
    const pathname = usePathname()
+   const searchParams = useSearchParams()
+   const type = searchParams.get("type")
+
+   console.log(links, pathname, type)
 
    return (
       <div className="border-b border-gray-400 py-6 w-11/12 mx-auto mb-8 flex flex-row justify-between">
@@ -11,14 +16,14 @@ const PreviewNavbar = ({heading, links}) => {
             <Link 
                href={links[0]}
                className={`px-8 py-4 border-b-2 ${
-                  links[0] == pathname ? "border-blue-700" : "border-gray-600"}`}
+                  links[0] == pathname + `?type=${type}`  ? "border-blue-700" : "border-gray-600"}`}
             >
                Elements
             </Link>
             <Link 
                href={links[1]}
                className={`px-8 py-4 border-b-2 ${
-                  links[1] == pathname ? "border-blue-700" : "border-gray-600"}`}               
+                  links[1] == pathname + `?type=${type}` ? "border-blue-700" : "border-gray-600"}`}               
             >
                Design
             </Link>

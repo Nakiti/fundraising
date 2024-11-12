@@ -68,7 +68,7 @@ const Users = () => {
                <p className="text-gray-700">Manage the users that can access your organization</p>
             </div>
             <div className="overflow-x-auto w-11/12 p-6">
-               <h1 className="text-2xl mb-4">Active Users</h1>
+               <h1 className="text-xl mb-4">Active Users</h1>
                <table className="min-w-full bg-white text-sm">
                   <thead>
                      <tr>
@@ -90,7 +90,7 @@ const Users = () => {
                               <select
                                  value={user.role}
                                  onChange={(e) => handleDesignationChange(user.id, 'status', e.target.value)}
-                                 className="w-full px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                 className="w-full px-4 py-1 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                               >
                                  <option value="admin">Admin</option>
                                  <option value="user">User</option>
@@ -111,7 +111,7 @@ const Users = () => {
             </div>
             <div className="w-11/12  border-b border-gray-300 my-4 px-6"/>
             <div className="p-6 ">
-               <h2 className="text-2xl mb-4 text-gray-800">Add New User</h2>
+               <h2 className="text-xl mb-4 text-gray-800">Add New User</h2>
                <form onSubmit={handleAddUser} className="grid grid-cols-4 gap-x-2 gap-y-4 w-3/4 text-sm">
                   <div className="flex flex-col col-start-1 col-end-3">
                      <label className="text-gray-700 text-sm font-semibold mb-1">First Name</label>
@@ -154,7 +154,7 @@ const Users = () => {
                         type="submit"
                         className="px-6 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                      >
-                        Create
+                        Add
                      </button>
                   </div>
                </form>

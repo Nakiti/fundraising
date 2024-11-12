@@ -4,14 +4,16 @@ import { CampaignContext } from "@/app/context/campaignContext";
 import { useState, useContext } from "react";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { createCampaignDesignation, deleteCampaignDesignation, updateCampaign, updatePreview } from "@/app/services/campaignService"
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 
-const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDeactivate, title, links, mode}) => {
+const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDeactivate, title, detailsLink, pageLinks, mode}) => {
    const {status, aboutInputs} = useContext(CampaignContext)
    const pathName = usePathname()
+   const searchParams = useSearchParams()
+   const type = searchParams.get("type")
    const [showDropdown, setShowDropdown] = useState(false)
 
    return (
@@ -24,11 +26,12 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
             <div className="flex flex-row items-center">
                <img 
                   src="404image"
-                  className="h-16 w-16 mr-4"
+                  className="h-20 w-20 mr-4"
                />
                <div className="flex flex-col text-gray-100">
                   <p className="text-sm">{mode == "new" ? "New Campaign" : "Edit Campaign"}</p>
                   <h1 className="text-3xl ">{aboutInputs.internalName || "Internal Campaign Name"}</h1>
+                  <p className="text-md font-semibold mt-1">{type}</p>
                </div>
             </div>
 
@@ -59,16 +62,16 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
 
          <div className="flex flex-row space-x-8 w-11/12 mx-auto mt-4 text-white mb-1">
             {mode == "new" ? <Link
-               className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName.split("/")[4] == links[0].split("/")[4] ? "border-white" : "border-transparent"}`}
-               href={links[0]}
+               className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName.split("/")[4] == detailsLink[0].split("/")[4] ? "border-blue-800" : "border-transparent"}`}
+               href={detailsLink}
                onClick={() => setShowDropdown(false)}
             >
                Details
             </Link> 
             :
             <Link
-               className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName.split("/")[5] == links[0].split("/")[5] ? "border-white" : "border-transparent"}`}
-               href={links[0]}
+               className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName.split("/")[5] == detailsLink[0].split("/")[5] ? "border-blue-800" : "border-transparent"}`}
+               href={detailsLink}
                onClick={() => setShowDropdown(false)}
             >
                Details
@@ -97,17 +100,36 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
             } */}
          </div>
          {showDropdown && <div className="border-t border-gray-400 px-4 w-11/12 mx-auto mt-2 py-4 ">
-            <div className="w-1/2 mx-auto flex flex-row justify-between">
-               <div className="flex flex-col w-48">
+            <div className="w-2/3 mx-auto flex flex-row justify-between">
+               {pageLinks.map(item => (
+                  <div className="flex flex-col w-48">
+                     {mode == "new" ? 
+                     <Link 
+                        className={`border-2 w-48 h-28 ${pathName.split("/")[4] + `?type=${type}` == item.path.split("/")[4] ? "border-blue-800" : "border-gray-400"}`}
+                        href={item.path}
+                     >
+
+                     </Link> :
+                     <Link 
+                        className={`border-2 w-48 h-28 ${pathName.split("/")[5] + `?type=${type}` == item.path.split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
+                        href={item.path}
+                     >
+
+                     </Link>
+                     }
+                     <p className="text-center text-white text-sm mt-1">{item.title}</p>
+                  </div>
+               ))}
+               {/* <div className="flex flex-col w-48">
                   {mode == "new" ? 
                   <Link 
-                     className={`border-2 w-48 h-28 ${pathName.split("/")[4] == links[1].split("/")[4] ? "border-blue-800" : "border-gray-400"}`}
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[4] + `?type=${type}` == links[1].split("/")[4] ? "border-blue-800" : "border-gray-400"}`}
                      href={links[1]}
                   >
 
                   </Link> :
                   <Link 
-                     className={`border-2 w-48 h-28 ${pathName.split("/")[5] == links[1].split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[5] + `?type=${type}` == links[1].split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
                      href={links[1]}
                   >
 
@@ -118,20 +140,20 @@ const Navbar = ({active, handleActiveChange, handlePublish, handleSave, handleDe
 
                <div className="flex flex-col w-48">
                   {mode == "new" ? <Link 
-                     className={`border-2 w-48 h-28 ${pathName.split("/")[4] == links[2].split("/")[4] ? "border-blue-800" : "border-gray-400"}`}
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[4] + `?type=${type}` == links[2].split("/")[4] ? "border-blue-800" : "border-gray-400"}`}
                      href={links[2]}
                   >
 
                   </Link> :
                   <Link 
-                     className={`border-2 w-48 h-28 ${pathName.split("/")[5] == links[2].split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
+                     className={`border-2 w-48 h-28 ${pathName.split("/")[5] + `?type=${type}` == links[2].split("/")[5] ? "border-blue-800" : "border-gray-400"}`}
                      href={links[2]}
                   >
 
                   </Link>
                }
                   <p className="text-center text-white text-sm mt-1">Thank You Page</p>
-               </div>
+               </div> */}
             </div>
          </div>}
       </div>

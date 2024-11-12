@@ -55,7 +55,7 @@ const Organization = () => {
 
             <div className="w-3/4 p-6">
 
-               <h1 className="text-2xl mb-4">General:</h1>
+               <h1 className="text-xl mb-4">General:</h1>
 
                <div className="text-sm space-y-6">
 
@@ -99,7 +99,7 @@ const Organization = () => {
             <div className="w-3/4 border-b border-gray-300 my-4 px-6"/>
 
             <div className="w-3/4 p-6">
-               <h1 className="text-2xl mb-4">Address:</h1>
+               <h1 className="text-xl mb-4">Address:</h1>
                <div className="text-sm grid grid-cols-4 gap-4">
 
                   <div className="flex flex-col col-start-1 col-end-4">

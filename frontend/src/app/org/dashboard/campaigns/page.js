@@ -1,12 +1,31 @@
 "use client"
 import Table from "./components/table"
 import Summary from "./components/summary"
-import Link from "next/link"
 import Modal from "./components/modal"
-import { useState } from "react"
+import { useState, useEffect, useContext } from "react"
+import Searchbar from "./components/searchbar"
+import Filters from "./components/filters"
+import { AuthContext } from "@/app/context/authContext"
+import { getAllCampaigns } from "@/app/services/fetchService"
 
 const Campaigns = () => {
+   const {currentUser} = useContext(AuthContext)
+   const organizationId = currentUser && currentUser.organization_id
    const [showModal, setShowModal] = useState(false)
+   const [data, setData] = useState(null)
+
+   useEffect(() => {
+      const fetchData = async() => {
+         try {
+            const response = await getAllCampaigns(organizationId)
+            setData(response)
+         } catch (err) {
+            console.log(err)
+         }
+      }
+
+      fetchData()
+   }, [])
 
    return (
       <div className="w-full h-full p-4">
@@ -22,7 +41,11 @@ const Campaigns = () => {
                </button>
             </div>
             <Summary />
-            <Table />
+            <div className="mb-4 flex flex-col px-6">
+               <Searchbar setData={setData} organizationId={organizationId}/>
+               <Filters setData={setData} organizationId={organizationId}/>
+            </div>
+            <Table setData={setData} data={data}/>
          </div>
       </div>
    )

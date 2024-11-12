@@ -43,7 +43,6 @@ const CampaignPage = ({params}) => {
                campaignTitle: campaignResponse.title
             }))
 
-
             const displayResponse = await getCampaignPreview(campaignId)
             setDisplay(displayResponse)
             setDonationInfo(prev => ({
@@ -53,6 +52,7 @@ const CampaignPage = ({params}) => {
 
             const designationResponse = await getCampaignDesignations(campaignId)
             setDesignations(designationResponse)
+            console.log(designationResponse)
          }
       }
 
@@ -83,107 +83,92 @@ const CampaignPage = ({params}) => {
 
 
    return (
-      <div className="w-full h-full mx-auto bg-white rounded-lg shadow-md overflow-y-auto">
+      <div className="w-full h-full mx-auto bg-white shadow-md overflow-y-auto">
          {error && <ErrorModal setError={setError} message={errorMessage}/>}
 
-         {campaign && display && <div className="grid grid-cols-11 gap-2 mx-8 mt-4">
-            <div className="flex flex-col px-6 py-4 col-start-1 col-end-8">
- 
-               <h1 className="text-4xl p-2 rounded-md mb-2 font-semibold ">{display.headline}</h1>
-
+         {display && <div >
+            <div className="relative w-full">
                <img
-                  src={display.image}
+                  src={"https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"}
                   alt="image"
-                  className="w-full h-96 object-contain border border-gray-400 shadow-md rounded-md bg-gray-50"
+                  className="w-full h-80 object-cover bg-gray-50"
                />
-               
-               <div className="flex flex-row items-center px-4 py-4 border-b text-sm">
-                  <CgProfile className="h-6 w-6"/>
-                  <p className="text-gray-600 font-medium ml-4">Created by John Doe</p>
-               </div>
-               <div className="p-4 border-b">
-                  <p 
-                     className="text-gray-500 text-sm w-full h-full p-2 rounded-md"
-                     name="description"
-                  >
-                     {display.description}
-                  </p>
-               </div>
-               <p className="text-gray-400 text-sm px-4 py-2">Created on {new Date(campaign.created_at).toLocaleDateString("en-US")}</p>
             </div>
 
-            <div className="bg-gray-50 p-8 rounded-md shadow-md col-start-8 col-end-12 mt-12 mb-8">
-               <p className="text-xl font-medium mb-2">{campaign.raised} of {campaign.goal} raised</p>
-
-               <div className="w-full bg-gray-300 rounded-full h-2 mb-1">
-                  <div className="bg-blue-600 h-2 rounded-full w-1/12"></div>
+            <div className="w-3/4 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6">
+               <div className="w-1/3">
+                  <img 
+                  src={display.image || "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"}
+                  className="h-64 w-64 object-cover border-4 border-white shadow-lg -mt-16 rounded-md"
+                  />
                </div>
+               <div className="w-2/3 mt-4">
+                  <div className="flex flex-row justify-between mb-8">
+                     <div>
+                        <p className="text-gray-500 text-sm">Fundraiser</p>
+                        <h1 className="text-4xl font-semibold text-gray-800">{display.headline}</h1>
+                     </div>
+                     <button className="text-sm text-blue-600 hover:underline">Share</button>
+                  </div>
 
-               <p className="text-sm text-gray-600">{campaign.donations} donations</p>
+                  <div className="mb-8">
+                     <p className="text-md font-medium mb-1 text-gray-700">X of 1000 raised</p>
+                     <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
+                        <div className="bg-blue-600 h-3 rounded-full w-1/12"></div>
+                     </div>
+                  </div>
 
-               <div className="border-b border-blue-600 my-8"/>
+                  <div className="space-y-4 py-12 border-t border-b border-gray-200">
+                     <h2 className="text-2xl text-gray-800 font-semibold text-center">Our Story</h2>
+                     <p className="text-md text-gray-600 leading-relaxed">
+                        {display.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
+                     </p>
+                  </div>
 
-               <div className="">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">I would like to give to:</h3>
-                  <select 
-                     className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     onChange={handleDesignationChange}
-                     defaultValue=""
-                  >
-                     <option disabled value="">Select an option</option>
-                     {designations && designations.map((item) => {
-                        return <option key={item.id} id={item.id} value={item.title}>{item.title}</option>
-                     })}
-                  </select>
-               </div>
+                  <div className="mt-6">
+                     <h3 className="text-lg text-gray-700 font-semibold mb-4">I would like to give to:</h3>
+                     <select 
+                        className="w-full border border-gray-300 rounded-sm p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                        defaultValue="Select"
+                     >
+                        <option value={"Select"} disabled>Select a Designation</option>
+                        {designations && designations.map(item => (
+                           <option key={item.id} value={item.id}>{item.title}</option>
+                        ))}
+                     </select>
+                  </div>
 
-               <div className="border-b border-blue-600 my-8"/>
-
-               <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-4">I would like to give:</h3>
-                  <div className="grid grid-cols-3 gap-x-4 gap-y-2 max-w-sm mx-auto px-4">
-                     {amounts.map((amount, index) => (
-                        <button
-                           key={index}
-                           className="w-full text-sm py-2 bg-blue-800 text-white rounded-sm shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           value={amount}
-                           onClick={handleAmount}
-                        >
-                        ${amount}
-                        </button>
-                     ))}
-                     <div className="col-start-1 col-end-3 mt-2">
-                        <label className="text-sm font-semibold text-gray-600 mb-1">Enter Custom Amount</label>
+                  <div className="mt-6">
+                     <h3 className="text-lg text-gray-700 font-semibold mb-4">I would like to give:</h3>
+                     <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
+                        {amounts.map((amount, index) => (
+                           <button
+                              key={index}
+                              className="w-full text-sm py-2 bg-blue-700 text-white rounded-sm shadow-md hover:bg-blue-800 transition-colors duration-200"
+                           >
+                           {amount}
+                           </button>
+                        ))}
                         <input 
                            placeholder="Enter Custom Amount" 
                            type="number" 
-                           className="w-full  text-sm rounded-md  py-2 px-4 bg-white border border-blue-600 text-black shadow focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                           onChange={handleAmount}
-                           value={donationInfo.amount}
-                        />
+                           className="col-span-3 text-sm rounded-sm py-2 px-4 bg-white border border-blue-600 text-gray-700 shadow focus:outline-none " 
+                        /> 
                      </div>
-
                   </div>
-               </div>
 
-               <div className="border-b border-blue-600 my-8"/>
-
-               <div className="flex flex-row justify-center items-center space-x-4">
-                  <button className="w-5/12 px-4 py-3 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
-                     Share
-                  </button>
-                  <button 
-                     className="w-5/12 px-4 py-3 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700"
-                     onClick={handleDonate}
-                  >
-                     Donate
-                  </button>
+                  {/* Donate Button */}
+                  <div className="flex justify-center items-center mt-8">
+                     <button 
+                        className="w-1/4 py-2 text-white rounded-sm bg-blue-700 shadow-md hover:bg-blue-800 transition-colors duration-200"
+                     >
+                        Donate
+                     </button>
+                  </div>
                </div>
             </div>
          </div>}
-         {
-            !campaign && !display && <p>Campaign not found/inactive</p>
-         }
+         {!campaign && !display && <p>Campaign not found/inactive</p>}
       </div>
    );
 }

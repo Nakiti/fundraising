@@ -8,10 +8,10 @@ const Modal = ({show, setShow}) => {
 
    // Sample content for each tab
    const tabContent = [
-      { title: 'Donation Form', content: 'Donation Form' },
-      { title: 'Crowdfunding', content: 'Crowdfunding' },
-      { title: 'Peer to Peer', content: 'Peer to Peer' },
-      { title: 'Ticketed Event', content: 'Ticketed Event' },
+      { title: 'Donation Form', content: 'donation-form' },
+      // { title: 'Crowdfunding', content: 'Crowdfunding' },
+      { title: 'Peer to Peer', content: 'peer-to-peer' },
+      { title: 'Ticketed Event', content: 'ticketed-event' },
    ];
 
    return (
@@ -43,7 +43,7 @@ const Modal = ({show, setShow}) => {
                <h2 className="text-2xl font-semibold mb-4">{tabContent[activeTab].title}</h2>
                <p className="text-gray-700">{tabContent[activeTab].content}</p>
 
-               <Link href="/org/campaign/new/details/about" >
+               <Link href={{pathname: "/org/campaign/new/details/about", query: {type: tabContent[activeTab].content}}} >
                   <p className="bg-blue-700 py-3 px-8 mt-56 ml-56 rounded-md text-md text-white text-center w-48">Create</p>
                </Link> 
             </div>

@@ -4,17 +4,37 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { SlOptionsVertical } from "react-icons/sl";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getCampaignDetails } from "@/app/services/fetchService";
+
 
 
 const CampaignPageLayout = ({children, params}) => {
    const campaignId = params.campaignId
    const pathname = usePathname()
+   const [campaign, setCampaign] = useState(null)
 
    const links = [
       {title: "Overview", pathName: `/org/dashboard/campaigns/${campaignId}`},
       {title: "Insights", pathName: `/org/dashboard/campaigns/${campaignId}/insights`},
       {title: "Transactions", pathName: `/org/dashboard/campaigns/${campaignId}/transactions`}
    ]
+
+   useEffect(() => {
+      const fetchData = async() => {
+         
+         try {
+            const response = await getCampaignDetails(campaignId)
+            console.log(response)
+            setCampaign(response)
+         } catch (err) {
+            console.log(err)
+         }
+
+      }
+
+      fetchData()
+   }, [])
 
    return (
       <div className="overflow-y-auto h-screen">
@@ -24,7 +44,7 @@ const CampaignPageLayout = ({children, params}) => {
                <p className="ml-2 text-sm font-semibold">Campaigns</p>
             </Link>
             <div className="flex flex-row px-6 py-2 w-full justify-between items-center">
-               <h1 className="text-3xl">Title</h1>
+               <h1 className="text-3xl">{campaign && campaign.campaign_name}</h1>
 
                <div className="w-1/5 flex flex-row justify-between">
                   <Link href={`/org/campaign/edit/${campaignId}/details/about`} className="bg-white text-gray-700 py-3 px-6 rounded-md text-md font-semibold">Edit Campaign</Link>
