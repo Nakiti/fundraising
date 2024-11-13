@@ -3,7 +3,7 @@
 const OrganzationCard = ({orgData, handleOrgDataChange, setTab}) => {
 
    return (
-<div className="max-w-xl bg-white rounded-lg shadow-lg p-10 mx-auto">
+   <div className="max-w-xl bg-white rounded-lg shadow-lg p-10 mx-auto">
    <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Register an Organization</h1>
 
    <div className="grid grid-cols-1 gap-y-6 gap-x-4 md:grid-cols-2">

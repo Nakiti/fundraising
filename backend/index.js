@@ -10,6 +10,7 @@ import designationRoutes from "./routes/designationRoutes.js"
 import campaign_designationRoutes from "./routes/campaign_designationRoutes.js"
 import custom_questionRoutes from "./routes/campaign_questionRoutes.js"
 import landing_pageRoutes from "./routes/landing_pageRoutes.js"
+import user_organizationRoutes from "./routes/user_organizationRoutes.js"
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use("/api/designation", designationRoutes)
 app.use("/api/campaign_designation", campaign_designationRoutes)
 app.use("/api/campaign_question", custom_questionRoutes)
 app.use("/api/landing_page", landing_pageRoutes)
+app.use("/api/user_organization", user_organizationRoutes)
 
 const port = 4000
 

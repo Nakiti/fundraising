@@ -7,12 +7,7 @@ import { getCurrentUser } from "../services/fetchService";
 export const AuthContext = createContext()
 
 export const AuthContextProvider = ({children}) => {
-   const [currentUser, setCurrentUser] = useState(() => {
-      if (typeof window !== "undefined") {
-         return JSON.parse(sessionStorage.getItem("user")) || null;
-      }
-      return null;
-   });
+   const [currentUser, setCurrentUser] = useState(null);
  
    const login = async (inputs) => {
       try {
@@ -26,7 +21,6 @@ export const AuthContextProvider = ({children}) => {
    const logout = async () => {
       try {
          await axios.post("http://localhost:4000/api/user/logout", {}, {withCredentials: true});
-
          setCurrentUser(null)
       } catch (e) {
          console.log(e)
@@ -39,6 +33,7 @@ export const AuthContextProvider = ({children}) => {
       const fetchData = async () => {
          const response = await getCurrentUser()
          setCurrentUser(response)
+         console.log(response)
       }
       
       fetchData()

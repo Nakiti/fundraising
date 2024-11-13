@@ -63,7 +63,7 @@ export const searchCampaigns = (req, res) => {
 }
 
 export const getCampaignsByOrg = (req, res) => {
-   const query = "SELECT * FROM campaigns WHERE `organization_id` = ?"
+   const query = "SELECT * FROM campaigns WHERE `organization_id` = ? "
    const value = req.params.id
 
    console.log("campaign", value)

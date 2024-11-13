@@ -15,6 +15,7 @@ const Campaigns = () => {
    const [data, setData] = useState(null)
 
    useEffect(() => {
+
       const fetchData = async() => {
          try {
             const response = await getAllCampaigns(organizationId)
@@ -25,7 +26,7 @@ const Campaigns = () => {
       }
 
       fetchData()
-   }, [])
+   }, [organizationId])
 
    return (
       <div className="w-full h-full p-4">

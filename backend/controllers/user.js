@@ -20,7 +20,7 @@ export const login = (req, res) => {
          return res.status(400).json("Password is incorrect")
       }
       
-      const token = jwt.sign({id: data[0].id}, "jwtkey")
+      const token = jwt.sign({id: data[0].id, organization_id: data[0].organization_id}, "jwtkey")
 
       const cookie = serialize("session", token, {
          httpOnly: true,
@@ -42,8 +42,9 @@ export const getCurrentUser = (req, res) => {
 
    jwt.verify(token, "jwtkey", (err, data) => {
       if (err) return res.status(403).json("Token is not Valid")
-
-      res.status(200).json({id: data.id, email: data.email})
+      
+      console.log(data)
+      res.status(200).json({id: data.id, email: data.email, organization_id: data.organization_id  })
    })
 }
 
@@ -79,14 +80,12 @@ export const createUser = (req, res) => {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt);
     
-      const query = "INSERT INTO users (`organization_id`, `first_name`, `last_name`, `email`, `password`, `role`, `created_at`, `updated_at`) VALUES (?)"
+      const query = "INSERT INTO users (`first_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`) VALUES (?)"
       const values = [
-         req.body.organization_id,
          req.body.firstName,
          req.body.lastName,
          req.body.email,
          hash,
-         req.body.role,
          (new Date()).toISOString().slice(0, 19).replace('T', ' '),
          (new Date()).toISOString().slice(0, 19).replace('T', ' ')
       ]

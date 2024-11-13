@@ -3,7 +3,7 @@
 const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
    return (
       <div className="w-full max-w-2xl bg-white rounded-md shadow-md p-8">
-         <h1 className="text-3xl font-semibold mb-8 text-center">Register Admin User:</h1>
+         <h1 className="text-3xl font-semibold mb-8 text-center">Register User:</h1>
 
          <div className="w-full grid grid-cols-4 grid-rows-3 gap-x-4 mt-4">
             <div className="flex flex-col mb-4 col-start-1 col-end-3 row-start-1 row-end-2">
@@ -52,12 +52,6 @@ const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
             </div>
          </div>
          <div className="w-full flex items-center justify-center mt-8 space-x-6">
-            <button 
-               className="p-2 bg-blue-600 hover:bg-blue-800 rounded-md text-white w-1/4"
-               onClick={() => setTab(1)}
-            >
-               Previous
-            </button>
             <button 
                className="p-2 bg-blue-600 hover:bg-blue-800 rounded-md text-white w-1/4"
                onClick={handleRegister}

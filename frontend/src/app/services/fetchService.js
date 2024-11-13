@@ -145,6 +145,14 @@ export const getCurrentUser = async() => {
    }
 }
 
+export const getUserData = async(userId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/user/get/${userId}`)
+      return response.data[0]
+   } catch (err) {
+      console.log(err)
+   }
+}
 
 // Transactions
 export const getTransactionsByOrg = async (organizationId) => {
@@ -241,6 +249,15 @@ export const getAboutPage = async(organizationId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/about_page/get/${organizationId}`)
       return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getUserOrganizations = async(userId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/user_organization/get/${userId}`)
+      return response.data 
    } catch (err) {
       console.log(err)
    }

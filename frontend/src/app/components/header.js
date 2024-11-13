@@ -5,7 +5,7 @@ import { AuthContext } from "../context/authContext";
 
 const Header = () => {
    const {currentUser} = useContext(AuthContext)
-
+   console.log(currentUser)
    const [isClient, setIsClient] = useState(false);
 
    // Ensure this only runs on the client-side

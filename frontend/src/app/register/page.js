@@ -14,16 +14,16 @@ const Register = () => {
    const [errorMessage, setErrorMessage] = useState("")
    const router = useRouter()
 
-   const [orgData, handleOrgDataChange, setOrgData] = useFormInput({
-      name: "",
-      email: "",
-      url: "",
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      zip: 0
-   })
+   // const [orgData, handleOrgDataChange, setOrgData] = useFormInput({
+   //    name: "",
+   //    email: "",
+   //    url: "",
+   //    address: "",
+   //    city: "",
+   //    state: "",
+   //    country: "",
+   //    zip: 0
+   // })
 
    const [userData, handleUserDataChange, setUserData] = useFormInput({
       firstName: "",
@@ -33,27 +33,16 @@ const Register = () => {
    })
 
    const handleRegister = async () => {
-      if (orgData.name == "" || orgData.email == "" || orgData.url == "" || orgData.address == "" || orgData.city == "" 
-         || orgData.state == "" || orgData.country == "" || orgData.zip == "") {
-            console.log(orgData)
-            setError(true)
-            setErrorMessage("Please fill all organization fields.")
-      } else if (userData.name == "" || userData.lastName == "" || userData.email == "" || userData.password == "") {
+      if (userData.name == "" || userData.lastName == "" || userData.email == "" || userData.password == "") {
          setError(true)
          setErrorMessage("Please fill all user fields")
       } else {
-
          try {
-            const response = await axios.post("http://localhost:4000/api/organization/register", orgData)
-
             await axios.post("http://localhost:4000/api/user/create", {
-               ...userData,
-               organization_id: response.data,
-               role: "admin"
+               ...userData
             })
 
             router.push("/login")
-
          } catch (err) {
             console.log(err)
          }
@@ -63,10 +52,8 @@ const Register = () => {
    return (
       <div className="flex items-start justify-center p-12 t-16 bg-gray-50">
          {error && <ErrorModal message={errorMessage} setError={setError}/>}
-         {tab == 1 ? 
-            <OrganzationCard orgData={orgData} handleOrgDataChange={handleOrgDataChange} setTab={setTab}/> : 
-            <UserCard userData={userData} handleUserDataChange={handleUserDataChange} setTab={setTab} handleRegister={handleRegister}/>
-         } 
+         <UserCard userData={userData} handleUserDataChange={handleUserDataChange} setTab={setTab} handleRegister={handleRegister}/>
+
       </div>
    )
 
