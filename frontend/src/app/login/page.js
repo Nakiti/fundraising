@@ -21,14 +21,6 @@ const Login = () => {
       router.push("/org/dashboard/home")
    }
 
-   // useEffect(() => {
-
-   //    if (currentUser) {
-   //       router.push("/org/dashboard/home")
-   //    }
-
-   // }, [])
-
    return (
       <div>
          <Header />

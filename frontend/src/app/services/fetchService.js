@@ -134,6 +134,17 @@ export const getAllUsers = async(organizationId) => {
    }
 }
 
+export const getCurrentUser = async() => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/user/getCurrentUser`, {
+         withCredentials: true,
+      });
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 
 // Transactions
 export const getTransactionsByOrg = async (organizationId) => {

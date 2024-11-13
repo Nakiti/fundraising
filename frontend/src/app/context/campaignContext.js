@@ -10,6 +10,9 @@ import DonateSection from "../org/campaign/components/previews/donationPage/sect
 import TitleSection from "../org/campaign/components/previews/donationPage/sections/titleSection";
 import BackgroundSection from "../org/campaign/components/previews/thankPage/sections/backgroundSection";
 import MessageSection from "../org/campaign/components/previews/thankPage/sections/messageSection";
+import LandingBanner from "../org/campaign/components/previews/landingPage/sections/bannerSection";
+import LandingAbout from "../org/campaign/components/previews/landingPage/sections/aboutSection";
+import PurchaseSection from "../org/campaign/components/previews/landingPage/sections/purchaseSection";
 
 export const CampaignContext = createContext();
 
@@ -29,6 +32,13 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
    const [designSections, setDesignSections] = useState([
       {name: "message", displayText: "Message Section", active: true, required: true, dropdown: false, content: <MessageSection />},
       {name: "background", displayText: "Background Section", active: true, required: true, dropdown: false, content: <BackgroundSection />},
+   ])
+
+   const [landingSections, setLandingSections] = useState([
+      {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <LandingBanner />},
+      {name: "about", displayText: "About Section", active: true, required: true, dropdown: false, content: <LandingAbout />},
+      {name: "purchase", displayText: "Purchase Section", active: true, required: true, dropdown: false, content: <PurchaseSection />},
+
    ])
 
    const [previewInputs, handlePreviewInputsChange, setPreviewInputs] = useFormInput({
@@ -105,6 +115,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
                   defaultDesignation: settingsResponse.default_designation
                })
 
+               setCampaignType(settingsResponse.type)
                setStatus(settingsResponse.status)
 
                const previewResponse = await getCampaignPreview(campaignId)
@@ -158,7 +169,7 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
          designations, customQuestions, setCustomQuestions, aboutInputs, handleAboutInputsChange,
          questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange, 
          defaultDesignation, setDefaultDesignation, sections, setSections, designSections, setDesignSections,
-         thankInputs, handleThankInputsChange, campaignType
+         thankInputs, handleThankInputsChange, campaignType, landingSections, setLandingSections
       }}>
          {children}
       </CampaignContext.Provider>

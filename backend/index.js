@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+import cookieParser from "cookie-parser"
 import organizationRoutes from "./routes/organizationRoutes.js"
 import campaignRoutes from "./routes/campaignRoutes.js"
 import previewRoutes from "./routes/previewRoutes.js"
@@ -19,6 +20,7 @@ const corsOptions ={
 
 app.use(express.json())
 app.use(cors(corsOptions))
+app.use(cookieParser())
 
 app.use("/api/organization", organizationRoutes)
 app.use("/api/campaign", campaignRoutes)

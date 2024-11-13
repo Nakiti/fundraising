@@ -67,9 +67,6 @@ const Display = () => {
                         />
                      </div>
                   </div>
-
-
-
                </div>
 
             </div>

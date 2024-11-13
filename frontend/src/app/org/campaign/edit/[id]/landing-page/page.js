@@ -1,4 +1,4 @@
-import ElementInputs from "../../components/previews/landingPage/elementInputs"
+import ElementInputs from "../../../components/previews/landingPage/elementInputs"
 
 const LandingPage = () => {
 

@@ -5,9 +5,9 @@ export const createCampaign = (req, res) => {
 
    db.query(q, [req.body.url], (err, data) => {
       if (err) return res.status(500).json(err)
-      if (data.length > 0) return res.status(409).json("Short URL already in use")
+      // if (data.length > 0) return res.status(409).json("Short URL already in use")
 
-      const query = "INSERT INTO campaigns (`organization_id`, `default_designation`, `campaign_name`, `internal_name`, `goal`, `raised`, `donations`, `visits`, `status`, `created_at`, `updated_at`, `created_by`, `updated_by`, `url`) VALUES (?)"
+      const query = "INSERT INTO campaigns (`organization_id`, `default_designation`, `campaign_name`, `internal_name`, `goal`, `raised`, `donations`, `visits`, `status`, `created_at`, `updated_at`, `created_by`, `updated_by`, `url`, `type`) VALUES (?)"
 
       const values = [
          req.body.organization_id,
@@ -23,7 +23,8 @@ export const createCampaign = (req, res) => {
          (new Date()).toISOString().slice(0, 19).replace('T', ' '),
          req.body.created_by,
          req.body.created_by,
-         req.body.url
+         req.body.url,
+         req.body.type
       ]
          
       db.query(query, [values], (err, data) => {

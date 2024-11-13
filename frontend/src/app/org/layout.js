@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Header from "../components/header"
 
 const OrgLayout = ({children}) => {
-   const {currentUser} = useContext(AuthContext)
+   // const {currentUser} = useContext(AuthContext)
    const router = useRouter()
 
    // useEffect(() => {
@@ -20,7 +20,7 @@ const OrgLayout = ({children}) => {
       <div>
          <Header />
          <div style={{height: "90vh"}}> 
-            {currentUser && children} 
+            {children} 
          </div>
       </div>
    )

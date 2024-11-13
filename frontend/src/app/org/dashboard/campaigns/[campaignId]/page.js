@@ -6,6 +6,7 @@ import Link from "next/link"
 import { AuthContext } from "@/app/context/authContext"
 import { updateCampaign } from "@/app/services/campaignService"
 import { deactivateCampaign } from "@/app/services/updateServices"
+import { FaExternalLinkAlt } from "react-icons/fa"
 
 const CampaignPage = ({params}) => {
    const campaignId = params.campaignId
@@ -78,19 +79,25 @@ const CampaignPage = ({params}) => {
                   <p className="text-2xl text-gray-800 ">Quick Actions:</p>
                </div>
 
-               <div className="px-6 pb-6 py-2 space-y-4">
-                  <Link href={`/organization/${organizationId}/campaign/${campaignId}`} >
-                     <p className="bg-blue-800 text-center text-white py-3 px-4 rounded-sm text-sm font-semibold w-full">Open Campaign Page</p>
+               <div className="px-6 pb-6 py-2 flex flex-col space-y-6">
+                  <Link href={`/organization/${organizationId}/campaign/${campaignId}`}>
+                     <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
+                        Open Campaign Page
+                        <FaExternalLinkAlt className="ml-2 text-blue-800" />
+                     </p>
                   </Link>
                   <Link href={``} >
-                     <p className="bg-blue-800 text-center text-white py-3 px-4 rounded-sm text-sm font-semibold w-full mt-4">Preview Campaign</p>
+                     <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
+                        Preview Campaign
+                        <FaExternalLinkAlt className="ml-2 text-blue-800" />
+                     </p>
                   </Link>
-                  {campaign && campaign.status == "active" && <button 
+                  {/* {campaign && campaign.status == "active" && <button 
                      className="bg-red-800 text-white py-3 px-4 rounded-sm text-sm font-semibold w-full"
                      onClick={handleDeactivate}
                   >
                      Deactivate Campaign
-                  </button>}
+                  </button>} */}
                </div>
             </div>
          </div>

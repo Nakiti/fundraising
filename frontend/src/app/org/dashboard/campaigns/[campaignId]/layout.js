@@ -38,15 +38,24 @@ const CampaignPageLayout = ({children, params}) => {
 
    return (
       <div className="overflow-y-auto h-screen">
-         <div className="bg-gray-700 w-full px-6 pt-6 text-white">
-            <Link href="/org/dashboard/campaigns" className="flex flex-row px-2 py-2 items-center cursor-pointer">
+         <div className="bg-gray-700 w-full px-6 pt-2 text-white">
+            <Link href="/org/dashboard/campaigns" className="flex flex-row px-2 py-2 mb-2 items-center cursor-pointer">
                <FaArrowLeft />
                <p className="ml-2 text-sm font-semibold">Campaigns</p>
             </Link>
-            <div className="flex flex-row px-6 py-2 w-full justify-between items-center">
-               <h1 className="text-3xl">{campaign && campaign.campaign_name}</h1>
+            <div className="flex flex-row px-6 py-2 w-full justify-between">
+               <div className="flex flex-row items-center mb-6">
+                  <img 
+                     src="404image"
+                     className="h-16 w-16 mr-4"
+                  />
+                  <div className="flex flex-col text-gray-100">
+                     <h1 className="text-3xl ">{campaign && campaign.campaign_name}</h1>
+                     <p className="text-sm mt-1">{campaign && campaign.type}</p>
+                  </div>
+               </div>
 
-               <div className="w-1/5 flex flex-row justify-between">
+               <div className="w-1/5 flex flex-row justify-between h-1/2">
                   <Link href={`/org/campaign/edit/${campaignId}/details/about`} className="bg-white text-gray-700 py-3 px-6 rounded-md text-md font-semibold">Edit Campaign</Link>
                   <button>
                      <SlOptionsVertical className="h-6 w-6"/>

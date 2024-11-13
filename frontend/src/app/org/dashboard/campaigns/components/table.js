@@ -14,6 +14,7 @@ const Table = ({setData, data}) => {
       { id: 'goal', label: 'Goal', sortable: true },
       { id: 'donations', label: 'Donations', sortable: true },
       { id: 'visits', label: 'Visits', sortable: true },
+      { id: 'type', label: 'Type', sortable: false },
       { id: 'active', label: 'Active', sortable: false }
    ];
    
@@ -98,6 +99,8 @@ const Table = ({setData, data}) => {
                      <td className="px-4 py-2 text-md text-center">{row.goal}</td>
                      <td className="px-4 py-2 text-md text-center">{row.donations}</td>
                      <td className="px-4 py-2 text-md text-center">{row.visits}</td>
+                     <td className="px-4 py-2 text-md text-center">{row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase()}</td>
+
                      <td className="px-4 py-2 text-sm text-center">
                         <label className={`px-4 py-1 w-32 text-center rounded-sm text-white ${row.status == "inactive" ? " bg-red-800" : "bg-green-800"}`}>{row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}</label>
                      </td>

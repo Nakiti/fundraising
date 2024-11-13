@@ -1,10 +1,10 @@
 import { db } from "../db.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
+import { serialize } from "cookie"
 
 export const login = (req, res) => {
    const query = "SELECT * FROM users WHERE email = ?"
-
    console.log("userid", req.body)
 
    db.query(query, [req.body.email], (err, data) => {
@@ -19,13 +19,31 @@ export const login = (req, res) => {
       if (!isPasswordCorrect) {
          return res.status(400).json("Password is incorrect")
       }
-
+      
       const token = jwt.sign({id: data[0].id}, "jwtkey")
-      const {password, ...other} = data[0]
-   
-      res.cookie("access_token", token, {
-         httpOnly: true
-      }).status(200).json(other)
+
+      const cookie = serialize("session", token, {
+         httpOnly: true,
+         secure: false,
+         maxAge: 60 * 60 * 24, // 1 day in seconds
+         path: "/"
+      });
+
+      res.setHeader("Set-Cookie", cookie)
+      const {password, ...userData} = data[0]
+      res.status(200).json(userData);
+   })
+}
+
+export const getCurrentUser = (req, res) => {
+   const token = req.cookies.session
+
+   if (!token) return res.json("Not authenticated");
+
+   jwt.verify(token, "jwtkey", (err, data) => {
+      if (err) return res.status(403).json("Token is not Valid")
+
+      res.status(200).json({id: data.id, email: data.email})
    })
 }
 

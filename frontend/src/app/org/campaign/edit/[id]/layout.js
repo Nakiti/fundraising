@@ -10,15 +10,17 @@ import ErrorModal from "@/app/components/errorModal"
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
    const router = useRouter()
-   const {previewInputs, aboutInputs, selectedDesignations, customQuestions, amountInputs} = useContext(CampaignContext)
+   const {previewInputs, aboutInputs, selectedDesignations, customQuestions, amountInputs, type} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
 
-   const links = [
-      `/org/campaign/edit/${campaignId}/details/about`,
-      `/org/campaign/edit/${campaignId}/donation-page/`,
-      `/org/campaign/edit/${campaignId}/thank-you-page/`
+   const detailsLink  = `/org/campaign/edit/${campaignId}/details/about`
+   
+   const pageLinks = [
+      {path: `/org/campaign/edit/${campaignId}/landing-page/`, title: "Landing Page"},
+      {path: `/org/campaign/edit/${campaignId}/donation-page/`, title: "Donation Page"},
+      {path: `/org/campaign/edit/${campaignId}/thank-you-page/`, title: "Thank You Page"}
    ]
 
    const handlePublish = async() => {
@@ -88,7 +90,7 @@ const EditLayout = ({params, children}) => {
 
    return (
       <div >
-         <Navbar links={links} handlePublish={handlePublish} handleSave={handleSave} handleDeactivate={handleDeactivate}/>
+         <Navbar detailsLink={detailsLink} pageLinks={pageLinks} handlePublish={handlePublish} handleSave={handleSave} handleDeactivate={handleDeactivate}/>
          {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="py-8">
             {children}
