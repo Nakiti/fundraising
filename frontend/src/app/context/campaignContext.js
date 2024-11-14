@@ -4,21 +4,21 @@ import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
 import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCustomQuestions } from "../services/fetchService.js";
-import BannerSection from "../org/campaign/components/previews/donationPage/sections/bannerSection";
-import DescSection from "../org/campaign/components/previews/donationPage/sections/descSection";
-import DonateSection from "../org/campaign/components/previews/donationPage/sections/donateSection";
-import TitleSection from "../org/campaign/components/previews/donationPage/sections/titleSection";
-import BackgroundSection from "../org/campaign/components/previews/thankPage/sections/backgroundSection";
-import MessageSection from "../org/campaign/components/previews/thankPage/sections/messageSection";
-import LandingBanner from "../org/campaign/components/previews/landingPage/sections/bannerSection";
-import LandingAbout from "../org/campaign/components/previews/landingPage/sections/aboutSection";
-import PurchaseSection from "../org/campaign/components/previews/landingPage/sections/purchaseSection";
+import BannerSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/bannerSection";
+import DescSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/descSection";
+import DonateSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/donateSection";
+import TitleSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/titleSection";
+import BackgroundSection from "../org/[organizationId]/campaign/components/previews/thankPage/sections/backgroundSection";
+import MessageSection from "../org/[organizationId]/campaign/components/previews/thankPage/sections/messageSection";
+import LandingBanner from "../org/[organizationId]/campaign/components/previews/landingPage/sections/bannerSection";
+import LandingAbout from "../org/[organizationId]/campaign/components/previews/landingPage/sections/aboutSection";
+import PurchaseSection from "../org/[organizationId]/campaign/components/previews/landingPage/sections/purchaseSection";
 
 export const CampaignContext = createContext();
 
-export const CampaignContextProvider = ({ children, campaignId }) => {
+export const CampaignContextProvider = ({ children, campaignId, organizationId }) => {
    const {currentUser} = useContext(AuthContext)
-   const organization_id = currentUser.organization_id
+   const organization_id = organizationId
 
    const [sections, setSections] = useState([
       {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
@@ -103,7 +103,11 @@ export const CampaignContextProvider = ({ children, campaignId }) => {
    const [status, setStatus] = useState("inactive")
 
    useEffect(() => {
+      console.log(organizationId)
+
       const fetchData = async () => {
+
+
          try {
             if (campaignId) {
                const settingsResponse = await getCampaignDetails(campaignId)

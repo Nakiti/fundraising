@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import useFormInput from "../hooks/useFormInput";
-import BannerSection from "../org/page/about/components/sections/bannerSection";
-import WhatSection from "../org/page/about/components/sections/whatSection";
-import WhySection from "../org/page/about/components/sections/whySection";
-import TeamSection from "../org/page/about/components/sections/teamSection";
+import BannerSection from "../org/[organizationId]/page/about/components/sections/bannerSection";
+import WhatSection from "../org/[organizationId]/page/about/components/sections/whatSection";
+import WhySection from "../org/[organizationId]/page/about/components/sections/whySection";
+import TeamSection from "../org/[organizationId]/page/about/components/sections/teamSection";
 export const AboutPageContext = createContext()
 
 

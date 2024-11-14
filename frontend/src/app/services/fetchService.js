@@ -254,6 +254,8 @@ export const getAboutPage = async(organizationId) => {
    }
 }
 
+// user organizations
+
 export const getUserOrganizations = async(userId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/user_organization/get/${userId}`)
@@ -261,4 +263,14 @@ export const getUserOrganizations = async(userId) => {
    } catch (err) {
       console.log(err)
    }
+}
+
+export const getPendingUserOrganizations = async(userId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/user_organization/getPending/${userId}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+
 }

@@ -51,7 +51,7 @@ export const updatePreview = async (campaignId, previewInputs, buttonInputs) => 
    }
 };
 
-export const createCampaign = async(status, aboutInputs, currentUser) => {
+export const createCampaign = async(status, aboutInputs, currentUser, organizationId) => {
    try {
       const campaignId = await axios.post(`${API_BASE_URL}/campaign/create`, {
          defaultDesignation: aboutInputs.defaultDesignation,
@@ -60,7 +60,7 @@ export const createCampaign = async(status, aboutInputs, currentUser) => {
          goal: aboutInputs.goal,
          url: aboutInputs.shortUrl,
          status: status,
-         organization_id: currentUser.organization_id,
+         organization_id: organizationId,
          created_by: currentUser.id 
       })
       

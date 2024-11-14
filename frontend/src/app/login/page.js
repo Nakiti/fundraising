@@ -18,7 +18,7 @@ const Login = () => {
    const handleSubmit = (e) => {
       e.preventDefault()
       login(inputs)
-      router.push("/org/dashboard/home")
+      router.push("/org/[organizationId]/dashboard/home")
    }
 
    return (

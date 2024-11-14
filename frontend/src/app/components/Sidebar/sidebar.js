@@ -14,7 +14,7 @@ import { GrTemplate } from "react-icons/gr";
 
 
 
-const Sidebar = () => {
+const Sidebar = ({organizationId}) => {
    const [isCollapsed, setIsCollapsed] = useState(false);
    const [isClient, setIsClient] = useState(false);
 
@@ -44,17 +44,19 @@ const Sidebar = () => {
 
          {/* Sidebar Buttons */}
          <div className={`${isCollapsed ? 'flex flex-col ' : 'flex flex-col'}`}>
-            <SidebarItem icon={<FaHome className='h-full w-full'/>} text="Home" isCollapsed={isCollapsed} link="/org/dashboard/home" />
-            <SidebarItem icon={<IoIosStats className='h-full w-full'/>} text="Campaigns" isCollapsed={isCollapsed} link="/org/dashboard/campaigns" />
+            <SidebarItem icon={<FaHome className='h-full w-full'/>} text="Home" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/home`} />
+            <SidebarItem icon={<IoIosStats className='h-full w-full'/>} text="Campaigns" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/campaigns`} />
+            <SidebarItem icon={<FaCalendarAlt className='h-full w-full'/>} text="Events" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/events`} />
+
             {/* <SidebarItem icon={<FaCalendarAlt className='h-full w-full'/>} text="Events" isCollapsed={isCollapsed} link="/org/dashboard/events" /> */}
-            <SidebarItem icon={<FaDonate className='h-full w-full'/>} text="Transactions" isCollapsed={isCollapsed} link="/org/dashboard/transactions"/>
-            <SidebarItem icon={<RiPagesLine className='h-full w-full'/>} text="Pages" isCollapsed={isCollapsed} link="/org/dashboard/pages"/>
-            <SidebarItem icon={<GrTemplate className='h-full w-full'/>} text="Templates" isCollapsed={isCollapsed} link="/org/dashboard/templates"/>
+            <SidebarItem icon={<FaDonate className='h-full w-full'/>} text="Transactions" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/transactions`}/>
+            <SidebarItem icon={<RiPagesLine className='h-full w-full'/>} text="Pages" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/pages`}/>
+            <SidebarItem icon={<GrTemplate className='h-full w-full'/>} text="Templates" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/templates`}/>
 
          </div>
 
-         <div className={`mt-44 border-t border-gray-200 ${isCollapsed ? 'flex flex-col' : 'flex flex-col'}`}>
-         <SidebarItem icon={<IoIosSettings className='h-full w-full'/>} text="Settings" isCollapsed={isCollapsed} link="/org/dashboard/settings"/>
+         <div className={`border-t border-gray-200 ${isCollapsed ? 'flex flex-col mt-36' : 'flex flex-col mt-32'}`}>
+            <SidebarItem icon={<IoIosSettings className='h-full w-full'/>} text="Settings" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/settings`}/>
          </div>
       </div>
    );

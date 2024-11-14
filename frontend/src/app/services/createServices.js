@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:4000/api';
 
-export const createCampaign = async(currentUser, type) => {
+export const createCampaign = async(currentUser, type, organizationId) => {
    try {
       const campaignId = await axios.post(`${API_BASE_URL}/campaign/create`, {
          defaultDesignation: 0,
@@ -11,7 +11,7 @@ export const createCampaign = async(currentUser, type) => {
          goal: 0,
          url: "",
          status: "inactive",
-         organization_id: currentUser.organization_id,
+         organization_id: organizationId,
          created_by: currentUser.id,
          type: type
       })

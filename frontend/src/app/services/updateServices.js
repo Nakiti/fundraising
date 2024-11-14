@@ -60,3 +60,11 @@ export const deactivateCampaign = async(campaignId, userId) => {
       console.log(err)
    }
 }
+
+export const updateUserOrganizationRelation = async(id) => {
+   try {
+      await axios.put(`${API_BASE_URL}/user_organization/update/${id}`)
+   } catch (err) {
+      console.log(err)
+   }
+}

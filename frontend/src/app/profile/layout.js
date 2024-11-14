@@ -1,0 +1,57 @@
+"use client"
+import Header from "../components/header"
+import { useState, useContext, useEffect } from "react"
+import { AuthContext } from "../context/authContext"
+import { FaPlus } from "react-icons/fa";
+import { getUserData, getUserOrganizations } from "../services/fetchService";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const ProfileLayout = ({children}) => {
+   const {currentUser} = useContext(AuthContext)
+   const [activeTab, setActiveTab] = useState('organizations');
+   const [userData, setUserData] = useState(null)
+   const pathName = usePathname()
+
+   useEffect(() => {
+      const fetchData = async() => {
+         const userResponse = await getUserData(currentUser && currentUser.id)
+         setUserData(userResponse)
+      }
+
+      fetchData()
+   }, [currentUser])
+
+
+   return (
+      <div>
+         <Header />
+         <div className="min-h-screen bg-gray-50">
+            <h1 className="text-5xl mt-12 text-center mb-16">Welcome, {userData && userData.first_name} {userData && userData.last_name}</h1>
+
+            <div className="flex w-3/4 justify-center mx-auto border-b mb-12 space-x-8">
+               <Link 
+                  href="/profile"
+                  className={`px-4 py-2 text-lg ${pathName === '/profile' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500'}`}>
+                  Organizations
+               </Link>
+               <Link 
+                  href="/profile/invites"
+                  className={`px-4 py-2 text-lg ${pathName === '/profile/invites' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500'}`}>
+                  Organization Invites
+               </Link>
+            </div>
+
+            <div className="w-1/2 mx-auto">
+               {children}
+            </div>
+         </div>
+
+
+      </div>
+   )
+
+
+}
+
+export default ProfileLayout
