@@ -5,7 +5,7 @@ const Pages = ({params}) => {
    const organizationId = params.organizationId
 
    return (
-      <div className="w-full h-full p-4">
+      <div className="w-full h-full">
          <div className="w-full h-full overflow-y-auto rounded-md p-8">
             <div className="flex flex-row w-full justify-between mb-8">
                <h1 className="text-4xl">Manage Organization Pages</h1>

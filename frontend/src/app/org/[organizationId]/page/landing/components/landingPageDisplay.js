@@ -29,7 +29,7 @@ const LandingPageDisplay = () => {
                <h1 className="text-3xl font-semibold text-white" style={{color: inputs.p_color}}>
                   {inputs.title || "Title"}
                </h1>
-               <p className="text-sm text-gray-200 w-11/12 md:w-2/3 lg:w-1/2 mx-auto" style={{color: inputs.s_color}}>
+               <p className="text-sm text-gray-200 w-11/12 md:w-2/3 lg:w-1/2 mx-auto" style={{color: inputs.p_color}}>
                   {inputs.description ? inputs.description : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
                </p>
             </div>

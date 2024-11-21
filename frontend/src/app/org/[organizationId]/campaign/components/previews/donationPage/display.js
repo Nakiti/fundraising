@@ -27,7 +27,7 @@ const Display = () => {
 
             {/* First Image */}
             <img
-               src="https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"
+               src={donationPageInputs.image || "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"}
                alt="image"
                className="w-full h-72 object-cover bg-gray-50"
             />
@@ -44,7 +44,7 @@ const Display = () => {
                <div className="flex flex-row justify-between mb-6">
                   <div>
                      <p className="text-gray-500 text-xs">Fundraiser</p>
-                     <h1 className="text-2xl font-semibold text-gray-800">Fundraiser Name</h1>
+                     <h1 className="text-2xl font-semibold text-gray-800">{donationPageInputs.headline || "Headline"}</h1>
                   </div>
                   <button className="text-xs text-blue-600 hover:underline">Share</button>
                </div>

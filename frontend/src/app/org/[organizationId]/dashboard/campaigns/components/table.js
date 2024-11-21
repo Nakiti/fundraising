@@ -100,10 +100,10 @@ const Table = ({setData, data, organizationId}) => {
                   <td className="px-4 py-2 text-center text-md text-gray-600">
                      {new Date(row.created_at).toLocaleDateString("en-US")}
                   </td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.raised}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.goal}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.donations}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.visits}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.raised}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.goal}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.donations}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.visits}</td>
                   <td className="px-4 py-2 text-center text-md text-gray-600">
                      {row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase()}
                   </td>

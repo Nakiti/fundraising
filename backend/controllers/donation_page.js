@@ -20,7 +20,6 @@ export const createDonationPage = (req, res) => {
 
 export const getDonationPage = (req, res) => {
    const query = "SELECT * FROM donation_pages WHERE `campaign_id` = ?"
-
    const value = req.params.id 
 
    console.log(value)
@@ -63,7 +62,7 @@ export const updateDonationPage = (req, res) => {
          req.params.id
       ]
 
-      // console.log(values)
+      console.log(values)
 
       db.query(query, values, (err, data) => {
          if (err) return console.log(err)

@@ -136,7 +136,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
                      return { ...section, id: match.id, active: match.active }
                   })
                })
-
+ 
                const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
                setSelectedDesignations(selectedDesignationsResponse)
 

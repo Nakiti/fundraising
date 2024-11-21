@@ -41,11 +41,15 @@ const EditLayout = ({params, children}) => {
                setError(true)
                setErrorMessage(response)
             } else {
-               await updateDonationPage(campaignId, donationPageInputs, amountInputs)
+               await updateDonationPage(campaignId, donationPageInputs)
+               await updateThankYouPage(campaignId, thankPageInputs)
                await deleteCampaignDesignation(campaignId)
                await createCampaignDesignation(campaignId, selectedDesignations)
                await deleteCustomQuestion(campaignId)
                await createCustomQuestion(campaignId, customQuestions)
+               for (const section of donationPageSections) {
+                  await updatePageSection(section.id, section.active)
+               }
 
                console.log("success")
                router.push(`/org/${organizationId}/dashboard/campaigns`)

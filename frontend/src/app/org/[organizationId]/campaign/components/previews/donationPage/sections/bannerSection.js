@@ -2,20 +2,20 @@ import { useContext } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 
 const BannerSection = () => {
-   const {donationPageInputs, handleDonationPageInputs} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
 
    const handleImageUpload = (e) => {
       const file = e.target.files[0];
       if (file) {
          const reader = new FileReader();
          reader.onloadend = () => {
-            handlePreviewInputsChange({ target: { name: 'image', value: reader.result } });
+            handleDonationPageInputsChange({ target: { name: 'image', value: reader.result } });
             console.log(reader.result)
          };
          reader.readAsDataURL(file); // Convert the file to base64
       }
 
-   }
+   } 
 
    return (
       <div>

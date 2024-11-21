@@ -55,7 +55,7 @@ export const searchCampaigns = (req, res) => {
 
 export const getCampaignsByOrg = (req, res) => {
    const query = `
-      SELECT campaigns.id, campaign_details.*
+      SELECT campaigns.id, campaigns.created_at, campaign_details.*
       FROM campaigns
       INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       WHERE campaigns.organization_id = ?
