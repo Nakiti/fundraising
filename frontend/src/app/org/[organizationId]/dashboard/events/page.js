@@ -4,7 +4,7 @@ import Table from "./table"
 
 const Events = () => {
    return (
-      <div className="w-full h-full p-4">
+      <div className="w-full h-full">
          <div className="w-full h-full bg-white rounded-md overflow-y-auto p-4">
             <div className="flex flex-row p-6 w-full justify-between">
                <h1 className="text-4xl">Events</h1>

@@ -23,5 +23,5 @@ export const middleware = (req) => {
 };
 
 export const config = {
-   matcher: ["/org/:path*"],
+   matcher: ["/org/:path*", "/profile"],
 };

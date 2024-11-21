@@ -19,6 +19,14 @@ export const updateDesignation = async(id, data) => {
    }
 }
 
+export const updatePageSection = async(id, active) => {
+   try {
+      await axios.put(`${API_BASE_URL}/sections/update/${id}`, {active: active})
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const updateUser = async(id, data) => {
    try {
       await axios.put(`${API_BASE_URL}/user/update/${id}`, data)
@@ -41,6 +49,27 @@ export const updateLandingPage = async(id, data) => {
    formData.append("ct_color", data.b2_color)
    formData.append("b_color", data.b3_color)
    formData.append("bt_color", data.b3_color)
+
+   try {
+      await axios.put(`${API_BASE_URL}/landing_page/update/${id}`, formData, {
+         headers: {
+           'Content-Type': 'multipart/form-data',
+         },
+      })
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const updateThankYouPage = async(campaignId, data) => {
+   const formData = new FormData()
+
+   formData.append("headline", data.title)
+   formData.append("description", data.description)
+   formData.append("bg_image", data.bg_image)
+   formData.append("bg_color", data.bg_color)
+   formData.append("p_color", data.p_color)
+   formData.append("s_color", data.s_color)
 
    try {
       await axios.put(`${API_BASE_URL}/landing_page/update/${id}`, formData, {

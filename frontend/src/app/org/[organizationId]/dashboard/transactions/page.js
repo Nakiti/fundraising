@@ -25,7 +25,7 @@ const Transactions = ({params}) => {
    }, [])
 
    return (
-      <div className="w-full h-full p-4">
+      <div className="w-full h-full">
          <div className="bg-white w-full h-full overflow-y-auto rounded-sm p-4">
             <div className="flex flex-row p-6 w-full justify-between items-center">
                <h1 className="text-4xl">Transactions</h1>

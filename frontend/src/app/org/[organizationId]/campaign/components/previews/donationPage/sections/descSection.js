@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const DescSection = () => {
-   const {previewInputs, handlePreviewInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
 
    return (
       <div>
@@ -15,8 +15,8 @@ const DescSection = () => {
                rows={5}
                placeholder="Enter a Description"
                name="description"
-               value={previewInputs.description}
-               onChange={handlePreviewInputsChange} 
+               value={donationPageInputs.description}
+               onChange={handleDonationPageInputsChange} 
             />
          </div>
       </div>

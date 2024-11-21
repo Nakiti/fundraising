@@ -34,9 +34,9 @@ export const getTransactionsbyCampaign = (req, res) => {
    // const query = "SELECT * FROM transactions WHERE `campaign_id` = ?"
 
    const query = `
-      SELECT transactions.*, campaigns.campaign_name 
+      SELECT transactions.*, campaign_details.external_name 
       FROM transactions 
-      INNER JOIN campaigns ON transactions.campaign_id = campaigns.id 
+      INNER JOIN campaign_details ON transactions.campaign_id = campaign_details.campaign_id 
       WHERE transactions.campaign_id = ?
    `;
 

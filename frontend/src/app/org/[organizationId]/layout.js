@@ -2,9 +2,10 @@
 import { useRouter } from "next/navigation"
 import Header from "@/app/components/header"
 
-const OrgLayout = ({children}) => {
+const OrgLayout = ({params, children}) => {
    // const {currentUser} = useContext(AuthContext)
    const router = useRouter()
+   const organizationId = params.organizationId
 
    // useEffect(() => {
    //    if (currentUser == null) {
@@ -16,7 +17,7 @@ const OrgLayout = ({children}) => {
    //have to check that user is logged in
    return (
       <div>
-         <Header />
+         <Header organizationId={organizationId}/>
          <div style={{height: "90vh"}}> 
             {children} 
          </div>

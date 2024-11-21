@@ -4,12 +4,12 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const ElementInputs = () => {
-   const {designSections, setDesignSections} = useContext(CampaignContext)
+   const {thankyouPageSections, setThankyouPageSections} = useContext(CampaignContext)
    
    return (
       <div className="w-full">
-         {designSections.map((section) => (
-            <SectionManager  section={section} sections={designSections} setSections={setDesignSections}/>
+         {thankyouPageSections.map((section) => (
+            <SectionManager  section={section} sections={thankyouPageSections} setSections={setThankyouPageSections}/>
          ))}
       </div>
    )

@@ -1,9 +1,10 @@
 "use client"
 import { useState, useContext } from 'react';
 import { IoIosClose } from "react-icons/io";
-import { createCampaign } from '@/app/services/createServices';
+import { createCampaign, createCampaignDetails, createPageSection, createThankYouPage } from '@/app/services/createServices';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/app/context/authContext';
+import { createDonationPage, createPreview } from '@/app/services/campaignService';
 
 const Modal = ({show, setShow, organizationId}) => {
    const [activeTab, setActiveTab] = useState(0);
@@ -12,14 +13,40 @@ const Modal = ({show, setShow, organizationId}) => {
 
    const tabContent = [
       { title: 'Donation Form', content: 'donation' },
-      // { title: 'Crowdfunding', content: 'Crowdfunding' },
+      { title: 'Crowdfunding', content: 'crowdfunding' },
       { title: 'Peer to Peer', content: 'peer-to-peer' },
       { title: 'Ticketed Event', content: 'ticketed-event' },
    ];
 
    const handleClick = async (type) => {
       try {
-         const id = await createCampaign(currentUser, type, organizationId)
+         const id = await createCampaign(currentUser, organizationId)
+         console.log(currentUser)
+         await createCampaignDetails(id, currentUser, tabContent[activeTab].content)
+
+         if (tabContent[activeTab].content == "donation") {
+            const donationPageId = await createDonationPage(id, currentUser)
+            const thankyouPageId = await createThankYouPage(id, currentUser)
+
+            console.log("donationidsf, ", donationPageId)
+
+            await createPageSection(donationPageId, "banner", true, currentUser)
+            await createPageSection(donationPageId, "title", true, currentUser)
+            await createPageSection(donationPageId, "desc", true, currentUser)
+            await createPageSection(donationPageId, "donate", true, currentUser)
+
+            await createPageSection(thankyouPageId, "message", true, currentUser)
+            await createPageSection(thankyouPageId, "background", true, currentUser)
+         } else if (tabContent[activeTab].content == "crowdfunding") { 
+         
+         } else if (tabContent[activeTab].content == "peer-to-peer") { 
+         
+         } else {
+
+         }
+
+
+
          router.push(`/org/${organizationId}/campaign/edit/${id}/details/about`)
       } catch (err) {
          console.log(err)
@@ -48,7 +75,6 @@ const Modal = ({show, setShow, organizationId}) => {
                   </button>
                ))}
             </div>
-
             <div className="w-3/4 px-6 py-6 bg-gray-200">
                <h2 className="text-2xl font-semibold mb-4">{tabContent[activeTab].title}</h2>
                <p className="text-gray-700">{tabContent[activeTab].content}</p>

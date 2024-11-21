@@ -3,11 +3,10 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const LandingBanner = () => {
-
    const {handleImageUpload} = useImageUpload()
+   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(CampaignContext)
 
    return (
-
       <div>
          <div className="my-4">
             <p className="text-sm font-bold text-gray-600 mb-2">
@@ -18,7 +17,7 @@ const LandingBanner = () => {
                <input 
                   type="file"
                   className="hidden" 
-                  name="image"
+                  name="bgImage"
                   accept="image/*"
                   onChange={handleImageUpload}
                />
@@ -26,15 +25,15 @@ const LandingBanner = () => {
          </div>
          <div className="mb-4">
             <p className="text-sm font-bold text-gray-600 mb-2">
-               Enter Headline <span className="text-red-500">*</span>
+               Enter Title <span className="text-red-500">*</span>
             </p>
             <textarea 
                className="text-black text-xl w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                rows={2}
                placeholder="Enter a Headline "
-               name="headline"
-               // value={previewInputs.headline}
-               // onChange={handlePreviewInputsChange}
+               name="title"
+               value={ticketsPageInputs.title}
+               onChange={handleTicketsPageInputs}
             />
          </div>
          <div className="mb-4">
@@ -44,10 +43,10 @@ const LandingBanner = () => {
             <textarea 
                className="text-black text-xl w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                rows={2}
-               placeholder="Enter a Headline "
-               name="headline"
-               // value={previewInputs.headline}
-               // onChange={handlePreviewInputsChange}
+               placeholder="Enter a Date"
+               name="date"
+               value={ticketsPageInputs.date}
+               onChange={handleTicketsPageInputs}
             />
          </div>
          <div className="mb-4">
@@ -57,10 +56,10 @@ const LandingBanner = () => {
             <textarea 
                className="text-black text-xl w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                rows={2}
-               placeholder="Enter a Headline "
-               name="headline"
-               // value={previewInputs.headline}
-               // onChange={handlePreviewInputsChange}
+               placeholder="Enter Address "
+               name="address"
+               value={ticketsPageInputs.address}
+               onChange={handleTicketsPageInputs}
             />
          </div>
       </div>

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 
 const BannerSection = () => {
-   const {previewInputs, handlePreviewInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputs} = useContext(CampaignContext)
 
    const handleImageUpload = (e) => {
       const file = e.target.files[0];

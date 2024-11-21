@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const DonateSection = () => {
-   const {amountInputs, handleAmountInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
 
    return (
       <div>
@@ -20,9 +20,9 @@ const DonateSection = () => {
                   placeholder="Enter a Value for Button One"
                   type="number"
                   className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={amountInputs.button1}
+                  value={donationPageInputs.button1}
                   name="button1"
-                  onChange={handleAmountInputsChange}
+                  onChange={handleDonationPageInputsChange}
                />
                {/* <input 
                   className="h-5 w-5" 
@@ -35,9 +35,9 @@ const DonateSection = () => {
                   placeholder="Enter a Value for Button One"
                   type="number"
                   className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={amountInputs.button2}
+                  value={donationPageInputs.button2}
                   name="button2"
-                  onChange={handleAmountInputsChange}
+                  onChange={handleDonationPageInputsChange}
                />
                {/* <input 
                   className="h-5 w-5" 
@@ -51,9 +51,9 @@ const DonateSection = () => {
                   placeholder="Enter a Value for Button One"
                   type="number"
                   className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={amountInputs.button3}
+                  value={donationPageInputs.button3}
                   name="button3"
-                  onChange={handleAmountInputsChange}
+                  onChange={handleDonationPageInputsChange}
                />
                {/* <input 
                   className="h-5 w-5" 
@@ -67,9 +67,9 @@ const DonateSection = () => {
                   placeholder="Enter a Value for Button One"
                   type="number"
                   className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={amountInputs.button4}
+                  value={donationPageInputs.button4}
                   name="button4"
-                  onChange={handleAmountInputsChange}
+                  onChange={handleDonationPageInputsChange}
                />
                {/* <input 
                   className="h-5 w-5" 
@@ -83,9 +83,9 @@ const DonateSection = () => {
                   placeholder="Enter a Value for Button One"
                   type="number"
                   className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={amountInputs.button5}
+                  value={donationPageInputs.button5}
                   name="button5"
-                  onChange={handleAmountInputsChange}
+                  onChange={handleDonationPageInputsChange}
                />
                {/* <input 
                   className="h-5 w-5" 
@@ -99,9 +99,9 @@ const DonateSection = () => {
                   placeholder="Enter a Value for Button One"
                   type="number"
                   className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={amountInputs.button6}
+                  value={donationPageInputs.button6}
                   name="button6"
-                  onChange={handleAmountInputsChange}
+                  onChange={handleDonationPageInputsChange}
                />
                {/* <input 
                   className="h-5 w-5" 

@@ -2,17 +2,16 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:4000/api';
 
-export const updateCampaign = async (campaignId, aboutInputs, status, currentUser) => {
+export const updateCampaignDetails = async (campaignId, inputs, status, currentUser) => {
    try {
-      await axios.put(`${API_BASE_URL}/campaign/update/${campaignId}`, {
-         defaultDesignation: aboutInputs.defaultDesignation,
-         campaignName: aboutInputs.campaignName,
-         internalName: aboutInputs.internalName,
-         goal: aboutInputs.goal,
-         url: aboutInputs.shortUrl,
-         defaultDesignation: aboutInputs.defaultDesignation,
+      await axios.put(`${API_BASE_URL}/campaign_details/update/${campaignId}`, {
+         defaultDesignation: inputs.defaultDesignation,
+         externalName: inputs.campaignName,
+         internalName: inputs.internalName,
+         goal: inputs.goal,
+         url: inputs.url,
          status: status,
-         updated_by: currentUser.id
+         userId: currentUser.id
       });
    } catch (err) {
       console.error('Error updating campaign:', err);
@@ -20,27 +19,27 @@ export const updateCampaign = async (campaignId, aboutInputs, status, currentUse
    }
 };
 
-export const updatePreview = async (campaignId, previewInputs, buttonInputs) => {
+export const updateDonationPage = async (campaignId, inputs) => {
    const formData = new FormData()
 
-   formData.append("headline", previewInputs.headline)
-   formData.append("description", previewInputs.description)
-   formData.append("image", previewInputs.image)
-   formData.append("bg_color", previewInputs.bg_color)
-   formData.append("p_color", previewInputs.p_color)
-   formData.append("s_color", previewInputs.s_color)
-   formData.append("b1_color", previewInputs.b1_color)
-   formData.append("b2_color", previewInputs.b2_color)
-   formData.append("b3_color", previewInputs.b3_color)
-   formData.append("button1", buttonInputs.button1);
-   formData.append("button2", buttonInputs.button2);
-   formData.append("button3", buttonInputs.button3);
-   formData.append("button4", buttonInputs.button4);
-   formData.append("button5", buttonInputs.button5);
-   formData.append("button6", buttonInputs.button6);
+   formData.append("headline", inputs.headline)
+   formData.append("description", inputs.description)
+   formData.append("image", inputs.image)
+   formData.append("bg_color", inputs.bg_color)
+   formData.append("p_color", inputs.p_color)
+   formData.append("s_color", inputs.s_color)
+   formData.append("b1_color", inputs.b1_color)
+   formData.append("b2_color", inputs.b2_color)
+   formData.append("b3_color", inputs.b3_color)
+   formData.append("button1", inputs.button1);
+   formData.append("button2", inputs.button2);
+   formData.append("button3", inputs.button3);
+   formData.append("button4", inputs.button4);
+   formData.append("button5", inputs.button5);
+   formData.append("button6", inputs.button6);
 
    try {
-      const response = await axios.put(`${API_BASE_URL}/preview/update/${campaignId}`, formData, {
+      await axios.put(`${API_BASE_URL}/donationPage/update/${campaignId}`, formData, {
          headers: {
            'Content-Type': 'multipart/form-data',
          },
@@ -51,54 +50,27 @@ export const updatePreview = async (campaignId, previewInputs, buttonInputs) => 
    }
 };
 
-export const createCampaign = async(status, aboutInputs, currentUser, organizationId) => {
+export const createCampaign = async(currentUser, organizationId) => {
    try {
       const campaignId = await axios.post(`${API_BASE_URL}/campaign/create`, {
-         defaultDesignation: aboutInputs.defaultDesignation,
-         campaignName: aboutInputs.campaignName,
-         internalName: aboutInputs.internalName,
-         goal: aboutInputs.goal,
-         url: aboutInputs.shortUrl,
-         status: status,
          organization_id: organizationId,
          created_by: currentUser.id 
       })
       
-      console.log("camapignid", campaignId.data)
-      return {id: campaignId.data, error: ""}
+      return campaignId.data
    } catch (err) {
       console.log(err)
-      return {id: null, error: err.response.data}
    }
 }
 
-export const createPreview = async(campaignId, previewInputs, buttonInputs) => {
-   const formData = new FormData()
-
-   formData.append('campaign_id', campaignId)
-   formData.append("headline", previewInputs.headline)
-   formData.append("description", previewInputs.description)
-   formData.append("image", previewInputs.image)
-   // formData.append("heading", previewInputs.heading)
-   formData.append("bg_color", previewInputs.bg_color)
-   formData.append("p_color", previewInputs.p_color)
-   formData.append("s_color", previewInputs.s_color)
-   formData.append("b1_color", previewInputs.b1_color)
-   formData.append("b2_color", previewInputs.b2_color)
-   formData.append("b3_color", previewInputs.b3_color)
-   formData.append("button1", buttonInputs.button1);
-   formData.append("button2", buttonInputs.button2);
-   formData.append("button3", buttonInputs.button3);
-   formData.append("button4", buttonInputs.button4);
-   formData.append("button5", buttonInputs.button5);
-   formData.append("button6", buttonInputs.button6);
-   
+export const createDonationPage = async (campaignId, currentUser) => {
    try {
-      const response = await axios.post(`${API_BASE_URL}/preview/create`, formData, {
-         headers: {
-           'Content-Type': 'multipart/form-data',
-         },
-      });
+      const pageId = await axios.post(`${API_BASE_URL}/donationPage/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.user_id
+      })
+
+      return pageId.data
    } catch (err) {
       console.log(err)
    }

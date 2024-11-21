@@ -61,7 +61,7 @@ const Users = ({params}) => {
    };
 
    return (
-<div className="h-full w-full p-4">
+<div className="h-full w-full">
    <div className="w-full h-full overflow-y-auto bg-white rounded-sm p-4">
       <div className="p-6">
          <h1 className="text-3xl font-semibold mb-4 text-gray-800">Users</h1>

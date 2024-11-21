@@ -3,7 +3,7 @@ import axios from "axios"
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
-import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCustomQuestions } from "../services/fetchService.js";
+import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCustomQuestions, getDonationPage, getPageSections, getThankYouPage } from "../services/fetchService.js";
 import BannerSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/bannerSection";
 import DescSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/descSection";
 import DonateSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/donateSection";
@@ -20,71 +20,41 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    const {currentUser} = useContext(AuthContext)
    const organization_id = organizationId
 
-   const [sections, setSections] = useState([
-      {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
-      {name: "title", displayText: "Title Section", active: true, required: true, dropdown: false, content: <TitleSection />},
-      {name: "desc", displayText: "Description Section", active: true, required: true, dropdown: false, content: <DescSection />},
-      {name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
+   const [donationPageSections, setDonationPageSections] = useState([
+      {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
+      {id: 1, name: "title", displayText: "Title Section", active: true, required: true, dropdown: false, content: <TitleSection />},
+      {id: 2, name: "desc", displayText: "Description Section", active: true, required: false, dropdown: false, content: <DescSection />},
+      {id: 3, name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
    ])
 
    const [campaignType, setCampaignType] = useState("")
 
-   const [designSections, setDesignSections] = useState([
+   const [thankyouPageSections, setThankyouPageSections] = useState([
       {name: "message", displayText: "Message Section", active: true, required: true, dropdown: false, content: <MessageSection />},
       {name: "background", displayText: "Background Section", active: true, required: true, dropdown: false, content: <BackgroundSection />},
    ])
 
    const [landingSections, setLandingSections] = useState([
-      {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <LandingBanner />},
-      {name: "about", displayText: "About Section", active: true, required: true, dropdown: false, content: <LandingAbout />},
-      {name: "purchase", displayText: "Purchase Section", active: true, required: true, dropdown: false, content: <PurchaseSection />},
-
+      {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <LandingBanner />},
+      {id: 1, name: "about", displayText: "About Section", active: true, required: true, dropdown: false, content: <LandingAbout />},
+      {id: 2, name: "purchase", displayText: "Purchase Section", active: true, required: true, dropdown: false, content: <PurchaseSection />},
    ])
 
-   const [previewInputs, handlePreviewInputsChange, setPreviewInputs] = useFormInput({
-      headline: '',
-      description: '',
-      image: '',
-      // heading: '',
-      bg_color: '#FFF', //background color
-      p_color: '#000', //primary text color
-      s_color: '#b3b3b3', //secondary text color
-      h_color: '', //header background color
-      ht_color: '', //header text color
-      b1_color: '#045991', //button one color (donate)
-      b2_color: '#989c9e', //button two color (share)
-      b3_color: '#045991', //button three color (money)
-      m_color: '#f9fafb', //modal color
-   })
+   const [donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs] = useFormInput({})
+   const [thankPageInputs, handleThankPageInputsChange, setThankPageInputs] = useFormInput({})
+   const [campaignDetails, handleCampaignDetailsChange, setCampaignDetails] = useFormInput({})
 
-   const [thankInputs, handleThankInputsChange, setThankInputs] = useFormInput({
-      backgroundImage: "",
-      headline: "",
-      description: ""
-   })
-
-   const [settingsInputs, handleSettingsInputsChange, setSettingsInputs] = useFormInput({
-      title: '',
-      description: '',
-      goal: '',
-      url: ''
-   })
-
-   const [amountInputs, handleAmountInputsChange, setAmountInputs] = useFormInput({
-      button1: 10,
-      button2: 25,
-      button3: 50,
-      button4: 75,
-      button5: 100,
-      button6: 200
-   })
-
-   const [aboutInputs, handleAboutInputsChange, setAboutInputs] = useFormInput({
-      campaignName: "",
-      internalName: "",
-      goal: 0,
-      shortUrl: "",
-      defaultDesignation: 0,
+   const [ticketsPageInputs, handleTicketsPageInputs, setTicketsPageInputs] = useFormInput({
+      title: "",
+      date: "",
+      address: "",
+      bgImage: "",
+      aboutDescription: "",
+      venueName: "",
+      bg_color: "",
+      bg_color2: "",
+      p_color: "",
+      s_color: ""
    })
 
    const [questionInputs, handleQuestionInputsChange, setQuestionInputs] = useFormInput({
@@ -96,7 +66,6 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    })
 
    const [customQuestions, setCustomQuestions] = useState([])
-
    const [selectedDesignations, setSelectedDesignations] = useState([]);
    const [designations, setDesignations] = useState([])
    const [defaultDesignation, setDefaultDesignation] = useState(0)
@@ -104,48 +73,68 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
 
    useEffect(() => {
       console.log(organizationId)
-
       const fetchData = async () => {
-
-
          try {
             if (campaignId) {
                const settingsResponse = await getCampaignDetails(campaignId)
-               setAboutInputs({
-                  campaignName: settingsResponse.campaign_name,
-                  internalName: settingsResponse.internal_name,
-                  goal: settingsResponse.goal,
-                  shortUrl: settingsResponse.url,
-                  defaultDesignation: settingsResponse.default_designation
+               console.log("asdfsdfsf", settingsResponse)
+               setCampaignDetails({
+                  campaignName: settingsResponse.external_name || "",
+                  internalName: settingsResponse.internal_name || "",
+                  goal: settingsResponse.goal || 0,
+                  url: settingsResponse.url || "",
+                  defaultDesignation: settingsResponse.default_designation || 0
                })
 
                setCampaignType(settingsResponse.type)
                setStatus(settingsResponse.status)
 
-               const previewResponse = await getCampaignPreview(campaignId)
-               setPreviewInputs({
-                  headline: previewResponse.headline,
-                  description: previewResponse.description,
-                  image: previewResponse.image,
-                  // heading: previewResponse.heading,
-                  bg_color: previewResponse.bg_color,
-                  p_color: previewResponse.p_color,
-                  s_color: previewResponse.s_color,
-                  // h_color: previewResponse.h_color,
-                  // ht_color: previewResponse.ht_color, //header text color
-                  b1_color: previewResponse.b1_color, //button one color (donate)
-                  b2_color: previewResponse.b2_color, //button two color (share)
-                  b3_color: previewResponse.b3_color, //button three color (money)
-                  // m_color: previewResponse.m_color, //modal color
+               const donationResponse = await getDonationPage(campaignId)
+               const donationPageId = donationResponse.id
+               console.log("donationresponse", donationResponse)
+               setDonationPageInputs({
+                  headline: donationResponse.headline || "",
+                  description: donationResponse.description || "",
+                  image: donationResponse.image || "",
+                  bg_color: donationResponse.bg_color || "",
+                  p_color: donationResponse.p_color || "",
+                  s_color: donationResponse.s_color || "",
+                  b1_color: donationResponse.b1_color || "", //button one color (donate)
+                  b2_color: donationResponse.b2_color || "", //button two color (share)
+                  b3_color: donationResponse.b3_color || "", //button three color (money)
+                  button1: donationResponse.button1 || 0,
+                  button2: donationResponse.button2 || 0,
+                  button3: donationResponse.button3 || 0,
+                  button4: donationResponse.button4 || 0,
+                  button5: donationResponse.button5 || 0,
+                  button6: donationResponse.button6 || 0,
                })
 
-               setAmountInputs({
-                  button1: previewResponse.button1,
-                  button2: previewResponse.button2,
-                  button3: previewResponse.button3,
-                  button4: previewResponse.button4,
-                  button5: previewResponse.button5,
-                  button6: previewResponse.button6,
+               console.log("donatonid", donationPageId)
+               const donationSections = await getPageSections(donationPageId)
+               setDonationPageSections((prevSections) => {
+                  return prevSections.map(section => {
+                     const match = donationSections.find((item) => item.name == section.name)
+                     return {...section, id: match.id, active: match.active }
+                  })
+               })
+
+               const thankyouPageResponse = await getThankYouPage(campaignId)
+               const thankyouPageId = thankyouPageResponse.id
+               setThankPageInputs({
+                  headline: thankyouPageResponse.headline || "",
+                  description: thankyouPageResponse.description || "",
+                  bgImage: thankyouPageResponse.bgImage || "",
+                  bg_color: thankyouPageResponse.bg_color || "",
+                  p_color: thankyouPageResponse.p_color || "",
+                  s_color: thankyouPageResponse.s_color || ""
+               })
+               const thankSections = await getPageSections(thankyouPageId)
+               setThankyouPageSections((prevSections) => {
+                  return prevSections.map(section => {
+                     const match = thankSections.find((item) => item.name == section.name)
+                     return { ...section, id: match.id, active: match.active }
+                  })
                })
 
                const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
@@ -154,10 +143,8 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
                const questionResponse = await getCustomQuestions(campaignId)
                setCustomQuestions(questionResponse)
             }
-
             const designationResponse = await getActiveDesignations(organization_id)
             setDesignations(designationResponse)
- 
          } catch (err) {
             console.log(err)
          }
@@ -168,12 +155,11 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
 
    return (
       <CampaignContext.Provider value={{
-         status, previewInputs, settingsInputs, handlePreviewInputsChange, 
-         handleSettingsInputsChange, setPreviewInputs, selectedDesignations, setSelectedDesignations, 
-         designations, customQuestions, setCustomQuestions, aboutInputs, handleAboutInputsChange,
-         questionInputs, handleQuestionInputsChange, amountInputs, handleAmountInputsChange, 
-         defaultDesignation, setDefaultDesignation, sections, setSections, designSections, setDesignSections,
-         thankInputs, handleThankInputsChange, campaignType, landingSections, setLandingSections
+         status, donationPageInputs, handleDonationPageInputsChange, selectedDesignations, setSelectedDesignations, 
+         designations, customQuestions, setCustomQuestions, questionInputs, handleQuestionInputsChange, 
+         defaultDesignation, setDefaultDesignation, donationPageSections, setDonationPageSections, thankyouPageSections, setThankyouPageSections,
+         thankPageInputs, handleThankPageInputsChange, campaignType, landingSections, setLandingSections, ticketsPageInputs,
+         handleTicketsPageInputs, campaignDetails, handleCampaignDetailsChange
       }}>
          {children}
       </CampaignContext.Provider>

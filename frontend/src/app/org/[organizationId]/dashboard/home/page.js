@@ -74,7 +74,7 @@ const Home = ({params}) => {
    
 
    return (
-<div className="w-full h-full p-4 text-gray-800">
+<div className="w-full h-full text-gray-800">
   <div className="w-full h-full rounded-sm overflow-y-auto p-6  bg-white">
     <h1 className="text-3xl font-semibold text-start mb-10 px-8 text-gray-700">
       Welcome Back, {userData && userData.first_name}!

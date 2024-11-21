@@ -2,43 +2,34 @@ import { db } from "../db.js"
 
 export const createCampaign = (req, res) => {
    const q = "SELECT * FROM campaigns WHERE url = ?"
+   // if (data.length > 0) return res.status(409).json("Short URL already in use")
 
-   db.query(q, [req.body.url], (err, data) => {
-      if (err) return res.status(500).json(err)
-      // if (data.length > 0) return res.status(409).json("Short URL already in use")
+   const query = "INSERT INTO campaigns (`organization_id`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES (?)"
 
-      const query = "INSERT INTO campaigns (`organization_id`, `default_designation`, `campaign_name`, `internal_name`, `goal`, `raised`, `donations`, `visits`, `status`, `created_at`, `updated_at`, `created_by`, `updated_by`, `url`, `type`) VALUES (?)"
-
-      const values = [
-         req.body.organization_id,
-         req.body.defaultDesignation,
-         req.body.campaignName,
-         req.body.internalName,
-         req.body.goal,
-         0,
-         0,
-         0,
-         req.body.status,
-         (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-         (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-         req.body.created_by,
-         req.body.created_by,
-         req.body.url,
-         req.body.type
-      ]
-         
-      db.query(query, [values], (err, data) => {
-         if (err) return res.json(err)
-         console.log(data)
-         return res.status(200).json(data.insertId)
-      })
+   const values = [
+      req.body.organization_id,
+      (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+      (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+      req.body.created_by,
+      req.body.created_by,
+   ]
+      
+   db.query(query, [values], (err, data) => {
+      if (err) return res.json(err)
+      console.log(data)
+      return res.status(200).json(data.insertId)
    })
 }
 
 export const getCampaign = (req, res) => {
    // const query = "SELECT * FROM campaigns WHERE `id` = ?"
 
-   const query = "SELECT campaigns.*, users.first_name, users.last_name FROM campaigns INNER JOIN users on campaigns.updated_by = users.id WHERE campaigns.id = ?"
+   const query = `
+      SELECT campaigns.*, campaign_details.*, users.first_name, users.last_name 
+      FROM campaigns 
+      INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+      INNER JOIN users on campaigns.updated_by = users.id 
+      WHERE campaigns.id = ?`
 
    const value = req.params.id
 
@@ -63,10 +54,13 @@ export const searchCampaigns = (req, res) => {
 }
 
 export const getCampaignsByOrg = (req, res) => {
-   const query = "SELECT * FROM campaigns WHERE `organization_id` = ? "
-   const value = req.params.id
-
-   console.log("campaign", value)
+   const query = `
+      SELECT campaigns.id, campaign_details.*
+      FROM campaigns
+      INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+      WHERE campaigns.organization_id = ?
+   `
+   const value = [req.params.id]
 
    db.query(query, value, (err, data) => {
       if (err) return res.json(err)

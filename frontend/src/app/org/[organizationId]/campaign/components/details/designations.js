@@ -4,7 +4,7 @@ import { CampaignContext } from "@/app/context/campaignContext"
 
 
 const DesignationsComponent = () => {
-   const {designations, selectedDesignations, setSelectedDesignations, aboutInputs, handleAboutInputsChange} = useContext(CampaignContext)
+   const {designations, selectedDesignations, setSelectedDesignations, campaignDetails, handleCampaignDetailsChange} = useContext(CampaignContext)
 
    const handleChange= (designation, isChecked) => {
       setSelectedDesignations(prev => {
@@ -27,87 +27,87 @@ const DesignationsComponent = () => {
    }  
 
    return (
-<div className="w-full max-w-4xl mx-auto py-8 px-6">
-   <h1 className="text-4xl font-light text-gray-900 mb-4">Designations</h1>
-   <h3 className="text-md text-gray-600 mb-8">Select the designations that users will be able to delegate their donation to:</h3>
-   
-   <div className="border-b border-gray-300 my-4"/>
+      <div className="w-full max-w-4xl mx-auto py-8 px-6">
+         <h1 className="text-4xl font-light text-gray-900 mb-4">Designations</h1>
+         <h3 className="text-md text-gray-600 mb-8">Select the designations that users will be able to delegate their donation to:</h3>
+         
+         <div className="border-b border-gray-300 my-4"/>
 
-   {/* Default Designation Section */}
-   <div className="flex flex-row items-center py-4 w-full">
-      <div className="flex flex-col w-1/3">
-         <h1 className="text-xl font-semibold mb-2">Default <span className="text-red-500">*</span></h1>
-         <p className="text-sm text-gray-600">Select the default designation that users will donate to.</p>
-      </div>
+         {/* Default Designation Section */}
+         <div className="flex flex-row items-center py-4 w-full">
+            <div className="flex flex-col w-1/3">
+               <h1 className="text-xl font-semibold mb-2">Default <span className="text-red-500">*</span></h1>
+               <p className="text-sm text-gray-600">Select the default designation that users will donate to.</p>
+            </div>
 
-      <div className="w-2/3 p-4">
-         <select 
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={aboutInputs.defaultDesignation == 0 ? "" : aboutInputs.defaultDesignation}
-            name="defaultDesignation"
-            onChange={handleAboutInputsChange}
-         >
-            <option value="" disabled>Select an Option</option>
-            {designations.map(item => (
-               <option value={item.id} key={item.id}>{item.title}</option>
-            ))}
-         </select>
-      </div>
-   </div>
-
-   <div className="border-b border-gray-300 my-4"/>
-
-   {/* Active Designations Section */}
-   <div className="px-2 py-4">
-      <h1 className="text-xl font-semibold mb-2">Active Designations</h1>
-      <p className="text-sm text-gray-600 w-1/2 mb-4">These are the designations that users will be able to direct their donations towards for this campaign.</p>
-
-      {selectedDesignations.map((item, index) => (
-         <div key={index} className="w-full p-4 bg-gray-100 flex flex-row justify-between rounded-md mb-2">
-            <p>{item.title}</p>
-            <button onClick={() => handleRemove(item.id)} className="text-gray-600 hover:text-red-500">
-               <FaTrash />
-            </button>
+            <div className="w-2/3 p-4">
+               <select 
+                  className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={campaignDetails.defaultDesignation == 0 ? "" : campaignDetails.defaultDesignation}
+                  name="defaultDesignation"
+                  onChange={handleCampaignDetailsChange}
+               >
+                  <option value="" disabled>Select an Option</option>
+                  {designations.map(item => (
+                     <option value={item.id} key={item.id}>{item.title}</option>
+                  ))}
+               </select>
+            </div>
          </div>
-      ))}
-   </div>
 
-   <div className="border-b border-gray-300 my-4"/>
+         <div className="border-b border-gray-300 my-4"/>
 
-   {/* All Designations Section */}
-   <div className="px-2 py-4">
-      <h1 className="text-xl font-semibold mb-2">All Designations</h1>
-      <p className="text-sm text-gray-600 w-1/2 mb-4">These are all active designations in your organization.</p>
+         {/* Active Designations Section */}
+         <div className="px-2 py-4">
+            <h1 className="text-xl font-semibold mb-2">Active Designations</h1>
+            <p className="text-sm text-gray-600 w-1/2 mb-4">These are the designations that users will be able to direct their donations towards for this campaign.</p>
 
-      <div className="px-6">
-         <table className="min-w-full bg-white border-gray-300 rounded-md">
-            <thead className="border-b border-gray-300">
-               <tr>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Add</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Designation Title</th>
-               </tr>
-            </thead>
+            {selectedDesignations.map((item, index) => (
+               <div key={index} className="w-full p-4 bg-gray-100 flex flex-row justify-between rounded-md mb-2">
+                  <p>{item.title}</p>
+                  <button onClick={() => handleRemove(item.id)} className="text-gray-600 hover:text-red-500">
+                     <FaTrash />
+                  </button>
+               </div>
+            ))}
+         </div>
 
-            <tbody>
-               {designations.map((item, index) => (
-                  <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                     <td className="px-4 py-2 text-sm">
-                        <input 
-                           type="checkbox" 
-                           value={item.id} 
-                           onChange={(e) => handleChange(item, e.target.checked)}
-                           checked={selectedDesignations.some(designation => designation.id === item.id)}
-                           className="focus:ring-2 focus:ring-blue-500"
-                        />
-                     </td>
-                     <td className="px-4 py-2 text-sm text-start">{item.title}</td>
-                  </tr>
-               ))}
-            </tbody>
-         </table>
+         <div className="border-b border-gray-300 my-4"/>
+
+         {/* All Designations Section */}
+         <div className="px-2 py-4">
+            <h1 className="text-xl font-semibold mb-2">All Designations</h1>
+            <p className="text-sm text-gray-600 w-1/2 mb-4">These are all active designations in your organization.</p>
+
+            <div className="px-6">
+               <table className="min-w-full bg-white border-gray-300 rounded-md">
+                  <thead className="border-b border-gray-300">
+                     <tr>
+                        <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Add</th>
+                        <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Designation Title</th>
+                     </tr>
+                  </thead>
+
+                  <tbody>
+                     {designations.map((item, index) => (
+                        <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
+                           <td className="px-4 py-2 text-sm">
+                              <input 
+                                 type="checkbox" 
+                                 value={item.id} 
+                                 onChange={(e) => handleChange(item, e.target.checked)}
+                                 checked={selectedDesignations.some(designation => designation.id === item.id)}
+                                 className="focus:ring-2 focus:ring-blue-500"
+                              />
+                           </td>
+                           <td className="px-4 py-2 text-sm text-start">{item.title}</td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
+         </div>
       </div>
-   </div>
-</div>
 
    )
 }

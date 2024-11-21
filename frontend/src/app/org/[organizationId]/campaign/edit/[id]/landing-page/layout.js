@@ -4,12 +4,12 @@ import Display from "../../../components/previews/landingPage/display"
 
 const LandingPageLayout = ({params, children}) => {
 
-   const campaignId = params.campaignId
+   const campaignId = params.id
    const organizationId = params.organizationId
 
    const links = [
-      `/org${organizationId}/campaign/${campaignId}/edit/landing-page`,
-      `/org${organizationId}/campaign/${campaignId}/edit/landing-page/design`
+      `/org/${organizationId}/campaign/edit/${campaignId}/landing-page`,
+      `/org/${organizationId}/campaign/edit/${campaignId}/landing-page/design`
    ]
 
    return (

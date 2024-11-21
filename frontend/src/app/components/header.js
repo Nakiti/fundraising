@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 
-const Header = () => {
+const Header = ({organizationId}) => {
    const {currentUser} = useContext(AuthContext)
    console.log(currentUser)
    const [isClient, setIsClient] = useState(false);
@@ -16,7 +16,7 @@ const Header = () => {
    return (
       <div className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-sm" style={{height: "10vh"}}>
          <Link href="/" className="text-lg font-bold">Title</Link>
-         {isClient && <Link href={!currentUser ? "/login" : "/org/dashboard/campaigns"} className="text-black font-semibold mr-4 hover:text-gray-700">{!currentUser ? "Login" : "Dashboard"}</Link>}
+         {isClient && <Link href={!currentUser ? "/login" : `/profile`} className="text-black font-semibold mr-4 hover:text-gray-700">{!currentUser ? "Login" : "Profile"}</Link>}
       </div>
    );
 }

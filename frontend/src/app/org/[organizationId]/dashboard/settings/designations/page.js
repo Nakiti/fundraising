@@ -71,7 +71,7 @@ const Designations = ({params}) => {
    };
 
    return (
-      <div className="w-full h-full p-4">
+      <div className="w-full h-full">
          <div className="w-full h-full p-8 bg-white overflow-y-auto">
             <div className="p-6">
                <h1 className="text-3xl font-semibold mb-4 text-gray-800">Designations</h1>

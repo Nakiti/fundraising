@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDetails } from "@/app/services/fetchService"
+import { getCampaign, getCampaignDetails } from "@/app/services/fetchService"
 
 import { useState, useEffect, useContext } from "react"
 import Link from "next/link"
@@ -28,9 +28,9 @@ const CampaignPage = ({params}) => {
    }, [])
 
    const fetchData = async() => {
-      const campaignResponse = await getCampaignDetails(campaignId)
+      const campaignResponse = await getCampaign(campaignId)
       setCampaign(campaignResponse)
-      console.log(campaignResponse)
+      console.log("asas", campaignResponse)
    }
 
    return (
@@ -55,6 +55,7 @@ const CampaignPage = ({params}) => {
                            ${campaign.status === "inactive" ? "bg-red-700" : "bg-green-700"}`}
                         >
                            {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1).toLowerCase()}
+
                         </p>
                      </div>
 

@@ -5,13 +5,12 @@ import SectionManager from "@/app/components/sectionManager"
 
 
 const ElementInputs = () => {
-   const {sections, setSections} = useContext(CampaignContext)
-
+   const {donationPageSections, setDonationPageSections} = useContext(CampaignContext)
 
    return (
       <div className="w-full">
-         {sections.map(section => {
-            return <SectionManager section={section} sections={sections} setSections={setSections}/>
+         {donationPageSections.map((section, index) => {
+            return <SectionManager key={index} section={section} sections={donationPageSections} setSections={setDonationPageSections}/>
          })}
       </div>
    )

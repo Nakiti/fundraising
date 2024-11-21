@@ -1,11 +1,12 @@
 "use client"
 import Link from "next/link"
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { SlOptionsVertical } from "react-icons/sl";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getCampaignDetails } from "@/app/services/fetchService";
+import { MdOutlineCampaign } from "react-icons/md";
 
 
 
@@ -18,7 +19,8 @@ const CampaignPageLayout = ({children, params}) => {
    const links = [
       {title: "Overview", pathName: `/org/${organizationId}/dashboard/campaigns/${campaignId}`},
       {title: "Insights", pathName: `/org/${organizationId}/dashboard/campaigns/${campaignId}/insights`},
-      {title: "Transactions", pathName: `/org/${organizationId}/dashboard/campaigns/${campaignId}/transactions`}
+      {title: "Transactions", pathName: `/org/${organizationId}/dashboard/campaigns/${campaignId}/transactions`},
+      {title: "Share", pathName: `/org/${organizationId}/dashboard/campaigns/${campaignId}/share`}
    ]
 
    useEffect(() => {
@@ -26,7 +28,7 @@ const CampaignPageLayout = ({children, params}) => {
          
          try {
             const response = await getCampaignDetails(campaignId)
-            console.log(response)
+            // console.log(response)
             setCampaign(response)
          } catch (err) {
             console.log(err)
@@ -39,21 +41,17 @@ const CampaignPageLayout = ({children, params}) => {
 
    return (
       <div className="overflow-y-auto h-screen">
-         <div className="bg-gray-800 w-full px-6 pt-4 text-white">
-            <Link href={`/org/${organizationId}/dashboard/campaigns`} className="flex flex-row px-4 py-3 items-center cursor-pointer hover:text-gray-200">
-               <FaArrowLeft className="text-xl" />
-               <p className="ml-3 text-sm font-semibold">Campaigns</p>
+         <div className="bg-gray-800 w-full px-4 pt-2 text-white">
+            <Link href={`/org/${organizationId}/dashboard/campaigns`} className="flex flex-row px-4 py-2 items-center cursor-pointer hover:text-gray-200">
+               <FaArrowLeft className="text-sm" />
+               <p className="ml-2 text-sm font-semibold">Campaigns</p>
             </Link>
 
             <div className="flex flex-row px-6 py-4 w-full justify-between">
                <div className="flex flex-row items-center">
-                  <img 
-                     src="404image" 
-                     className="h-16 w-16 rounded-full mr-6 object-cover" 
-                     alt="Campaign Image"
-                  />
+                  <MdOutlineCampaign className="h-12 w-12 p-1 border-2 border-white rounded-sm mr-4"/>
                   <div className="flex flex-col text-gray-100">
-                     <h1 className="text-2xl font-semibold">{campaign && campaign.campaign_name}</h1>
+                     <h1 className="text-2xl font-semibold">{campaign && campaign.external_name}</h1>
                      <p className="text-sm mt-1 text-gray-400">{campaign && campaign.type}</p>
                   </div>
                </div>
@@ -71,7 +69,7 @@ const CampaignPageLayout = ({children, params}) => {
                </div>
             </div>
 
-            <div className="w-1/3 px-6 flex flex-row justify-between">
+            <div className="w-1/3 px-6 space-x-4 flex flex-row justify-between">
                {links.map((item, index) => (
                   <Link 
                      key={index} 

@@ -2,29 +2,56 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:4000/api';
 
-export const createCampaign = async(currentUser, type, organizationId) => {
+export const createCampaign = async(currentUser, organizationId) => {
    try {
       const campaignId = await axios.post(`${API_BASE_URL}/campaign/create`, {
-         defaultDesignation: 0,
-         campaignName: "",
-         internalName: "",
-         goal: 0,
-         url: "",
-         status: "inactive",
          organization_id: organizationId,
          created_by: currentUser.id,
-         type: type
       })
-      
       console.log("camapignid", campaignId.data)
       return campaignId.data
    } catch (err) {
       console.log(err)
       return {id: null, error: err.response.data}
    }
+}
 
-   // create campaign with just type and id
-   // use update campaign on all future edits/changes to organization
+export const createCampaignDetails = async (campaignId, currentUser, type) => {
+   try {
+      await axios.post(`${API_BASE_URL}/campaign_details/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.id,
+         type: type
+      })
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createThankYouPage = async (campaignId, currentUser) => {
+   try {
+      const pageId = await axios.post(`${API_BASE_URL}/thankYouPage/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.id
+      })
+
+      return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createPageSection = async(pageId, name, active, currentUser) => {
+   try {
+      await axios.post(`${API_BASE_URL}/sections/create`, {
+         page_id: pageId,
+         name: name,
+         active: active, 
+         user_id: currentUser.id
+      })
+   } catch (err) {
+      console.log(err)
+   }
 }
 
 export const createDesignation = async (data) => {

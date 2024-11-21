@@ -4,7 +4,7 @@ import { useContext } from "react"
 
 const BackgroundSection = () => {
 
-   const {handleThankInputsChange} = useContext(CampaignContext)
+   const {handleThankPageInputsChange} = useContext(CampaignContext)
    const {handleImageUpload} = useImageUpload()
 
 
@@ -19,9 +19,9 @@ const BackgroundSection = () => {
                <input 
                   type="file"
                   className="hidden" 
-                  name="backgroundImage"
+                  name="bgImage"
                   accept="image/*"
-                  onChange={(e) => handleImageUpload(e, handleThankInputsChange)}
+                  onChange={(e) => handleImageUpload(e, handleThankPageInputsChange)}
                />
             </label>                  
          </div>

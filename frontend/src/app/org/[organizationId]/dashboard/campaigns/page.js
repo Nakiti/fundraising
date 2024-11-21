@@ -19,6 +19,7 @@ const Campaigns = ({params}) => {
          try {
             const response = await getAllCampaigns(organizationId)
             setData(response)
+            console.log(response)
          } catch (err) {
             console.log(err)
          }
@@ -28,9 +29,9 @@ const Campaigns = ({params}) => {
    }, [organizationId])
 
    return (
-      <div className="w-full h-full p-4">
+      <div className="w-full h-full overflow-y-auto bg-white p-4">
          {showModal && <Modal setShow={setShowModal} organizationId={organizationId}/>}
-         <div className="w-full h-full bg-white overflow-y-auto rounded-md p-4">
+         <div className="w-full h-full rounded-md p-4">
             <div className="flex flex-row p-6 w-full justify-between items-center">
                <h1 className="text-4xl">Campaigns</h1>
                {/* <Link href="/org/campaign/new/details/about" >

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 
 const TitleSection = () => {
-   const {previewInputs, handlePreviewInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
 
    const handleImageUpload = (e) => {
       const file = e.target.files[0];
@@ -42,8 +42,8 @@ const TitleSection = () => {
                rows={2}
                placeholder="Enter a Headline "
                name="headline"
-               value={previewInputs.headline}
-               onChange={handlePreviewInputsChange}
+               value={donationPageInputs.headline}
+               onChange={handleDonationPageInputsChange}
             />
          </div>
       </div>

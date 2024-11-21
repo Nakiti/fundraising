@@ -32,9 +32,7 @@ export const register = (req, res) => {
 
 export const get = (req, res) => {
    const query = "SELECT * FROM organizations WHERE id = ?"
-
    const id = req.params.id;
-
    console.log("id", id)
 
    db.query(query, [id], (err, data) => {

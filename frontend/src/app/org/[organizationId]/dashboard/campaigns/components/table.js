@@ -62,84 +62,83 @@ const Table = ({setData, data, organizationId}) => {
    }
 
    return (
-   <div className="px-6 mt-4 mb-4">
-      <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
-         <thead className="bg-gray-100 border-b border-gray-300">
-            <tr>
-            {columns.map((column, index) => (
-               <th
-                  key={index}
-                  className="px-4 py-3 text-left text-gray-700 text-sm font-semibold cursor-pointer hover:text-gray-900 transition-colors"
-                  onClick={() => sortData(column.id)}
-               >
-                  <div className="flex items-center">
-                  {column.label}
-                  {column.sortable && (
-                     <span className="ml-1 text-gray-500">
-                        {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
-                        <FaSortUp className="ml-2 text-blue-600" />
-                        ) : (
-                        <FaSortDown className="ml-2 text-blue-600" />
-                        )}
-                     </span>
-                  )}
-                  </div>
-               </th>
-            ))}
-            </tr>
-         </thead>
-
-         <tbody>
-            {currentRows && currentRows.map((row, index) => (
-            <tr
-               key={index}
-               className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-               onClick={() => handleClick(row.id)}
-            >
-               <td className="px-4 py-3 text-center text-md text-gray-700">{row.campaign_name}</td>
-               <td className="px-4 py-2 text-center text-sm text-gray-600">
-                  {new Date(row.created_at).toLocaleDateString("en-US")}
-               </td>
-               <td className="px-4 py-2 text-center text-sm text-gray-600">{row.raised}</td>
-               <td className="px-4 py-2 text-center text-sm text-gray-600">{row.goal}</td>
-               <td className="px-4 py-2 text-center text-sm text-gray-600">{row.donations}</td>
-               <td className="px-4 py-2 text-center text-sm text-gray-600">{row.visits}</td>
-               <td className="px-4 py-2 text-center text-sm text-gray-600">
-                  {row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase()}
-               </td>
-               <td className="px-4 py-2 text-center">
-                  <span
-                  className={`px-4 py-1 w-24 rounded-full text-white text-xs font-medium ${
-                     row.status === "inactive" ? "bg-red-500" : "bg-green-500"
-                  }`}
+      <div className="px-6 mt-6 mb-4">
+         <table className="min-w-full bg-white border-gray-300">
+            <thead className=" border-b border-gray-300">
+               <tr>
+               {columns.map((column, index) => (
+                  <th
+                     key={index}
+                     className="px-4 py-3 text-left text-gray-700 text-sm font-semibold cursor-pointer hover:text-gray-900 transition-colors"
+                     onClick={() => sortData(column.id)}
                   >
-                  {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
-                  </span>
-               </td>
-            </tr>
-            ))}
-         </tbody>
-      </table>
+                     <div className="flex items-center">
+                     {column.label}
+                     {column.sortable && (
+                        <span className="ml-1 text-gray-500">
+                           {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
+                           <FaSortUp className="ml-2 text-blue-600" />
+                           ) : (
+                           <FaSortDown className="ml-2 text-blue-600" />
+                           )}
+                        </span>
+                     )}
+                     </div>
+                  </th>
+               ))}
+               </tr>
+            </thead>
 
-      <div className="flex justify-between items-center mt-6 text-gray-600 text-sm w-1/2 mx-auto">
-         <button
-            className="flex items-center px-3 py-2 rounded-full hover:bg-gray-200 transition-colors"
-            onClick={handlePreviousPage}
-         >
-            <FaAngleLeft />
-            <span className="ml-1">Previous</span>
-         </button>
-         <p>Page {currentPage} / {totalPages}</p>
-         <button
-            className="flex items-center px-3 py-2 rounded-full hover:bg-gray-200 transition-colors"
-            onClick={handleNextPage}
-         >
-            <span className="mr-1">Next</span>
-            <FaAngleRight />
-         </button>
+            <tbody>
+               {currentRows && currentRows.map((row, index) => (
+               <tr
+                  key={index}
+                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => handleClick(row.campaign_id)}
+               >
+                  <td className="px-4 py-3 text-center text-md text-gray-700">{row.external_name}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">
+                     {new Date(row.created_at).toLocaleDateString("en-US")}
+                  </td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.raised}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.goal}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.donations}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.visits}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">
+                     {row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase()}
+                  </td>
+                  <td className="px-4 py-2 text-center">
+                     <span
+                     className={`px-4 py-1 w-24 rounded-full text-white text-xs font-medium ${
+                        row.status === "inactive" ? "bg-red-500" : "bg-green-500"
+                     }`}
+                     >
+                     {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
+                     </span>
+                  </td>
+               </tr>
+               ))}
+            </tbody>
+         </table>
+
+         <div className="flex justify-between items-center my-2 pb-4 text-gray-600 text-sm w-1/2 mx-auto">
+            <button
+               className="flex items-center px-3 py-2 rounded-full hover:bg-gray-200 transition-colors"
+               onClick={handlePreviousPage}
+            >
+               <FaAngleLeft />
+               <span className="ml-1">Previous</span>
+            </button>
+            <p>Page {currentPage} / {totalPages}</p>
+            <button
+               className="flex items-center px-3 py-2 rounded-full hover:bg-gray-200 transition-colors"
+               onClick={handleNextPage}
+            >
+               <span className="mr-1">Next</span>
+               <FaAngleRight />
+            </button>
+         </div>
       </div>
-   </div>
-
    );
 };
 

@@ -17,9 +17,9 @@ const Ticket = () => {
    }
 
    return (
-      <div className="w-full">
-         <h1 className="text-3xl mb-2 font-light">Tickets</h1>
-         <h3 className="text-md text-gray-600 mb-8">Manage Tickets</h3>
+      <div className="w-full  max-w-4xl mx-auto py-8 px-6">
+         <h1 className="text-4xl font-light text-gray-900 mb-4">Tickets</h1>
+         <h3 className="text-md text-gray-600 mb-10">Manage Tickets</h3>
 
 
          <div className="bg-gray-100 px-8 py-4">

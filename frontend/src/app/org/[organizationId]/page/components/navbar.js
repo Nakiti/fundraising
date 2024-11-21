@@ -2,13 +2,14 @@ import Link from "next/link"
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
 
-const Navbar = ({links, title}) => {
+const Navbar = ({organizationId , links, title}) => {
    const pathName = usePathname()
+   
 
    return (
-      <div className="border-b border-gray-100 bg-gray-700 shadow-sm text-black">
+      <div className="border-b border-gray-100 bg-gray-800 shadow-sm text-black">
          <div className="flex flex-row py-2">
-            <Link href="/org/dashboard/pages" className="px-4 flex items-center"> <IoMdArrowRoundBack className="text-xl text-white"/></Link>
+            <Link href={`/org/${organizationId}/dashboard/pages`} className="px-4 flex items-center"> <IoMdArrowRoundBack className="text-xl text-white"/></Link>
             {/* <div className="border-r h-8 border-gray-300"/> */}
          </div>
          <div className="flex items-center justify-between w-11/12 mx-auto py-4">
@@ -25,7 +26,7 @@ const Navbar = ({links, title}) => {
 
             <div className="flex space-x-4 text-md">
                <button 
-                  className="bg-blue-700 hover:bg-blue-600 py-2 px-10 rounded-md text-gray-100"
+                  className="bg-blue-800 hover:bg-blue-600 py-2 px-10 rounded-md text-gray-100"
                   // onClick={handleSave}
                >
                   Save
@@ -33,16 +34,16 @@ const Navbar = ({links, title}) => {
             </div>
          </div>
 
-         <div className="flex flex-row space-x-8 w-11/12 mx-auto mt-4 text-white mb-1">
+         <div className="flex flex-row space-x-8 w-11/12 mx-auto mt-4 text-white">
             <Link
-               className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName == links[0] ? "border-white" : "border-transparent"}`}
+               className={`cursor-pointer text-md border-b-4 py-1 px-8 ${pathName == links[0] ? "border-blue-800" : "border-transparent"}`}
                href={links[0]}
             >
                Elements
             </Link> 
             
             <Link
-               className={`cursor-pointer text-md border-b-2 py-1 px-8 ${pathName == links[1] ? "border-white" : "border-transparent"}`}
+               className={`cursor-pointer text-md border-b-4 py-1 px-8 ${pathName == links[1] ? "border-blue-800" : "border-transparent"}`}
                href={links[1]}
             >
                Design

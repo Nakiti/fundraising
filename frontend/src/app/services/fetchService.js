@@ -4,7 +4,7 @@ const API_BASE_URL = 'http://localhost:4000/api';
 
 //Campaign
 
-export const getCampaignDetails = async (campaignId) => {
+export const getCampaign = async (campaignId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/campaign/get/${campaignId}`);
       return response.data[0];
@@ -13,10 +13,37 @@ export const getCampaignDetails = async (campaignId) => {
    }
 };
 
-export const getCampaignPreview = async (campaignId) => {
+export const getCampaignDetails = async (campaignId) => {
    try {
-      const response = await axios.get(`${API_BASE_URL}/preview/get/${campaignId}`)
+      const response = await axios.get(`${API_BASE_URL}/campaign_details/get/${campaignId}`)
+      return response.data[0]
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getPageSections = async (pageId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/sections/getSectionsByPage/${pageId}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getDonationPage = async (campaignId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/donationPage/get/${campaignId}`)
       console.log(response)
+      return response.data[0]
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getThankYouPage = async(campaignId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/thankYouPage/get/${campaignId}`)
       return response.data[0]
    } catch (err) {
       console.log(err)

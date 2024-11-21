@@ -1,28 +1,36 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "./authContext";
 import useFormInput from "../hooks/useFormInput";
-import { getLandingPage } from "../services/fetchService";
 import BannerSection from "../org/[organizationId]/page/landing/components/sections/bannerSection";
 import AboutSection from "../org/[organizationId]/page/landing/components/sections/aboutSection";
 import ImpactSection from "../org/[organizationId]/page/landing/components/sections/impactSection";
+import LargeTextSection from "../org/[organizationId]/page/landing/components/sections/largeTextSection";
+import TripleSection from "../org/[organizationId]/page/landing/components/sections/tripleSection";
 
 export const LandingPageContext = createContext()
 
-export const LandingPageContextProvider = ({children}) => {
-   const {currentUser} = useContext(AuthContext)
-   const organizationId = currentUser.organization_id
+export const LandingPageContextProvider = ({organizationId, children}) => {
+   // const {currentUser} = useContext(AuthContext)
+   // const organizationId = currentUser.organization_id
  
    const [inputs, handleInputsChange, setInputs] = useFormInput({
+      //banner
       title: "",
       description: "",
       bgImage: "",
+      //main
+      mainHeadline: "",
+      mainText: "",
+      //about
       aboutImage: "",
       aboutText: "",
+      //impact
       impactImage: "",
       impactText: "",
+
       bg_color: "#FFFFFF",
-      p_color: "#000000",
-      s_color: "gray",
+      p_color: "white",
+      s_color: "white",
       c_color: "#FFFFFF",
       ct_color: "#000000",
       b_color: "blue",
@@ -32,9 +40,11 @@ export const LandingPageContextProvider = ({children}) => {
 
    const [sections, setSections] = useState([
       {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
+      {name: "main", displayText: "Main Section", active: true, required: false, dropdown: false, content: <LargeTextSection />},
       {name: "about", displayText: "About Section", active: false, required: false, dropdown: false, content: <AboutSection />},
       {name: "impact", displayText: "Impact Section", active: false, required: false, dropdown: false, content: <ImpactSection />},
-      {name: "featured", displayText: "Featured Campaign", active: false, required: false, dropdown: false, content: <ImpactSection />}
+      {name: "featured", displayText: "Featured Campaign", active: false, required: false, dropdown: false, content: <ImpactSection />},
+      {name: "triple", displayText: "Triple Section", active: false, required: false, dropdown: false, content: <TripleSection />}
    ])
 
    // useEffect(() => {

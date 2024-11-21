@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const MessageSection = () => {
-   const {thankInputs, handleThankInputsChange} = useContext(CampaignContext)
+   const {thankPageInputs, handleThankPageInputsChange} = useContext(CampaignContext)
 
    return (
       <div>
@@ -15,8 +15,8 @@ const MessageSection = () => {
                rows={5}
                placeholder="Enter a headline"
                name="headline"
-               value={thankInputs.headline}
-               onChange={handleThankInputsChange} 
+               value={thankPageInputs.headline}
+               onChange={handleThankPageInputsChange} 
             />
          </div>
          <div className="my-4">
@@ -28,8 +28,8 @@ const MessageSection = () => {
                rows={5}
                placeholder="Enter a message"
                name="message"
-               value={thankInputs.message}
-               onChange={handleThankInputsChange} 
+               value={thankPageInputs.message}
+               onChange={handleThankPageInputsChange} 
             />
          </div>
       </div>
