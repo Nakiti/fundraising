@@ -1,11 +1,11 @@
-import ElementInputs from "@/app/org/campaign/components/previews/donationPage/elementInputs"
+// import ElementInputs from "@/app/org/campaign/components/previews/donationPage/elementInputs"
 
 
-const DonationPage = () => {
+// const DonationPage = () => {
 
-   return (
-      <ElementInputs />
-   )
-}
+//    return (
+//       <ElementInputs />
+//    )
+// }
 
-export default DonationPage
+// export default DonationPage

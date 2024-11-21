@@ -1,11 +1,11 @@
-import DesignInputs from "@/app/org/campaign/components/previews/donationPage/designInputs"
+// import DesignInputs from "@/app/org/campaign/components/previews/donationPage/designInputs"
 
 
-const Design = () => {
+// const Design = () => {
 
-   return (
-      <DesignInputs />
-   )
-}
+//    return (
+//       <DesignInputs />
+//    )
+// }
 
-export default Design
+// export default Design

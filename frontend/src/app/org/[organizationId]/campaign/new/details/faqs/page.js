@@ -1,12 +1,12 @@
-"use client"
+// "use client"
 
-const Faqs = () => {
+// const Faqs = () => {
 
-   return (
-      <div>
+//    return (
+//       <div>
 
-      </div>
-   )
-}
+//       </div>
+//    )
+// }
 
-export default Faqs
+// export default Faqs

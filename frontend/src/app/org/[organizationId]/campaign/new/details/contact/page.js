@@ -1,11 +1,11 @@
-"use client"
-import Contact from "../../../components/details/contact"
+// "use client"
+// import Contact from "../../../components/details/contact"
 
-const CampaignContact = () => {
+// const CampaignContact = () => {
 
-   return (
-      <Contact />
-   )
-}
+//    return (
+//       <Contact />
+//    )
+// }
 
-export default CampaignContact
+// export default CampaignContact

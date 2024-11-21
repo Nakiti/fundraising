@@ -1,12 +1,12 @@
-import ElementInputs from "../../components/previews/landingPage/elementInputs"
+// import ElementInputs from "../../components/previews/landingPage/elementInputs"
 
-const LandingPage = () => {
+// const LandingPage = () => {
 
-   return (
-      <div>
-         <ElementInputs />
-      </div>
-   )
-}
+//    return (
+//       <div>
+//          <ElementInputs />
+//       </div>
+//    )
+// }
 
-export default LandingPage
+// export default LandingPage

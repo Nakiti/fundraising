@@ -1,12 +1,12 @@
-"use client"
+// "use client"
 
-const Sharing = () => {
+// const Sharing = () => {
 
-   return (
-      <div>
+//    return (
+//       <div>
 
-      </div>
-   )
-}
+//       </div>
+//    )
+// }
 
-export default Sharing
+// export default Sharing

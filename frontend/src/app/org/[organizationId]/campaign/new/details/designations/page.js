@@ -1,17 +1,17 @@
-"use client"
-import DesignationsComponent from "@/app/org/campaign/components/details/designations";
-import { FaTrash } from "react-icons/fa"
+// "use client"
+// import DesignationsComponent from "@/app/org/campaign/components/details/designations";
+// import { FaTrash } from "react-icons/fa"
 
-const Designations = () => {
+// const Designations = () => {
 
-   const columns = [
-      { id: 'title', label: 'Title'},
-      { id: 'raised', label: 'Raised'},
-   ];
+//    const columns = [
+//       { id: 'title', label: 'Title'},
+//       { id: 'raised', label: 'Raised'},
+//    ];
 
-   return (
-      <DesignationsComponent />
-   )
-}
+//    return (
+//       <DesignationsComponent />
+//    )
+// }
 
-export default Designations
+// export default Designations

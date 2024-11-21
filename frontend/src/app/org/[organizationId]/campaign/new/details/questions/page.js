@@ -1,12 +1,12 @@
-"use client"
+// "use client"
 
-import QuestionsComponent from "@/app/org/campaign/components/details/questions"
+// import QuestionsComponent from "@/app/org/campaign/components/details/questions"
 
-const Questions = () => {
+// const Questions = () => {
 
-   return (
-      <QuestionsComponent />
-   )
-}
+//    return (
+//       <QuestionsComponent />
+//    )
+// }
 
-export default Questions
+// export default Questions

@@ -1,11 +1,11 @@
-"use client"
-import Ticket from "../../../components/details/ticket"
+// "use client"
+// import Ticket from "../../../components/details/ticket"
 
-const Tickets = () => {
+// const Tickets = () => {
 
-   return (
-      <Ticket />
-   )
-}
+//    return (
+//       <Ticket />
+//    )
+// }
 
-export default Tickets
+// export default Tickets

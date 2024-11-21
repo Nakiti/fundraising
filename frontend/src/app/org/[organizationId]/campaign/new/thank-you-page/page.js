@@ -1,10 +1,10 @@
-import ElementInputs from "../../components/previews/thankPage/elementInputs"
+// import ElementInputs from "../../components/previews/thankPage/elementInputs"
 
-const ThankYouPage = () => {
+// const ThankYouPage = () => {
 
-   return (
-      <ElementInputs />
-   )
-}
+//    return (
+//       <ElementInputs />
+//    )
+// }
 
-export default ThankYouPage
+// export default ThankYouPage
