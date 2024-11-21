@@ -16,10 +16,12 @@ import sectionRoutes from "./routes/sectionRoutes.js"
 import thankYouPageRoutes from "./routes/thankyou_pageRoutes.js"
 const app = express()
 
-const corsOptions ={
-   origin: true,
-   credentials: true
-}
+const corsOptions = {
+   origin: 'https://mango-river-06d82041e.5.azurestaticapps.net', // Explicit frontend origin
+   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+   credentials: true, // Required for cookies/credentials
+};
 
 app.use(express.json())
 app.use(cors(corsOptions))

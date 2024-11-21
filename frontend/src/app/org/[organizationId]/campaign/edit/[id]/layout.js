@@ -12,7 +12,7 @@ const EditLayout = ({params, children}) => {
    const campaignId = params.id
    const organizationId = params.organizationId
    const router = useRouter()
-   const {donationPageInputs, campaignDetails, selectedDesignations, customQuestions, thankPageInputs, donationPageSections, thankyouPageSections} = useContext(CampaignContext)
+   const {donationPageInputs, campaignDetails, selectedDesignations, customQuestions, thankPageInputs, donationPageSections, thankyouPageSections, campaignType} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
@@ -20,7 +20,7 @@ const EditLayout = ({params, children}) => {
    const detailsLink  = `/org/${organizationId}/campaign/edit/${campaignId}/details/about`
    
    const pageLinks = [
-      {path: `/org/${organizationId}/campaign/edit/${campaignId}/landing-page/`, title: "Landing Page"},
+      campaignType == "ticketed-event" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/landing-page/`, title: "Landing Page"} : null,
       {path: `/org/${organizationId}/campaign/edit/${campaignId}/donation-page/`, title: "Donation Page"},
       {path: `/org/${organizationId}/campaign/edit/${campaignId}/thank-you-page/`, title: "Thank You Page"}
    ]
