@@ -39,7 +39,7 @@ app.use("/api/campaign_details", campaign_detailRoutes)
 app.use("/api/sections", sectionRoutes)
 app.use("/api/thankyouPage", thankYouPageRoutes)
 
-const port = 4000
+const port = process.env.port ||  4000
 
 app.listen(port, (req, res) => {
    console.log("runninnnnnnnnnnnn")
