@@ -4,7 +4,7 @@ const Settings = ({params}) => {
    const organizationId = params.organizationId
 
    return (
-      <div className="w-full h-full p-4" >
+      <div className="w-full h-full" >
          <div className="w-full h-full flex flex-col p-8 overflow-y-auto rounded-sm">
             <h1 className="text-4xl mb-8">Settings</h1>
             <div className="grid grid-cols-2 gap-8 w-full">
