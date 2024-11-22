@@ -20,6 +20,10 @@ const Settings = ({params}) => {
                   <p className="text-xl text-black mb-4">Designations</p>
                   <p className="text-sm text-gray-700">Create and manage the designations that donors can donate to</p>
                </Link>
+               <Link href={`/org/${organizationId}/dashboard/settings/theme`} className="w-full bg-white rounded-md shadow-md p-8 h-48 hover:bg-gray-100 cursor-pointer">
+                  <p className="text-xl text-black mb-4">Theme</p>
+                  <p className="text-sm text-gray-700">Manage themes that can be used for your organization's campaigns</p>
+               </Link>
             </div>
          </div>
       </div>
