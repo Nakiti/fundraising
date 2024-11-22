@@ -17,7 +17,7 @@ import thankYouPageRoutes from "./routes/thankyou_pageRoutes.js"
 const app = express()
 
 const corsOptions = {
-   origin: 'https://mango-river-06d82041e.5.azurestaticapps.net', // Explicit frontend origin
+   origin: ['https://mango-river-06d82041e.5.azurestaticapps.net', "http://localhost:3000"], // Explicit frontend origin
    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
    credentials: true, // Required for cookies/credentials
