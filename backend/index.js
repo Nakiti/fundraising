@@ -22,23 +22,22 @@ const allowedOrigins = [
 ];
 
 
-const corsOptions = {
-   origin: (origin, callback) => {
-      if (allowedOrigins.includes(origin) || !origin) {
-         callback(null, origin); // Allow the origin
-      } else {
-         callback(new Error('Not allowed by CORS'));
-      }
-   },
-   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-   allowedHeaders: ['Content-Type', 'Authorization'],
-   // credentials: true, // Enable credentials (cookies, etc.)
-};
+// const corsOptions = {
+//    origin: (origin, callback) => {
+//       if (allowedOrigins.includes(origin) || !origin) {
+//          callback(null, origin); // Allow the origin
+//       } else {
+//          callback(new Error('Not allowed by CORS'));
+//       }
+//    },
+//    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//    allowedHeaders: ['Content-Type', 'Authorization'],
+//    // credentials: true, // Enable credentials (cookies, etc.)
+// };
 
-console.log(corsOptions)
 
 app.use(express.json())
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(cookieParser())
 
 app.options('*', (req, res) => {
