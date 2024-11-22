@@ -16,11 +16,22 @@ import sectionRoutes from "./routes/sectionRoutes.js"
 import thankYouPageRoutes from "./routes/thankyou_pageRoutes.js"
 const app = express()
 
+const allowedOrigins = [
+   'https://mango-river-06d82041e.5.azurestaticapps.net',
+   'http://localhost:3000',
+];
+
 const corsOptions = {
-   origin: ['https://mango-river-06d82041e.5.azurestaticapps.net', "http://localhost:3000"], // Explicit frontend origin
-   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-   credentials: true, // Required for cookies/credentials
+   origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+         callback(null, origin); // Allow the origin
+      } else {
+         callback(new Error('Not allowed by CORS'));
+      }
+   },
+   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+   allowedHeaders: ['Content-Type', 'Authorization'],
+   credentials: true, // Enable credentials (cookies, etc.)
 };
 
 app.use(express.json())
