@@ -4,18 +4,18 @@ export const middleware = (req) => {
    console.log("Middleware is running");
 
    const token = req.cookies.get("session");
-   console.log("Token found: ", token);
+   // console.log("Token found: ", token);
 
    const isAuthPage = req.nextUrl.pathname == "/login";
-   console.log("Is login page: ", isAuthPage);
+   // console.log("Is login page: ", isAuthPage);
 
    if (!token && !isAuthPage) {
-      console.log("Redirecting to login...");
+      // console.log("Redirecting to login...");
       return NextResponse.redirect(new URL("/login", req.url));
    }
 
    if (token && isAuthPage) {
-      console.log("Redirecting to dashboard...");
+      // console.log("Redirecting to dashboard...");
       return NextResponse.redirect(new URL("/org/dashboard/campaigns", req.url));
    }
 
@@ -23,5 +23,5 @@ export const middleware = (req) => {
 };
 
 export const config = {
-   matcher: ["/org/:path*", "/profile"],
+   matcher: ["/org/:path*", "/profile", "/organization/:organizationId/campaign/:campaignId/preview"],
 };

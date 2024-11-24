@@ -9,7 +9,8 @@ import { updateDesignation } from "@/app/services/updateServices"
 import { createDesignation } from "@/app/services/createServices"
 import { FaCheck } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa"
-
+import Link from "next/link";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Designations = ({params}) => {
    const [designations, setDesignations] = useState([]);
@@ -73,6 +74,13 @@ const Designations = ({params}) => {
    return (
       <div className="w-full h-full">
          <div className="w-full h-full p-8 bg-white overflow-y-auto">
+            <Link 
+               href={`/org/${organizationId}/dashboard/settings`}
+               className="text-gray-700 flex flex-row items-center space-x-2"
+            >
+               <FaArrowLeft className="text-gray-700"/>
+               <p>Settings</p>
+            </Link>
             <div className="p-6">
                <h1 className="text-3xl font-semibold mb-4 text-gray-800">Designations</h1>
                <p className="text-gray-700">Manage the designations that users can donate to </p>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://e-hundi-node-avhydrhehccmauf3.westus-01.azurewebsites.net/api";
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000/api';
 
 //Campaign
 
@@ -253,6 +253,16 @@ export const getTransactionSearch = async (query, organizationId) => {
 export const getCustomQuestions = async (campaignId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/campaign_question/get/${campaignId}`)
+      return response.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+//faqs
+export const getFaqs = async(campaignId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/faq/get/${campaignId}`)
       return response.data
    } catch (err) {
       console.log(err)

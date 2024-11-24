@@ -15,9 +15,9 @@ const Login = () => {
       password: ""
    })
 
-   const handleSubmit = (e) => {
+   const handleSubmit = async(e) => {
       e.preventDefault()
-      login(inputs)
+      await login(inputs)
       router.push("/profile")
    }
 

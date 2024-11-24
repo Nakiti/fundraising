@@ -2,10 +2,9 @@ import Link from "next/link"
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
 
-const Navbar = ({organizationId , links, title}) => {
+const Navbar = ({organizationId , links, title, handleSave}) => {
    const pathName = usePathname()
    
-
    return (
       <div className="border-b border-gray-100 bg-gray-800 shadow-sm text-black">
          <div className="flex flex-row py-2">

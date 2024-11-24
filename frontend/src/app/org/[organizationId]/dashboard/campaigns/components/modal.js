@@ -30,7 +30,7 @@ const Modal = ({ show, setShow, organizationId }) => {
 
       try {
          const id = await createCampaign(currentUser, organizationId);
-         await createCampaignDetails(id, currentUser, tabContent[activeTab].content);
+         await createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
 
          if (tabContent[activeTab].content === "donation") {
             const donationPageId = await createDonationPage(id, currentUser);

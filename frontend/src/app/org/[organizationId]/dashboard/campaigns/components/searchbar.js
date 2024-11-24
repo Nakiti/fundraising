@@ -15,6 +15,8 @@ const Searchbar = ({setData, organizationId}) => {
       try {
          const response = await getCampaignSearch(query, organizationId);
          setData(response)
+         console.log("ASasas", response)
+
       } catch (err) {
          console.error(err);
       }
@@ -24,7 +26,7 @@ const Searchbar = ({setData, organizationId}) => {
       try {
          const response = await getCampaignSearch(query, organizationId)
          setData(response)
-         console.log(response)
+         console.log("ASasas", response)
       } catch (err) {
          console.log(err)
       }

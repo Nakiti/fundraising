@@ -6,6 +6,7 @@ import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname, useSearchParams } from "next/navigation";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 
 const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDeactivate, detailsLink, pageLinks, mode}) => {
@@ -58,23 +59,35 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
             </div>
          </div>
 
-         <div className="flex flex-row space-x-10 w-11/12 mx-auto mt-6 text-white">
-            <Link
-               className={`cursor-pointer text-md font-medium py-1 px-6 border-b-4 ${pathName.split("/")[6] === detailsLink.split("/")[6] ? "border-blue-600" : "border-transparent"} hover:text-blue-600`}
-               href={detailsLink}
-               onClick={() => setShowDropdown(false)}
-            >
-               Details
-            </Link>
+         <div className="flex flex-row justify-between w-11/12 mx-auto mt-6 text-white">
+            <div className="flex space-x-10">
+               <Link
+                  className={`cursor-pointer text-md font-medium py-1 px-6 border-b-4 ${
+                  pathName.split("/")[6] === detailsLink.split("/")[6] ? "border-blue-600" : "border-transparent"
+                  } hover:text-blue-600`}
+                  href={detailsLink}
+                  onClick={() => setShowDropdown(false)}
+               >
+                  Details
+               </Link>
 
-            <button 
-               className="cursor-pointer text-md font-medium py-1 px-6 flex items-center border-b-4 border-transparent hover:text-blue-600"
-               onClick={() => setShowDropdown(!showDropdown)}
-            >
-               Pages
-               {showDropdown ? <IoIosArrowUp className="ml-2" /> : <IoIosArrowDown className="ml-2" />}
-            </button>
+               <button
+                  className="cursor-pointer text-md font-medium py-1 px-6 flex items-center border-b-4 border-transparent hover:text-blue-600"
+                  onClick={() => setShowDropdown(!showDropdown)}
+               >
+                  Pages
+                  {showDropdown ? <IoIosArrowUp className="ml-2" /> : <IoIosArrowDown className="ml-2" />}
+               </button>
+            </div>
+
+            <Link href={`/organization/${organizationId}/campaign/${campaignId}/preview`}>
+               <p className="flex items-center text-white hover:underline font-semibold text-md">
+                  Preview Campaign
+                  <FaExternalLinkAlt className="ml-2 text-white" />
+               </p>
+            </Link>
          </div>
+
 
          {showDropdown && (
             <div className="border-t border-gray-300 px-6 w-11/12 mx-auto py-4">

@@ -39,7 +39,7 @@ const EditLandingLayout = ({params, children}) => {
 
    return (
       <div className="w-full">
-         <Navbar organizationId={organizationId} links={links} title={"Landing Page"}/>
+         <Navbar organizationId={organizationId} links={links} title={"Landing Page"} handleSave={handleSave}/>
          <div className="flex flex-row space-x-4 w-11/12 mx-auto mt-8 p-4">
             <div className="w-1/3">
                {children}

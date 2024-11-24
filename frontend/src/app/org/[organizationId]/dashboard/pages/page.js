@@ -6,7 +6,7 @@ const Pages = ({params}) => {
 
    return (
       <div className="w-full h-full">
-         <div className="w-full h-full overflow-y-auto rounded-md p-8">
+         <div className="w-full h-full overflow-y-auto rounded-md p-12">
             <div className="flex flex-row w-full justify-between mb-8">
                <h1 className="text-4xl">Manage Organization Pages</h1>
             </div>

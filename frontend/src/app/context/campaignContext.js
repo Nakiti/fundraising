@@ -66,6 +66,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    })
 
    const [customQuestions, setCustomQuestions] = useState([])
+   const [faqs, setFaqs] = useState([])
    const [selectedDesignations, setSelectedDesignations] = useState([]);
    const [designations, setDesignations] = useState([])
    const [defaultDesignation, setDefaultDesignation] = useState(0)
@@ -159,7 +160,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
          designations, customQuestions, setCustomQuestions, questionInputs, handleQuestionInputsChange, 
          defaultDesignation, setDefaultDesignation, donationPageSections, setDonationPageSections, thankyouPageSections, setThankyouPageSections,
          thankPageInputs, handleThankPageInputsChange, campaignType, landingSections, setLandingSections, ticketsPageInputs,
-         handleTicketsPageInputs, campaignDetails, handleCampaignDetailsChange
+         handleTicketsPageInputs, campaignDetails, handleCampaignDetailsChange, faqs, setFaqs
       }}>
          {children}
       </CampaignContext.Provider>

@@ -95,7 +95,7 @@ const CampaignPage = ({params}) => {
                      </p>
                   </Link>
 
-                  <Link href={``}>
+                  <Link href={`/organization/${organizationId}/campaign/${campaignId}/preview`}>
                      <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
                         Preview Campaign
                         <FaExternalLinkAlt className="ml-2 text-blue-800" />

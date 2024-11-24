@@ -29,7 +29,8 @@ export const getCampaign = (req, res) => {
       FROM campaigns 
       INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       INNER JOIN users on campaigns.updated_by = users.id 
-      WHERE campaigns.id = ?`
+      WHERE campaigns.id = ?
+   `
 
    const value = req.params.id
 
@@ -40,15 +41,22 @@ export const getCampaign = (req, res) => {
 }
 
 export const searchCampaigns = (req, res) => {
-   const query = "SELECT * FROM campaigns WHERE campaign_name LIKE ? AND organization_id = ?"
-
+   // const query = "SELECT * FROM campaigns WHERE campaign_name LIKE ? AND organization_id = ?"
+   const query = `
+      SELECT campaigns.id, campaigns.created_at, campaign_details.*
+      FROM campaigns
+      INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+      WHERE internal_name LIKE ? OR external_name LIKE ? AND campaigns.organization_id = ?
+   `
    const values = [
+      `%${req.query.q}%`,
       `%${req.query.q}%`,
       req.params.id
    ]
 
    db.query(query, values, (err, data) => {
       if (err) return res.json(err)
+      console.log(data)
       return res.status(200).json(data)
    })
 }
@@ -78,14 +86,26 @@ export const getActive = (req, res) => {
 }
 
 export const getFiltered = (req, res) => {
-   let query = "SELECT * FROM campaigns WHERE `organization_id` = ? AND `status` = ?"
+   // let query = "SELECT * FROM campaigns WHERE `organization_id` = ? AND `status` = ?"
    const status = req.query.status
    const id = req.params.id
+
+   let query = `
+      SELECT campaigns.id, campaigns.created_at, campaign_details.*
+      FROM campaigns
+      INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+      WHERE campaigns.organization_id = ? and status = ?
+   `
 
    console.log(id)
 
    if (status == "all") {
-      query = "SELECT * FROM campaigns WHERE `organization_id` = ?"
+      query = `
+         SELECT campaigns.id, campaigns.created_at, campaign_details.*
+         FROM campaigns
+         INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+         WHERE campaigns.organization_id = ?
+      `
    }
 
    db.query(query, [id, status], (err, data) => {
@@ -95,8 +115,13 @@ export const getFiltered = (req, res) => {
 }
 
 export const getDateRange = (req, res) => {
-   const query = "SELECT * FROM campaigns WHERE `created_at` BETWEEN ? AND ? AND `organization_id` = ?" 
-
+   // const query = "SELECT * FROM campaigns WHERE `created_at` BETWEEN ? AND ? AND `organization_id` = ?" 
+   const query = `
+      SELECT campaigns.id, campaigns.created_at, campaign_details.*
+      FROM campaigns
+      INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+      WHERE created_at BETWEEN ? AND ? AND organization_id = ?
+   `
    const values = [
       req.query.start,
       req.query.end,

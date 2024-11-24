@@ -7,6 +7,8 @@ import { createUser } from "@/app/services/createServices"
 import { updateUser } from "@/app/services/updateServices"
 import { getAllUsers } from "@/app/services/fetchService"
 import { FaCheck, FaPlus } from "react-icons/fa";
+import Link from "next/link";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Users = ({params}) => {
    const [users, setUsers] = useState([])
@@ -63,6 +65,13 @@ const Users = ({params}) => {
    return (
       <div className="h-full w-full">
          <div className="w-full h-full overflow-y-auto bg-white rounded-sm p-4">
+            <Link 
+               href={`/org/${organizationId}/dashboard/settings`}
+               className="text-gray-700 flex flex-row items-center space-x-2"
+            >
+               <FaArrowLeft className="text-gray-700"/>
+               <p>Settings</p>
+            </Link>
             <div className="p-6">
                <h1 className="text-3xl font-semibold mb-4 text-gray-800">Users</h1>
                <p className="text-gray-700">Manage the users that can access your organization</p>

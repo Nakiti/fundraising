@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://e-hundi-node-avhydrhehccmauf3.westus-01.azurewebsites.net/api";
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000/api';
 
 export const createCampaign = async(currentUser, organizationId) => {
    try {
@@ -16,12 +16,13 @@ export const createCampaign = async(currentUser, organizationId) => {
    }
 }
 
-export const createCampaignDetails = async (campaignId, currentUser, type) => {
+export const createCampaignDetails = async (campaignId, currentUser, type, internalName) => {
    try {
       await axios.post(`${API_BASE_URL}/campaign_details/create`, {
          campaign_id: campaignId,
          user_id: currentUser.id,
-         type: type
+         type: type,
+         internalName: internalName
       })
    } catch (err) {
       console.log(err)
@@ -71,9 +72,17 @@ export const createUser = async(data) => {
    }
 }
 
-export const createCustomQuestion = async(data) => {
+// export const createCustomQuestion = async(data, campaignId) => {
+//    try {
+//       await axios.post(`${API_BASE_URL}/campaign_question/create/${campaignId}`, data)
+//    } catch (err) {
+//       console.log(err)
+//    }
+// }
+
+export const createFaq = async(data, camapaignId) => {
    try {
-      await axios.post(`${API_BASE_URL}/campaign_question/create`, data)
+      await axios.post(`${API_BASE_URL}/faq/create/${camapaignId}`, data)
    } catch (err) {
       console.log(err)
    }

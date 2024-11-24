@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDesignations, getCampaignDetails, getCampaignPreview } from "@/app/services/fetchService"
+import { getCampaignDesignations, getCampaignDetails, getCampaignPreview, getDonationPage } from "@/app/services/fetchService"
 import { useState, useEffect, useContext } from "react"
 import { CgProfile } from "react-icons/cg"
 import { useRouter } from "next/navigation"
@@ -7,10 +7,12 @@ import Link from "next/link"
 import useFormInput from "@/app/hooks/useFormInput"
 import { DonationContext } from "@/app/context/donationContext"
 import ErrorModal from "@/app/components/errorModal"
+import { FaArrowLeft } from "react-icons/fa"
 
 const CampaignPage = ({params}) => {
    const campaignId = params.campaignId
    const organizationId = params.organizationId
+   const status = params.status
    const [campaign, setCampaign] = useState(null)
    const [display, setDisplay] = useState(null)
    const router = useRouter()
@@ -19,7 +21,6 @@ const CampaignPage = ({params}) => {
    const {donations, setDonations} = useContext(DonationContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("Please Fill All Donation Fields")
-
 
    const [donationInfo, handleDonationInfoChange, setDonationInfo] = useFormInput({
       id: new Date(),
@@ -35,21 +36,19 @@ const CampaignPage = ({params}) => {
    useEffect(() => {
       const fetchData = async() => {
          const campaignResponse = await getCampaignDetails(campaignId)
-
-         if (organizationId == campaignResponse.organization_id && campaignResponse.status == "active") {
+         if (campaignResponse.status == "active") {
             setCampaign(campaignResponse)
             setDonationInfo(prev => ({
                ...prev,
                campaignTitle: campaignResponse.title
             }))
-
-            const displayResponse = await getCampaignPreview(campaignId)
+            const displayResponse = await getDonationPage(campaignId)
+            console.log(displayResponse)
             setDisplay(displayResponse)
             setDonationInfo(prev => ({
                ...prev,
                campaignImage: displayResponse.image
             }))
-
             const designationResponse = await getCampaignDesignations(campaignId)
             setDesignations(designationResponse)
             console.log(designationResponse)
@@ -58,8 +57,6 @@ const CampaignPage = ({params}) => {
 
       fetchData()
    }, [])
-
-
 
    const handleDesignationChange = (e) => {
       setDonationInfo(prev => ({...prev, designationId: e.target.id, designationTitle: e.target.value}))
@@ -78,13 +75,18 @@ const CampaignPage = ({params}) => {
          router.push(`/organization/${organizationId}/cart`)
       }
    }
-
    const amounts = [10, 25, 50, 75, 100, 150];
-
 
    return (
       <div className="w-full h-full mx-auto bg-white shadow-md overflow-y-auto">
          {error && <ErrorModal setError={setError} message={errorMessage}/>}
+         {status == "preview" && <div className="py-4 px-8 bg-gray-700 flex flex-row justify-between">
+            <Link href={`/org/${organizationId}/campaign/edit/${campaignId}/details/about`} className="flex flex-row space-x-2 items-center text-white">
+               <FaArrowLeft />
+               <p>Campaign Manager</p>
+            </Link>
+            <p className="text-md text-white">Your Campaign is in Draft Mode</p>
+         </div>}
 
          {display && <div >
             <div className="relative w-full">
