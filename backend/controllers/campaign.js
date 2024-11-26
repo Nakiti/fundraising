@@ -25,10 +25,16 @@ export const getCampaign = (req, res) => {
    // const query = "SELECT * FROM campaigns WHERE `id` = ?"
 
    const query = `
-      SELECT campaigns.*, campaign_details.*, users.first_name, users.last_name 
+      SELECT 
+         campaigns.*, campaign_details.*,       
+         creator.first_name AS creator_first_name, 
+         creator.last_name AS creator_last_name, 
+         updater.first_name AS updater_first_name, 
+         updater.last_name AS updater_last_name 
       FROM campaigns 
       INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-      INNER JOIN users on campaigns.updated_by = users.id 
+      INNER JOIN users AS creator ON campaigns.created_by = creator.id
+      INNER JOIN users AS updater ON campaigns.updated_by = updater.id 
       WHERE campaigns.id = ?
    `
 
@@ -66,7 +72,7 @@ export const getCampaignsByOrg = (req, res) => {
       SELECT campaigns.id, campaigns.created_at, campaign_details.*
       FROM campaigns
       INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-      WHERE campaigns.organization_id = ?
+      WHERE campaigns.organization_id = ? ORDER BY campaigns.id DESC
    `
    const value = [req.params.id]
 
@@ -87,29 +93,31 @@ export const getActive = (req, res) => {
 
 export const getFiltered = (req, res) => {
    // let query = "SELECT * FROM campaigns WHERE `organization_id` = ? AND `status` = ?"
-   const status = req.query.status
-   const id = req.params.id
+   const {status, type} = req.query
+   // const id = req.params.id
+   const params = [req.params.id]
 
    let query = `
       SELECT campaigns.id, campaigns.created_at, campaign_details.*
       FROM campaigns
       INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-      WHERE campaigns.organization_id = ? and status = ?
+      WHERE campaigns.organization_id = ?
    `
 
-   console.log(id)
-
-   if (status == "all") {
-      query = `
-         SELECT campaigns.id, campaigns.created_at, campaign_details.*
-         FROM campaigns
-         INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-         WHERE campaigns.organization_id = ?
-      `
+   if (status && status !== "all") {
+      query += " AND campaign_details.status = ?"
+      params.push(status)
    }
 
-   db.query(query, [id, status], (err, data) => {
-      if (err) return res.json(err)
+   if (type && type != "all") {
+      query += " AND campaign_details.type = ?"
+      params.push(type)
+   }
+
+   query += " ORDER BY campaigns.id DESC"
+
+   db.query(query, params, (err, data) => {
+      if (err) return console.log(err)
       return res.status(200).json(data)
    })
 }

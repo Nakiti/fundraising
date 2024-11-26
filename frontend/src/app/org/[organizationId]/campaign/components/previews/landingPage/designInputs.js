@@ -3,14 +3,12 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const DesignInputs = () => {
-
    const {ticketsPageInputs, handleTicketsPageInputs} = useContext(CampaignContext)
 
    return (
       <div className="w-full">
          <div className="mb-8">
             <p className="text-gray-800 text-lg font-semibold py-1 border-b-2 border-gray-300 mb-4">Manage Text Color</p>
-            
             <div className="mb-6">
                <p className="text-xs font-bold text-gray-600 mb-2">Primary Text Color</p>
                <div className="relative">
@@ -76,12 +74,12 @@ const DesignInputs = () => {
                      type="color" 
                      className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
                      name="b3_color"
-                     value={previewInputs.b3_color}
-                     onChange={handlePreviewInputsChange}
+                     value={ticketsPageInputs.b3_color}
+                     onChange={handleTicketsPageInputs}
                   />
                   <div 
                      className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer" 
-                     style={{ backgroundColor: previewInputs.b3_color }}  
+                     style={{ backgroundColor: ticketsPageInputs.b3_color }}  
                   />
                </div>
             </div>
@@ -93,12 +91,12 @@ const DesignInputs = () => {
                      type="color" 
                      className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
                      name="b2_color"
-                     value={previewInputs.b2_color}
-                     onChange={handlePreviewInputsChange}
+                     value={ticketsPageInputs.b2_color}
+                     onChange={handleTicketsPageInputs}
                   />
                   <div 
                      className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer"
-                     style={{ backgroundColor: previewInputs.b2_color }}  
+                     style={{ backgroundColor: ticketsPageInputs.b2_color }}  
                   />
                </div>
             </div>
@@ -110,12 +108,12 @@ const DesignInputs = () => {
                      type="color" 
                      className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
                      name="b1_color"
-                     value={previewInputs.b1_color}
-                     onChange={handlePreviewInputsChange}
+                     value={ticketsPageInputs.b1_color}
+                     onChange={handleTicketsPageInputs}
                   />
                   <div 
                      className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer"
-                     style={{ backgroundColor: previewInputs.b1_color }}  
+                     style={{ backgroundColor: ticketsPageInputs.b1_color }}  
                   />
                </div>
             </div>

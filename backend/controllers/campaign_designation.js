@@ -36,12 +36,23 @@ export const getRelations = (req, res) => {
 }
 
 export const deleteRelation = (req, res) => {
-   const query = "DELETE FROM campaign_designations WHERE `campaign_id` = ?"
+   const query = "DELETE FROM campaign_designations WHERE `id` = ?"
 
    const value = req.params.id
 
    db.query(query, value, (err, data) => {
       if (err) return console.log(err)
+      return res.status(200).json(data)
+   })
+}
+
+export const deleteRelationBatch = (req, res) => {
+   const query = "DELETE FROM campaign_designations WHERE `id` IN (?)"
+
+   const values = req.body.map(item => item.id)
+
+   db.query(query, [values], (err, data) => {
+      if (err) return res.json(err)
       return res.status(200).json(data)
    })
 }

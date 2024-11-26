@@ -91,7 +91,7 @@ const CampaignPage = ({params}) => {
          {display && <div >
             <div className="relative w-full">
                <img
-                  src={"https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"}
+                  src={display.banner_image}
                   alt="image"
                   className="w-full h-80 object-cover bg-gray-50"
                />
@@ -100,8 +100,9 @@ const CampaignPage = ({params}) => {
             <div className="w-3/4 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6">
                <div className="w-1/3">
                   <img 
-                  src={display.image || "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"}
+                  src={display.small_image}
                   className="h-64 w-64 object-cover border-4 border-white shadow-lg -mt-16 rounded-md"
+                  alt="image"
                   />
                </div>
                <div className="w-2/3 mt-4">

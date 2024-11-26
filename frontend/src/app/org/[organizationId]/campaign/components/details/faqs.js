@@ -98,6 +98,11 @@ const FaqsComponent = () => {
                ))}
             </div> : <p className="text-gray-700 text-center p-6">No Faqs</p>}
          </div>
+         <div className="w-full flex flex-row mt-6">
+            <button className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white">
+               Save
+            </button>
+         </div>
       </div>
    )
 }

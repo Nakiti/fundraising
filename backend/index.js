@@ -15,6 +15,9 @@ import campaign_detailRoutes from "./routes/campaign_detailsRoutes.js"
 import sectionRoutes from "./routes/sectionRoutes.js"
 import thankYouPageRoutes from "./routes/thankyou_pageRoutes.js"
 import faqRoutes from "./routes/campaign_faqRoutes.js"
+import ticketPageRoutes from "./routes/ticket_pageRoutes.js"
+import campaignTicketRoutes from "./routes/campaign_ticketRoutes.js"
+
 const app = express()
 
 const allowedOrigins = [
@@ -56,6 +59,8 @@ app.use("/api/campaign_details", campaign_detailRoutes)
 app.use("/api/sections", sectionRoutes)
 app.use("/api/thankyouPage", thankYouPageRoutes)
 app.use("/api/faq", faqRoutes)
+app.use("/api/ticket_page", ticketPageRoutes)
+app.use("/api/campaign_ticket", campaignTicketRoutes)
 
 const port = process.env.port ||  4000
 

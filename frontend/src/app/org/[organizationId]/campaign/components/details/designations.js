@@ -1,12 +1,14 @@
 import { FaTrash } from "react-icons/fa"
 import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
-
+import { getCampaignDesignations } from "@/app/services/fetchService"
+import { createCampaignDesignation } from "@/app/services/campaignService"
+import { deleteCampaignDesignationBatch } from "@/app/services/deleteService"
 
 const DesignationsComponent = () => {
    const {designations, selectedDesignations, setSelectedDesignations, campaignDetails, handleCampaignDetailsChange} = useContext(CampaignContext)
 
-   const handleChange= (designation, isChecked) => {
+   const handleChange = (designation, isChecked) => {
       setSelectedDesignations(prev => {
          const exists = prev.some(item => item.id === designation.id)
 
@@ -17,7 +19,6 @@ const DesignationsComponent = () => {
          } else {
             return prev.filter((item) => item.id !== designation.id)
          }
-
          return prev
       })
    }
@@ -26,6 +27,23 @@ const DesignationsComponent = () => {
       setSelectedDesignations(selectedDesignations.filter(item => item.id !== id))
    }  
 
+   const handleSave = async() => {
+      try {
+         const existingRelations = await getCampaignDesignations(campaignId)
+         const relationsToAdd = selectedDesignations.filter(designation =>!existingRelations.includes(designation))
+         const relationsToRemove = existingRelations.filter(designation =>!selectedDesignations.includes(designation))
+
+         if (relationsToAdd.length > 0) {
+            await createCampaignDesignation(campaignId, relationsToAdd)
+         }
+         if (relationsToRemove.length > 0) {
+            await deleteCampaignDesignationBatch(relationsToRemove)
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
    return (
       <div className="w-full max-w-4xl mx-auto py-8 px-6">
          <h1 className="text-4xl font-light text-gray-900 mb-4">Designations</h1>
@@ -33,7 +51,6 @@ const DesignationsComponent = () => {
          
          <div className="border-b border-gray-300 my-4"/>
 
-         {/* Default Designation Section */}
          <div className="flex flex-row items-center py-4 w-full">
             <div className="flex flex-col w-1/3">
                <h1 className="text-xl font-semibold mb-2">Default <span className="text-red-500">*</span></h1>
@@ -57,7 +74,6 @@ const DesignationsComponent = () => {
 
          <div className="border-b border-gray-300 my-4"/>
 
-         {/* Active Designations Section */}
          <div className="px-2 py-4">
             <h1 className="text-xl font-semibold mb-2">Active Designations</h1>
             <p className="text-sm text-gray-600 w-1/2 mb-4">These are the designations that users will be able to direct their donations towards for this campaign.</p>
@@ -74,7 +90,6 @@ const DesignationsComponent = () => {
 
          <div className="border-b border-gray-300 my-4"/>
 
-         {/* All Designations Section */}
          <div className="px-2 py-4">
             <h1 className="text-xl font-semibold mb-2">All Designations</h1>
             <p className="text-sm text-gray-600 w-1/2 mb-4">These are all active designations in your organization.</p>
@@ -106,6 +121,14 @@ const DesignationsComponent = () => {
                   </tbody>
                </table>
             </div>
+         </div>
+         <div className="w-full flex flex-row mt-6">
+            <button 
+               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
+               onClick={handleSave}
+            >
+               Save
+            </button>
          </div>
       </div>
 

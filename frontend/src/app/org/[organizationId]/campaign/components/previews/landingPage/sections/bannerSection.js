@@ -19,7 +19,7 @@ const LandingBanner = () => {
                   className="hidden" 
                   name="bgImage"
                   accept="image/*"
-                  onChange={handleImageUpload}
+                  onChange={(e) =>handleImageUpload(e, handleTicketsPageInputs)}
                />
             </label>                  
          </div>

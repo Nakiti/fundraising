@@ -2,10 +2,20 @@ import { useState } from "react"
 import { IoClose } from "react-icons/io5"
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
-
 const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => {
    const handleDelete = (id) => {
       setTickets(tickets.filter(item => item.id !== id))
+   }
+
+   const handleChange = (e) => {
+      setTickets(tickets.map((item) => {
+         if (item.id == ticket.id) {
+            return {...item, [e.target.name]: e.target.value}
+         }
+         return item
+      }))
+
+      console.log(tickets)
    }
 
    const [showDropdown, setShowDropdown] = useState(false)
@@ -28,7 +38,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                   placeholder="Enter a Name"
                   className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={ticket.name}
-                  onChange={handleTicketsChange}
+                  onChange={handleChange}
                />
             </div>
             <div className="flex flex-col w-1/6">
@@ -41,7 +51,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                   placeholder="0"
                   className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={ticket.quantity}
-                  onChange={handleTicketsChange}
+                  onChange={handleChange}
                />
                <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                   <input 
@@ -61,7 +71,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                   placeholder="0"
                   className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={ticket.value}
-                  onChange={handleTicketsChange}
+                  onChange={handleChange}
                />
                <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                   <input 
@@ -92,7 +102,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                      placeholder="Enter Description"
                      className="p-2 border text-sm border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                      value={ticket.description}
-                     onChange={handleTicketsChange}
+                     onChange={handleChange}
                      rows={6}
                   />
                </div>
@@ -107,7 +117,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         placeholder="1"
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         value={ticket.attendees}
-                        onChange={handleTicketsChange}
+                        onChange={handleChange}
                      />
                   </div>
                   <div className="flex flex-col">
@@ -120,7 +130,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         placeholder="1"
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         value={ticket.maxPurchase}
-                        onChange={handleTicketsChange}
+                        onChange={handleChange}
                      />
                   </div>
                   <div className="flex flex-col">
@@ -132,7 +142,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         type="date"
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         value={ticket.dateStart}
-                        onChange={handleTicketsChange}
+                        onChange={handleChange}
                      />
                   </div>
                   <div className="flex flex-col">
@@ -144,32 +154,28 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         type="date"
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         value={ticket.dateEnd}
-                        onChange={handleTicketsChange}
+                        onChange={handleChange}
                      />
                   </div>
                </div>
-
             </div>
             <div className="w-1/4">
                <div className="flex flex-col">
-                     <label className="text-gray-700 text-sm mb-2">
-                        Fee Estiamte
-                     </label>
-                     <input
-                        name="attendess"
-                        type="text"
-                        placeholder="$1.00"
-                        className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={ticket.name}
-                        onChange={handleTicketsChange}
-                        disabled
-                     />
-                  </div>
-
+                  <label className="text-gray-700 text-sm mb-2">
+                     Fee Estiamte
+                  </label>
+                  <input
+                     name="attendess"
+                     type="text"
+                     placeholder="$1.00"
+                     className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     value={ticket.name}
+                     onChange={handleChange}
+                     disabled
+                  />
+               </div>
             </div>
-
          </div>}
-
       </div>
    )
 }

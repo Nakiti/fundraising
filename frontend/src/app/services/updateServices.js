@@ -72,7 +72,7 @@ export const updateThankYouPage = async(campaignId, data) => {
    formData.append("s_color", data.s_color)
 
    try {
-      await axios.put(`${API_BASE_URL}/landing_page/update/${id}`, formData, {
+      await axios.put(`${API_BASE_URL}/landing_page/update/${campaignId}`, formData, {
          headers: {
            'Content-Type': 'multipart/form-data',
          },
@@ -80,6 +80,34 @@ export const updateThankYouPage = async(campaignId, data) => {
    } catch (err) {
       console.log(err)
    }
+}
+
+export const updateTicketPage = async (campaignId, data) => {
+   const formData = new FormData()
+
+   formData.append("title", data.title)
+   formData.append("date", data.date)
+   formData.append("address", data.address)
+   formData.append("bgImage", data.bgImage)
+   formData.append("aboutDescription", data.aboutDescription)
+   formData.append("venueName", data.venueName)
+   formData.append("instructions", data.instructions)
+   formData.append("bg_color", data.bg_color)
+   formData.append("bg_color2", data.bg_color2)
+   formData.append("p_color", data.p_color)
+   formData.append("s_color", data.s_color)
+   formData.append("b1_color", data.b1_color)
+
+   try {
+      await axios.put(`${API_BASE_URL}/ticket_page/update/${campaignId}`, formData, {
+         headers: {
+           'Content-Type': 'multipart/form-data',
+         },
+      })
+   } catch (err) {
+      console.log(err)
+   }
+
 }
 
 export const deactivateCampaign = async(campaignId, userId) => {

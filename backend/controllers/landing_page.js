@@ -7,7 +7,10 @@ const upload = multer({
 
 
 export const createLandingPage = (req, res) => {
-   upload.fields(["bgImage", "aboutImage"])(req, res, (err) => {
+   upload.fields([
+      { name: "bgImage", maxCount: 1 },
+      { name: "aboutImage", maxCount: 1 }
+   ])(req, res, (err) => {
       if (err) {
          if (err.code == "LIMIT_FILE_SIZE") {
             return res.status(400).json({ error: "File is too large. Max size is 5MB" });
@@ -22,8 +25,8 @@ export const createLandingPage = (req, res) => {
          req.body.organization_id,
          req.body.title,
          req.body.description,
-         req.files["bgImage"][0].path,
-         req.files["aboutImage"][0].path,
+         req.body.bgImage,
+         req.body.aboutImage, 
          req.body.about,
          req.body.p_color,
          req.body.s_color,
@@ -41,7 +44,10 @@ export const createLandingPage = (req, res) => {
 }
 
 export const updateLandingPage = (req, res) => {
-   upload.fields(["bgImage", "aboutImage"])(req, res, (err) => {
+   upload.fields([
+      { name: "bgImage", maxCount: 1 },
+      { name: "aboutImage", maxCount: 1 }
+   ])(req, res, (err) => {
       if (err) {
          if (err.code == "LIMIT_FILE_SIZE") {
             return res.status(400).json({ error: "File is too large. Max size is 5MB" });
@@ -55,8 +61,8 @@ export const updateLandingPage = (req, res) => {
       const values = [
          req.body.title,
          req.body.description,
-         req.files["bgImage"][0].path,
-         req.files["aboutImage"][0].path,
+         req.body.bgImage,
+         req.body.aboutImage,
          req.body.about,
          req.body.p_color,
          req.body.s_color,

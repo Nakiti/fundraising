@@ -5,13 +5,12 @@ import SectionManager from "@/app/components/sectionManager"
 
 
 const ElementInputs = () => {
-   const {landingSections, setLandingSections} = useContext(CampaignContext)
-
+   const {ticketPageSections, setTicketPageSections} = useContext(CampaignContext)
 
    return (
       <div className="w-full">
-         {landingSections.map(section => {
-            return <SectionManager section={section} sections={landingSections} setSections={setLandingSections}/>
+         {ticketPageSections.map(section => {
+            return <SectionManager section={section} sections={ticketPageSections} setSections={setTicketPageSections}/>
          })}
       </div>
    )

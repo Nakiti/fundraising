@@ -61,7 +61,7 @@ const Share = () => {
                <div className="px-6 pb-6 py-4 flex flex-col space-y-6">
 
                   <div className="flex flex-col">
-                     <p className="flex items-center text-gray-800 hover:underline font-semibold text-md mb-2">
+                     <p className="flex items-center text-gray-800 font-semibold text-md mb-2">
                         Campaign URL: 
                      </p>
 
@@ -69,7 +69,7 @@ const Share = () => {
                   </div>
 
                   <div className="flex flex-col">
-                     <p className="flex items-center text-gray-800 hover:underline font-semibold text-md mb-2">
+                     <p className="flex items-center text-gray-800 font-semibold text-md mb-2">
                         QR Code: 
                      </p>
 

@@ -66,7 +66,7 @@ const CampaignPage = ({params}) => {
 
                      <div className="flex flex-col">
                         <label className="text-sm font-bold text-gray-500 mb-2">Last Updated By</label>
-                        <p className="text-md text-gray-800">{campaign.first_name} {campaign.last_name}</p>
+                        <p className="text-md text-gray-800">{campaign.updater_first_name} {campaign.updater_last_name}</p>
                      </div>
 
                      <div className="flex flex-col">
@@ -76,7 +76,7 @@ const CampaignPage = ({params}) => {
 
                      <div className="flex flex-col">
                         <label className="text-sm font-bold text-gray-500 mb-2">Created By</label>
-                        <p className="text-md text-gray-800">{campaign.created_by}</p>
+                        <p className="text-md text-gray-800">{campaign.creator_first_name} {campaign.creator_last_name}</p>
                      </div>
                   </div>
                )}

@@ -1,20 +1,22 @@
 import { useContext } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
+import useImageUpload from "@/app/hooks/useImageUpload";
 
 const TitleSection = () => {
    const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
+   const {handleImageUpload} = useImageUpload()
 
-   const handleImageUpload = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-         const reader = new FileReader();
-         reader.onloadend = () => {
-            handlePreviewInputsChange({ target: { name: 'image', value: reader.result } });
-            console.log(reader.result)
-         };
-         reader.readAsDataURL(file); // Convert the file to base64
-      }
-   }
+   // const handleImageUpload = (e) => {
+   //    const file = e.target.files[0];
+   //    if (file) {
+   //       const reader = new FileReader();
+   //       reader.onloadend = () => {
+   //          handleDonationPageInputsChange({ target: { name: 'image', value: reader.result } });
+   //          console.log(reader.result)
+   //       };
+   //       reader.readAsDataURL(file); // Convert the file to base64
+   //    }
+   // }
 
    return (
       <div>
@@ -27,9 +29,9 @@ const TitleSection = () => {
                <input 
                   type="file"
                   className="hidden" 
-                  name="image"
+                  name="small_image"
                   accept="image/*"
-                  onChange={handleImageUpload}
+                  onChange={(e) => handleImageUpload(e, handleDonationPageInputsChange)}
                />
             </label>                  
          </div>

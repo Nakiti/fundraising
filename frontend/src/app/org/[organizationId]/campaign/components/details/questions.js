@@ -2,6 +2,9 @@ import { FaTrash } from "react-icons/fa"
 import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import useFormInput from "@/app/hooks/useFormInput"
+import { getCustomQuestions } from "@/app/services/fetchService"
+import { createCustomQuestion } from "@/app/services/campaignService"
+import { deleteCampaignQuestionsBatch } from "@/app/services/deleteService"
 
 const QuestionsComponent = () => {
    const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestions} = useContext(CampaignContext)
@@ -13,7 +16,6 @@ const QuestionsComponent = () => {
    })
 
    const handleAdd = () => {
-
       if (newQuestion.question != "" && newQuestion.type != "") {
          setCustomQuestions((prev) => [
             ...prev,
@@ -23,11 +25,27 @@ const QuestionsComponent = () => {
          setNewQuestion({id: new Date(), question: "", type: ""})
          console.log(customQuestions)
       }
-
    }
 
    const handleDelete = (id) => {
       setCustomQuestions(customQuestions.filter(item => item.id !== id))
+   }
+
+   const handleSave = async () => {
+      try {
+         const existingQuestions = await getCustomQuestions(campaignId)
+         const questionsToAdd = customQuestions.filter(item => !existingQuestions.includes(item))
+         const questionsToRemove = existingQuestions.filter(item => !customQuestions.includes(item))
+
+         if (questionsToAdd.length > 0) {
+            await createCustomQuestion(campaignId, questionsToAdd)
+         }
+         if (questionsToRemove.length > 0) {
+            await deleteCampaignQuestionsBatch(questionsToRemove)
+         }
+      } catch (err) {
+         console.log(err)
+      }
    }
 
 
@@ -35,15 +53,12 @@ const QuestionsComponent = () => {
       <div className="w-full max-w-4xl mx-auto py-8 px-6">
          <h1 className="text-4xl font-light text-gray-900 mb-4">Questions</h1>
          <h3 className="text-md text-gray-600 mb-8">Create Questions to Ask Donors:</h3>
-
-         {/* Contact Information Section */}
          <div className="w-full mb-12">
             <div className="flex flex-row justify-between text-sm text-gray-700 mb-2">
                <h1 className="mb-1">Contact Information</h1>
                <h1 className="mb-1">Show?</h1>
             </div>
             <div className="border-b border-gray-600 mb-2"></div>
-
             <div className="text-gray-600">
                {["Phone", "Title", "Suffix"].map((field, idx) => (
                   <div key={idx} className="flex flex-row items-center justify-between p-2">
@@ -59,15 +74,12 @@ const QuestionsComponent = () => {
                ))}
             </div>
          </div>
-
-         {/* Company/Organization Details Section */}
          <div className="w-full mb-12">
             <div className="flex flex-row justify-between text-sm text-gray-700 mb-2">
                <h1 className="mb-1">Company/Organization Details</h1>
                <h1 className="mb-1">Show?</h1>
             </div>
             <div className="border-b border-gray-600 mb-2"></div>
-
             <div className="text-gray-600">
                {["Company/Organization Name", "Website URL"].map((field, idx) => (
                   <div key={idx} className="flex flex-row justify-between p-2">
@@ -83,12 +95,9 @@ const QuestionsComponent = () => {
                ))}
             </div>
          </div>
-
-         {/* Add Custom Question Section */}
          <div className="w-full mb-12">
             <h1 className="text-sm text-gray-700 mb-1">Add Custom Question</h1>
             <div className="border-b border-gray-600 mb-2"></div>
-
             <div className="p-6 bg-gray-100 rounded-lg">
                <div className="flex flex-row items-center justify-between space-x-4 mb-4">
                   <div className="flex flex-col w-3/4">
@@ -130,7 +139,6 @@ const QuestionsComponent = () => {
          <div>
             <h1 className="text-sm text-gray-700 mb-1">Manage Custom Question(s)</h1>
             <div className="border-b border-gray-600 mb-2"></div>
-
             <div>
                {customQuestions.map((item, index) => (
                   <div className="bg-gray-100 mb-2" key={index}>
@@ -159,8 +167,15 @@ const QuestionsComponent = () => {
                ))}
             </div>
          </div>
+         <div className="w-full flex flex-row mt-6">
+            <button 
+               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
+               onClick={handleSave}
+            >
+               Save
+            </button>
+         </div>
       </div>
-
    )
 }
 

@@ -1,9 +1,19 @@
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
+import { AuthContext } from "@/app/context/authContext"
+import { updateCampaignDetails } from "@/app/services/campaignService"
 
 const AboutComponent = () => {
+   const {campaignDetails, handleCampaignDetailsChange, campaignId} = useContext(CampaignContext)
+   const {currentUser} = useContext(AuthContext)
 
-   const {campaignDetails, handleCampaignDetailsChange} = useContext(CampaignContext)
+   const handleSave = async() => {
+      try {
+         await updateCampaignDetails(campaignId, campaignDetails, 'inactive', currentUser)
+      } catch (err) {
+         console.log(err)
+      }
+   }
 
    return (
       <div className="w-full max-w-4xl mx-auto py-8 px-6">
@@ -73,8 +83,16 @@ const AboutComponent = () => {
                />
             </div>
          </div>
-      </div>
 
+         <div className="w-full flex flex-row mt-6">
+            <button 
+               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
+               onClick={handleSave}
+            >
+               Save
+            </button>
+         </div>
+      </div>
    )
 }
 

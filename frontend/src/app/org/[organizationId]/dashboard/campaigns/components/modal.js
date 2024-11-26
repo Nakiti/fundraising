@@ -1,7 +1,7 @@
 "use client"
 import { useState, useContext } from 'react';
 import { IoIosClose } from "react-icons/io";
-import { createCampaign, createCampaignDetails, createPageSection, createThankYouPage } from '@/app/services/createServices';
+import { createCampaign, createCampaignDetails, createPageSection, createThankYouPage, createTicketPage } from '@/app/services/createServices';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/app/context/authContext';
 import { createDonationPage, createPreview } from '@/app/services/campaignService';
@@ -22,11 +22,10 @@ const Modal = ({ show, setShow, organizationId }) => {
 
    const handleClick = async (type) => {
       if (internalName === "") {
-         setError(true); // Show the error
-         return;
+         setError(true)
+         return
       }
-
-      setError(false); // Reset the error if input is valid
+      setError(false)
 
       try {
          const id = await createCampaign(currentUser, organizationId);
@@ -43,8 +42,18 @@ const Modal = ({ show, setShow, organizationId }) => {
 
             await createPageSection(thankyouPageId, "message", true, currentUser);
             await createPageSection(thankyouPageId, "background", true, currentUser);
-         }
+         } else if (tabContent[activeTab].content == "ticketed-event") {
+            const thankyouPageId = await createThankYouPage(id, currentUser);
+            const ticketPageId = await createTicketPage(id, currentUser)
 
+            await createPageSection(thankyouPageId, "message", true, currentUser);
+            await createPageSection(thankyouPageId, "background", true, currentUser);
+
+            await createPageSection(ticketPageId, "banner", true, currentUser)
+            await createPageSection(ticketPageId, "about", true, currentUser)
+            await createPageSection(ticketPageId, "event", true, currentUser)
+            await createPageSection(ticketPageId, "purchase", true, currentUser)
+         }
          router.push(`/org/${organizationId}/campaign/edit/${id}/details/about`);
       } catch (err) {
          console.log(err);

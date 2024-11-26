@@ -29,7 +29,7 @@ const Table = ({setData, data, organizationId}) => {
    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
    const currentRows = data && data.slice(indexOfFirstRow, indexOfLastRow);
 
-   const totalPages = Math.ceil(data && data.length / rowsPerPage);
+   const totalPages = data && data.length > 0 ? Math.ceil(data && data.length / rowsPerPage) : 1;
 
    const handlePreviousPage = () => {
       if (currentPage > 1) {
@@ -89,8 +89,8 @@ const Table = ({setData, data, organizationId}) => {
                </tr>
             </thead>
 
-            <tbody>
-               {currentRows && currentRows.map((row, index) => (
+            {currentRows && currentRows.length > 0 && <tbody>
+               {currentRows.map((row, index) => (
                <tr
                   key={index}
                   className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
@@ -118,9 +118,9 @@ const Table = ({setData, data, organizationId}) => {
                   </td>
                </tr>
                ))}
-            </tbody>
+            </tbody>}
          </table>
-
+         {currentRows && currentRows.length == 0 && <p className="text-gray-700 text-center mx-auto p-4 ">No Campaigns</p>}
          <div className="flex justify-between items-center my-2 pb-4 text-gray-600 text-sm w-1/2 mx-auto">
             <button
                className="flex items-center px-3 py-2 rounded-full hover:bg-gray-200 transition-colors"

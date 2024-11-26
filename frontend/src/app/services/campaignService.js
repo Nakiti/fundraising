@@ -24,7 +24,8 @@ export const updateDonationPage = async (campaignId, inputs) => {
 
    formData.append("headline", inputs.headline)
    formData.append("description", inputs.description)
-   formData.append("image", inputs.image)
+   formData.append("banner_image", inputs.banner_image)
+   formData.append("small_image", inputs.small_image)
    formData.append("bg_color", inputs.bg_color)
    formData.append("p_color", inputs.p_color)
    formData.append("s_color", inputs.s_color)

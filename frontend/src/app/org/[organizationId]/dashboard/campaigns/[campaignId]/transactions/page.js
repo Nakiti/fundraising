@@ -50,7 +50,7 @@ const Transactions = ({params}) => {
                         <td className="px-4 py-2 text-sm text-center">{row.first_name} {row.last_name}</td>
                         <td className="px-4 py-2 text-sm text-center"></td>
                         <td className="px-4 py-2 text-sm text-center">{new Date(row.date).toLocaleDateString()}</td>
-                        <td className="px-4 py-2 text-sm text-center">{row.amount}</td>
+                        <td className="px-4 py-2 text-sm text-center">${row.amount}</td>
                         {/* <td className="px-4 py-2 text-sm text-center">{row.campaign_name}</td> */}
                         <td className="px-4 py-2 text-sm text-center">{row.method}</td>
                         <td className="px-4 py-2 text-sm text-center">{row.status}</td>

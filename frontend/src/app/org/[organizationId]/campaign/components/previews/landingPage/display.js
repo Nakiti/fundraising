@@ -48,19 +48,18 @@ const Display = () => {
             style={{backgroundColor: ticketsPageInputs.bg_color}}
          >
             <div className="">
-               <div className="space-y-2 w-2/3 mx-auto text-white">
+               <div className="space-y-2 w-2/3 mx-auto">
                   <h2 className="text-xl font-semibold text-center">About the Event</h2>
-                  <p className="text-sm leading-relaxed">
+                  <p className="text-sm leading-relaxed text-black">
                      {ticketsPageInputs.aboutDescription || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
                   </p>
                </div>
 
-
                <div className="mt-12 border-t border-white">
                   <div className="flex flex-row w-2/3 mx-auto justify-between items-center">
-                     <div className="text-white">
-                        <p className="text-xl">{ticketsPageInputs.venue}</p>
-                        <p className="text-sm">{ticketsPageInputs.address}</p>
+                     <div className="">
+                        <p className="text-2xl mb-2">{ticketsPageInputs.venue}</p>
+                        <p className="text-md">{ticketsPageInputs.instructions}</p>
                      </div>
                      <div>
                         <img 

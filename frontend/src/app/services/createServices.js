@@ -42,6 +42,17 @@ export const createThankYouPage = async (campaignId, currentUser) => {
    }
 }
 
+export const createTicketPage = async(campaignId) => {
+   try {
+      const pageId = await axios.post(`${API_BASE_URL}/ticket_page/create`, {
+         campaignId: campaignId
+      })
+      return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const createPageSection = async(pageId, name, active, currentUser) => {
    try {
       await axios.post(`${API_BASE_URL}/sections/create`, {
@@ -58,7 +69,14 @@ export const createPageSection = async(pageId, name, active, currentUser) => {
 export const createDesignation = async (data) => {
    try {
       await axios.post("http://localhost:4000/api/designation/create", data)
+   } catch (err) {
+      console.log(err)
+   }
+}
 
+export const createCampaignTicket = async(campaignId, data) => {
+   try {
+      await axios.post(`${API_BASE_URL}/campaign_ticket/create/${campaignId}`, data)
    } catch (err) {
       console.log(err)
    }

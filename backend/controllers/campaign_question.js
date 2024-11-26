@@ -32,6 +32,17 @@ export const deleteCustomQuestion = (req, res) => {
    })
 }
 
+export const deleteCustomQuestionsBatch = (req, res) =>{
+   const query = "DELETE FROM campaign_questions WHERE `id` IN (?)"
+
+   const values = req.body.map(item => item.id)
+
+   db.query(query, [values], (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data)
+   })
+}
+
 export const getCustomQuestions = (req, res) => {
    const query = "SELECT * FROM campaign_questions WHERE `campaign_id` = ?"
 

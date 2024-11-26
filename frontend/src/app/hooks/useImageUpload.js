@@ -11,7 +11,7 @@ const useImageUpload = () => {
          reader.onloadend = () => {
             const base64Image = reader.result;
             setImagePreview(base64Image);
-            handlePreviewInputsChange({ target: { name: 'image', value: base64Image } });
+            handlePreviewInputsChange({ target: { name: e.target.name, value: base64Image } });
          };
          reader.readAsDataURL(file);
       }

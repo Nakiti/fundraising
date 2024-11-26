@@ -1,7 +1,7 @@
 import { FaRegCheckCircle } from "react-icons/fa";
 import { IoMegaphoneOutline } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { getCampaignsFiltered, getCampaignsDateRange } from "@/app/services/fetchService";
@@ -9,10 +9,15 @@ import { getCampaignsFiltered, getCampaignsDateRange } from "@/app/services/fetc
 const Filters = ({setData, organizationId}) => {
    const [startDate, setStartDate] = useState(null);
    const [endDate, setEndDate] = useState(null);
+   const [status, setStatus] = useState("all")
+   const [type, setType] = useState("all")
 
    const handleFilter = async (e) => {
-      const response = await getCampaignsFiltered(organizationId, e.target.value)
-      setData(response)
+      if (e.target.name == "status") {
+         setStatus(e.target.value)
+      } else if (e.target.name == "type") {
+         setType(e.target.value)
+      }
    }
 
    const handleDateChange = async (dates) => {
@@ -27,7 +32,16 @@ const Filters = ({setData, organizationId}) => {
          const response = await getCampaignsFiltered(organizationId, "all")
          setData(response)
       }
-   };
+   }
+
+   useEffect(() => {
+      const fetchData = async() => {
+         const response = await getCampaignsFiltered(organizationId, status, type)
+         setData(response)
+      }
+
+      fetchData()
+   }, [status, type])
 
    return (
       <div className="flex flex-row mt-4 space-x-4">
@@ -38,6 +52,7 @@ const Filters = ({setData, organizationId}) => {
             className="pl-10 pr-4 py-2 text-sm text-gray-700 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             defaultValue="temp"
             onChange={handleFilter}
+            name="status"
          >
             <option value="temp" disabled>Status</option>
             <option value="all">All</option>
@@ -53,11 +68,12 @@ const Filters = ({setData, organizationId}) => {
             className="pl-10 pr-4 py-2 text-sm text-gray-700 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             defaultValue="temp"
             onChange={handleFilter}
+            name="type"
          >
             <option value="temp" disabled>Campaign Type</option>
             <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="donation">Donation</option>
+            <option value="ticketed-event">Ticketed Event</option>
          </select>
       </div>
 

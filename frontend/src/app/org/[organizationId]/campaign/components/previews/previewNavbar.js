@@ -10,7 +10,7 @@ const PreviewNavbar = ({heading, links}) => {
    console.log(links, pathname, type)
 
    return (
-      <div className="border-b border-gray-400 py-6 w-11/12 mx-auto mb-8 flex flex-row justify-between items-center">
+      <div className="border-b border-gray-400 w-11/12 mx-auto mb-8 flex flex-row justify-between items-center">
          <h1 className="text-3xl font-semibold text-gray-800">{heading}</h1>
          <div className="space-x-6 text-lg flex items-center">
             <Link 
