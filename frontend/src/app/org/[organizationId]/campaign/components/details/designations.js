@@ -6,7 +6,7 @@ import { createCampaignDesignation } from "@/app/services/campaignService"
 import { deleteCampaignDesignationBatch } from "@/app/services/deleteService"
 
 const DesignationsComponent = () => {
-   const {designations, selectedDesignations, setSelectedDesignations, campaignDetails, handleCampaignDetailsChange} = useContext(CampaignContext)
+   const {designations, selectedDesignations, setSelectedDesignations, campaignDetails, handleCampaignDetailsChange, campaignId} = useContext(CampaignContext)
 
    const handleChange = (designation, isChecked) => {
       setSelectedDesignations(prev => {
@@ -33,6 +33,7 @@ const DesignationsComponent = () => {
          const relationsToAdd = selectedDesignations.filter(designation =>!existingRelations.includes(designation))
          const relationsToRemove = existingRelations.filter(designation =>!selectedDesignations.includes(designation))
 
+         console.log(relationsToAdd)
          if (relationsToAdd.length > 0) {
             await createCampaignDesignation(campaignId, relationsToAdd)
          }

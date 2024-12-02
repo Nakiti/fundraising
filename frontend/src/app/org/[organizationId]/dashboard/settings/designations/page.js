@@ -72,8 +72,9 @@ const Designations = ({params}) => {
    };
 
    return (
-      <div className="w-full h-full">
-         <div className="w-full h-full p-8 bg-white overflow-y-auto">
+      <div className="w-full h-full overflow-y-auto">
+         <div className="p-6 bg-gray-50">
+         <div className="w-full h-full p-8 bg-white rounded-lg">
             <Link 
                href={`/org/${organizationId}/dashboard/settings`}
                className="text-gray-700 flex flex-row items-center space-x-2"
@@ -180,6 +181,7 @@ const Designations = ({params}) => {
                   </div>
                </form>
             </div>
+         </div>
          </div>
       </div>
    );

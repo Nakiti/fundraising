@@ -30,7 +30,7 @@ const Share = () => {
       <div className="w-full p-8 mb-8">
          <div className="flex flex-row space-x-4">
 
-            <div className="w-2/3 bg-white rounded-lg shadow-md mb-8">
+            <div className="w-2/3 bg-white rounded-lg shadow-sm mb-8">
                <div className="flex flex-row w-full justify-between items-center px-6 py-4 border-b border-gray-300">
                   <p className="text-2xl text-gray-800 font-semibold">Campaign Fliers:</p>
                </div>
@@ -53,7 +53,7 @@ const Share = () => {
 
             </div>
 
-            <div className="w-1/3 bg-white rounded-lg shadow-md mb-8">
+            <div className="w-1/3 bg-white rounded-lg shadow-sm mb-8">
                <div className="flex flex-row w-full justify-between items-center px-6 py-4 border-b border-gray-300">
                   <p className="text-2xl text-gray-800 font-semibold">Quick Info:</p>
                </div>

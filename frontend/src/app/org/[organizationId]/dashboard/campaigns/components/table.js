@@ -100,8 +100,8 @@ const Table = ({setData, data, organizationId}) => {
                   <td className="px-4 py-2 text-center text-md text-gray-600">
                      {new Date(row.created_at).toLocaleDateString("en-US")}
                   </td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.raised}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.goal}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : "$"+row.raised}</td>
+                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : "$"+row.goal}</td>
                   <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.donations}</td>
                   <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.visits}</td>
                   <td className="px-4 py-2 text-center text-md text-gray-600">
@@ -110,7 +110,7 @@ const Table = ({setData, data, organizationId}) => {
                   <td className="px-4 py-2 text-center">
                      <span
                      className={`px-4 py-1 w-24 rounded-full text-white text-xs font-medium ${
-                        row.status === "inactive" ? "bg-red-500" : "bg-green-500"
+                        row.status === "inactive" ? "bg-red-700" : "bg-green-700"
                      }`}
                      >
                      {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}

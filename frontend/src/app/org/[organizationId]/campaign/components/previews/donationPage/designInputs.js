@@ -3,8 +3,15 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const DesignInputs = () => {
-
    const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
+   
+   const handleSave = async() => {
+      try {
+         await updateDonationPage(campaignId, donationPageInputs)
+      } catch (err) {
+         console.log(err)
+      }
+   }
 
    return (
       <div className="w-full">
@@ -137,7 +144,14 @@ const DesignInputs = () => {
                </div>
             </div>
          </div>
-
+         <div className="w-full flex flex-row mt-6">
+            <button 
+               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white"
+               onClick={handleSave}
+            >
+               Save
+            </button>
+         </div>
       </div>
    )
 }

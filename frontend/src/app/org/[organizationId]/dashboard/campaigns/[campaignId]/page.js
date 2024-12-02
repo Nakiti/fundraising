@@ -36,7 +36,7 @@ const CampaignPage = ({params}) => {
    return (
       <div className="w-full p-8">
          <div className="flex flex-row space-x-6 w-full">
-            <div className="w-3/4 bg-white rounded-lg shadow-md">
+            <div className="w-3/4 bg-white rounded-lg shadow-sm">
                <div className="flex flex-row w-full justify-between items-center px-6 py-4 border-b border-gray-300">
                   <p className="text-2xl text-gray-800 font-semibold">Campaign Details:</p>
                </div>
@@ -82,7 +82,7 @@ const CampaignPage = ({params}) => {
                )}
             </div>
 
-            <div className="bg-white rounded-lg shadow-md w-1/4 space-y-4">
+            <div className="bg-white rounded-lg shadow-sm w-1/4 space-y-4">
                <div className="px-6 py-4 border-b border-gray-300">
                   <p className="text-2xl text-gray-800 font-semibold">Quick Actions:</p>
                </div>

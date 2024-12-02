@@ -7,7 +7,7 @@ import { createCustomQuestion } from "@/app/services/campaignService"
 import { deleteCampaignQuestionsBatch } from "@/app/services/deleteService"
 
 const QuestionsComponent = () => {
-   const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestions} = useContext(CampaignContext)
+   const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestions, campaignId} = useContext(CampaignContext)
 
    const [newQuestion, handleNewQuestionChange, setNewQuestion] = useFormInput({
       id: new Date(),
@@ -36,6 +36,8 @@ const QuestionsComponent = () => {
          const existingQuestions = await getCustomQuestions(campaignId)
          const questionsToAdd = customQuestions.filter(item => !existingQuestions.includes(item))
          const questionsToRemove = existingQuestions.filter(item => !customQuestions.includes(item))
+
+         console.log(questionsToAdd)
 
          if (questionsToAdd.length > 0) {
             await createCustomQuestion(campaignId, questionsToAdd)

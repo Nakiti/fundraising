@@ -4,13 +4,32 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 
 const ElementInputs = () => {
-   const {thankyouPageSections, setThankyouPageSections} = useContext(CampaignContext)
+   const {thankyouPageSections, setThankyouPageSections, campaignId, thankyouPageInputs} = useContext(CampaignContext)
+
+   const handleSave = async() => {
+      try {
+         await updateTicketPage(campaignId, thankyouPageInputs)
+         for (const section of thankyouPageSections) {
+            await updatePageSection(section.id, section.active)
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
    
    return (
       <div className="w-full">
          {thankyouPageSections.map((section) => (
             <SectionManager  section={section} sections={thankyouPageSections} setSections={setThankyouPageSections}/>
          ))}
+         <div className="w-full flex flex-row mt-6">
+            <button 
+               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white"
+               onClick={handleSave}
+            >
+               Save
+            </button>
+         </div>         
       </div>
    )
 }

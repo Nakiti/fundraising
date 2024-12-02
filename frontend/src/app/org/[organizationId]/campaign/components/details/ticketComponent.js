@@ -32,27 +32,21 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                <label className="text-gray-700 text-sm mb-2">
                   Ticket Name <span className="text-red-500">*</span>
                </label>
-               <input
-                  name="name"
-                  type="text"
-                  placeholder="Enter a Name"
+               <p
                   className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={ticket.name}
-                  onChange={handleChange}
-               />
+               >
+                  {ticket.name}
+               </p>
             </div>
             <div className="flex flex-col w-1/6">
                <label className="text-gray-700 text-sm mb-2">
                   Quantity <span className="text-red-500">*</span>
                </label>
-               <input
-                  name="quantity"
-                  type="number"
-                  placeholder="0"
+               <p
                   className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={ticket.quantity}
-                  onChange={handleChange}
-               />
+               >
+                  {ticket.quantity}
+               </p>
                <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                   <input 
                      type="checkbox"
@@ -65,14 +59,11 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                <label className="text-gray-700 text-sm mb-2">
                   Price <span className="text-red-500">*</span>
                </label>
-               <input
-                  name="value"
-                  type="number"
-                  placeholder="0"
+               <p
                   className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={ticket.value}
-                  onChange={handleChange}
-               />
+               >
+                  {ticket.value}
+               </p>
                <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                   <input 
                      type="checkbox"
@@ -85,10 +76,10 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
 
          <div className="border-t border-gray-200 text-gray-700 mt-12 flex flex-row justify-between px-4 pt-4">
             <div className="flex flex-row items-center space-x-4" onClick={() => setShowDropdown(!showDropdown)}>
-               <p className="text-lg">Edit Details</p>
+               <p className="text-md">Show Details</p>
                {showDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
             </div>
-            <p className="text-lg">Total: 0</p>
+            <p className="text-md">Total: 0</p>
          </div>
 
          {showDropdown && <div className="bg-gray-150 p-4 space-x-4 flex flex-row">
@@ -97,65 +88,52 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                   <label className="text-gray-700 text-sm mb-2">
                      Description
                   </label>
-                  <textarea
-                     name="description"
-                     placeholder="Enter Description"
+                  <p
                      className="p-2 border text-sm border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     value={ticket.description}
-                     onChange={handleChange}
-                     rows={6}
-                  />
+                  >
+                     {ticket.description}
+                  </p>
                </div>
                <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col">
                      <label className="text-gray-700 text-sm mb-2">
                         Attendees Per Ticket
                      </label>
-                     <input
-                        name="attendess"
-                        type="number"
-                        placeholder="1"
+                     <p
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={ticket.attendees}
-                        onChange={handleChange}
-                     />
+                     >
+                        {ticket.attendees}
+                     </p>
                   </div>
                   <div className="flex flex-col">
                      <label className="text-gray-700 text-sm mb-2">
                         Maximum Tickets Per Order
                      </label>
-                     <input
-                        name="maxPurchase"
-                        type="number"
-                        placeholder="1"
+                     <p
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={ticket.maxPurchase}
-                        onChange={handleChange}
-                     />
+                     >
+                        {ticket.maxPurchase}
+                     </p>
                   </div>
                   <div className="flex flex-col">
                      <label className="text-gray-700 text-sm mb-2">
                         Ticket Available From
                      </label>
-                     <input
-                        name="dateStart"
-                        type="date"
+                     <p
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={ticket.dateStart}
-                        onChange={handleChange}
-                     />
+                     >
+                        {ticket.dateStart}
+                     </p>
                   </div>
                   <div className="flex flex-col">
                      <label className="text-gray-700 text-sm mb-2">
                         Ticket Available Until
                      </label>
-                     <input
-                        name="dateEnd"
-                        type="date"
+                     <p
                         className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={ticket.dateEnd}
-                        onChange={handleChange}
-                     />
+                     >
+                        {ticket.dateEnd}
+                     </p>
                   </div>
                </div>
             </div>

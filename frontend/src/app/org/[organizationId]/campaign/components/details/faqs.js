@@ -1,6 +1,9 @@
 import { CampaignContext } from "@/app/context/campaignContext"
 import { useState, useContext } from "react"
 import useFormInput from "@/app/hooks/useFormInput"
+import { getFaqs } from "@/app/services/fetchService"
+import { createFaq } from "@/app/services/createServices"
+import { deleteFaq, deleteFaqsBatch } from "@/app/services/deleteService"
 
 const FaqsComponent = () => {
    const {faqs, setFaqs} = useContext(CampaignContext)
@@ -24,6 +27,23 @@ const FaqsComponent = () => {
 
    const handleDelete = (id) => {
       setFaqs(faqs.filter(item => item.id !== id))
+   }
+
+   const handleSave = async () => {
+      try {
+         const exisitingFaqs = await getFaqs(campaignId)
+         const relationsToAdd = faqs.filter(faq =>!exisitingFaqs.includes(faq))
+         const relationsToRemove = exisitingFaqs.filter(faq =>!faqs.includes(faq))
+
+         if (relationsToAdd.length > 0) {
+            await createFaq(campaignId, relationsToAdd)
+         }
+         if (relationsToRemove.length > 0) {
+            await deleteFaqsBatch(relationsToRemove)
+         }
+      } catch (err) {
+         console.log(err)
+      }
    }
 
    return (
@@ -99,7 +119,10 @@ const FaqsComponent = () => {
             </div> : <p className="text-gray-700 text-center p-6">No Faqs</p>}
          </div>
          <div className="w-full flex flex-row mt-6">
-            <button className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white">
+            <button 
+               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
+               onClick={handleSave}
+            >
                Save
             </button>
          </div>

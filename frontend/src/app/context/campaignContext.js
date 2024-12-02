@@ -3,7 +3,7 @@ import axios from "axios"
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
-import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCustomQuestions, getDonationPage, getPageSections, getThankYouPage, getTicketPage } from "../services/fetchService.js";
+import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCampaignTickets, getCustomQuestions, getDonationPage, getPageSections, getThankYouPage, getTicketPage } from "../services/fetchService.js";
 import BannerSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/bannerSection";
 import DescSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/descSection";
 import DonateSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/donateSection";
@@ -56,9 +56,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    })
 
    const [customQuestions, setCustomQuestions] = useState([])
-   const [tickets, setTickets] = useState([
-      {id: new Date(), title: "", quantity: 0, value: 0, descritpion: "", attendees: 0, maxPurchase: 0, dateStart: null, dateEnd: null}
-   ])
+   const [tickets, setTickets] = useState([])
    const [faqs, setFaqs] = useState([])
    const [selectedDesignations, setSelectedDesignations] = useState([]);
    const [designations, setDesignations] = useState([])
@@ -141,6 +139,9 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
                         return {...section, id: match.id, active: match.active }
                      })
                   })
+
+                  const ticketsResponse = await getCampaignTickets(campaignId)
+                  setTickets(ticketsResponse)
                }
 
                const thankyouPageResponse = await getThankYouPage(campaignId)
@@ -163,6 +164,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
 
                const questionResponse = await getCustomQuestions(campaignId)
                setCustomQuestions(questionResponse)
+               console.log(questionResponse, "sadsad")
             }
             const designationResponse = await getActiveDesignations(organization_id)
             setDesignations(designationResponse)

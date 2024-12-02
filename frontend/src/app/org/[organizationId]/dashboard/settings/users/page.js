@@ -17,6 +17,7 @@ const Users = ({params}) => {
       lastName: "",
       email: ""
    })
+   const organizationId = params.organizationId
 
    const { currentUser } = useContext(AuthContext);
 
@@ -63,8 +64,10 @@ const Users = ({params}) => {
    };
 
    return (
-      <div className="h-full w-full">
-         <div className="w-full h-full overflow-y-auto bg-white rounded-sm p-4">
+      <div className="h-full w-full bg-gray-50 overflow-y-auto ">
+         <div className="p-6 bg-gray-50">
+
+         <div className="w-full h-full bg-white rounded-lg p-8">
             <Link 
                href={`/org/${organizationId}/dashboard/settings`}
                className="text-gray-700 flex flex-row items-center space-x-2"
@@ -167,6 +170,7 @@ const Users = ({params}) => {
                   </div>
                </form>
             </div>
+         </div>
          </div>
       </div>
 

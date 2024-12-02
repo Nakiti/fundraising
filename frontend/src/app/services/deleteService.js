@@ -33,3 +33,11 @@ export const deleteCampaignTicketsBatch = async(tickets) => {
       console.log(err)
    }
 }
+
+export const deleteFaqsBatch = async(faqs) => {
+   try {
+      await axios.delete(`${API_BASE_URL}/faq/deleteBatch`, faqs)
+   } catch (err) {
+      console.log(err)
+   }
+} 

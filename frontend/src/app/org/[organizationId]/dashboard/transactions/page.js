@@ -15,6 +15,7 @@ const Transactions = ({params}) => {
       const fetchData = async() => {
          try {
             const response = await getTransactionsByOrg(organizationId)
+            console.log(response)
             setData(response)
          } catch (err) {
             console.log(err)
@@ -26,20 +27,22 @@ const Transactions = ({params}) => {
 
    return (
       <div className="w-full h-full">
-         <div className="bg-white w-full h-full overflow-y-auto rounded-sm p-4">
-            <div className="flex flex-row p-6 w-full justify-between items-center">
-               <h1 className="text-4xl">Transactions</h1>
-               <button className="bg-blue-700 font-semibold py-3 px-8 rounded-md text-md text-white">
-                  Add Offline Transaction 
-               </button>
-            </div>
+         <div className="bg-gray-50 w-full h-full overflow-y-auto rounded-sm p-6">
+            <div className="bg-white p-4 rounded-lg">
+               <div className="flex flex-row p-6 w-full justify-between items-center">
+                  <h1 className="text-4xl">Transactions</h1>
+                  <button className="bg-blue-700 font-semibold py-3 px-8 rounded-md text-md text-white">
+                     Add Offline Transaction 
+                  </button>
+               </div>
 
-            <Summary />
-            <div className="px-8">
-               <Searchbar setData={setData} organizationId={organizationId}/>
-               <Filters setData={setData} organizationId={organizationId}/>
+               <Summary />
+               <div className="px-8">
+                  <Searchbar setData={setData} organizationId={organizationId}/>
+                  <Filters setData={setData} organizationId={organizationId}/>
+               </div>
+               <Table setData={setData} data={data}/>
             </div>
-            <Table setData={setData} data={data}/>
          </div>
       </div>
    )

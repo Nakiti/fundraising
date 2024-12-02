@@ -31,8 +31,8 @@ const Table = ({data, setData}) => {
 
    return (
       <div className="px-8 mt-4">
-         <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
-            <thead className="bg-gray-100 border-b border-gray-300">
+         <table className="min-w-full bg-white">
+            <thead className=" border-b border-gray-300">
                <tr>
                   {columns.map((column, index) => (
                      <th 

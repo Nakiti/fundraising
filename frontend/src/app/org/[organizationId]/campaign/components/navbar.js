@@ -41,7 +41,7 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                      className="bg-blue-600 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
                      onClick={handleSave}
                   >
-                     Save
+                     Save & Exit
                   </button> :
                   <button 
                      className="bg-blue-600 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"

@@ -52,7 +52,7 @@ export const getThankYouPage = async(campaignId) => {
 
 export const getTicketPage = async(campaignId) => {
    try {
-      const response = await axios.get(`${API_BASE_URL}/ticketPage/get/${campaignId}`)
+      const response = await axios.get(`${API_BASE_URL}/ticket_page/get/${campaignId}`)
       return response.data[0]
    } catch (err) {
       console.log(err)

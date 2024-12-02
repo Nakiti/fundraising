@@ -46,8 +46,9 @@ const Organization = ({params}) => {
    }, [])
 
    return (
-      <div className="w-full h-full">
-         <div className="w-full h-full p-8 bg-white rounded-sm shadow-sm overflow-y-auto">
+      <div className="w-full h-full overflow-y-auto">
+         <div className="p-6 bg-gray-50">
+         <div className="w-full h-full p-8 bg-white rounded-lg shadow-sm ">
             <Link 
                href={`/org/${organizationId}/dashboard/settings`}
                className="text-gray-700 flex flex-row items-center space-x-2"
@@ -183,6 +184,7 @@ const Organization = ({params}) => {
                   </button>
                </div>
             </div>
+         </div>
          </div>
       </div>
    )

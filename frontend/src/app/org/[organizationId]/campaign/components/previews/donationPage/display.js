@@ -27,7 +27,7 @@ const Display = () => {
 
             {/* First Image */}
             <img
-               src={donationPageInputs.banner_image || "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"}
+               src={donationPageInputs.banner_image || "image1.jpg"}
                alt="image"
                className="w-full h-72 object-cover bg-gray-50"
             />
@@ -36,7 +36,7 @@ const Display = () => {
          <div className="w-5/6 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6">
             <div className="w-1/3">
                <img 
-                  src={donationPageInputs.small_image || "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"}
+                  src={donationPageInputs.small_image || "image1.jpg"}
                   className="h-48 w-48 object-cover border-4 border-white shadow-lg -mt-10 rounded-md"
                   alt="image"
                />

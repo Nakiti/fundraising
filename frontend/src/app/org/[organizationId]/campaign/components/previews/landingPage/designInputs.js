@@ -1,9 +1,18 @@
 "use client"
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
+import { updateTicketPage } from "@/app/services/updateServices"
 
 const DesignInputs = () => {
-   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(CampaignContext)
+   const {ticketsPageInputs, handleTicketsPageInputs, campaignId} = useContext(CampaignContext)
+
+   const handleSave = async() => {
+      try {
+         await updateTicketPage(campaignId, ticketsPageInputs)
+      } catch (err) {
+         console.log(err)
+      }
+   }
 
    return (
       <div className="w-full">
@@ -118,7 +127,14 @@ const DesignInputs = () => {
                </div>
             </div>
          </div>
-
+         <div className="w-full flex flex-row mt-6">
+            <button 
+               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white"
+               onClick={handleSave}
+            >
+               Save
+            </button>
+         </div>
       </div>
    )
 }

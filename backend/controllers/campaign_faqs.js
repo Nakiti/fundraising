@@ -37,3 +37,14 @@ export const deleteFaq = (req, res) => {
       return res.status(200).json(data)
    })
 }
+
+export const deleteFaqsBatch = (req, res) =>{
+   const query = "DELETE FROM campaign_faqs WHERE `id` IN (?)"
+
+   const values = req.body.map(item => item.id)
+
+   db.query(query, [values], (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data)
+   })
+}
