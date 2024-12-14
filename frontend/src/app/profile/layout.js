@@ -6,6 +6,7 @@ import { FaPlus } from "react-icons/fa";
 import { getUserData, getUserOrganizations } from "../services/fetchService";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IoIosAdd } from "react-icons/io";
 
 const ProfileLayout = ({children}) => {
    const {currentUser} = useContext(AuthContext)
@@ -27,7 +28,12 @@ const ProfileLayout = ({children}) => {
       <div>
          <Header />
          <div className="min-h-screen bg-gray-50">
-            <h1 className="text-5xl mt-12 text-center mb-16">Welcome, {userData && userData.first_name} {userData && userData.last_name}</h1>
+            <h1 className="text-5xl mt-12 text-center mb-12">Welcome, {userData && userData.first_name} {userData && userData.last_name}</h1>
+
+            <Link href="/createOrganization" className="flex flex-col items-center mb-4 w-1/4 mx-auto cursor-pointer">
+               <p className="text-xl">Create an Organization</p>
+               <IoIosAdd className="w-16 h-16"/>
+            </Link>
 
             <div className="flex w-3/4 justify-center mx-auto border-b mb-12 space-x-8">
                <Link 

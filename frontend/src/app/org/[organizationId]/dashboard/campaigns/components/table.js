@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 
 const Table = ({setData, data, organizationId}) => {
    const columns = [
-      // { id: '', label: '', sortable: false},
-      { id: 'campaignName', label: 'Campaign Name', sortable: false },
+      { id: 'id', label: 'Id', sortable: false},
+      { id: 'internalName', label: 'Internal Name', sortable: false },
       { id: 'date', label: 'Date Created', sortable: false },
       { id: 'raised', label: 'Raised', sortable: true},
-      { id: 'goal', label: 'Goal', sortable: true },
+      // { id: 'goal', label: 'Goal', sortable: true },
       { id: 'donations', label: 'Donations', sortable: true },
       { id: 'visits', label: 'Visits', sortable: true },
       { id: 'type', label: 'Type', sortable: false },
@@ -63,63 +63,64 @@ const Table = ({setData, data, organizationId}) => {
 
    return (
       <div className="px-6 mt-6 mb-4">
-         <table className="min-w-full bg-white border-gray-300">
-            <thead className=" border-b border-gray-300">
-               <tr>
-               {columns.map((column, index) => (
-                  <th
-                     key={index}
-                     className="px-4 py-3 text-left text-gray-700 text-sm font-semibold cursor-pointer hover:text-gray-900 transition-colors"
-                     onClick={() => sortData(column.id)}
-                  >
-                     <div className="flex items-center">
-                     {column.label}
-                     {column.sortable && (
-                        <span className="ml-1 text-gray-500">
-                           {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
-                           <FaSortUp className="ml-2 text-blue-600" />
-                           ) : (
-                           <FaSortDown className="ml-2 text-blue-600" />
-                           )}
-                        </span>
-                     )}
-                     </div>
-                  </th>
-               ))}
-               </tr>
-            </thead>
-
-            {currentRows && currentRows.length > 0 && <tbody>
-               {currentRows.map((row, index) => (
-               <tr
-                  key={index}
-                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => handleClick(row.campaign_id)}
-               >
-                  <td className="px-4 py-3 text-center text-md text-gray-700">{row.external_name}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">
-                     {new Date(row.created_at).toLocaleDateString("en-US")}
-                  </td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : "$"+row.raised}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : "$"+row.goal}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.donations}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : row.visits}</td>
-                  <td className="px-4 py-2 text-center text-md text-gray-600">
-                     {row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase()}
-                  </td>
-                  <td className="px-4 py-2 text-center">
-                     <span
-                     className={`px-4 py-1 w-24 rounded-full text-white text-xs font-medium ${
-                        row.status === "inactive" ? "bg-red-700" : "bg-green-700"
-                     }`}
+         <div className="overflow-x-auto bg-white">
+            <table className="border-gray-300 w-full">
+               <thead className="border-b border-gray-300">
+                  <tr>
+                  {columns.map((column, index) => (
+                     <th
+                        key={index}
+                        className="px-4 py-3 whitespace-nowrap text-center text-gray-700 text-sm font-semibold cursor-pointer hover:text-gray-900 transition-colors"
+                        onClick={() => sortData(column.id)}
                      >
-                     {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
-                     </span>
-                  </td>
-               </tr>
-               ))}
-            </tbody>}
-         </table>
+                        <div className="flex flex-row items-center">
+                        {column.label}
+                        {column.sortable && (
+                           <span className="ml-1 text-gray-500">
+                              {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
+                              <FaSortUp className="ml-2 text-blue-600" />) : (<FaSortDown className="ml-2 text-blue-600" />
+                              )}
+                           </span>
+                        )}
+                        </div>
+                     </th>
+                  ))}
+                  </tr>
+               </thead>
+
+               {currentRows && currentRows.length > 0 && <tbody>
+                  {currentRows.map((row, index) => (
+                  <tr
+                     key={index}
+                     className="border-b border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+                     onClick={() => handleClick(row.campaign_id)}
+                  >
+                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.id}</td>
+                     <td className="px-4 py-4 whitespace-nowrap text-center text-md text-gray-900">{row.internal_name}</td>
+                     <td className="px-4 py-4 text-center text-md text-gray-900">
+                        {new Date(row.created_at).toLocaleDateString("en-US")}
+                     </td>
+                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : "$"+row.raised}</td>
+                     {/* <td className="px-4 py-4 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : "$"+row.goal}</td> */}
+                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : row.donations}</td>
+                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : row.visits}</td>
+                     <td className="px-4 py-4 text-center text-md text-gray-900">
+                        {row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase()}
+                     </td>
+                     <td className="px-4 py-4 text-center">
+                        <span
+                        className={`px-4 py-1 w-24 rounded-full text-white text-xs font-medium ${
+                           row.status === "inactive" ? "bg-red-800" : "bg-green-800"
+                        }`}
+                        >
+                        {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
+                        </span>
+                     </td>
+                  </tr>
+                  ))}
+               </tbody>}
+            </table>
+         </div>
          {currentRows && currentRows.length == 0 && <p className="text-gray-700 text-center mx-auto p-4 ">No Campaigns</p>}
          <div className="flex justify-between items-center my-2 pb-4 text-gray-600 text-sm w-1/2 mx-auto">
             <button

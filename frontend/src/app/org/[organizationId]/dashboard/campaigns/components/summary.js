@@ -46,7 +46,7 @@ const Summary = () => {
       <div className="flex justify-between items-center gap-4 p-6">
          <Box text={"Total Raised: " + summary.totalRaised}/>
          <Box text={"Total Donations: " + summary.totalDonations}/>
-         <Box text={"Total Visits: " + summary.totalVisits}/>
+         {/* <Box text={"Total Visits: " + summary.totalVisits}/> */}
          <Box text={"Average Raised: " + summary.averageRaised}/>
          <Box text={"Average Raised: " + summary.averageRaised}/>
          

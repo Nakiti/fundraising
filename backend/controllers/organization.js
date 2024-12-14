@@ -9,7 +9,7 @@ export const register = (req, res) => {
       if (err) return res.status(500).json(err)
       if (data.length > 0) {return res.status(409).json("Organization already exists")}
       
-      const query = "INSERT INTO organizations(`name`, `email`, `address`, `city`, `state`, `country`, `zip`, `created_at`, `updated_at`, `updated_by`) VALUES (?)";
+      const query = "INSERT INTO organizations(`name`, `email`, `address`, `city`, `state`, `country`, `zip`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES (?)";
       const values = [
          req.body.name, 
          req.body.email, 
@@ -20,7 +20,8 @@ export const register = (req, res) => {
          req.body.zip,
          (new Date()).toISOString().slice(0, 19).replace('T', ' '),
          (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-         0
+         req.body.userId,
+         req.body.userId
       ]
   
       db.query(query, [values], (err, data) => {

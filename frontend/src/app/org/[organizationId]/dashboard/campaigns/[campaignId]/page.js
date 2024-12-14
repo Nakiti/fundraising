@@ -35,14 +35,14 @@ const CampaignPage = ({params}) => {
 
    return (
       <div className="w-full p-8">
-         <div className="flex flex-row space-x-6 w-full">
+         <div className="flex flex-row space-x-4 w-full">
             <div className="w-3/4 bg-white rounded-lg shadow-sm">
-               <div className="flex flex-row w-full justify-between items-center px-6 py-4 border-b border-gray-300">
+               <div className="flex flex-row w-full justify-between items-center px-4 py-4 border-b border-gray-300">
                   <p className="text-2xl text-gray-800 font-semibold">Campaign Details:</p>
                </div>
 
                {campaign && (
-                  <div className="grid grid-cols-2 w-full gap-8 px-6 pt-4 pb-6">
+                  <div className="grid grid-cols-2 w-full gap-8 px-4 pt-4 pb-6">
                      <div className="flex flex-col">
                         <label className="text-sm font-bold text-gray-500 mb-2">Campaign ID</label>
                         <p className="text-md text-gray-800">{campaignId}</p>
@@ -83,11 +83,11 @@ const CampaignPage = ({params}) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm w-1/4 space-y-4">
-               <div className="px-6 py-4 border-b border-gray-300">
+               <div className="px-4 py-4 border-b border-gray-300">
                   <p className="text-2xl text-gray-800 font-semibold">Quick Actions:</p>
                </div>
 
-               <div className="px-6 pb-6 py-4 flex flex-col space-y-6">
+               <div className="px-4 pb-6 py-4 flex flex-col space-y-6">
                   <Link href={`/organization/${organizationId}/campaign/${campaignId}`}>
                      <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
                         Open Campaign Page

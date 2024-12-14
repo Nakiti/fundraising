@@ -2,6 +2,18 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000/api';
 
+export const createOrganization = async(data, userId) => {
+   try {
+      const organizationId = await axios.post(`${API_BASE_URL}/organization/register`, {
+         ...data, 
+         userId: userId
+      })
+      return organizationId
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const createCampaign = async(currentUser, organizationId) => {
    try {
       const campaignId = await axios.post(`${API_BASE_URL}/campaign/create`, {
@@ -84,7 +96,21 @@ export const createCampaignTicket = async(campaignId, data) => {
 
 export const createUser = async(data) => {
    try {
-      await axios.post("http://localhost:4000/api/user/create", data)
+      const userId = await axios.post("http://localhost:4000/api/user/create", data)
+      return userId
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createUserOrganizationRelation = async(userId, organizationId, status, role) => {
+   try {
+      await axios.post(`${API_BASE_URL}/user_organization/create`, {
+         userId: userId,
+         organizationId: organizationId,
+         status: status,
+         role: role
+      })
    } catch (err) {
       console.log(err)
    }

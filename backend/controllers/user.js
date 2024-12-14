@@ -71,8 +71,6 @@ export const logout = (req, res) => {
 export const createUser = (req, res) => {
    const q = "SELECT * FROM users WHERE email = ?"
 
-   console.log(req.body)
-
    db.query(q, req.body.email, (err, data) => {
       if (err) return res.status(500).json(err)
       if (data.length > 0) {return res.status(409).json("Email already in use")}
@@ -92,7 +90,7 @@ export const createUser = (req, res) => {
   
       db.query(query, [values], (err, data) => {
          if (err) return console.log(err)
-         return res.status(200).json(data)
+         return res.status(200).json(data.insertId)
       })
    })
 }

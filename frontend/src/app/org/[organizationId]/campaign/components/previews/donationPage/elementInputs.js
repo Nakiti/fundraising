@@ -2,6 +2,8 @@
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import SectionManager from "@/app/components/sectionManager"
+import { updateDonationPage } from "@/app/services/campaignService"
+import { updatePageSection } from "@/app/services/updateServices"
 
 
 const ElementInputs = () => {
@@ -13,6 +15,8 @@ const ElementInputs = () => {
          for (const section of donationPageSections) {
             await updatePageSection(section.id, section.active)
          }
+
+         console.log("asdasd")
       } catch (err) {
          console.log(err)
       }
@@ -25,7 +29,7 @@ const ElementInputs = () => {
          })}
          <div className="w-full flex flex-row mt-6">
             <button 
-               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white"
+               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white hover:bg-blue-800"
                onClick={handleSave}
             >
                Save

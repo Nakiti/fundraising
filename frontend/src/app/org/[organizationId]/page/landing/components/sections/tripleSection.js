@@ -16,9 +16,9 @@ const TripleSection = () => {
                <textarea 
                   className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                   rows={2}
-                  placeholder="Enter about text"
-                  name="aboutText"
-                  value={inputs.aboutText}
+                  placeholder="Enter headline"
+                  name="headlineOne"
+                  value={inputs.headlineOne}
                   onChange={handleInputsChange} 
                />
             </div>
@@ -29,9 +29,9 @@ const TripleSection = () => {
                <textarea 
                   className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                   rows={6}
-                  placeholder="Enter about text"
-                  name="aboutText"
-                  value={inputs.aboutText}
+                  placeholder="Enter description"
+                  name="descriptionOne"
+                  value={inputs.descriptionOne}
                   onChange={handleInputsChange} 
                />
             </div>
@@ -44,7 +44,7 @@ const TripleSection = () => {
                   <input 
                      type="file"
                      className="hidden" 
-                     name="aboutImage"
+                     name="imageOne"
                      accept="image/*"
                      onChange={handleImageUpload}
                   />
@@ -59,9 +59,9 @@ const TripleSection = () => {
                <textarea 
                   className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                   rows={2}
-                  placeholder="Enter about text"
-                  name="aboutText"
-                  value={inputs.aboutText}
+                  placeholder="Enter headline"
+                  name="headlineTwo"
+                  value={inputs.headlineTwo}
                   onChange={handleInputsChange} 
                />
             </div>
@@ -72,9 +72,9 @@ const TripleSection = () => {
                <textarea 
                   className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                   rows={6}
-                  placeholder="Enter about text"
-                  name="aboutText"
-                  value={inputs.aboutText}
+                  placeholder="Enter description"
+                  name="descriptionTwo"
+                  value={inputs.descriptionTwo}
                   onChange={handleInputsChange} 
                />
             </div>
@@ -87,7 +87,7 @@ const TripleSection = () => {
                   <input 
                      type="file"
                      className="hidden" 
-                     name="aboutImage"
+                     name="imageTwo"
                      accept="image/*"
                      onChange={handleImageUpload}
                   />
@@ -102,9 +102,9 @@ const TripleSection = () => {
                <textarea 
                   className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                   rows={2}
-                  placeholder="Enter about text"
-                  name="aboutText"
-                  value={inputs.aboutText}
+                  placeholder="Enter headline"
+                  name="headlineThree"
+                  value={inputs.headlineThree}
                   onChange={handleInputsChange} 
                />
             </div>
@@ -115,9 +115,9 @@ const TripleSection = () => {
                <textarea 
                   className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                   rows={6}
-                  placeholder="Enter about text"
-                  name="aboutText"
-                  value={inputs.aboutText}
+                  placeholder="Enter description"
+                  name="descriptionThree"
+                  value={inputs.descriptionThree}
                   onChange={handleInputsChange} 
                />
             </div>
@@ -130,7 +130,7 @@ const TripleSection = () => {
                   <input 
                      type="file"
                      className="hidden" 
-                     name="aboutImage"
+                     name="imageThree"
                      accept="image/*"
                      onChange={handleImageUpload}
                   />

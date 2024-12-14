@@ -10,27 +10,27 @@ const DonationPage = ({display, designations}) => {
          <div className="relative w-full">
 
             {/* First Image */}
-            {/* <img
+            <img
                src={display.banner_image || "image1.jpg"}
                alt="image"
                className="w-full object-cover bg-gray-50"
                style={{height: "60vh"}}
-            /> */}
-            <div className="bg-gray-600" style={{height: "45vh"}}>
+            />
+            {/* <div className="bg-gray-600" style={{height: "45vh"}}>
 
-            </div>
+            </div> */}
          </div>
 
          <div className="w-5/6 mx-auto relative flex flex-row mb-8 space-x-6 pt-2">
             <div className="w-1/4">
-               {/* <img 
+               <img 
                   src={display.small_image || "image1.jpg"}
                   className="h-72 w-72 object-cover border-4 border-gray -mt-24 rounded-md"
                   alt="image"
-               /> */}
-               <div className="h-64 w-64 bg-blue-600 border-4 -mt-16 border-white">
+               />
+               {/* <div className="h-64 w-64 bg-blue-600 border-4 -mt-16 border-white">
                   <p>a</p>
-               </div>
+               </div> */}
             </div>
             <div className="w-2/3 mt-4">
                <div className="flex flex-row justify-between mb-10 w-11/12">

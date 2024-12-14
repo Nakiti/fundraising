@@ -59,13 +59,13 @@ const DesignInputs = () => {
                   <input 
                      type="color" 
                      className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
-                     name="b1_color"
-                     value={donationPageInputs.b1_color}
+                     name="bt_color"
+                     value={donationPageInputs.bt_color}
                      onChange={handleDonationPageInputsChange}
                   />
                   <div 
                      className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer"
-                     style={{ backgroundColor: donationPageInputs.b1_color }}  
+                     style={{ backgroundColor: donationPageInputs.bt_color }}  
                   />
                </div>
             </div>

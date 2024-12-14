@@ -33,7 +33,7 @@ const Display = () => {
             />
          </div>
 
-         <div className="w-5/6 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6">
+         <div className="w-5/6 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6" style={{ color: donationPageInputs.bg_color }}>
             <div className="w-1/3">
                <img 
                   src={donationPageInputs.small_image || "image1.jpg"}
@@ -44,8 +44,8 @@ const Display = () => {
             <div className="w-2/3 mt-4">
                <div className="flex flex-row justify-between mb-6">
                   <div>
-                     <p className="text-gray-500 text-xs">Fundraiser</p>
-                     <h1 className="text-2xl font-semibold text-gray-800">{donationPageInputs.headline || "Headline"}</h1>
+                     <p className="text-gray-500 text-xs" style={{ color: donationPageInputs.p_color }}>Fundraiser</p>
+                     <h1 className="text-2xl font-semibold text-gray-800" style={{ color: donationPageInputs.p_color }}>{donationPageInputs.headline || "Headline"}</h1>
                   </div>
                   <button className="text-xs text-blue-600 hover:underline">Share</button>
                </div>
@@ -82,7 +82,7 @@ const Display = () => {
                         key={index}
                         className="w-full text-xs py-2 bg-blue-700 text-white rounded-sm shadow-md hover:bg-blue-800 transition-colors duration-200"
                         disabled
-                        style={{ backgroundColor: donationPageInputs.b3_color }}
+                        style={{ backgroundColor: donationPageInputs.b3_color, color: donationPageInputs.bt_color }}
                         >
                         {amount}
                         </button>
@@ -92,6 +92,7 @@ const Display = () => {
                         type="number" 
                         disabled
                         className="col-span-2 text-sm rounded-sm py-2 px-4 bg-white border border-blue-600 text-gray-700 shadow focus:outline-none " 
+                        style={{ backgroundColor: donationPageInputs.b3_color, color: donationPageInputs.bt_color }}
                      /> 
                   </div>
                </div>

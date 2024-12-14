@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react"
 import axios from "axios"
 import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
-import { createUser } from "@/app/services/createServices"
+import { createUser, createUserOrganizationRelation } from "@/app/services/createServices"
 import { updateUser } from "@/app/services/updateServices"
 import { getAllUsers } from "@/app/services/fetchService"
 import { FaCheck, FaPlus } from "react-icons/fa";
@@ -15,7 +15,8 @@ const Users = ({params}) => {
    const [newUser, handleNewUserChange, setNewUser] = useFormInput({
       firstName: "",
       lastName: "",
-      email: ""
+      email: "",
+      password: "password"
    })
    const organizationId = params.organizationId
 
@@ -31,7 +32,8 @@ const Users = ({params}) => {
       e.preventDefault();
 
       try {
-         await createUser({...newUser, organization_id: currentUser.organization_id});
+         const userId = await createUser({...newUser});
+         await createUserOrganizationRelation(userId, organizationId, "pending", "user")
          setNewUser({ firstName: "", lastName: "", email: "" });
          fetchData();
       } catch (err) {

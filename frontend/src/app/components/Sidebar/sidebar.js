@@ -32,7 +32,7 @@ const Sidebar = ({organizationId}) => {
 
    return (
       <div 
-         className={`${isCollapsed ? 'w-16' : 'w-56'} h-full bg-white border-r shadow-md border-gray-200 transition-width duration-300`}
+         className={`${isCollapsed ? 'w-16' : 'w-56'} h-full bg-white border-r shadow-xl border-gray-200 transition-width duration-300`}
       >
          {/* Collapse Button */}
          <button

@@ -2,11 +2,14 @@ import { db } from "../db.js"
 
 export const createUserOrganizationRelation = (req, res) => {
 
-   const query = "INSERT INTO user_organizations (`user_id`, `organization_id`) VALUES ?"
+   const query = "INSERT INTO user_organizations (`user_id`, `organization_id`, `status`, `role`, `created_at`) VALUES ?"
 
    const values = [
       req.body.userId,
-      req.body.organizationId
+      req.body.organizationId,
+      req.body.status,
+      req.body.role,
+      (new Date()).toISOString().slice(0, 19).replace('T', ' ')
    ]
 
    db.query(query, values, (err, data) => {
@@ -21,7 +24,7 @@ export const getUserOrganizations = (req, res) => {
       FROM user_organizations
       JOIN organizations ON user_organizations.organization_id = organizations.id
       WHERE status = "active" AND user_organizations.user_id = ?
-   `
+   ` 
 
    const value = [req.params.id]
 

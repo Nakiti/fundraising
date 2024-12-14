@@ -43,16 +43,18 @@ const Modal = ({ show, setShow, organizationId }) => {
             await createPageSection(thankyouPageId, "message", true, currentUser);
             await createPageSection(thankyouPageId, "background", true, currentUser);
          } else if (tabContent[activeTab].content == "ticketed-event") {
-            const thankyouPageId = await createThankYouPage(id, currentUser);
             const ticketPageId = await createTicketPage(id, currentUser)
-
-            await createPageSection(thankyouPageId, "message", true, currentUser);
-            await createPageSection(thankyouPageId, "background", true, currentUser);
+            const thankyouPageId = await createThankYouPage(id, currentUser);
 
             await createPageSection(ticketPageId, "banner", true, currentUser)
             await createPageSection(ticketPageId, "about", true, currentUser)
             await createPageSection(ticketPageId, "event", true, currentUser)
             await createPageSection(ticketPageId, "purchase", true, currentUser)
+
+            await createPageSection(thankyouPageId, "message", true, currentUser);
+            await createPageSection(thankyouPageId, "background", true, currentUser);
+         } else if (tabContent[activeTab].content == "peer-to-peer") {
+            
          }
          router.push(`/org/${organizationId}/campaign/edit/${id}/details/about`);
       } catch (err) {

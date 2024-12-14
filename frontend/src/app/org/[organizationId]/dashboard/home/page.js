@@ -78,7 +78,7 @@ const Home = ({params}) => {
 
    return (
       <div className="w-full h-full">
-         <div className="w-full h-full rounded-sm overflow-y-auto p-6 bg-gray-50">
+         <div className="w-full h-full rounded-sm overflow-y-auto p-6 bg-gray-100">
             <h1 className="text-4xl font-semibold text-start mb-10 px-8 pt-4 text-gray-800">
                Welcome Back, {userData && userData.first_name}!
             </h1>
@@ -118,7 +118,7 @@ const Home = ({params}) => {
                <div>
                   <div className="flex items-center justify-between mb-5">
                      <h2 className="text-lg font-medium">Organization Status</h2>
-                     <p className="px-3 py-1 bg-green-500 text-sm text-white rounded-full">Active</p>
+                     <p className="px-3 py-1 bg-green-700 text-sm text-white rounded-full">Active</p>
                   </div>
                   {["Landing", "Impact", "About"].map((page) => (
                      <div key={page} className="flex justify-between items-center mb-3">
@@ -128,7 +128,7 @@ const Home = ({params}) => {
                            <MdOpenInNew className="text-gray-500 hover:text-gray-700" />
                         </Link>
                      </div>
-                     <p className="px-3 py-1 bg-green-500 text-sm text-white rounded-full">Active</p>
+                     <p className="px-3 py-1 bg-green-700 text-sm text-white rounded-full">Active</p>
                      </div>
                   ))}
                </div>

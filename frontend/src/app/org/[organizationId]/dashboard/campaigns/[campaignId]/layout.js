@@ -28,7 +28,7 @@ const CampaignPageLayout = ({children, params}) => {
          
          try {
             const response = await getCampaignDetails(campaignId)
-            // console.log(response)
+            console.log(response)
             setCampaign(response)
          } catch (err) {
             console.log(err)
@@ -51,7 +51,7 @@ const CampaignPageLayout = ({children, params}) => {
                <div className="flex flex-row items-center">
                   <MdOutlineCampaign className="h-12 w-12 p-1 border-2 border-white rounded-sm mr-4"/>
                   <div className="flex flex-col text-gray-100">
-                     <h1 className="text-2xl font-semibold">{campaign && campaign.external_name}</h1>
+                     <h1 className="text-2xl font-semibold">{campaign && campaign.internal_name}</h1>
                      <p className="text-sm mt-1 text-gray-400">{campaign && campaign.type}</p>
                   </div>
                </div>

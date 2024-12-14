@@ -4,16 +4,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
 import { getActiveDesignations, getCampaignDesignations, getCampaignDetails, getCampaignPreview, getCampaignTickets, getCustomQuestions, getDonationPage, getPageSections, getThankYouPage, getTicketPage } from "../services/fetchService.js";
-import BannerSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/bannerSection";
-import DescSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/descSection";
-import DonateSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/donateSection";
-import TitleSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/titleSection";
-import BackgroundSection from "../org/[organizationId]/campaign/components/previews/thankPage/sections/backgroundSection";
-import MessageSection from "../org/[organizationId]/campaign/components/previews/thankPage/sections/messageSection";
-import LandingBanner from "../org/[organizationId]/campaign/components/previews/landingPage/sections/bannerSection";
-import LandingAbout from "../org/[organizationId]/campaign/components/previews/landingPage/sections/aboutSection";
-import PurchaseSection from "../org/[organizationId]/campaign/components/previews/landingPage/sections/purchaseSection";
-import EventSection from "../org/[organizationId]/campaign/components/previews/landingPage/sections/eventSection";
+import { donationPageSections, setDonationPageSections, ticketPageSections, setTicketPageSections, thankyouPageSections, setThankyouPageSections } from "../constants/pageSectionsConfig";
 
 export const CampaignContext = createContext();
 
@@ -21,26 +12,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    const {currentUser} = useContext(AuthContext)
    const organization_id = organizationId
 
-   const [donationPageSections, setDonationPageSections] = useState([
-      {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
-      {id: 1, name: "title", displayText: "Title Section", active: true, required: true, dropdown: false, content: <TitleSection />},
-      {id: 2, name: "desc", displayText: "Description Section", active: true, required: false, dropdown: false, content: <DescSection />},
-      {id: 3, name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
-   ])
-
    const [campaignType, setCampaignType] = useState("")
-
-   const [thankyouPageSections, setThankyouPageSections] = useState([
-      {name: "message", displayText: "Message Section", active: true, required: true, dropdown: false, content: <MessageSection />},
-      {name: "background", displayText: "Background Section", active: true, required: true, dropdown: false, content: <BackgroundSection />},
-   ])
-
-   const [ticketPageSections, setTicketPageSections] = useState([
-      {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <LandingBanner />},
-      {id: 1, name: "about", displayText: "About Section", active: true, required: true, dropdown: false, content: <LandingAbout />},
-      {id: 1, name: "event", displayText: "Event Section", active: true, required: true, dropdown: false, content: <EventSection />},
-      {id: 2, name: "purchase", displayText: "Purchase Section", active: true, required: true, dropdown: false, content: <PurchaseSection />},
-   ])
 
    const [donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs] = useFormInput({})
    const [thankPageInputs, handleThankPageInputsChange, setThankPageInputs] = useFormInput({})
@@ -100,6 +72,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
                      button4: donationResponse.button4 || 0,
                      button5: donationResponse.button5 || 0,
                      button6: donationResponse.button6 || 0,
+                     bt_color: donationResponse.bt_color || ""
                   })
    
                   console.log("donatonid", donationPageId)

@@ -1,7 +1,7 @@
 import { db } from "../db.js";
 
 export const createFaqs = (req, res) => {
-   const query = "INSERT INTO campaign_faqs (`campaign_id`, `question`, `answer`, `created-at`) VALUES ?"
+   const query = "INSERT INTO campaign_faqs (`campaign_id`, `question`, `answer`, `created_at`) VALUES ?"
 
    const values = req.body.map(faq => [
       Number(req.params.id),

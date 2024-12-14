@@ -33,11 +33,11 @@ const Searchbar = ({setData, organizationId}) => {
    }
 
    return (
-      <div className="relative w-3/4  mb-2">
+      <div className="relative w-3/4 mb-2">
          <input
             type="text"
             placeholder="Search for a Campaign"
-            className="px-5 py-3 pr-12 w-full text-sm text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500 transition-colors"
+            className="px-5 py-3 pr-12 w-full text-sm text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 transition-colors"
             value={query}
             onChange={handleInputsChange}
             onKeyDown={(e) => {

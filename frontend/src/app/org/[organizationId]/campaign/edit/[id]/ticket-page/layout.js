@@ -8,8 +8,8 @@ const LandingPageLayout = ({params, children}) => {
    const organizationId = params.organizationId
 
    const links = [
-      `/org/${organizationId}/campaign/edit/${campaignId}/landing-page`,
-      `/org/${organizationId}/campaign/edit/${campaignId}/landing-page/design`
+      `/org/${organizationId}/campaign/edit/${campaignId}/ticket-page`,
+      `/org/${organizationId}/campaign/edit/${campaignId}/ticket-page/design`
    ]
 
    return (

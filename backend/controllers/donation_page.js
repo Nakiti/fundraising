@@ -88,6 +88,3 @@ export const updateDonationPage = (req, res) => {
    })
 }
 
-export const deletePreview = (req, res) => {
-   
-}

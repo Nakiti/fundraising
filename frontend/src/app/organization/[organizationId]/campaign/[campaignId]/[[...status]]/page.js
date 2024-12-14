@@ -63,7 +63,7 @@ const CampaignPage = ({params}) => {
          {status == "preview" && (
             <div className="fixed top-0 left-0 right-0 py-4 px-8 bg-gray-700 flex flex-row justify-between shadow-lg z-10">
                <Link
-                  href={`/org/${organizationId}/campaign/edit/${campaignId}/details/about`}
+                  href={`/org/${organizationId}/campaign/edit/${campaignId}/donation-page`}
                   className="flex flex-row space-x-2 items-center text-white"
                >
                   <FaArrowLeft />

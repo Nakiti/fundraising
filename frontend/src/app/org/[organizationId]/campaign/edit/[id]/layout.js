@@ -23,7 +23,7 @@ const EditLayout = ({params, children}) => {
    const detailsLink  = `/org/${organizationId}/campaign/edit/${campaignId}/details/about`
    
    const pageLinks = [
-      campaignType == "ticketed-event" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/landing-page/`, title: "Ticket Page"} : null,
+      campaignType == "ticketed-event" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/ticket-page/`, title: "Ticket Page"} : null,
       campaignType == "donation" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/donation-page/`, title: "Donation Page"} : null,
       {path: `/org/${organizationId}/campaign/edit/${campaignId}/thank-you-page/`, title: "Thank You Page"}
    ]

@@ -19,7 +19,7 @@ const DashboardLayout = ({params, children }) => {
         {isClient && <Sidebar organizationId={organizationId}/>} {/* Render a placeholder on the server */}
 
       {/* Main Content */}
-      <div className="flex-1 bg-gray-50">
+      <div className="flex-1 bg-gray-50 overflow-x-hidden">
         {isClient && children} {/* Placeholder for children on the server */}
       </div>
     </div>

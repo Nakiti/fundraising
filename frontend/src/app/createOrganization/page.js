@@ -1,7 +1,10 @@
 "use client"
-import { useState } from "react"
+import { useState, useContext } from "react"
 import useFormInput from "../hooks/useFormInput"
 import Header from "../components/header"
+import { AuthContext } from "../context/authContext"
+import { createOrganization, createUserOrganizationRelation } from "../services/createServices"
+import { useRouter } from "next/navigation"
 
 const CreateOrganization = () => {
    const [orgData, handleOrgDataChange, setOrgData] = useFormInput({
@@ -13,6 +16,15 @@ const CreateOrganization = () => {
       country: "",
       zip: ""
    })
+   const {currentUser} = useContext(AuthContext)
+   const userId = currentUser.id
+   const router = useRouter()
+
+   const handleRegister = async() => {
+      const organizationId = await createOrganization(orgData, userId)
+      await createUserOrganizationRelation(userId, organizationId, "active", "admin")
+      router.push("/profile")
+   }
 
    return (
       <div>
@@ -119,6 +131,7 @@ const CreateOrganization = () => {
                <div className="flex items-center justify-center mt-8">
                   <button 
                      className="py-3 px-6 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition w-full md:w-1/4"
+                     onClick={handleRegister}
                   >
                      Register
                   </button>
