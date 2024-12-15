@@ -1,8 +1,9 @@
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
+import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 
 const DonateSection = () => {
-   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
 
    return (
       <div>

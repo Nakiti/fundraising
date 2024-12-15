@@ -61,6 +61,30 @@ export const updateLandingPage = async(id, data) => {
    }
 }
 
+export const updatePeerLandingPage = async(id, data, userId) => {
+   const formData = new FormData()
+
+   formData.append("headline", data.title)
+   formData.append("tagline", data.description)
+   formData.append("description", data.image)
+   formData.append("banner_image", data.bg_color)
+   formData.append("p_color", data.p_color)
+   formData.append("s_color", data.s_color)
+   formData.append("bg_color", data.b1_color)
+   formData.append("t_color", data.b2_color)
+   formData.append("user_id", userId)
+
+   try {
+      await axios.put(`${API_BASE_URL}/peer_landing_page/update/${id}`, formData, {
+         headers: {
+           'Content-Type': 'multipart/form-data',
+         },
+      })
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const updateThankYouPage = async(campaignId, data) => {
    const formData = new FormData()
 

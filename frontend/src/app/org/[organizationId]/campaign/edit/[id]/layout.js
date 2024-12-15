@@ -10,21 +10,26 @@ import { updatePageSection, updateThankYouPage, updateTicketPage } from "@/app/s
 import { getCampaignDesignations, getCampaignTickets, getCustomQuestions } from "@/app/services/fetchService"
 import { deleteCampaignDesignationBatch, deleteCampaignQuestionsBatch, deleteCampaignTicketsBatch } from "@/app/services/deleteService"
 import { createCampaignTicket } from "@/app/services/createServices"
+import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext"
+import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext"
 
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
    const organizationId = params.organizationId
    const router = useRouter()
-   const {donationPageInputs, campaignDetails, selectedDesignations, customQuestions, thankPageInputs, ticketPageInputs, donationPageSections, thankyouPageSections, campaignType, tickets} = useContext(CampaignContext)
+   const {campaignDetails, selectedDesignations, customQuestions, thankPageInputs, thankyouPageSections, campaignType, tickets} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
+   const {donationPageInputs, donationPageSections} = useContext(DonationPageContext)
+   const {ticketPageInputs, ticketPageSections} = useContext(TicketPageContext)
 
    const detailsLink  = `/org/${organizationId}/campaign/edit/${campaignId}/details/about`
    
    const pageLinks = [
       campaignType == "ticketed-event" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/ticket-page/`, title: "Ticket Page"} : null,
       campaignType == "donation" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/donation-page/`, title: "Donation Page"} : null,
+      campaignType == "peer-to-peer" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/peer-landing-page/`, title: "Landing Page"} : null,
       {path: `/org/${organizationId}/campaign/edit/${campaignId}/thank-you-page/`, title: "Thank You Page"}
    ]
 
@@ -89,6 +94,10 @@ const EditLayout = ({params, children}) => {
             } else if (campaignType == "ticketed-event") {
                await updateTicketPage(campaignId, ticketPageInputs)
                await updateCampaignTickets()
+
+               for (const section of ticketPageSections) {
+                  await updatePageSection(section.id, section.active)
+               }
             }
             
             await updateThankYouPage(campaignId, thankPageInputs)

@@ -3,9 +3,10 @@ import { CgProfile } from "react-icons/cg";
 import { useContext, useState } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 import { IoIosClose } from "react-icons/io";
+import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
 
 const Display = () => {
-   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(CampaignContext)
+   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(TicketPageContext)
    
    return (
       <div 

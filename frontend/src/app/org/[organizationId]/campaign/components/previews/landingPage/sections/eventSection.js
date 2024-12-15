@@ -1,9 +1,10 @@
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import useImageUpload from "@/app/hooks/useImageUpload"
+import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
 
 const EventSection = () => {
-   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(CampaignContext)
+   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(TicketPageContext)
    const {handleImageUpload} = useImageUpload()
 
    return (

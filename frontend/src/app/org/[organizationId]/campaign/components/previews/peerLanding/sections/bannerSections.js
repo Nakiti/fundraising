@@ -1,23 +1,10 @@
 import { useContext } from "react";
-import { CampaignContext } from "@/app/context/campaignContext";
 import useImageUpload from "@/app/hooks/useImageUpload";
-import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
+import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingPageContext";
 
-const TitleSection = () => {
-   const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
+const BannerSection = () => {
+   const {peerLandingPageInputs, handlePeerLandingPageInputsChange} = useContext(PeerLandingPageContext)
    const {handleImageUpload} = useImageUpload()
-
-   // const handleImageUpload = (e) => {
-   //    const file = e.target.files[0];
-   //    if (file) {
-   //       const reader = new FileReader();
-   //       reader.onloadend = () => {
-   //          handleDonationPageInputsChange({ target: { name: 'image', value: reader.result } });
-   //          console.log(reader.result)
-   //       };
-   //       reader.readAsDataURL(file); // Convert the file to base64
-   //    }
-   // }
 
    return (
       <div>
@@ -30,9 +17,9 @@ const TitleSection = () => {
                <input 
                   type="file"
                   className="hidden" 
-                  name="small_image"
+                  name="banner_image"
                   accept="image/*"
-                  onChange={(e) => handleImageUpload(e, handleDonationPageInputsChange)}
+                  onChange={(e) => handleImageUpload(e, handlePeerLandingPageInputsChange)}
                />
             </label>                  
          </div>
@@ -45,13 +32,12 @@ const TitleSection = () => {
                rows={2}
                placeholder="Enter a Headline "
                name="headline"
-               value={donationPageInputs.headline}
-               onChange={handleDonationPageInputsChange}
+               value={peerLandingPageInputs.headline}
+               onChange={handlePeerLandingPageInputsChange}
             />
          </div>
       </div>
    )
-
 }
 
-export default TitleSection
+export default BannerSection

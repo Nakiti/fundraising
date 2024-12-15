@@ -1,9 +1,10 @@
 "use client"
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
+import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 
 const DesignInputs = () => {
-   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
    
    const handleSave = async() => {
       try {

@@ -6,9 +6,10 @@ import { createCampaignTicket } from "@/app/services/createServices"
 import { deleteCampaignTicketsBatch } from "@/app/services/deleteService"
 import useFormInput from "@/app/hooks/useFormInput"
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext"
 
 const Ticket = () => {
-   const {tickets, setTickets, campaignId} = useContext(CampaignContext)
+   const {tickets, setTickets, campaignId} = useContext(TicketPageContext)
    const [newTicket, handleNewTicketChange, setNewTicket] = useFormInput(
       {id: new Date(), title: "", quantity: 0, value: 0, descritpion: "", attendees: 0, maxPurchase: 0, dateStart: null, dateEnd: null}
    )

@@ -1,9 +1,10 @@
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
+import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
 
 const LandingAbout = () => {
 
-   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(CampaignContext)
+   const {ticketsPageInputs, handleTicketsPageInputs} = useContext(TicketPageContext)
 
    return (
       <div>

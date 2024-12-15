@@ -3,6 +3,9 @@
 import { CampaignContextProvider } from "@/app/context/campaignContext";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { DonationPageContextProvider } from "@/app/context/campaignPages/donationPageContext";
+import { ThankYouPageContextProvider } from "@/app/context/campaignPages/thankYouPageContext";
+import { TicketPageContextProvider } from "@/app/context/campaignPages/ticketPageContext";
 
 const CampaignLayout = ({ children }) => {
   const [isClient, setIsClient] = useState(false);
@@ -15,13 +18,17 @@ const CampaignLayout = ({ children }) => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null; // Wait until it's safe to use client-side hooks
+  if (!isClient) return null; 
 
    return (
       <CampaignContextProvider campaignId={campaignId} organizationId={organizationId}>
-         <div>
+         <DonationPageContextProvider campaignId={campaignId}>
+         <ThankYouPageContextProvider campaignId={campaignId}>
+         <TicketPageContextProvider campaignId={campaignId}>
             {children}
-         </div>
+         </TicketPageContextProvider>
+         </ThankYouPageContextProvider>
+         </DonationPageContextProvider>
       </CampaignContextProvider>
    );
 };

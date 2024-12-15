@@ -3,11 +3,10 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import SectionManager from "@/app/components/sectionManager"
 import { updateTicketPage } from "@/app/services/updateServices"
-
-
+import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
 
 const ElementInputs = () => {
-   const {ticketPageSections, setTicketPageSections, ticketPageInputs, campaignId} = useContext(CampaignContext)
+   const {ticketPageSections, setTicketPageSections, ticketPageInputs, campaignId} = useContext(TicketPageContext)
 
    const handleSave = async() => {
       try {

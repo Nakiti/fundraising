@@ -3,9 +3,10 @@ import { CgProfile } from "react-icons/cg";
 import { useContext, useState } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 import { IoIosClose } from "react-icons/io";
+import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 
 const Display = () => {
-   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
    
    return (
       <div 
@@ -113,3 +114,11 @@ const Display = () => {
 }
 
 export default Display
+
+//TODO
+/*
+   design generic donation form that will be available for all campaigns
+   create necessary pages on intialization of peer 2 peer
+   add update/fetch/create services
+
+*/

@@ -1,21 +1,19 @@
 "use client"
 import { useContext } from "react"
-import { CampaignContext } from "@/app/context/campaignContext"
 import SectionManager from "@/app/components/sectionManager"
 import { updateDonationPage } from "@/app/services/campaignService"
-import { updatePageSection } from "@/app/services/updateServices"
-import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
-
+import { updatePageSection, updatePeerLandingPage } from "@/app/services/updateServices"
+import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingPageContext"
+import { AuthContext } from "@/app/context/authContext"
 
 const ElementInputs = () => {
-   const {donationPageSections, setDonationPageSections, donationPageInputs, campaignId} = useContext(DonationPageContext)
+   const {peerLandingPageSections, setPeerLandingPageSections, peerLandingPageInputs, campaignId} = useContext(PeerLandingPageContext)
+   const {currentUser} = useContext(AuthContext)
 
    const handleSave = async() => {
-      console.log(donationPageInputs)
-
       try {
-         await updateDonationPage(campaignId, donationPageInputs)
-         for (const section of donationPageSections) {
+         await updatePeerLandingPage(campaignId, peerLandingPageInputs, currentUser.user_id)
+         for (const section of peerLandingPageSections) {
             await updatePageSection(section.id, section.active)
          }
       } catch (err) {
@@ -25,8 +23,8 @@ const ElementInputs = () => {
 
    return (
       <div className="w-full">
-         {donationPageSections.map((section, index) => {
-            return <SectionManager key={index} section={section} sections={donationPageSections} setSections={setDonationPageSections}/>
+         {peerLandingPageSections.map((section, index) => {
+            return <SectionManager key={index} section={section} sections={peerLandingPageSections} setSections={setPeerLandingPageSections}/>
          })}
          <div className="w-full flex flex-row mt-6">
             <button 

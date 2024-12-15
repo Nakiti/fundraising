@@ -4,9 +4,11 @@ import { CampaignContext } from "@/app/context/campaignContext"
 import { getCampaignDesignations } from "@/app/services/fetchService"
 import { createCampaignDesignation } from "@/app/services/campaignService"
 import { deleteCampaignDesignationBatch } from "@/app/services/deleteService"
+import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext"
 
 const DesignationsComponent = () => {
-   const {designations, selectedDesignations, setSelectedDesignations, campaignDetails, handleCampaignDetailsChange, campaignId} = useContext(CampaignContext)
+   const {designations, campaignDetails, handleCampaignDetailsChange, campaignId} = useContext(CampaignContext)
+   const {selectedDesignations, setSelectedDesignations} = useContext(DonationPageContext)
 
    const handleChange = (designation, isChecked) => {
       setSelectedDesignations(prev => {

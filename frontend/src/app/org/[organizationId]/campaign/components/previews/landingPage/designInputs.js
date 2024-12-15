@@ -2,9 +2,10 @@
 import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { updateTicketPage } from "@/app/services/updateServices"
+import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
 
 const DesignInputs = () => {
-   const {ticketsPageInputs, handleTicketsPageInputs, campaignId} = useContext(CampaignContext)
+   const {ticketsPageInputs, handleTicketsPageInputs, campaignId} = useContext(TicketPageContext)
 
    const handleSave = async() => {
       try {

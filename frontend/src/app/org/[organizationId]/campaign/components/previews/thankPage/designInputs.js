@@ -3,6 +3,7 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { updateTicketPage } from "@/app/services/updateServices"
 
+
 const DesignInputs = () => {
    const {ticketsPageInputs, handleTicketsPageInputs, campaignId} = useContext(CampaignContext)
 

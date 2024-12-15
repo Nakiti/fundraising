@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 import useImageUpload from "@/app/hooks/useImageUpload";
+import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 
 const BannerSection = () => {
-   const {donationPageInputs, handleDonationPageInputsChange} = useContext(CampaignContext)
+   const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
    const {handleImageUpload} = useImageUpload()
 
    return (

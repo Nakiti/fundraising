@@ -1,10 +1,10 @@
 "use client"
 import SectionManager from "@/app/components/sectionManager"
 import { useContext } from "react"
-import { CampaignContext } from "@/app/context/campaignContext"
+import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
 
 const ElementInputs = () => {
-   const {thankyouPageSections, setThankyouPageSections, campaignId, thankyouPageInputs} = useContext(CampaignContext)
+   const {thankyouPageSections, setThankyouPageSections, campaignId, thankyouPageInputs} = useContext(ThankYouPageContext)
 
    const handleSave = async() => {
       try {
