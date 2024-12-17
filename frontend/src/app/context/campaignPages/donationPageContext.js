@@ -2,18 +2,16 @@ import { createContext, useEffect, useState, useContext } from "react";
 import useFormInput from "../../hooks/useFormInput";
 import { getDonationPage, getPageSections, getCampaignDesignations } from "../../services/fetchService";
 import { initialDonationPageSections } from "../../constants/pageSectionsConfig";
-import { CampaignContext } from "../campaignContext";
 
 export const DonationPageContext = createContext()
 
-export const DonationPageContextProvider = ({campaignId, children}) => {
+export const DonationPageContextProvider = ({campaignId, campaignType, children}) => {
    const [donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs] = useFormInput({})
    const [donationPageSections, setDonationPageSections] = useState(initialDonationPageSections)
-   const {campaignType} = useContext(CampaignContext)
    const [selectedDesignations, setSelectedDesignations] = useState([]);
 
    useEffect(() => {
-      console.log("asdsvfsdds", campaignType)
+      if (campaignType != "crowdfunding") return
 
       const fetchData = async() => {
          try {
@@ -27,9 +25,9 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
                bg_color: donationResponse.bg_color || "",
                p_color: donationResponse.p_color || "",
                s_color: donationResponse.s_color || "",
-               b1_color: donationResponse.b1_color || "", //button one color (donate)
-               b2_color: donationResponse.b2_color || "", //button two color (share)
-               b3_color: donationResponse.b3_color || "", //button three color (money)
+               b1_color: donationResponse.b1_color || "",
+               b2_color: donationResponse.b2_color || "",
+               b3_color: donationResponse.b3_color || "", 
                button1: donationResponse.button1 || 0,
                button2: donationResponse.button2 || 0,
                button3: donationResponse.button3 || 0,
@@ -56,6 +54,11 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
 
       fetchData()
    }, [])
+
+
+   if (campaignType !== "crowdfunding") {
+      return <>{children}</>
+   }
 
    return (
       <DonationPageContext.Provider value={{donationPageInputs, handleDonationPageInputsChange, 

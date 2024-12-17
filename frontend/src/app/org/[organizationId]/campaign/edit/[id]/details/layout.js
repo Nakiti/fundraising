@@ -13,7 +13,7 @@ const DetailsLayout = ({params, children}) => {
    const links = [
       {title: "About", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/about`},
       campaignType == "ticketed-event" ? {title: "Tickets", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/tickets`} : null,
-      campaignType == "donation" ? {title: "Designations", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/designations`} : null,
+      campaignType == "donation" || campaignType == "crowdfunding" ? {title: "Designations", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/designations`} : null,
       {title: "Questions", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/questions`},
       {title: "Contact", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/contact`},
       {title: "Sharing", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/sharing`},

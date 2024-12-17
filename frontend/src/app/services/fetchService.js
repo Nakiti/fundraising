@@ -68,6 +68,25 @@ export const getPeerLandingPage = async(campaignId) => {
    }
 }
 
+export const getPeerFundraisingPage = async(campaignId) =>{
+   try {
+      const response = await axios.get(`${API_BASE_URL}/peer_fundraising_page/get/${campaignId}`)
+      return response.data[0]
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getDonationForm = async(campaignId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/donation_form/get/${campaignId}`)
+      console.log("fonrted", response.data[0])
+      return response.data[0]
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const getAllCampaigns = async(organizationId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/campaign/getByOrg/${organizationId}`)

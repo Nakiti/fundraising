@@ -1,7 +1,7 @@
 "use client"
 
 import { CampaignContext } from "@/app/context/campaignContext";
-import { useState, useContext } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -13,6 +13,26 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
    const {status, campaignDetails, campaignType} = useContext(CampaignContext)
    const pathName = usePathname()
    const [showDropdown, setShowDropdown] = useState(false)
+   const [showLinks, setShowLinks] = useState(false)
+   const dropdownRef = useRef(null);
+
+   const toggleDropdown = (e) => {
+      e.stopPropagation(); // Prevent immediate closure
+      setShowLinks((prev) => !prev);
+   };
+
+   useEffect(() => {
+      const handleOutsideClick = (e) => {
+         if (
+            dropdownRef.current &&
+            !dropdownRef.current.contains(e.target)
+         ) {
+            setShowLinks(false);
+         }
+      };
+      document.addEventListener("click", handleOutsideClick);
+      return () => document.removeEventListener("click", handleOutsideClick);
+   }, []);
 
    return (
       <div className="border-b border-gray-200 bg-gray-800 text-white">
@@ -38,20 +58,20 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
             <div className="flex space-x-6 text-md">
                {status === "inactive" ? 
                   <button 
-                     className="bg-blue-600 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
+                     className="bg-blue-700 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
                      onClick={handleSave}
                   >
                      Save & Exit
                   </button> :
                   <button 
-                     className="bg-blue-600 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
+                     className="bg-blue-700 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
                      onClick={handleDeactivate}
                   >
                      Deactivate
                   </button>
                }
                <button 
-                  className="bg-blue-600 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
+                  className="bg-blue-700 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
                   onClick={handlePublish}
                >
                   Publish
@@ -80,12 +100,31 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                </button>
             </div>
 
-            <Link href={`/organization/${organizationId}/campaign/${campaignId}/preview`}>
-               <p className="flex items-center text-white hover:underline font-semibold text-md">
-                  Preview Campaign
-                  <FaExternalLinkAlt className="ml-2 text-white" />
-               </p>
-            </Link>
+            <div className="relative inline-block" ref={dropdownRef}>
+               <div
+                  onClick={toggleDropdown}
+                  className="cursor-pointer px-4 py-2 text-white text-sm flex flex-row justify-between items-center space-x-4"
+
+               >
+                  <p>Preview a Page</p>
+                  {showLinks ? <IoIosArrowUp /> : <IoIosArrowDown />}
+               </div>
+
+               {showLinks && (
+                  <div className="absolute left-0 bg-gray-800 border border-gray-200 shadow-xs w-48 z-50">
+                     {pageLinks.filter(item => item != null).map((item, index) => (
+                        <a
+                           key={index}
+                           href={`${item?.link}preview`}
+                           className="block border-b border-gray-200 px-4 py-3 text-sm text-white hover:bg-gray-700"
+                        >
+                           {item?.title}
+                        </a>
+                     ))}
+                  </div>
+               )}
+            </div>
+
          </div>
 
 

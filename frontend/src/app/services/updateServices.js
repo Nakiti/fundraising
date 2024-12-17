@@ -85,6 +85,62 @@ export const updatePeerLandingPage = async(id, data, userId) => {
    }
 }
 
+export const updateDonationForm = async(id, data, userId) => {
+   const formData = new FormData()
+
+   formData.append("headline", data.headline)
+   formData.append("description", data.description)
+   formData.append("bg_image", data.bg_image)
+   formData.append("p_color", data.p_color)
+   formData.append("s_color", data.s_color)
+   formData.append("bg_color", data.b1_color)
+   formData.append("t_color", data.b2_color)
+   formData.append("button1", data.button1);
+   formData.append("button2", data.button2);
+   formData.append("button3", data.button3);
+   formData.append("button4", data.button4);
+   formData.append("button5", data.button5);
+   formData.append("button6", data.button6);
+   formData.append("user_id", userId)
+
+   console.log(formData)
+
+   try {
+      await axios.put(`${API_BASE_URL}/donation_form/update/${id}`, formData, {
+         headers: {
+           'Content-Type': 'multipart/form-data',
+         },
+      })
+   } catch (err) {
+      console.log(err)
+   }
+
+}
+
+export const updatePeerFundraisingPage = async(id, data, userId) => {
+   const formData = new FormData()
+
+   formData.append("headline", data.title)
+   formData.append("tagline", data.description)
+   formData.append("description", data.image)
+   formData.append("banner_image", data.bg_color)
+   formData.append("p_color", data.p_color)
+   formData.append("s_color", data.s_color)
+   formData.append("bg_color", data.b1_color)
+   formData.append("t_color", data.b2_color)
+   formData.append("user_id", userId)
+
+   try {
+      await axios.put(`${API_BASE_URL}/peer_landing_page/update/${id}`, formData, {
+         headers: {
+           'Content-Type': 'multipart/form-data',
+         },
+      })
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const updateThankYouPage = async(campaignId, data) => {
    const formData = new FormData()
 

@@ -54,6 +54,45 @@ export const createThankYouPage = async (campaignId, currentUser) => {
    }
 }
 
+export const createPeerLandingPage = async (campaignId, currentUser) => {
+   try {
+      const pageId = await axios.post(`${API_BASE_URL}/peer_landing_page/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.id
+      })
+
+      return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createDonationForm = async(campaignId, currentUser) => {
+   try {
+      const pageId = await axios.post(`${API_BASE_URL}/donation_form/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.id
+      })
+
+      return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createPeerFundraisingPage = async (campaignId, currentUser) => {
+   try {
+      const pageId = await axios.post(`${API_BASE_URL}/peer_fundraising_page/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.id
+      })
+
+      return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const createTicketPage = async(campaignId) => {
    try {
       const pageId = await axios.post(`${API_BASE_URL}/ticket_page/create`, {

@@ -11,8 +11,6 @@ const ElementInputs = () => {
    const {donationPageSections, setDonationPageSections, donationPageInputs, campaignId} = useContext(DonationPageContext)
 
    const handleSave = async() => {
-      console.log(donationPageInputs)
-
       try {
          await updateDonationPage(campaignId, donationPageInputs)
          for (const section of donationPageSections) {

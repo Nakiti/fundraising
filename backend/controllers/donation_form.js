@@ -9,7 +9,7 @@ const upload = multer({
 });
 
 export const createDonationForm = (req, res) => {
-   const query = "INSERT INTO donation_forms (`campaign_id`, `updated_at`, `updated_by`) VALUES ?"
+   const query = "INSERT INTO donation_forms (`campaign_id`, `updated_at`, `updated_by`) VALUES (?)"
 
    const values = [
       req.body.campaign_id,
@@ -31,7 +31,7 @@ export const getDonationForm = (req, res) => {
 
    db.query(query, [value], (err, data) => {
       if (err) return console.log(err)
-      console.log("id", data.id)
+      console.log("id", data[0].id)
       return res.status(200).json(data)
    })
 }
@@ -46,7 +46,7 @@ export const updateDonationForm = (req, res) => {
          return res.status(500).json({ error: "Image upload failed" });
       } 
 
-      const query = "UPDATE donation_forms SET `bg_image` = ?, `headline` = ?, `description` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? `WHERE `campaign_id` = ?"
+      const query = "UPDATE donation_forms SET `bg_image` = ?, `headline` = ?, `description` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
 
       const values = [
          req.body.bg_image,
@@ -55,7 +55,7 @@ export const updateDonationForm = (req, res) => {
          req.body.button1,
          req.body.button2,
          req.body.button3,
-         req.body.button4,
+         req.body.button4, 
          req.body.button5,
          req.body.button6,
          req.body.p_color,
@@ -67,8 +67,11 @@ export const updateDonationForm = (req, res) => {
          req.params.id
       ]
 
+      console.log(values)
+
       db.query(query, values, (err, data) => {
          if (err) return console.log(err)
+         console.log(data)
          return res.status(200).json(data)
       })
    })

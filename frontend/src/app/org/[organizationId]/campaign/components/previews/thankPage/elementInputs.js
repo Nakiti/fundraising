@@ -2,13 +2,14 @@
 import SectionManager from "@/app/components/sectionManager"
 import { useContext } from "react"
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
+import { updateTicketPage } from "@/app/services/updateServices"
 
 const ElementInputs = () => {
-   const {thankyouPageSections, setThankyouPageSections, campaignId, thankyouPageInputs} = useContext(ThankYouPageContext)
+   const {thankyouPageSections, setThankyouPageSections, campaignId, thankPageInputs} = useContext(ThankYouPageContext)
 
    const handleSave = async() => {
       try {
-         await updateTicketPage(campaignId, thankyouPageInputs)
+         await updateTicketPage(campaignId, thankPageInputs)
          for (const section of thankyouPageSections) {
             await updatePageSection(section.id, section.active)
          }
@@ -20,7 +21,7 @@ const ElementInputs = () => {
    return (
       <div className="w-full">
          {thankyouPageSections.map((section) => (
-            <SectionManager  section={section} sections={thankyouPageSections} setSections={setThankyouPageSections}/>
+            <SectionManager key={section.id}  section={section} sections={thankyouPageSections} setSections={setThankyouPageSections}/>
          ))}
          <div className="w-full flex flex-row mt-6">
             <button 

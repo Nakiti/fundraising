@@ -1,8 +1,8 @@
 import { useContext } from "react"
-import { CampaignContext } from "@/app/context/campaignContext"
+import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
 
 const MessageSection = () => {
-   const {thankPageInputs, handleThankPageInputsChange} = useContext(CampaignContext)
+   const {thankPageInputs, handleThankPageInputsChange} = useContext(ThankYouPageContext)
 
    return (
       <div>

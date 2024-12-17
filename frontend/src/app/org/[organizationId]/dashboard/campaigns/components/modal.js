@@ -1,7 +1,7 @@
 "use client"
-import { useState, useContext } from 'react';
+import { useState, useContext, act } from 'react';
 import { IoIosClose } from "react-icons/io";
-import { createCampaign, createCampaignDetails, createPageSection, createThankYouPage, createTicketPage } from '@/app/services/createServices';
+import { createCampaign, createCampaignDetails, createDonationForm, createPageSection, createPeerFundraisingPage, createPeerLandingPage, createThankYouPage, createTicketPage } from '@/app/services/createServices';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/app/context/authContext';
 import { createDonationPage, createPreview } from '@/app/services/campaignService';
@@ -31,31 +31,46 @@ const Modal = ({ show, setShow, organizationId }) => {
          const id = await createCampaign(currentUser, organizationId);
          await createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
 
-         if (tabContent[activeTab].content === "donation") {
+         if (tabContent[activeTab].content === "crowdfunding") {
             const donationPageId = await createDonationPage(id, currentUser);
-            const thankyouPageId = await createThankYouPage(id, currentUser);
 
             await createPageSection(donationPageId, "banner", true, currentUser);
             await createPageSection(donationPageId, "title", true, currentUser);
             await createPageSection(donationPageId, "desc", true, currentUser);
             await createPageSection(donationPageId, "donate", true, currentUser);
 
-            await createPageSection(thankyouPageId, "message", true, currentUser);
-            await createPageSection(thankyouPageId, "background", true, currentUser);
          } else if (tabContent[activeTab].content == "ticketed-event") {
             const ticketPageId = await createTicketPage(id, currentUser)
-            const thankyouPageId = await createThankYouPage(id, currentUser);
 
             await createPageSection(ticketPageId, "banner", true, currentUser)
             await createPageSection(ticketPageId, "about", true, currentUser)
             await createPageSection(ticketPageId, "event", true, currentUser)
             await createPageSection(ticketPageId, "purchase", true, currentUser)
 
-            await createPageSection(thankyouPageId, "message", true, currentUser);
-            await createPageSection(thankyouPageId, "background", true, currentUser);
          } else if (tabContent[activeTab].content == "peer-to-peer") {
-            
+            const peerLandingPageId = await createPeerLandingPage(id, currentUser)
+            const peerFundraisingPageId = await createPeerFundraisingPage(id, currentUser)
+
+            console.log("pageid", peerFundraisingPageId)
+
+            await createPageSection(peerLandingPageId, "banner", true, currentUser);
+            await createPageSection(peerLandingPageId, "description", true, currentUser);
+
+            await createPageSection(peerFundraisingPageId, "banner", true, currentUser);
+            await createPageSection(peerFundraisingPageId, "description", true, currentUser);
+            await createPageSection(peerFundraisingPageId, "title", true, currentUser);
+            // await createPageSection(peerFundraisingPageId, "description", true, currentUser);
+
          }
+         const donationFormId = await createDonationForm(id, currentUser)
+         await createPageSection(donationFormId, "header", currentUser)
+         await createPageSection(donationFormId, "background", currentUser)
+         await createPageSection(donationFormId, "buttons", currentUser)
+
+         const thankyouPageId = await createThankYouPage(id, currentUser);
+         await createPageSection(thankyouPageId, "message", true, currentUser);
+         await createPageSection(thankyouPageId, "background", true, currentUser);
+
          router.push(`/org/${organizationId}/campaign/edit/${id}/details/about`);
       } catch (err) {
          console.log(err);
@@ -88,6 +103,18 @@ const Modal = ({ show, setShow, organizationId }) => {
             </div>
             <div className="w-3/4 px-6 py-6 bg-gray-100 flex flex-col">
                <h2 className="text-2xl font-semibold mb-4">{tabContent[activeTab].title}</h2>
+               <div className='mt-4 mb-8 text-gray-700'>
+
+
+                  {tabContent[activeTab].content == "donation" ? 
+                     <p>Create a standard donation form that allows users to donate funds while collecting user information</p> :
+                  tabContent[activeTab].content == "crowdfunding" ?
+                     <p>Create a compelling story to drive donations to your cause</p> :
+                  tabContent[activeTab].content == "peer-to-peer" ?
+                     <p>Leverage the efforts of potential donors by giving users the opportunity to fundraise on your behalf</p> :
+                  <p>Create an event which users can purchase tickets for and donate funds towards</p>
+                  }
+               </div>
                <div className="flex flex-col col-span-1 sm:col-span-2 w-3/4 mb-6">
                   <label className="text-gray-600 text-sm font-semibold mb-2">
                      Internal Campaign Name <span className="text-red-500">*</span>

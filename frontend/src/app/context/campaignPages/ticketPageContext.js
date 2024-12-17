@@ -1,16 +1,19 @@
 import { createContext, useState, useEffect } from "react";
 import { initialTicketPageSections } from "../../constants/pageSectionsConfig";
 import useFormInput from "../../hooks/useFormInput";
+import { getTicketPage, getPageSections, getCampaignTickets } from "@/app/services/fetchService";
 
 export const TicketPageContext = createContext()
 
-export const TicketPageContextProvider = ({campaignId, children}) => {
+export const TicketPageContextProvider = ({campaignId, campaignType, children}) => {
    const [ticketPageSections, setTicketPageSections] = useState(initialTicketPageSections)
    const [ticketsPageInputs, handleTicketsPageInputs, setTicketsPageInputs] = useFormInput({})
    const [tickets, setTickets] = useState([])
 
 
    useEffect(() => {
+      if (campaignType != "ticket") return
+
       const fetchData = async() =>{
          try {
             const ticketPageResponse = await getTicketPage(campaignId)
@@ -47,7 +50,11 @@ export const TicketPageContextProvider = ({campaignId, children}) => {
       }
 
       fetchData()
-   })
+   }, [])
+
+   if (campaignType !== "ticket") {
+      return <>{children}</>
+   }
 
    return (
       <TicketPageContext.Provider value={{campaignId, ticketPageSections, 

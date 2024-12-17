@@ -1,7 +1,7 @@
 "use client"
 import { usePathname } from "next/navigation"
 import PreviewNavbar from "../../../components/previews/previewNavbar"
-import Display from "../../../components/previews/thankPage/display"
+import Display from "../../../components/previews/peerLanding/display"
 
 const PeerLandingPageLayout = ({params, children}) => {
    const campaignId = params.id
@@ -15,7 +15,7 @@ const PeerLandingPageLayout = ({params, children}) => {
 
    return (
       <div className="w-full">
-         <PreviewNavbar heading={"Configure Landing You Page"} links={links}/>
+         <PreviewNavbar heading={"Configure Landing Page"} links={links}/>
          <div className="flex flex-row space-x-4 w-11/12 mx-auto">
             <div className="w-1/3">
                {children}

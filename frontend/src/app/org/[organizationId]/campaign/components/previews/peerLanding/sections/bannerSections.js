@@ -2,7 +2,7 @@ import { useContext } from "react";
 import useImageUpload from "@/app/hooks/useImageUpload";
 import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingPageContext";
 
-const BannerSection = () => {
+const PeerLandingBannerSection = () => {
    const {peerLandingPageInputs, handlePeerLandingPageInputsChange} = useContext(PeerLandingPageContext)
    const {handleImageUpload} = useImageUpload()
 
@@ -40,4 +40,4 @@ const BannerSection = () => {
    )
 }
 
-export default BannerSection
+export default PeerLandingBannerSection

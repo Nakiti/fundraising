@@ -5,8 +5,8 @@ const upload = multer({
    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
-export const createPeerFundraisingPage = () => {
-   const query = "INSERT INTO peer_fundraising_pages (`campaign_id`, `updated_at`, `updated_by`)"
+export const createPeerFundraisingPage = (req, res) => {
+   const query = "INSERT INTO peer_fundraising_pages (`campaign_id`, `updated_at`, `updated_by`) VALUES (?)"
 
    const values = [
       req.body.campaign_id,
@@ -36,7 +36,7 @@ export const updatePeerFundraisingPage = (req, res) => {
          req.body.banner_image,
          req.body.person_image,
          req.body.default_tagline,
-         req.body.default_heading,
+         req.body.default_heading, 
          req.body.default_description,
          req.body.p_color,
          req.body.s_color,

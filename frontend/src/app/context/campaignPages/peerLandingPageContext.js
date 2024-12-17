@@ -5,11 +5,14 @@ import { createContext, useState, useEffect } from "react";
 
 export const PeerLandingPageContext = createContext()
 
-export const PeerLandingPageContextProvider = ({campaignId, children}) => {
+export const PeerLandingPageContextProvider = ({campaignId, campaignType, children}) => {
    const [peerLandingPageSections, setPeerLandingPageSections] = useState(initialPeerLandingPageSections)
    const [peerLandingPageInputs, handlePeerLandingPageInputsChange, setPeerLandingPageInputs] = useFormInput({})
 
    useEffect(() => {
+      console.log("campaigntype" , campaignType)
+      if (campaignType !== "peer-to-peer") return
+
       const fetchData = async() => {
          try {
             const peerLandingResponse = await getPeerLandingPage(campaignId)
@@ -26,7 +29,7 @@ export const PeerLandingPageContextProvider = ({campaignId, children}) => {
                t_color: peerLandingResponse.t_color || "",
             })
 
-            const peerLandingSections = getPageSections(peerLandingPageId)
+            const peerLandingSections = await getPageSections(peerLandingPageId)
             setPeerLandingPageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = peerLandingSections.find((item) => item.name == section.name)
@@ -40,7 +43,11 @@ export const PeerLandingPageContextProvider = ({campaignId, children}) => {
       }
 
       fetchData()
-   })
+   }, [])
+
+   if (campaignType !== "peer-to-peer") {
+      return <>{children}</>
+   }
 
    return (
       <PeerLandingPageContext.Provider value={{campaignId, peerLandingPageInputs, 

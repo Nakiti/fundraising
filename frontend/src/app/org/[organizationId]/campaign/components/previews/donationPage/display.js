@@ -27,23 +27,22 @@ const Display = () => {
             </div>
 
             {/* First Image */}
-            <img
-               src={donationPageInputs.banner_image || "image1.jpg"}
-               alt="image"
-               className="w-full h-72 object-cover bg-gray-50"
-            />
+            <div className="relative w-full h-72 bg-gray-50 flex items-center justify-center">
+               {donationPageInputs.banner_image ? (
+                  <img
+                     src={donationPageInputs.banner_image || "image1.jpg"}
+                     alt="image"
+                     className="w-full h-72 object-cover"
+                  />
+               ) : (
+                  <span className="text-gray-400 text-lg font-medium">Upload Image</span>
+               )}
+            </div>
          </div>
 
-         <div className="w-5/6 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6" style={{ color: donationPageInputs.bg_color }}>
-            <div className="w-1/3">
-               <img 
-                  src={donationPageInputs.small_image || "image1.jpg"}
-                  className="h-48 w-48 object-cover border-4 border-white shadow-lg -mt-10 rounded-md"
-                  alt="image"
-               />
-            </div>
-            <div className="w-2/3 mt-4">
-               <div className="flex flex-row justify-between mb-6">
+         <div className="w-5/6 mx-auto relative flex flex-row mb-8 pt-6" style={{ color: donationPageInputs.bg_color }}>
+            <div className="w-full mt-4">
+               <div className="flex flex-row justify-between mb-4">
                   <div>
                      <p className="text-gray-500 text-xs" style={{ color: donationPageInputs.p_color }}>Fundraiser</p>
                      <h1 className="text-2xl font-semibold text-gray-800" style={{ color: donationPageInputs.p_color }}>{donationPageInputs.headline || "Headline"}</h1>
@@ -58,55 +57,31 @@ const Display = () => {
                   </div>
                </div>
 
-               <div className="space-y-4 py-4 border-t border-gray-200">
+               <div className="space-y-4 pb-4 pt-8 border-t border-gray-200">
                   <h2 className="text-xl text-gray-800 font-semibold text-center">About</h2>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <pre className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
                      {donationPageInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
-                  </p>
+                  </pre>
                </div>
 
-               <div className="mt-6">
-                  <h3 className="text-md text-gray-700 font-semibold mb-2">I would like to give to:</h3>
-                  <select 
-                     className="w-full border border-gray-300 rounded-sm p-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                     defaultValue="Select"
-                     disabled
-                  >
-                  </select>
-               </div>
-
-               <div className="mt-6">
-                  <h3 className="text-md text-gray-700 font-semibold mb-2">I would like to give:</h3>
-                  <div className="grid grid-cols-3 gap-4 max-w-sm">
-                     {[donationPageInputs.button1, donationPageInputs.button2, donationPageInputs.button3, donationPageInputs.button4, donationPageInputs.button5, donationPageInputs.button6].map((amount, index) => (
-                        <button
-                        key={index}
-                        className="w-full text-xs py-2 bg-blue-700 text-white rounded-sm shadow-md hover:bg-blue-800 transition-colors duration-200"
-                        disabled
-                        style={{ backgroundColor: donationPageInputs.b3_color, color: donationPageInputs.bt_color }}
-                        >
-                        {amount}
-                        </button>
-                     ))}
-                     <input 
-                        placeholder="Enter Custom Amount" 
-                        type="number" 
-                        disabled
-                        className="col-span-2 text-sm rounded-sm py-2 px-4 bg-white border border-blue-600 text-gray-700 shadow focus:outline-none " 
-                        style={{ backgroundColor: donationPageInputs.b3_color, color: donationPageInputs.bt_color }}
-                     /> 
-                  </div>
-               </div>
-
-               <div className="flex justify-center items-center mt-6">
+               <div className="flex justify-center items-center mt-6 border-t border-gray-200 pt-6">
                   <button 
                      disabled
-                     className="w-1/2 py-2 text-white rounded-sm bg-blue-700 shadow-md hover:bg-blue-800 transition-colors duration-200"
+                     className="w-1/4 cursor-pointer py-2 text-white rounded-sm bg-blue-700 shadow-md hover:bg-blue-800 transition-colors duration-200"
                      style={{ backgroundColor: donationPageInputs.b1_color }}
                   >
                      Donate
                   </button>
                </div>
+            </div>
+         </div>
+         <div className="bg-gray-100 border-t border-gray-300 py-4 mt-12">
+            <div className="text-center text-gray-600 text-xs">
+               <p>&copy; {new Date().getFullYear()} Your Organization. All rights reserved.</p>
+               <p className="mt-1">
+                  <a href="#" className="hover:underline">Privacy Policy</a> | 
+                  <a href="#" className="hover:underline ml-2">Terms of Service</a>
+               </p>
             </div>
          </div>
       </div>

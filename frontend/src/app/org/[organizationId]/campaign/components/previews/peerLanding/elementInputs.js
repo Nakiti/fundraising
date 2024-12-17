@@ -1,7 +1,6 @@
 "use client"
 import { useContext } from "react"
 import SectionManager from "@/app/components/sectionManager"
-import { updateDonationPage } from "@/app/services/campaignService"
 import { updatePageSection, updatePeerLandingPage } from "@/app/services/updateServices"
 import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingPageContext"
 import { AuthContext } from "@/app/context/authContext"
@@ -12,7 +11,7 @@ const ElementInputs = () => {
 
    const handleSave = async() => {
       try {
-         await updatePeerLandingPage(campaignId, peerLandingPageInputs, currentUser.user_id)
+         await updatePeerLandingPage(campaignId, peerLandingPageInputs, currentUser.id)
          for (const section of peerLandingPageSections) {
             await updatePageSection(section.id, section.active)
          }

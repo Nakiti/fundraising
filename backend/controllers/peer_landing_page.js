@@ -5,8 +5,8 @@ const upload = multer({
    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
-export const createPeerLandingPage = () => {
-   const query = "INSERT INTO peer_landing_pages (`campaign_id`, `updated_at`, `updated_by`)"
+export const createPeerLandingPage = (req, res) => {
+   const query = "INSERT INTO peer_landing_pages (`campaign_id`, `updated_at`, `updated_by`) VALUES (?)"
 
    const values = [
       req.body.campaign_id,
@@ -30,7 +30,7 @@ export const updatePeerLandingPage = (req, res) => {
          return res.status(500).json({ error: "Image upload failed" });
       } 
 
-      const query = "UPDATE peer_landing_pages SET `headline` = ?, `tagline` = ?, `description` = ?, `banner_image` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? `WHERE `campaign_id` = ?"
+      const query = "UPDATE peer_landing_pages SET `headline` = ?, `tagline` = ?, `description` = ?, `banner_image` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
 
       const values = [
          req.body.headline,

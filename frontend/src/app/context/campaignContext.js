@@ -31,14 +31,12 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    const [defaultDesignation, setDefaultDesignation] = useState(0)
    const [status, setStatus] = useState("inactive")
 
-   //either abstract data fetching or split into separate contexts per page
 
    useEffect(() => {
       const fetchData = async () => {
          try {
             if (campaignId) {
                const settingsResponse = await getCampaignDetails(campaignId)
-               console.log("asdfsdfsf", settingsResponse)
                setCampaignDetails({
                   campaignName: settingsResponse.external_name || "",
                   internalName: settingsResponse.internal_name || "",
@@ -70,7 +68,6 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
 
                const questionResponse = await getCustomQuestions(campaignId)
                setCustomQuestions(questionResponse)
-               console.log(questionResponse, "sadsad")
             }
             const designationResponse = await getActiveDesignations(organization_id)
             setDesignations(designationResponse)

@@ -17,7 +17,7 @@ const DesignInputs = () => {
    return (
       <div className="w-full">
          <div className="mb-8">
-            <p className="text-gray-800 text-lg font-semibold py-1 border-b-2 border-gray-300 mb-4">Manage Text Color</p>
+            <p className="text-gray-800 text-md font-semibold py-1 border-b-2 border-gray-300 mb-4">Manage Text Color</p>
             
             <div className="mb-6">
                <p className="text-xs font-bold text-gray-600 mb-2">Primary Text Color</p>
@@ -53,27 +53,10 @@ const DesignInputs = () => {
                   />
                </div>
             </div>
-
-            <div className="mb-6">
-               <p className="text-xs font-bold text-gray-600 mb-2">Amount Button Text Color</p>
-               <div className="relative">
-                  <input 
-                     type="color" 
-                     className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
-                     name="bt_color"
-                     value={donationPageInputs.bt_color}
-                     onChange={handleDonationPageInputsChange}
-                  />
-                  <div 
-                     className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer"
-                     style={{ backgroundColor: donationPageInputs.bt_color }}  
-                  />
-               </div>
-            </div>
          </div>
 
          <div className="mb-8">
-            <p className="text-gray-800 text-lg font-semibold py-1 border-b-2 border-gray-300 mb-4">Manage Background Colors</p>
+            <p className="text-gray-800 text-md font-semibold py-1 border-b-2 border-gray-300 mb-4">Manage Background Colors</p>
             <div className="mb-6">
                <p className="text-xs font-bold text-gray-600 mb-2">Background Color</p>
                <div className="relative">
@@ -93,41 +76,7 @@ const DesignInputs = () => {
          </div>
 
          <div className="mb-8">
-            <p className="text-gray-800 text-lg font-semibold py-1 border-b-2 border-gray-300 mb-4">Manage Button Colors</p>
-            <div className="mb-6">
-               <p className="text-xs font-bold text-gray-600 mb-2">Amount Buttons Color</p>
-               <div className="relative">
-                  <input 
-                     type="color" 
-                     className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
-                     name="b3_color"
-                     value={donationPageInputs.b3_color}
-                     onChange={handleDonationPageInputsChange}
-                  />
-                  <div 
-                     className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer" 
-                     style={{ backgroundColor: donationPageInputs.b3_color }}  
-                  />
-               </div>
-            </div>
-
-            <div className="mb-6">
-               <p className="text-xs font-bold text-gray-600 mb-2">Share Button Color</p>
-               <div className="relative">
-                  <input 
-                     type="color" 
-                     className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
-                     name="b2_color"
-                     value={donationPageInputs.b2_color}
-                     onChange={handleDonationPageInputsChange}
-                  />
-                  <div 
-                     className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer"
-                     style={{ backgroundColor: donationPageInputs.b2_color }}  
-                  />
-               </div>
-            </div>
-
+            <p className="text-gray-800 text-md font-semibold py-1 border-b-2 border-gray-300 mb-4">Manage Button Colors</p>
             <div className="mb-6">
                <p className="text-xs font-bold text-gray-600 mb-2">Donate Button Color</p>
                <div className="relative">

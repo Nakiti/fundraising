@@ -19,7 +19,7 @@ import ticketPageRoutes from "./routes/ticket_pageRoutes.js"
 import campaignTicketRoutes from "./routes/campaign_ticketRoutes.js"
 import peerFundraisingPageRoutes from "./routes/peer_fundraising_pageRoutes.js"
 import peerLandingPageRoutes from "./routes/peer_landing_pageRoutes.js"
-// import donationFormRoutes from "./routes/donation_formRoutes.js"
+import donationFormRoutes from "./routes/donation_formRoutes.js"
 
 const app = express()
 
@@ -66,7 +66,7 @@ app.use("/api/ticket_page", ticketPageRoutes)
 app.use("/api/campaign_ticket", campaignTicketRoutes)
 app.use("/api/peer_landing_page", peerLandingPageRoutes)
 app.use("/api/peer_fundraising_page", peerFundraisingPageRoutes)
-// app.use("/api/donation_form", donationFormRoutes)
+app.use("/api/donation_form", donationFormRoutes)
 
 const port = process.env.port ||  4000
 

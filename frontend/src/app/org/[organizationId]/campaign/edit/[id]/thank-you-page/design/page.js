@@ -1,11 +1,9 @@
-
+import DesignInputs from "../../../../components/previews/thankPage/designInputs"
 
 const Design = () => {
 
    return (
-      <div>
-
-      </div>
+      <DesignInputs />
    )
 }
 

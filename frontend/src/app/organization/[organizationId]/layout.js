@@ -8,8 +8,8 @@ const OrganizationLayout = ({children, params}) => {
 
    return (
       <DonationContextProvider>
-         {/* <Header organizationId={organizationId}/> */}
-         <div style={{height: "100vh"}}>
+         <Header organizationId={organizationId}/>
+         <div style={{height: "90vh"}}>
             {children}
          </div>
       </DonationContextProvider>

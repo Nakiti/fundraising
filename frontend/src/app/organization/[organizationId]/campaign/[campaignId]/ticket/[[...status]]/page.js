@@ -1,6 +1,32 @@
+"use client"
+import { getCampaignDetails, getTicketPage } from "@/app/services/fetchService"
+import { useState, useEffect } from "react"
 
+const TicketPage = ({params}) => {
+   const [pageInputs, setPageInputs] = useState(null)
+   const [campaignDetails, setCampaignDetails] = useState(null)
+   const campaignId = params.campaignId
+   const status = params.status
 
-const TicketPage = () => {
+   useEffect(() => {
+      const fetchData = async() => {
+         try {
+            const campaignResponse = await getCampaignDetails(campaignId)
+            setCampaignDetails(campaignResponse)
+            const campaignStatus = campaignResponse.status
+
+            if (status == "preview" || campaignStatus == "active") {
+               const response = await getTicketPage(campaignId)
+               setPageInputs(response)
+            }
+         } catch (err) {
+            console.log(err)
+         }
+      }
+
+      fetchData()
+   }, [])
+
 
    return (
       <div 

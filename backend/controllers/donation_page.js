@@ -52,9 +52,6 @@ export const updateDonationPage = (req, res) => {
       const bannerImagePath = req.files?.banner_image?.[0]?.path || req.body.banner_image;
       const smallImagePath = req.files?.small_image?.[0]?.path || req.body.small_image;
 
-      console.log("banner", bannerImagePath)
-      console.log("small", smallImagePath)
-
 
       const query = "UPDATE donation_pages SET `headline` = ?, `description` = ?, `banner_image` = ?, `small_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `b1_color` = ?, `b2_color` = ?, `b3_color` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?  WHERE `campaign_id` = ?"
 
@@ -83,6 +80,7 @@ export const updateDonationPage = (req, res) => {
 
       db.query(query, values, (err, data) => {
          if (err) return console.log(err)
+         console.log(data)
          return res.status(200).json(data)
       })
    })

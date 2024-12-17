@@ -1,10 +1,10 @@
 import { createContext, useState, useEffect } from "react";
 import useFormInput from "../../hooks/useFormInput";
 import { initialThankyouPageSections } from "../../constants/pageSectionsConfig";
-
+import { getThankYouPage, getPageSections } from "@/app/services/fetchService";
 export const ThankYouPageContext = createContext()
 
-export const ThankYouPageContextProvider = ({campaignId, children}) => {
+export const ThankYouPageContextProvider = ({campaignId, campaignType, children}) => {
    const [thankPageInputs, handleThankPageInputsChange, setThankPageInputs] = useFormInput({})
    const [thankyouPageSections, setThankyouPageSections] = useState(initialThankyouPageSections)
 
@@ -35,7 +35,7 @@ export const ThankYouPageContextProvider = ({campaignId, children}) => {
 
 
       fetchData()
-   })
+   }, [])
 
    return (
       <ThankYouPageContext.Provider value={{campaignId, thankPageInputs, thankyouPageSections, handleThankPageInputsChange, setThankyouPageSections}}>
