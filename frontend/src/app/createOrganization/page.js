@@ -13,7 +13,7 @@ const CreateOrganization = () => {
       address: "",
       city: "",
       state: "",
-      country: "",
+      country: "", 
       zip: ""
    })
    const {currentUser} = useContext(AuthContext)
