@@ -2,17 +2,17 @@
 import SectionManager from "@/app/components/sectionManager"
 import { useContext } from "react"
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
-import { updateTicketPage } from "@/app/services/updateServices"
+import { updateThankYouPage } from "@/app/services/updateServices"
 
 const ElementInputs = () => {
    const {thankyouPageSections, setThankyouPageSections, campaignId, thankPageInputs} = useContext(ThankYouPageContext)
 
    const handleSave = async() => {
       try {
-         await updateTicketPage(campaignId, thankPageInputs)
-         for (const section of thankyouPageSections) {
-            await updatePageSection(section.id, section.active)
-         }
+         await updateThankYouPage(campaignId, thankPageInputs)
+         // for (const section of thankyouPageSections) {
+         //    await updatePageSection(section.id, section.active)
+         // }
       } catch (err) {
          console.log(err)
       }

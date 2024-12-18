@@ -87,7 +87,7 @@ const Designations = ({params}) => {
                <p className="text-gray-700">Manage the designations that users can donate to </p>
             </div>            
             <div className="overflow-x-auto w-11/12 p-6">
-               <h1 className="text-2xl mb-4">All Designations</h1>
+               <h1 className="text-xl font-semibold mb-4">All Designations</h1>
 
                <table className="min-w-full bg-white text-sm">
                   <thead>
@@ -147,8 +147,8 @@ const Designations = ({params}) => {
             <div className="w-11/12  border-b border-gray-300 my-2 px-6"/>
 
             <div className="mt-4 p-6">
-               <h2 className="text-2xl mb-4 text-gray-800">Add New Designation</h2>
-               <form onSubmit={handleAddDesignation} className="grid grid-cols-4 gap-4 w-3/4 text-sm">
+               <h2 className="text-xl font-semibold mb-4 text-gray-800">Add New Designation</h2>
+               <form onSubmit={handleAddDesignation} className="grid grid-cols-4 gap-2 w-3/4 text-sm">
                   <div>
                      <input
                         type="text"
@@ -156,7 +156,7 @@ const Designations = ({params}) => {
                         placeholder="Title"
                         value={newDesignation.title}
                         onChange={handleNewDesignationChange}
-                        className="w-full px-4 py-1 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        className="w-full px-6 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                      />
                   </div>
@@ -167,7 +167,7 @@ const Designations = ({params}) => {
                         placeholder="Goal"
                         value={newDesignation.goal}
                         onChange={handleNewDesignationChange}
-                        className="w-full px-4 py-1 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        className="w-full px-6 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                      />
                   </div>

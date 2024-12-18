@@ -7,7 +7,7 @@ const Display = () => {
    return (
       <div 
          className="min-h-screen bg-cover bg-center" 
-         style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80)' }}
+         style={{ backgroundImage: thankPageInputs.bg_image || 'url(https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80)' }}
       >
          <div className="bg-white py-4 px-8 w-full opacity-90">
             <h1>Header</h1>
@@ -18,7 +18,7 @@ const Display = () => {
                <div className="pt-10 px-10 pb-6">
                   <h1 className="text-2xl font-semibold text-gray-800">{thankPageInputs.headline || "Thank You"} </h1>
 
-                  <p className="mt-4 text-sm text-gray-600">{thankPageInputs.message || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"}</p>
+                  <p className="mt-4 text-sm text-gray-600">{thankPageInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"}</p>
 
                   <div className="flex flex-row text-xs mt-6 text-gray-600 space-x-4">
                      <p>Share</p>

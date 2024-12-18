@@ -19,27 +19,34 @@ const Summary = () => {
    });
 
    useEffect(() => {
-      const campaigns = getAllCampaigns(organizationId);
-      setData(campaigns);
 
-      if (campaigns && campaigns.length > 0) {
-         const totalDonations = campaigns.reduce((acc, campaign) => acc + campaign.donations, 0);
-         const totalRaised = campaigns.reduce((acc, campaign) => acc + campaign.raised, 0);
-         const totalVisits = campaigns.reduce((acc, campaign) => acc + campaign.visits, 0);
-         const averageRaised = totalRaised / campaigns.length;
-         const averageConversionRate = campaigns.reduce((acc, campaign) => {
-            const conversionRate = campaign.visits > 0 ? (campaign.donations / campaign.visits) * 100 : 0;
-            return acc + conversionRate;
-         }, 0) / campaigns.length;
+      const fetchData = async() => {
+         const campaigns = await getAllCampaigns(organizationId);
+         setData(campaigns);
 
-         setSummary({
-            totalDonations,
-            totalRaised,
-            totalVisits,
-            averageRaised,
-            averageConversionRate,
-         });
+         console.log("campsadas", campaigns)
+
+         if (campaigns && campaigns.length > 0) {
+            const totalDonations = campaigns.reduce((acc, campaign) => acc + campaign.donations, 0);
+            const totalRaised = campaigns.reduce((acc, campaign) => acc + campaign.raised, 0);
+            const totalVisits = campaigns.reduce((acc, campaign) => acc + campaign.visits, 0);
+            const averageRaised = totalRaised / campaigns.length;
+            const averageConversionRate = campaigns.reduce((acc, campaign) => {
+               const conversionRate = campaign.visits > 0 ? (campaign.donations / campaign.visits) * 100 : 0;
+               return acc + conversionRate;
+            }, 0) / campaigns.length;
+
+            setSummary({
+               totalDonations,
+               totalRaised,
+               totalVisits,
+               averageRaised,
+               averageConversionRate,
+            });
+         }
       }
+
+      fetchData()
    }, [])
 
    return (

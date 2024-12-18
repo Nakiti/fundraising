@@ -22,7 +22,7 @@ const Display = () => {
                <div className="text-gray-700">
                   <h1 className="text-2xl font-semibold mb-4">{donationFormInputs.headline || "This is the Heading Woo Hoo"}</h1>
 
-                  <pre className="text-sm">{donationFormInputs.description || "This is the description"}</pre>
+                  <pre className="text-sm leading-relaxed whitespace-pre-line">{donationFormInputs.description || "This is the description"}</pre>
                </div>
 
                <div className="w-full border-gray-200 border my-6" />
@@ -33,7 +33,7 @@ const Display = () => {
                      <h3 className="text-xs text-gray-700 font-semibold mb-2">I would like to give:</h3>
                      <div className="grid grid-cols-6 gap-2 w-full">
                         {[donationFormInputs.button1, donationFormInputs.button2, donationFormInputs.button3, donationFormInputs.button4, donationFormInputs.button5, donationFormInputs.button6].map(item => {
-                           return <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">{item}</button>
+                           return <div className="px-4 py-2 text-center text-xs bg-gray-200 text-gray-700 rounded-md">${item}</div>
                         })}
                         </div>
                      </div>

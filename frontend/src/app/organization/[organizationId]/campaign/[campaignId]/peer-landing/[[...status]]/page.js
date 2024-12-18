@@ -18,7 +18,7 @@ const PeerLandingPage = ({params}) => {
             if (status == "preview" || campaignStatus == "active") {
                const response = await getPeerLandingPage(campaignId)
                setPageInputs(response)
-               console.log("runn")
+               console.log(response)
             }
          } catch (err) {
             console.log(err)
@@ -26,7 +26,7 @@ const PeerLandingPage = ({params}) => {
       }
 
       fetchData()
-   })
+   }, [])
 
    return (
       <div className="w-full mb-4 mx-auto bg-white">
@@ -35,13 +35,13 @@ const PeerLandingPage = ({params}) => {
                <img
                   src={pageInputs.banner_image || "image1.jpg"}
                   alt="Banner"
-                  className="w-full h-96 object-cover bg-gray-100"
+                  className="w-full h-96 object-cover bg-gray-100 border-b border-gray-300"
                />
 
                <div 
                   className="absolute inset-0 flex flex-col items-center justify-center text-center  p-4"
                >
-                  <h2 className="text-5xl font-semibold text-black mb-8">
+                  <h2 className="text-5xl font-semibold text-black mb-8" style={{color: pageInputs.p_color}}>
                      {pageInputs.headline || "Headline"}
                   </h2>
                   <div className="flex gap-4">
@@ -59,11 +59,11 @@ const PeerLandingPage = ({params}) => {
                </div>
             </div>
 
-            <div className="p-6 text-gray-700 w-11/12 mx-auto ">
-               <h3 className="text-2xl font-semibold mb-6 text-center">
+            <div className="p-6 text-gray-700 w-2/3 mx-auto ">
+               <h3 className="text-3xl font-semibold mb-6 text-center">
                   {pageInputs.tagline || "About the Cause"}
                </h3>
-               <pre className="text-center text-sm text-wrap">
+               <pre className="text-center text-md text-wrap">
                   {pageInputs.description || 
                   "Your generous donations help us make a difference. Join us in supporting this important cause."}
                </pre>

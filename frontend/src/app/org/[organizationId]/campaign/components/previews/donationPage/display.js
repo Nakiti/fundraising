@@ -53,7 +53,7 @@ const Display = () => {
                <div className="mb-6">
                   <p className="text-sm font-medium mb-1 text-gray-700" style={{ color: donationPageInputs.p_color }}>X of 1000 raised</p>
                   <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
-                     <div className="bg-blue-600 h-3 rounded-full w-1/12"></div>
+                     <div className="bg-blue-600 h-3 rounded-full w-1/12" style={{backgroundColor: donationPageInputs.s_color}}></div>
                   </div>
                </div>
 

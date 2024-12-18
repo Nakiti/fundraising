@@ -30,7 +30,7 @@ const Display = () => {
             <div 
                className="absolute inset-0 flex flex-col items-center justify-center text-center  p-4"
             >
-               <h2 className="text-5xl font-semibold text-black mb-8">
+               <h2 className="text-5xl font-semibold text-black mb-8" style={{color: peerLandingPageInputs.p_color}}>
                   {peerLandingPageInputs.headline || "Headline"}
                </h2>
                <div className="flex gap-4">
@@ -53,10 +53,10 @@ const Display = () => {
             <h3 className="text-2xl font-semibold mb-6 text-center">
                {peerLandingPageInputs.tagline || "About the Cause"}
             </h3>
-            <p className="text-center text-sm">
+            <pre className="text-center text-sm leading-relaxed whitespace-pre-line">
                {peerLandingPageInputs.description || 
                "Your generous donations help us make a difference. Join us in supporting this important cause."}
-            </p>
+            </pre>
          </div>
 
          <div className="bg-gray-100 border-t border-gray-300 py-4 mt-12">

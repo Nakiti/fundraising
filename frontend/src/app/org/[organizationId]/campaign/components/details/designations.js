@@ -2,13 +2,15 @@ import { FaTrash } from "react-icons/fa"
 import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { getCampaignDesignations } from "@/app/services/fetchService"
-import { createCampaignDesignation } from "@/app/services/campaignService"
+import { createCampaignDesignation, updateCampaignDetails } from "@/app/services/campaignService"
 import { deleteCampaignDesignationBatch } from "@/app/services/deleteService"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext"
+import { AuthContext } from "@/app/context/authContext"
 
 const DesignationsComponent = () => {
    const {designations, campaignDetails, handleCampaignDetailsChange, campaignId} = useContext(CampaignContext)
    const {selectedDesignations, setSelectedDesignations} = useContext(DonationPageContext)
+   const {currentUser} = useContext(AuthContext)
 
    const handleChange = (designation, isChecked) => {
       setSelectedDesignations(prev => {
@@ -35,13 +37,15 @@ const DesignationsComponent = () => {
          const relationsToAdd = selectedDesignations.filter(designation =>!existingRelations.includes(designation))
          const relationsToRemove = existingRelations.filter(designation =>!selectedDesignations.includes(designation))
 
-         console.log(relationsToAdd)
+         console.log(relationsToAdd, relationsToRemove)
          if (relationsToAdd.length > 0) {
             await createCampaignDesignation(campaignId, relationsToAdd)
          }
          if (relationsToRemove.length > 0) {
             await deleteCampaignDesignationBatch(relationsToRemove)
          }
+
+         await updateCampaignDetails(campaignId, campaignDetails, false, currentUser)
       } catch (err) {
          console.log(err)
       }

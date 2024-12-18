@@ -64,14 +64,14 @@ export const updateLandingPage = async(id, data) => {
 export const updatePeerLandingPage = async(id, data, userId) => {
    const formData = new FormData()
 
-   formData.append("headline", data.title)
-   formData.append("tagline", data.description)
-   formData.append("description", data.image)
-   formData.append("banner_image", data.bg_color)
+   formData.append("headline", data.headline)
+   formData.append("tagline", data.tagline)
+   formData.append("description", data.description)
+   formData.append("banner_image", data.banner_image)
    formData.append("p_color", data.p_color)
    formData.append("s_color", data.s_color)
-   formData.append("bg_color", data.b1_color)
-   formData.append("t_color", data.b2_color)
+   formData.append("bg_color", data.bg_color)
+   formData.append("t_color", data.t_color)
    formData.append("user_id", userId)
 
    try {
@@ -144,15 +144,16 @@ export const updatePeerFundraisingPage = async(id, data, userId) => {
 export const updateThankYouPage = async(campaignId, data) => {
    const formData = new FormData()
 
-   formData.append("headline", data.title)
+   formData.append("headline", data.headline)
    formData.append("description", data.description)
    formData.append("bg_image", data.bg_image)
    formData.append("bg_color", data.bg_color)
    formData.append("p_color", data.p_color)
    formData.append("s_color", data.s_color)
+   
 
    try {
-      await axios.put(`${API_BASE_URL}/landing_page/update/${campaignId}`, formData, {
+      await axios.put(`${API_BASE_URL}/thankyouPage/update/${campaignId}`, formData, {
          headers: {
            'Content-Type': 'multipart/form-data',
          },

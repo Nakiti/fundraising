@@ -30,7 +30,7 @@ export const updateThankYouPage = (req, res) => {
          return res.status(500).json({ error: "Image upload failed" });
       } 
 
-      const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ? `WHERE `campaign_id` = ?"
+      const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ? WHERE `campaign_id` = ?"
 
       const values = [
          req.body.headline,
@@ -41,6 +41,8 @@ export const updateThankYouPage = (req, res) => {
          req.body.s_color,
          req.params.id
       ]
+
+      console.log(values)
 
       db.query(query, values, (err, data) => {
          if (err) return console.log(err)

@@ -22,7 +22,7 @@ export const initialDonationPageSections = [
    {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
    {id: 1, name: "title", displayText: "Title Section", active: true, required: true, dropdown: false, content: <TitleSection />},
    {id: 2, name: "desc", displayText: "Description Section", active: true, required: true, dropdown: false, content: <DescSection />},
-   {id: 3, name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
+   // {id: 3, name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
 ]
 
 export const initialThankyouPageSections = [

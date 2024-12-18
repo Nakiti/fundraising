@@ -19,7 +19,7 @@ const BackgroundSection = () => {
                <input 
                   type="file"
                   className="hidden" 
-                  name="bgImage"
+                  name="bg_image"
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, handleThankPageInputsChange)}
                />

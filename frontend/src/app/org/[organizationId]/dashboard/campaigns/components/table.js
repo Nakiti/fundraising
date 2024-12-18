@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 const Table = ({setData, data, organizationId}) => {
    const columns = [
-      { id: 'id', label: 'Id', sortable: false},
+      { id: 'id', label: 'Id', sortable: true},
       { id: 'internalName', label: 'Internal Name', sortable: false },
       { id: 'date', label: 'Date Created', sortable: false },
       { id: 'raised', label: 'Raised', sortable: true},

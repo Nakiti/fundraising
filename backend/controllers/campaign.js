@@ -62,7 +62,6 @@ export const searchCampaigns = (req, res) => {
 
    db.query(query, values, (err, data) => {
       if (err) return res.json(err)
-      console.log(data)
       return res.status(200).json(data)
    })
 }
@@ -74,6 +73,17 @@ export const getCampaignsByOrg = (req, res) => {
       INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       WHERE campaigns.organization_id = ? ORDER BY campaigns.id DESC
    `
+   //    const query = `
+//    SELECT campaigns.id, campaigns.created_at, campaign_details.*, SUM(transactions.amount) AS amount_raised
+//    FROM campaigns
+//    INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+//    LEFT JOIN transactions ON campaigns.id = transactions.campaign_id
+//    WHERE campaigns.organization_id = ?
+//    GROUP BY campaigns.id, campaigns.created_at, campaign_details.*
+//    ORDER BY campaigns.id DESC
+// `
+
+
    const value = [req.params.id]
 
    db.query(query, value, (err, data) => {
@@ -135,8 +145,6 @@ export const getDateRange = (req, res) => {
       req.query.end,
       req.params.id
    ]
-
-   console.log(values)
 
    db.query(query, values, (err, data) => {
       if (err) return console.log(err)

@@ -21,7 +21,7 @@ const TitleSection = () => {
 
    return (
       <div>
-         <div className="my-4">
+         {/* <div className="my-4">
             <p className="text-sm font-bold text-gray-600 mb-2">
                Image Upload <span className="text-red-500">*</span>
             </p>
@@ -35,8 +35,8 @@ const TitleSection = () => {
                   onChange={(e) => handleImageUpload(e, handleDonationPageInputsChange)}
                />
             </label>                  
-         </div>
-         <div className="mb-4">
+         </div> */}
+         <div className="my-4">
             <p className="text-sm font-bold text-gray-600 mb-2">
                Enter Headline <span className="text-red-500">*</span>
             </p>

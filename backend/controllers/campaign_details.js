@@ -46,7 +46,6 @@ export const getCampaignDetails = (req, res) => {
    const query = "SELECT * FROM campaign_details WHERE campaign_id = ?"
 
    const value = [req.params.id]
-   console.log("campaignId", value)
 
    db.query(query, value, (err, data) => {
       if (err) return console.log(err)

@@ -12,7 +12,8 @@ export const deleteFaq = async(id) => {
 
 export const deleteCampaignDesignationBatch = async(designations) => {
    try {
-      await axios.delete(`${API_BASE_URL}/campaign_designation/deleteBatch`, designations)
+      console.log(designations)
+      await axios.delete(`${API_BASE_URL}/campaign_designation/deleteBatch`, {data: designations})
    } catch (err) {
       console.log(err)
    }

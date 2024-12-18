@@ -3,8 +3,6 @@ import { db } from "../db.js";
 export const createRelationBatch = (req, res) => {
    const query = "INSERT INTO campaign_designations (`campaign_id`, `designation_id`, `created_at`) VALUES ?"
 
-   console.log("body", req.body)
-
    const values = req.body.map(relation => [
       Number(req.params.campaign_id),
       relation.id,
@@ -26,7 +24,6 @@ export const getRelations = (req, res) => {
       JOIN designations ON campaign_designations.designation_id = designations.id
       WHERE campaign_designations.campaign_id = ?
    `
-
    const value = req.params.id
 
    db.query(query, value, (err, data) => {
@@ -37,7 +34,6 @@ export const getRelations = (req, res) => {
 
 export const deleteRelation = (req, res) => {
    const query = "DELETE FROM campaign_designations WHERE `id` = ?"
-
    const value = req.params.id
 
    db.query(query, value, (err, data) => {
@@ -47,12 +43,11 @@ export const deleteRelation = (req, res) => {
 }
 
 export const deleteRelationBatch = (req, res) => {
-   const query = "DELETE FROM campaign_designations WHERE `id` IN (?)"
-
+   const query = "DELETE FROM campaign_designations WHERE `designation_id` IN (?)"
    const values = req.body.map(item => item.id)
 
    db.query(query, [values], (err, data) => {
-      if (err) return res.json(err)
+      if (err) return console.log(err)
       return res.status(200).json(data)
    })
 }

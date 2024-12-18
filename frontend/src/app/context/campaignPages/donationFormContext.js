@@ -16,9 +16,9 @@ export const DonationFormContextProvider = ({campaignId, campaignType, children}
             const donationResponse = await getDonationForm(campaignId)
             const donationPageId = donationResponse.id
             setDonationFormInputs({
-               bg_image: donationResponse.headline || "",
-               headline: donationResponse.description || "",
-               description: donationResponse.banner_image || "",
+               bg_image: donationResponse.bg_image || "",
+               headline: donationResponse.headline || "",
+               description: donationResponse.description || "",
                bg_color: donationResponse.bg_color || "",
                p_color: donationResponse.p_color || "",
                s_color: donationResponse.s_color || "",

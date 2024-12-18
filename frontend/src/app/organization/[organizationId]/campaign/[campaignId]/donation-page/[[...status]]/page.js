@@ -3,6 +3,7 @@ import { getCampaignDesignations, getCampaignDetails, getDonationPage } from "@/
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
+import { FaArrowLeft } from "react-icons/fa"
 
 const DonationLandingPage = ({params}) => {
    const [display, setDisplay] = useState(null)
@@ -41,6 +42,10 @@ const DonationLandingPage = ({params}) => {
          className="w-full mb-4 bg-white overflow-y-auto" 
          // style={{ backgroundColor: donationPageInputs.bg_color }}
       >
+      <div className="p-3 bg-gray-700 text-white flex flex-row">
+         <button className="ml-4 mr-2"><FaArrowLeft /></button>
+         <p>Campaign is in Preview mode</p>
+      </div>
       {display && <div>
          <div className="relative w-full">
             <img

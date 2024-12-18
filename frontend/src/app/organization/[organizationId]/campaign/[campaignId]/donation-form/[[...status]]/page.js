@@ -14,18 +14,17 @@ const DonationForm = ({params}) => {
 
       const fetchData = async() => {
          const campaignResponse = await getCampaignDetails(campaignId)
-
-         console.log("dasfdsf", campaignResponse.status, status)
          
          if (campaignResponse.status == "active" || status == "preview") {
             setCampaignDetails(campaignResponse)
 
             const displayResponse = await getDonationForm(campaignId)
             setDisplay(displayResponse)
-            console.log("asdasd", displayResponse)
 
             const designationResponse = await getCampaignDesignations(campaignId)
             setDesignations(designationResponse)
+
+            console.log(designationResponse)
          }
       }
 
@@ -65,6 +64,9 @@ const DonationForm = ({params}) => {
                         className="w-3/4 border border-gray-300 rounded-sm p-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
                         defaultValue="Select"
                      >
+                        {designations && designations.map(item => {
+                           return <option key={item.id} value={item.id}>{item.title}</option>
+                        })}
                      </select>
                   </div>
 

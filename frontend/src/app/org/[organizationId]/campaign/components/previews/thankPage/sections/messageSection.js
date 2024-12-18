@@ -27,8 +27,8 @@ const MessageSection = () => {
                className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
                rows={5}
                placeholder="Enter a message"
-               name="message"
-               value={thankPageInputs.message}
+               name="description"
+               value={thankPageInputs.description}
                onChange={handleThankPageInputsChange} 
             />
          </div>
