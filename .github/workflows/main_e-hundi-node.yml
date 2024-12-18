@@ -60,7 +60,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'e-hundi-node'
+          app-name: 'fundraising-node'
           slot-name: 'Production'
           package: .
           
