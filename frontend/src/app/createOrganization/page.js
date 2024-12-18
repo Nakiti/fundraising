@@ -17,7 +17,7 @@ const CreateOrganization = () => {
       zip: ""
    })
    const {currentUser} = useContext(AuthContext)
-   const userId = currentUser.id
+   const userId = currentUser && currentUser.id
    const router = useRouter()
 
    const handleRegister = async() => {
