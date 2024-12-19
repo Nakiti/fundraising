@@ -62,10 +62,6 @@ app.use("/api/peer_landing_page", peerLandingPageRoutes)
 app.use("/api/peer_fundraising_page", peerFundraisingPageRoutes)
 app.use("/api/donation_form", donationFormRoutes)
 
-app.get("/", (req, res) => {
-   res.json({message: "welcome"})
-})
-
 const port = process.env.port ||  4000
 
 app.listen(port, (req, res) => {

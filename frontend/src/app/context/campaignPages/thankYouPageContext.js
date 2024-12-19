@@ -16,7 +16,7 @@ export const ThankYouPageContextProvider = ({campaignId, campaignType, children}
             setThankPageInputs({
                headline: thankyouPageResponse.headline || "",
                description: thankyouPageResponse.description || "",
-               bg_image: thankyouPageResponse.bg_image || "",
+               bgImage: thankyouPageResponse.bg_image || "",
                bg_color: thankyouPageResponse.bg_color || "",
                p_color: thankyouPageResponse.p_color || "",
                s_color: thankyouPageResponse.s_color || ""

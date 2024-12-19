@@ -13,6 +13,7 @@ const useImageUpload = () => {
             setImagePreview(base64Image);
             handlePreviewInputsChange({ target: { name: e.target.name, value: base64Image } });
          };
+
          reader.readAsDataURL(file);
       }
    }

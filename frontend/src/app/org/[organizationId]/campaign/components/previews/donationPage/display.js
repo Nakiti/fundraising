@@ -8,6 +8,8 @@ import { DonationPageContext } from "@/app/context/campaignPages/donationPageCon
 const Display = () => {
    const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
    
+   console.log("inputs", donationPageInputs)
+
    return (
       <div 
          className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-sm shadow-md mt-6 overflow-y-auto" 

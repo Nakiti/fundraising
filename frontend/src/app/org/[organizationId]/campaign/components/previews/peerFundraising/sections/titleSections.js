@@ -3,7 +3,7 @@ import useImageUpload from "@/app/hooks/useImageUpload";
 import { PeerFundraisingPageContext } from "@/app/context/campaignPages/peerFundraisingPageContext";
 
 const PeerFundraisingTitleSection = () => {
-   const {peerFundraisingPageInputs, handlePeerFundraisingInputsChange} = useContext(PeerFundraisingPageContext)
+   const {peerFundraisingPageInputs, handlePeerFundraisingPageInputsChange} = useContext(PeerFundraisingPageContext)
    const {handleImageUpload} = useImageUpload()
 
    return (
@@ -19,7 +19,7 @@ const PeerFundraisingTitleSection = () => {
                   className="hidden" 
                   name="person_image"
                   accept="image/*"
-                  onChange={(e) => handleImageUpload(e, handlePeerFundraisingInputsChange)}
+                  onChange={(e) => handleImageUpload(e, handlePeerFundraisingPageInputsChange)}
                />
             </label>                  
          </div>
@@ -33,7 +33,7 @@ const PeerFundraisingTitleSection = () => {
                placeholder="Enter a Headline "
                name="headline"
                value={peerFundraisingPageInputs.headline}
-               onChange={handlePeerFundraisingInputsChange}
+               onChange={handlePeerFundraisingPageInputsChange}
             />
          </div>
       </div>

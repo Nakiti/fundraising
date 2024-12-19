@@ -29,7 +29,7 @@ export const getDonationPage = (req, res) => {
 
    db.query(query, [value], (err, data) => {
       if (err) return console.log(err)
-      console.log("id", data.id)
+      console.log("id", data)
       return res.status(200).json(data)
    })
 }
@@ -54,7 +54,6 @@ export const updateDonationPage = (req, res) => {
 
 
       const query = "UPDATE donation_pages SET `headline` = ?, `description` = ?, `banner_image` = ?, `small_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `b1_color` = ?, `b2_color` = ?, `b3_color` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?  WHERE `campaign_id` = ?"
-
 
       const values = [
          req.body.headline,

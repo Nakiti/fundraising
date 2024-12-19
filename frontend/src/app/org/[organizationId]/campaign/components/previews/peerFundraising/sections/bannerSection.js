@@ -4,7 +4,7 @@ import useImageUpload from "@/app/hooks/useImageUpload";
 import { PeerFundraisingPageContext } from "@/app/context/campaignPages/peerFundraisingPageContext";
 
 const PeerFundraisingBannerSection = () => {
-   const {peerFundraisingPageInputs, handlePeerFundraisingInputsChange} = useContext(PeerFundraisingPageContext)
+   const {peerFundraisingPageInputs, handlePeerFundraisingPageInputsChange} = useContext(PeerFundraisingPageContext)
    const {handleImageUpload} = useImageUpload()
 
    return (
@@ -20,7 +20,7 @@ const PeerFundraisingBannerSection = () => {
                   className="hidden" 
                   name="banner_image"
                   accept="image/*"
-                  onChange={(e) => handleImageUpload(e, handlePeerFundraisingInputsChange)}
+                  onChange={(e) => handleImageUpload(e, handlePeerFundraisingPageInputsChange)}
                />
             </label>                  
             {/* <img

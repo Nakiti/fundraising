@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { PeerFundraisingPageContext } from "@/app/context/campaignPages/peerFundraisingPageContext";
 
 const PeerFundraisingDescritpionSection = () => {
-   const {peerFundraisingPageInputs, handlePeerFundraisingInputsChange} = useContext(PeerFundraisingPageContext)
+   const {peerFundraisingPageInputs, handlePeerFundraisingPageInputsChange} = useContext(PeerFundraisingPageContext)
 
    return (
       <div>
@@ -16,7 +16,7 @@ const PeerFundraisingDescritpionSection = () => {
                placeholder="Enter a Description"
                name="description"
                value={peerFundraisingPageInputs.description}
-               onChange={handlePeerFundraisingInputsChange} 
+               onChange={handlePeerFundraisingPageInputsChange} 
             />
          </div>
       </div>

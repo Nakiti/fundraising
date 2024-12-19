@@ -14,8 +14,10 @@ export const DonationPageContextProvider = ({campaignId, campaignType, children}
       if (campaignType != "crowdfunding") return
 
       const fetchData = async() => {
+         console.log("id", campaignId)
          try {
             const donationResponse = await getDonationPage(campaignId)
+            console.log(donationResponse)
             const donationPageId = donationResponse.id
             setDonationPageInputs({
                headline: donationResponse.headline || "",

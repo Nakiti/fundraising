@@ -49,7 +49,6 @@ export const getCampaignDetails = (req, res) => {
 
    db.query(query, value, (err, data) => {
       if (err) return console.log(err)
-      console.log(data)
       return res.json(data)
    })
 }

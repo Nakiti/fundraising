@@ -120,18 +120,18 @@ export const updateDonationForm = async(id, data, userId) => {
 export const updatePeerFundraisingPage = async(id, data, userId) => {
    const formData = new FormData()
 
-   formData.append("headline", data.title)
-   formData.append("tagline", data.description)
-   formData.append("description", data.image)
-   formData.append("banner_image", data.bg_color)
+   formData.append("headline", data.headline)
+   formData.append("description", data.description)
+   formData.append("banner_image", data.banner_image)
+   formData.append("person_image", data.person_image)
    formData.append("p_color", data.p_color)
    formData.append("s_color", data.s_color)
-   formData.append("bg_color", data.b1_color)
-   formData.append("t_color", data.b2_color)
+   formData.append("bg_color", data.bg_color)
+   formData.append("t_color", data.t_color)
    formData.append("user_id", userId)
 
    try {
-      await axios.put(`${API_BASE_URL}/peer_landing_page/update/${id}`, formData, {
+      await axios.put(`${API_BASE_URL}/peer_fundraising_page/update/${id}`, formData, {
          headers: {
            'Content-Type': 'multipart/form-data',
          },

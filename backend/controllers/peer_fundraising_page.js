@@ -30,14 +30,13 @@ export const updatePeerFundraisingPage = (req, res) => {
          return res.status(500).json({ error: "Image upload failed" });
       } 
 
-      const query = "UPDATE peer_fundraising_pages SET `banner_image` = ?, `person_image` = ?, `default_tagline` = ?, `default_heading` = ?, `default_description` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? `WHERE `campaign_id` = ?"
+      const query = "UPDATE peer_fundraising_pages SET `banner_image` = ?, `person_image` = ?, `headline` = ?, `description` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
 
       const values = [
          req.body.banner_image,
          req.body.person_image,
-         req.body.default_tagline,
-         req.body.default_heading, 
-         req.body.default_description,
+         req.body.headline,
+         req.body.description, 
          req.body.p_color,
          req.body.s_color,
          req.body.bg_color,
@@ -47,8 +46,11 @@ export const updatePeerFundraisingPage = (req, res) => {
          req.params.id
       ]
 
+      console.log(values)
+
       db.query(query, values, (err, data) => {
          if (err) return console.log(err)
+         console.log(data)
          return res.status(200).json(data)
       })
    })
