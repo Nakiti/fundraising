@@ -62,7 +62,7 @@ app.use("/api/peer_landing_page", peerLandingPageRoutes)
 app.use("/api/peer_fundraising_page", peerFundraisingPageRoutes)
 app.use("/api/donation_form", donationFormRoutes)
 
-const port = process.env.PORT ||  4000
+const port = process.env.PORT || 8080
 
 app.listen(port, (req, res) => {
    console.log("runninnnnnnnnnnnn")
