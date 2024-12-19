@@ -95,12 +95,12 @@ const CampaignPage = ({params}) => {
                      </p>
                   </Link>
 
-                  <Link href={`/organization/${organizationId}/campaign/${campaignId}/preview`}>
+                  {/* <Link href={`/organization/${organizationId}/campaign/${campaignId}/preview`}>
                      <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
                         Preview Campaign
                         <FaExternalLinkAlt className="ml-2 text-blue-800" />
                      </p>
-                  </Link>
+                  </Link> */}
 
                   {/* Deactivate button (commented out) */}
                   {/* {campaign && campaign.status === "active" && (

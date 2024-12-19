@@ -35,7 +35,8 @@ const PeerLandingPage = ({params}) => {
                <img
                   src={pageInputs.banner_image || "image1.jpg"}
                   alt="Banner"
-                  className="w-full h-96 object-cover bg-gray-100 border-b border-gray-300"
+                  className="w-full object-cover bg-gray-100 border-b border-gray-300"
+                  style={{height: "500px"}}
                />
 
                <div 

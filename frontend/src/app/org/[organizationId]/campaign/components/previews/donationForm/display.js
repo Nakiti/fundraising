@@ -20,7 +20,7 @@ const Display = () => {
          <div className="px-6 py-4">
             <div className="bg-white p-6 rounded-sm">
                <div className="text-gray-700">
-                  <h1 className="text-2xl font-semibold mb-4">{donationFormInputs.headline || "This is the Heading Woo Hoo"}</h1>
+                  <h1 className="text-2xl font-semibold mb-4">{donationFormInputs.headline || "This is the Heading"}</h1>
 
                   <pre className="text-sm leading-relaxed whitespace-pre-line">{donationFormInputs.description || "This is the description"}</pre>
                </div>

@@ -57,7 +57,7 @@ const Display = () => {
                <div className="space-y-4 py-8 mt-8 border-t border-gray-200">
                   <h2 className="text-xl text-gray-800 font-semibold text-center">About</h2>
                   <pre className="text-sm text-wrap text-gray-600 leading-relaxed">
-                     {peerFundraisingPageInputs.default_description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
+                     {peerFundraisingPageInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
                   </pre>
                </div>
 

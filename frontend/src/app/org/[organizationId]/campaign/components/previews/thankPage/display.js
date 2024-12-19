@@ -6,7 +6,7 @@ const Display = () => {
 
    return (
       <div 
-         className="min-h-screen bg-cover bg-center" 
+         className="min-h-screen bg-cover bg-center border" 
          style={{ backgroundImage: thankPageInputs.bg_image}}
       >
          <div className="bg-white py-4 px-8 w-full opacity-90">
@@ -22,18 +22,6 @@ const Display = () => {
                   <pre className="mt-4 text-sm text-gray-600 leading-relaxed whitespace-pre-line">
                      {thankPageInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"}
                   </pre>
-
-                  <div className="relative w-full h-72 bg-gray-50 flex items-center justify-center">
-                  {thankPageInputs.bg_image ? (
-                     <img
-                        src={thankPageInputs.bg_image || "image1.jpg"}
-                        alt="image"
-                        className="w-full h-72 object-cover"
-                     />
-                  ) : (
-                     <span className="text-gray-400 text-lg font-medium">Upload Image</span>
-                  )}
-               </div>
 
                   <div className="flex flex-row text-xs mt-6 text-gray-600 space-x-4">
                      <p>Share</p>

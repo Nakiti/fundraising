@@ -64,6 +64,10 @@ app.use("/api/donation_form", donationFormRoutes)
 
 const port = process.env.PORT || 4000
 
+app.get("/", (req, res) => {
+   res.send("its running!")
+})
+
 app.listen(port, (req, res) => {
    console.log("runninnnnnnnnnnnn")
 })
