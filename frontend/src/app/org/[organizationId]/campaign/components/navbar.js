@@ -130,9 +130,9 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
 
          {showDropdown && (
             <div className="border-t border-gray-300 px-6 w-11/12 mx-auto py-4">
-               <div className="w-2/3 mx-auto flex flex-row space-x-8">
+               <div className="mx-auto flex flex-row justify-center space-x-8">
                   {pageLinks.filter(item => item != null).map(item => (
-                     <div key={item.title} className="flex w-full flex-col items-center">
+                     <div key={item.title} className="flex w-52 flex-col items-center">
                         <Link 
                            className={`w-full h-28 border-2 ${pathName.split("/")[6] === item.path.split("/")[6] ? "border-blue-600" : "border-gray-400"} rounded-md p-4 flex justify-center items-center hover:border-blue-600 transition-all duration-200`}
                            href={item.path}

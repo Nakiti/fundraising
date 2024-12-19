@@ -67,21 +67,21 @@ export const searchCampaigns = (req, res) => {
 }
 
 export const getCampaignsByOrg = (req, res) => {
+   // const query = `
+   //    SELECT campaigns.id, campaigns.created_at, campaign_details.*
+   //    FROM campaigns
+   //    INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
+   //    WHERE campaigns.organization_id = ? ORDER BY campaigns.id DESC
+   // `
    const query = `
-      SELECT campaigns.id, campaigns.created_at, campaign_details.*
+      SELECT campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.type, campaign_details.status, SUM(transactions.amount) AS amount_raised
       FROM campaigns
       INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-      WHERE campaigns.organization_id = ? ORDER BY campaigns.id DESC
+      LEFT JOIN transactions ON campaigns.id = transactions.campaign_id
+      WHERE campaigns.organization_id = ?
+      GROUP BY campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.type, campaign_details.status
+      ORDER BY campaigns.id DESC
    `
-   //    const query = `
-//    SELECT campaigns.id, campaigns.created_at, campaign_details.*, SUM(transactions.amount) AS amount_raised
-//    FROM campaigns
-//    INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-//    LEFT JOIN transactions ON campaigns.id = transactions.campaign_id
-//    WHERE campaigns.organization_id = ?
-//    GROUP BY campaigns.id, campaigns.created_at, campaign_details.*
-//    ORDER BY campaigns.id DESC
-// `
 
 
    const value = [req.params.id]

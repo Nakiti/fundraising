@@ -75,7 +75,7 @@ const Display = () => {
 
                <div className="flex flex-col w-1/3 mx-auto space-y-2">
                   <button className="px-4 py-2 text-xs bg-yellow-400">Pay Pal</button>
-                  <button className="px-4 py-2 text-xs bg-blue-700 text-white">Credit Card</button>
+                  <button style={{backgroundColor: donationFormInputs.b1_color}} className="px-4 py-2 text-xs bg-blue-700 text-white">Credit Card</button>
                </div>
             </div>
          </div>

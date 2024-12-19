@@ -21,9 +21,9 @@ const DetailsLayout = ({params, children}) => {
    ]
 
    return (
-      <div className="bg-white rounded-lg shadow-md w-11/12 mx-auto flex flex-row">
+      <div className="bg-white rounded-lg shadow-sm w-11/12 mx-auto flex flex-row">
          {/* Side Navigation */}
-         <div className="flex flex-col border-r-4 border-gray-200 w-1/4 py-8 text-md text-gray-600">
+         <div className="flex flex-col border-r-4 border-gray-100 w-1/4 py-8 text-md text-gray-600">
             {links.filter(item => item != null).map((item, index) => (
                <Link 
                   key={index} 

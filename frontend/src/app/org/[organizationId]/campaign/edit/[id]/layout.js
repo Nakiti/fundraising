@@ -49,9 +49,6 @@ const EditLayout = ({params, children}) => {
          campaignDetails.goal == 0 || campaignDetails.shortUrl == "" || campaignDetails.designation == 0) {
          setErrorMessage("Please Fill All Required Fields in Campaign Details")
          setError(true)
-      } else if (donationPageInputs.headline == "" || donationPageInputs.description == "" || donationPageInputs.image == "") {
-         setErrorMessage("Please Fill All Required Fields in Campaign Pages")
-         setError(true)
       } else {
          try {
             const response = await updateCampaignDetails(campaignId, campaignDetails, "active", currentUser)
@@ -59,44 +56,7 @@ const EditLayout = ({params, children}) => {
                setError(true)
                setErrorMessage(response)
             } else {
-
-               if (campaignType == "donation") {
-                  await updateDonationPage(campaignId, donationPageInputs)
-                  for (const section of donationPageSections) {
-                     await updatePageSection(section.id, section.active)
-                  }
-                  await updateCampaignDesignations()
-
-               } else if (campaignType == "ticked-event") {
-                  await updateTicketPage(campaignId, ticketPageInputs)
-                  for (const section of ticketPageSections) {
-                     await updatePageSection(section.id, section.active)
-                  }
-                  await updateCampaignTickets()
-               } else if (campaignType == "peer-to-peer") {
-                  await updatePeerLandingPage(campaignId, peerLandingPageInputs, currentUser.id)
-                  await updatePeerFundraisingPage(campaignId, peerFundraisingPageInputs, currentUser.id)
-
-                  for (const section of peerLandingPageSections) {
-                     await updatePageSection(section.id, section.active)
-                  }
-
-                  for (const section of peerFundraisingPageSections) {
-                     await updatePageSection(section.id, section.active)
-                  }
-               }
-
-               await updateCustomQuestions()
-               await updateThankYouPage(campaignId, thankPageInputs)
-               for (const section of thankyouPageSections) {
-                  await updatePageSection(section.id, section.active)
-               }
-
-               await updateDonationForm(campaignId, donationFormInputs, currentUser.id)
-               for (const section of donationFormSections) {
-                  await updatePageSection(section.id, section.active)
-               }
-               console.log("success")
+               handleCampaignUpdates()
                router.push(`/org/${organizationId}/dashboard/campaigns`)
             }
          } catch (err) {
@@ -114,42 +74,7 @@ const EditLayout = ({params, children}) => {
             setError(true)
             setErrorMessage(response)
          } else {
-            if (campaignType == "donation") {
-               await updateDonationPage(campaignId, donationPageInputs);
-               await updateCampaignDesignations()
-
-               for (const section of donationPageSections) {
-                  await updatePageSection(section.id, section.active)
-               }
-            } else if (campaignType == "ticketed-event") {
-               await updateTicketPage(campaignId, ticketPageInputs)
-               await updateCampaignTickets()
-
-               for (const section of ticketPageSections) {
-                  await updatePageSection(section.id, section.active)
-               }
-            } else if (campaignType == "peer-to-peer") {
-               await updatePeerLandingPage(campaignId, peerLandingPageInputs)
-               await updatePeerFundraisingPage(campaignId, peerFundraisingPageInputs, currentUser.id)
-
-               for (const section of peerLandingPageSections) {
-                  await updatePageSection(section.id, section.active)
-               }
-               for (const section of peerFundraisingPageSections) {
-                  await updatePageSection(section.id, section.active)
-               }
-            }
-            
-            await updateThankYouPage(campaignId, thankPageInputs)
-            await updateCustomQuestions()
-            for (const section of thankyouPageSections) {
-               await updatePageSection(section.id, section.active)
-            }
-
-            await updateDonationForm(campaignId, donationFormInputs, currentUser.id)
-            for (const section of donationFormSections) {
-               await updatePageSection(section.id, section.active)
-            }
+            handleCampaignUpdates()
             router.push(`/org/${organizationId}/dashboard/campaigns`)
          }
       } catch (err) {
@@ -157,6 +82,46 @@ const EditLayout = ({params, children}) => {
          setError(true)
          setErrorMessage(err)
       }
+   }
+
+   const handleCampaignUpdates = async() => {
+      if (campaignType == "crowdfunding") {
+         await updateDonationPage(campaignId, donationPageInputs);
+
+         for (const section of donationPageSections) {
+            await updatePageSection(section.id, section.active)
+         }
+      } else if (campaignType == "ticketed-event") {
+         await updateTicketPage(campaignId, ticketPageInputs)
+         await updateCampaignTickets()
+
+         for (const section of ticketPageSections) {
+            await updatePageSection(section.id, section.active)
+         }
+      } else if (campaignType == "peer-to-peer") {
+         await updatePeerLandingPage(campaignId, peerLandingPageInputs)
+         await updatePeerFundraisingPage(campaignId, peerFundraisingPageInputs, currentUser.id)
+
+         for (const section of peerLandingPageSections) {
+            await updatePageSection(section.id, section.active)
+         }
+         for (const section of peerFundraisingPageSections) {
+            await updatePageSection(section.id, section.active)
+         }
+      }
+      await updateCustomQuestions()
+      await updateCampaignDesignations()
+
+      await updateThankYouPage(campaignId, thankPageInputs)
+      for (const section of thankyouPageSections) {
+         await updatePageSection(section.id, section.active)
+      }
+
+      await updateDonationForm(campaignId, donationFormInputs, currentUser.id)
+      for (const section of donationFormSections) {
+         await updatePageSection(section.id, section.active)
+      }
+
    }
 
    const updateCampaignDesignations = async() => {

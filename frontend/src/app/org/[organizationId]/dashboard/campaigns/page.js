@@ -14,7 +14,6 @@ const Campaigns = ({params}) => {
    const [data, setData] = useState(null)
 
    useEffect(() => {
-
       const fetchData = async() => {
          try {
             const response = await getAllCampaigns(organizationId)
@@ -31,8 +30,8 @@ const Campaigns = ({params}) => {
    return (
       <div className="w-full max-w-full overflow-x-hidden h-full overflow-y-auto bg-gray-100 p-6">
          {showModal && <Modal setShow={setShowModal} organizationId={organizationId}/>}
-         <div className="bg-white rounded-xl max-w-full">
-            <div className="max-w-full h-full rounded-xl p-4">
+         <div className="bg-white rounded-md max-w-full">
+            <div className="max-w-full h-full rounded-lg p-4">
                <div className="flex flex-row p-6 w-full justify-between items-center">
                   <h1 className="text-4xl font-semibold">Campaigns</h1>
                   {/* <Link href="/org/campaign/new/details/about" >
@@ -42,7 +41,7 @@ const Campaigns = ({params}) => {
                      Create New Campaign
                   </button>
                </div>
-               <Summary />
+               {data && <Summary data={data}/>}
                <div className="mb-4 flex flex-col px-6">
                   <Searchbar setData={setData} organizationId={organizationId}/>
                   <Filters setData={setData} organizationId={organizationId}/>

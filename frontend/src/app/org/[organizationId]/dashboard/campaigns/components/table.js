@@ -93,14 +93,14 @@ const Table = ({setData, data, organizationId}) => {
                   <tr
                      key={index}
                      className="border-b border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
-                     onClick={() => handleClick(row.campaign_id)}
+                     onClick={() => handleClick(row.id)}
                   >
                      <td className="px-4 py-4 text-center text-md text-gray-900">{row.id}</td>
                      <td className="px-4 py-4 whitespace-nowrap text-center text-md text-gray-900">{row.internal_name}</td>
                      <td className="px-4 py-4 text-center text-md text-gray-900">
                         {new Date(row.created_at).toLocaleDateString("en-US")}
                      </td>
-                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : "$"+row.raised}</td>
+                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : "$"+ (row.amount_raised || 0)}</td>
                      {/* <td className="px-4 py-4 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : "$"+row.goal}</td> */}
                      <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : row.donations}</td>
                      <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : row.visits}</td>

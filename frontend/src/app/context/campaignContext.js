@@ -5,7 +5,7 @@ import useFormInput from "../hooks/useFormInput";
 import { AuthContext } from "./authContext";
 import { getActiveDesignations, getCampaignDetails, getCustomQuestions, getPageSections, getThankYouPage, getTicketPage } from "../services/fetchService.js";
 import { initialThankyouPageSections } from "../constants/pageSectionsConfig";
-
+import { getCampaignDesignations } from "../services/fetchService.js";
 export const CampaignContext = createContext();
 
 export const CampaignContextProvider = ({ children, campaignId, organizationId }) => {
@@ -30,6 +30,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    const [designations, setDesignations] = useState([])
    const [defaultDesignation, setDefaultDesignation] = useState(0)
    const [status, setStatus] = useState("inactive")
+   const [selectedDesignations, setSelectedDesignations] = useState([])
 
 
    useEffect(() => {
@@ -68,6 +69,9 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
 
                const questionResponse = await getCustomQuestions(campaignId)
                setCustomQuestions(questionResponse)
+
+               const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
+               setSelectedDesignations(selectedDesignationsResponse)
             }
             const designationResponse = await getActiveDesignations(organization_id)
             setDesignations(designationResponse)
@@ -83,7 +87,8 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
       <CampaignContext.Provider value={{
          status, designations, customQuestions, setCustomQuestions, questionInputs, handleQuestionInputsChange, 
          defaultDesignation, setDefaultDesignation, thankyouPageSections, setThankyouPageSections,
-         thankPageInputs, handleThankPageInputsChange, campaignType, campaignDetails, handleCampaignDetailsChange, faqs, setFaqs, campaignId
+         thankPageInputs, handleThankPageInputsChange, campaignType, campaignDetails, handleCampaignDetailsChange, faqs, setFaqs, campaignId,
+         selectedDesignations, setSelectedDesignations
       }}>
          {children}
       </CampaignContext.Provider>

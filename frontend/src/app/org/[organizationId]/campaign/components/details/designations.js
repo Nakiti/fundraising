@@ -8,8 +8,7 @@ import { DonationPageContext } from "@/app/context/campaignPages/donationPageCon
 import { AuthContext } from "@/app/context/authContext"
 
 const DesignationsComponent = () => {
-   const {designations, campaignDetails, handleCampaignDetailsChange, campaignId} = useContext(CampaignContext)
-   const {selectedDesignations, setSelectedDesignations} = useContext(DonationPageContext)
+   const {designations, campaignDetails, handleCampaignDetailsChange, campaignId, selectedDesignations, setSelectedDesignations} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
 
    const handleChange = (designation, isChecked) => {

@@ -1,4 +1,4 @@
-import DesignInputs from "@/app/org/[organizationId]/campaign/components/previews/donationPage/designInputs"
+import DesignInputs from "../../../../components/previews/donationForm/designInputs"
 
 const Design = () => {
 

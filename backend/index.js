@@ -23,14 +23,8 @@ import donationFormRoutes from "./routes/donation_formRoutes.js"
 
 const app = express()
 
-const allowedOrigins = [
-   'https://mango-river-06d82041e.5.azurestaticapps.net',
-   'http://localhost:3000',
-];
-
-
 const corsOptions = {
-   origin: ['https://mango-river-06d82041e.5.azurestaticapps.net', 'http://localhost:3000'],
+   origin: true,
    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
    allowedHeaders: ['Content-Type', 'Authorization'],
    credentials: true, // Enable credentials (cookies, etc.)
@@ -67,6 +61,10 @@ app.use("/api/campaign_ticket", campaignTicketRoutes)
 app.use("/api/peer_landing_page", peerLandingPageRoutes)
 app.use("/api/peer_fundraising_page", peerFundraisingPageRoutes)
 app.use("/api/donation_form", donationFormRoutes)
+
+app.get("/", (req, res) => {
+   res.json({message: "welcome"})
+})
 
 const port = process.env.port ||  4000
 
