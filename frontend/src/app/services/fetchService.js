@@ -13,6 +13,15 @@ export const getCampaign = async (campaignId) => {
    }
 };
 
+export const getSingleDesignation = async(id) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/designation/getSingle/${id}`)
+      return response.data[0]
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const getCampaignDetails = async (campaignId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/campaign_details/get/${campaignId}`)

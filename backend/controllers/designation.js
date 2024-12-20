@@ -76,7 +76,16 @@ export const getDesignations = (req, res) => {
 
 export const getActiveDesignations = (req, res) => {
    const query = "SELECT * FROM designations WHERE status = 'active' AND organization_id = ?"
+   const value = req.params.id
 
+   db.query(query, value, (err, data) => {
+      if (err) return res.json(err)
+      return res.status(200).json(data)
+   })
+}
+
+export const getDesignation = (req, res) => {
+   const query = "SELECT * FROM designations WHERE id = ?"
    const value = req.params.id
 
    db.query(query, value, (err, data) => {

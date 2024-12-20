@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDesignations, getCampaignDetails, getDonationForm } from "@/app/services/fetchService"
+import { getCampaignDesignations, getCampaignDetails, getDonationForm, getSingleDesignation } from "@/app/services/fetchService"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
@@ -8,6 +8,7 @@ const DonationForm = ({params}) => {
    const [display, setDisplay] = useState(null)
    const [designations, setDesignations] = useState(null)
    const [campaignDetails, setCampaignDetails] = useState(null)
+   const [defaultDesignation, setDefaultDesignation] = useState(null)
 
    const status = params.status
    const campaignId = params.campaignId
@@ -19,6 +20,10 @@ const DonationForm = ({params}) => {
          
          if (campaignResponse.status == "active" || status == "preview") {
             setCampaignDetails(campaignResponse)
+
+            const defaultDesignationResponse = await getSingleDesignation(campaignResponse.default_designation)
+            setDefaultDesignation(defaultDesignationResponse)
+            console.log(defaultDesignationResponse)
 
             const displayResponse = await getDonationForm(campaignId)
             setDisplay(displayResponse)
@@ -40,8 +45,8 @@ const DonationForm = ({params}) => {
          {display && <div className="px-6 py-4">
             <div className="bg-white p-6 rounded-sm w-2/3 mx-auto">
                <div className="text-gray-700">
-                  <h1 className="text-xl font-semibold mb-4">{display.headline || "This is the Heading Woo Hoo"}</h1>
-                  <p className="text-xs">{display.description || "This is the description"}</p>
+                  <h1 className="text-2xl font-semibold mb-4">{display.headline || "This is the Heading Woo Hoo"}</h1>
+                  <p className="text-sm">{display.description || "This is the description"}</p>
                </div>
                <div className="w-full border-gray-200 border my-6" />
                <div>
@@ -49,22 +54,25 @@ const DonationForm = ({params}) => {
                   <div className="mt-2">
                      <h3 className="text-xs text-gray-700 font-semibold mb-2">I would like to give:</h3>
                      <div className="grid grid-cols-6 gap-2 w-full">
-                           <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
-                           <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
-                           <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
-                           <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
-                           <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
-                        </div>
+                        <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
+                        <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
+                        <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
+                        <button className="px-4 py-2 text-xs bg-gray-200 text-gray-700 rounded-md">$100</button>
+                        <input className="px-4 py-2 col-span-2 text-xs border border-gray-200 text-gray-700 rounded-md" placeholder="Enter Custom Amount"/>
                      </div>
+                  </div>
                   <div className="mt-4">
                      <h3 className="text-xs text-gray-700 font-semibold mb-1">I would like to give to:</h3>
                      <select 
-                        className="w-3/4 border border-gray-300 rounded-sm p-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                        className="w-3/4 border text-sm border-gray-300 rounded-sm p-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
                         defaultValue="Select"
                      >
-                        {designations && designations.map(item => {
+                        {designations && designations.length > 0 ?
+                         designations.map(item => {
                            return <option key={item.id} value={item.id}>{item.title}</option>
-                        })}
+                        }) :
+                        defaultDesignation && <option className="text-sm" value={defaultDesignation.id}>{defaultDesignation.title}</option>
+                        }
                      </select>
                   </div>
                </div>

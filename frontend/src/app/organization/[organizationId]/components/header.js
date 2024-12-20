@@ -12,7 +12,7 @@ const Header = ({organizationId}) => {
             <p>Our Impact</p>
             <p>Contact Us</p>
          </div>     
-         <Link href={`/organization/${organizationId}/cart`} className="text-xl font-bold"><FaCartShopping /></Link>
+         {/* <Link href={`/organization/${organizationId}/cart`} className="text-xl font-bold"><FaCartShopping /></Link> */}
       </div>
    );
 }
