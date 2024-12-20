@@ -11,6 +11,7 @@ import { FaExternalLinkAlt } from "react-icons/fa"
 const CampaignPage = ({params}) => {
    const campaignId = params.campaignId
    const [campaign, setCampaign] = useState(null)
+   const [campaignType, setCampaignType] = useState(null)
    const {currentUser} = useContext(AuthContext)
    const organizationId = params.organizationId
 
@@ -30,6 +31,7 @@ const CampaignPage = ({params}) => {
    const fetchData = async() => {
       const campaignResponse = await getCampaign(campaignId)
       setCampaign(campaignResponse)
+      setCampaignType(campaignResponse.type)
       console.log("asas", campaignResponse)
    }
 
@@ -88,19 +90,35 @@ const CampaignPage = ({params}) => {
                </div>
 
                <div className="px-4 pb-6 py-4 flex flex-col space-y-6">
-                  <Link href={`/organization/${organizationId}/campaign/${campaignId}`}>
+                  <Link href={
+                     campaignType && campaignType == "crowdfunding" ?
+                     `/organization/${organizationId}/campaign/${campaignId}/donation-page/`
+                     : campaignType == "peer-to-peer" ?
+                     `/organization/${organizationId}/campaign/${campaignId}/peer-landing-page/`
+                     : campaignType == "donation" ?
+                     `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
+                     : ""
+                  }>                     
                      <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
                         Open Campaign Page
                         <FaExternalLinkAlt className="ml-2 text-blue-800" />
                      </p>
                   </Link>
 
-                  {/* <Link href={`/organization/${organizationId}/campaign/${campaignId}/preview`}>
+                  <Link href={
+                     campaignType && campaignType == "crowdfunding" ?
+                     `/organization/${organizationId}/campaign/${campaignId}/donation-page/preview`
+                     : campaignType == "peer-to-peer" ?
+                     `/organization/${organizationId}/campaign/${campaignId}/peer-landing-page/preview`
+                     : campaignType == "donation" ?
+                     `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview`
+                     : ""
+                  }>
                      <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
                         Preview Campaign
                         <FaExternalLinkAlt className="ml-2 text-blue-800" />
                      </p>
-                  </Link> */}
+                  </Link>
 
                   {/* Deactivate button (commented out) */}
                   {/* {campaign && campaign.status === "active" && (

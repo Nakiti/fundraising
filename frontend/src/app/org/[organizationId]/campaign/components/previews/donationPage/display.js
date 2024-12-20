@@ -18,7 +18,7 @@ const Display = () => {
          <div className="relative w-full">
             {/* Header overlay */}
             <div 
-               className="absolute top-0 left-0 w-full text-lg font-bold text-start text-gray-600 px-4 py-2 bg-white/70 backdrop-blur-sm z-10 border-b border-gray-200"
+               className="top-0 left-0 w-full text-lg font-bold text-start text-gray-600 px-4 py-2 bg-white/70 backdrop-blur-sm z-10 border-b border-gray-200"
             >
                <h1 
                className="px-2 py-1"
@@ -29,12 +29,12 @@ const Display = () => {
             </div>
 
             {/* First Image */}
-            <div className="relative w-full h-72 bg-gray-50 flex items-center justify-center">
+            <div className="w-full h-80 bg-gray-50 flex items-center justify-center border-b border-gray-300">
                {donationPageInputs.banner_image ? (
                   <img
                      src={donationPageInputs.banner_image || "image1.jpg"}
                      alt="image"
-                     className="w-full h-72 object-cover"
+                     className="w-full h-80 object-cover"
                   />
                ) : (
                   <span className="text-gray-400 text-lg font-medium">Upload Image</span>

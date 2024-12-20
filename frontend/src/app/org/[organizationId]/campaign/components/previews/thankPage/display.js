@@ -1,13 +1,18 @@
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 
 const Display = () => {
    const {thankPageInputs} = useContext(ThankYouPageContext)
 
+   useEffect(() => {
+
+      console.log("image", thankPageInputs.bg_image)
+   }, [thankPageInputs])
+
    return (
       <div 
          className="min-h-screen bg-cover bg-center border" 
-         style={{ backgroundImage: thankPageInputs.bg_image}}
+         style={{ backgroundImage: `url('${thankPageInputs.bg_image}')`}}
       >
          <div className="bg-white py-4 px-8 w-full opacity-90">
             <h1>Header</h1>

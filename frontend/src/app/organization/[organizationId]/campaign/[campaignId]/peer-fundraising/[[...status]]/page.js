@@ -1,12 +1,15 @@
 "use client"
 import { getCampaignDetails, getPeerFundraisingPage } from "@/app/services/fetchService"
 import { useState, useEffect } from "react"
+import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
 
 const PeerFundraisingPage = ({params}) => {
    const [pageInputs, setPageInputs] = useState(null)
    const [campaignDetails, setCampaignDetails] = useState(null)
+
    const campaignId = params.campaignId
    const status = params.status
+   const organizationId = params.organizationId
 
    useEffect(() => {
       const fetchData = async() => {
@@ -31,6 +34,7 @@ const PeerFundraisingPage = ({params}) => {
 
    return (
       <div>
+         {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
          {pageInputs && <div 
             className="w-full mb-4 mx-auto bg-white" 
             style={{ backgroundColor: pageInputs.bg_color }}
@@ -42,7 +46,6 @@ const PeerFundraisingPage = ({params}) => {
                   className="w-full h-96 object-cover bg-gray-50"
                />
             </div>
-
             <div className="w-3/4 mx-auto relative flex flex-row mb-8 border-t border-gray-200 pt-6" style={{ color: pageInputs.bg_color }}>
                <div className="w-1/3">
                   <img 
@@ -60,7 +63,6 @@ const PeerFundraisingPage = ({params}) => {
                         </div>
                         <button className="text-sm text-blue-600 hover:underline">Share</button>
                      </div>
-
                      <div className="mb-6">
                         <p className="text-sm font-medium mb-1 text-gray-700" style={{ color: pageInputs.p_color }}>X of 1000 raised</p>
                         <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
@@ -68,14 +70,12 @@ const PeerFundraisingPage = ({params}) => {
                         </div>
                      </div>
                   </div>
-
                   <div className="space-y-4 py-8 mt-12 border-t border-gray-200">
                      <h2 className="text-2xl text-gray-800 font-semibold text-center mb-4">About</h2>
                      <pre className="text-md text-wrap text-gray-600 leading-relaxed">
                         {pageInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
                      </pre>
                   </div>
-
                   <div className="flex justify-center items-center mt-6">
                      <button 
                         disabled

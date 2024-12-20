@@ -1,6 +1,7 @@
 "use client"
 import { getCampaignDetails, getPeerLandingPage } from "@/app/services/fetchService"
 import { useState, useEffect } from "react"
+import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
 
 const PeerLandingPage = ({params}) => {
    const [pageInputs, setPageInputs] = useState(null)
@@ -30,6 +31,8 @@ const PeerLandingPage = ({params}) => {
 
    return (
       <div className="w-full mb-4 mx-auto bg-white">
+         {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
+
          {pageInputs && <div>
             <div className="relative w-full mb-8">
                <img
@@ -81,7 +84,6 @@ const PeerLandingPage = ({params}) => {
             </div>
          </div>}
       </div>
-
    )
 }
 

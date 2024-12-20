@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 import { FaArrowLeft } from "react-icons/fa"
+import Link from "next/link"
+import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
 
 const DonationLandingPage = ({params}) => {
    const [display, setDisplay] = useState(null)
@@ -14,6 +16,7 @@ const DonationLandingPage = ({params}) => {
 
    const status = params.status
    const campaignId = params.campaignId
+   const organizationId = params.organizationId
 
    useEffect(() => {
       const fetchData = async() => {
@@ -42,10 +45,7 @@ const DonationLandingPage = ({params}) => {
          className="w-full mb-4 bg-white overflow-y-auto" 
          // style={{ backgroundColor: donationPageInputs.bg_color }}
       >
-      <div className="p-3 bg-gray-700 text-white flex flex-row">
-         <button className="ml-4 mr-2"><FaArrowLeft /></button>
-         <p>Campaign is in Preview mode</p>
-      </div>
+      {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
       {display && <div>
          <div className="relative w-full">
             <img
@@ -55,7 +55,6 @@ const DonationLandingPage = ({params}) => {
                style={{height: "70vh"}}
             />
          </div>
-
          <div className="w-3/4 mx-auto relative flex flex-row mb-8 space-x-6 pt-2">
             <div className="w-full mt-8">
                <div className="flex flex-row justify-between mb-10 w-11/12">
@@ -65,7 +64,6 @@ const DonationLandingPage = ({params}) => {
                   </div>
                   <button className="text-md text-blue-600 hover:underline">Share</button>
                </div>
-
                <div className="mb-12 flex flex-row w-full items-center space-x-8">
                   <div className="w-3/4">
                      <p className="text-xl mb-3 text-gray-700" >X raised</p>
@@ -77,22 +75,23 @@ const DonationLandingPage = ({params}) => {
                      <button className="px-10 py-2 text-lg bg-blue-700 text-white">Donate</button>
                   </div>
                </div>
-
                <div className="space-y-4 py-4 mt-8 border-t border-gray-200 pt-12">
                   <h2 className="text-3xl text-gray-700 text-center mb-6">About</h2>
                   <pre className="text-md text-gray-700 w-3/4 mx-auto text-wrap">
-                     {"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
+                     {display.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
                   </pre>
                </div>
-
-            
                <div className="flex justify-center items-center mt-8 mx-auto">
-                  <button 
-                     className="w-1/4 py-3 text-white rounded-sm bg-blue-700 shadow-md hover:bg-blue-800 transition-colors duration-200"
+                  <Link 
+                     href={status ? 
+                        `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview` :
+                        `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
+                     }
+                     className="w-1/5 py-3 text-center text-white rounded-sm bg-blue-700 shadow-md hover:bg-blue-800 transition-colors duration-200"
                      // style={{ backgroundColor: donationPageInputs.b1_color }}
                   >
                      Donate
-                  </button>
+                  </Link>
                </div>
             </div>
          </div>

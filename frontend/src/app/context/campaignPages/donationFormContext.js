@@ -1,5 +1,5 @@
 import { initialDonationFormSections } from "@/app/constants/pageSectionsConfig";
-import { getDonationForm, getPageSections } from "@/app/services/fetchService";
+import { getCustomQuestions, getDonationForm, getPageSections } from "@/app/services/fetchService";
 import { createContext, useState, useEffect } from "react";
 import useFormInput from "@/app/hooks/useFormInput";
 
@@ -8,6 +8,7 @@ export const DonationFormContext = createContext()
 export const DonationFormContextProvider = ({campaignId, campaignType, children}) => {
    const [donationFormInputs, handleDonationFormInputsChange, setDonationFormInputs] = useFormInput({})
    const [donationFormSections, setDonationFormSections] = useState(initialDonationFormSections)
+   const [customQuestions, setCustomQuestions] = useState(null)
 
    useEffect(() => {
 
@@ -31,6 +32,9 @@ export const DonationFormContextProvider = ({campaignId, campaignType, children}
                button6: donationResponse.button6 || 0,
             })
 
+            const customQuestionsResponse = await getCustomQuestions(campaignId)
+            setCustomQuestions(customQuestionsResponse)
+
             // const donationSections = await getPageSections(donationPageId)
             // setDonationFormSections((prevSections) => {
             //    return prevSections.map(section => {
@@ -51,7 +55,7 @@ export const DonationFormContextProvider = ({campaignId, campaignType, children}
 
    return (
       <DonationFormContext.Provider value={{campaignId, donationFormInputs, handleDonationFormInputsChange,
-         donationFormSections, setDonationFormSections 
+         donationFormSections, setDonationFormSections, customQuestions 
          }}
       >
          {children}
