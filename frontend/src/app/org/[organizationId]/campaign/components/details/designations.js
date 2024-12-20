@@ -44,7 +44,7 @@ const DesignationsComponent = () => {
             await deleteCampaignDesignationBatch(relationsToRemove)
          }
 
-         await updateCampaignDetails(campaignId, campaignDetails, false, currentUser)
+         await updateCampaignDetails(campaignId, campaignDetails, "inactive", currentUser)
       } catch (err) {
          console.log(err)
       }

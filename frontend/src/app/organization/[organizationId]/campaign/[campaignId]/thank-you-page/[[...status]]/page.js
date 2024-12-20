@@ -9,6 +9,7 @@ const ThankYouPage = ({params}) => {
 
    const status = params.status
    const campaignId = params.campaignId
+   const organizationId = params.organizationId
 
    useEffect(() => {
       const fetchData = async() => {
@@ -33,13 +34,13 @@ const ThankYouPage = ({params}) => {
       >
          {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
 
-         {display && <div className="w-2/3 mx-auto py-8">
+         {display && <div className="w-3/5 mx-auto py-8">
             <div className="bg-white shadow-md rounded-sm">
                <div className="pt-10 px-10 pb-2">
                   <h1 className="text-2xl text-gray-800">{display.headline || "Thank you"}</h1>
-                  <p className="mt-4 text-xs text-gray-600">{display.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"}</p>
+                  <p className="mt-4 text-sm text-gray-600">{display.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"}</p>
                   <div className="flex flex-row text-sm mt-6 text-gray-600 space-x-4">
-                     <p>Share</p>
+                     <p className="text-xs">Share</p>
                   </div>
                </div>
 

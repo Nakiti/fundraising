@@ -45,7 +45,7 @@ const DonationForm = ({params}) => {
          {display && <div className="px-6 py-4">
             <div className="bg-white p-6 rounded-sm w-2/3 mx-auto">
                <div className="text-gray-700">
-                  <h1 className="text-2xl font-semibold mb-4">{display.headline || "This is the Heading Woo Hoo"}</h1>
+                  <h1 className="text-2xl font-semibold mb-4">{display.headline || "This is the Heading"}</h1>
                   <p className="text-sm">{display.description || "This is the description"}</p>
                </div>
                <div className="w-full border-gray-200 border my-6" />
@@ -64,9 +64,10 @@ const DonationForm = ({params}) => {
                   <div className="mt-4">
                      <h3 className="text-xs text-gray-700 font-semibold mb-1">I would like to give to:</h3>
                      <select 
-                        className="w-3/4 border text-sm border-gray-300 rounded-sm p-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                        defaultValue="Select"
+                        className="w-3/4 border text-sm border-gray-300 rounded-sm p-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                        defaultValue="select"
                      >
+                        <option value="select" disabled>Select a Designation</option>
                         {designations && designations.length > 0 ?
                          designations.map(item => {
                            return <option key={item.id} value={item.id}>{item.title}</option>
@@ -92,7 +93,7 @@ const DonationForm = ({params}) => {
                <div className="w-full border-gray-200 border my-6" />
                <div className="text-center flex flex-col mb-6">
                   <p className="text-lg"> $100</p>
-                  <p className="text-sm">Humanitarian Fund</p>
+                  <p className="text-sm">Fund Name</p>
                </div>
                <div className="flex flex-col w-1/3 mx-auto space-y-2">
                   <button className="px-4 py-2 text-xs bg-yellow-400">Pay Pal</button>
