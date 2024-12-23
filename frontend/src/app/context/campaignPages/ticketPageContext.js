@@ -10,9 +10,8 @@ export const TicketPageContextProvider = ({campaignId, campaignType, children}) 
    const [ticketsPageInputs, handleTicketsPageInputs, setTicketsPageInputs] = useFormInput({})
    const [tickets, setTickets] = useState([])
 
-
    useEffect(() => {
-      if (campaignType != "ticket") return
+      if (campaignType != "ticketed-event") return
 
       const fetchData = async() =>{
          try {
@@ -52,13 +51,13 @@ export const TicketPageContextProvider = ({campaignId, campaignType, children}) 
       fetchData()
    }, [])
 
-   if (campaignType !== "ticket") {
+   if (campaignType !== "ticketed-event") {
       return <>{children}</>
    }
 
    return (
       <TicketPageContext.Provider value={{campaignId, ticketPageSections, 
-         ticketsPageInputs, handleTicketsPageInputs, tickets, setTickets}}
+         ticketsPageInputs, handleTicketsPageInputs, tickets, setTickets, setTicketPageSections}}
       >
          {children}
       </TicketPageContext.Provider>

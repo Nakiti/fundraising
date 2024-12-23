@@ -97,7 +97,7 @@ const CampaignPage = ({params}) => {
                      `/organization/${organizationId}/campaign/${campaignId}/peer-landing-page/`
                      : campaignType == "donation" ?
                      `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
-                     : ""
+                     : `/organization/${organizationId}/campaign/${campaignId}/ticket/`
                   }>                     
                      <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
                         Open Campaign Page
@@ -112,7 +112,7 @@ const CampaignPage = ({params}) => {
                      `/organization/${organizationId}/campaign/${campaignId}/peer-landing-page/preview`
                      : campaignType == "donation" ?
                      `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview`
-                     : ""
+                     : `/organization/${organizationId}/campaign/${campaignId}/ticket/preview`
                   }>
                      <p className="flex items-center text-blue-800 hover:underline font-semibold text-md">
                         Preview Campaign

@@ -99,7 +99,6 @@ const DesignationsComponent = () => {
          <div className="px-2 py-4">
             <h1 className="text-xl font-semibold mb-2">All Designations</h1>
             <p className="text-sm text-gray-600 w-1/2 mb-4">These are all active designations in your organization.</p>
-
             <div className="px-6">
                <table className="min-w-full bg-white border-gray-300 rounded-md">
                   <thead className="border-b border-gray-300">
@@ -108,7 +107,6 @@ const DesignationsComponent = () => {
                         <th className="px-4 py-2 text-left text-sm font-semibold text-gray-600">Designation Title</th>
                      </tr>
                   </thead>
-
                   <tbody>
                      {designations.map((item, index) => (
                         <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
@@ -137,7 +135,6 @@ const DesignationsComponent = () => {
             </button>
          </div>
       </div>
-
    )
 }
 

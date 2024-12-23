@@ -26,10 +26,9 @@ const Display = () => {
             </div>
          </div>
 
-         <div class="relative w-full h-72">
+         <div class="relative w-full h-80">
             <img
                src={ticketsPageInputs.bgImage}
-               alt="Nature"
                class="w-full h-full object-cover"
             />
             <div 
@@ -59,8 +58,8 @@ const Display = () => {
                <div className="mt-12 border-t border-white">
                   <div className="flex flex-row w-2/3 mx-auto justify-between items-center">
                      <div className="">
-                        <p className="text-2xl mb-2">{ticketsPageInputs.venue}</p>
-                        <p className="text-md">{ticketsPageInputs.instructions}</p>
+                        <p className="text-2xl mb-2">{ticketsPageInputs.venue || "Venue Name"}</p>
+                        <p className="text-md">{ticketsPageInputs.instructions || "Instructions for guests"}</p>
                      </div>
                      <div>
                         <img 
@@ -85,6 +84,15 @@ const Display = () => {
 
             <div className="bg-gray-100 border p-4">
 
+            </div>
+         </div>
+         <div className="bg-gray-100 border-t border-gray-300 py-4 mt-12">
+            <div className="text-center text-gray-600 text-xs">
+               <p>&copy; {new Date().getFullYear()} Your Organization. All rights reserved.</p>
+               <p className="mt-1">
+                  <a href="#" className="hover:underline">Privacy Policy</a> | 
+                  <a href="#" className="hover:underline ml-2">Terms of Service</a>
+               </p>
             </div>
          </div>
       </div>

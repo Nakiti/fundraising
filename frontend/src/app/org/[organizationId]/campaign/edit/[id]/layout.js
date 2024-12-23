@@ -6,7 +6,7 @@ import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
 import ErrorModal from "@/app/components/errorModal"
-import { updateDonationForm, updatePageSection, updatePeerFundraisingPage, updatePeerLandingPage, updateThankYouPage, updateTicketPage } from "@/app/services/updateServices"
+import { updateDonationForm, updatePageSection, updatePeerFundraisingPage, updatePeerLandingPage, updateThankYouPage, updateTicketPage, updateTicketPurchasePage } from "@/app/services/updateServices"
 import { getCampaignDesignations, getCampaignTickets, getCustomQuestions } from "@/app/services/fetchService"
 import { deleteCampaignDesignationBatch, deleteCampaignQuestionsBatch, deleteCampaignTicketsBatch } from "@/app/services/deleteService"
 import { createCampaignTicket } from "@/app/services/createServices"
@@ -16,6 +16,7 @@ import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingP
 import { PeerFundraisingPageContext } from "@/app/context/campaignPages/peerFundraisingPageContext"
 import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext"
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
+import { TicketPurchasePageContext } from "@/app/context/campaignPages/ticketPurchasePageContext"
 
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
@@ -32,11 +33,14 @@ const EditLayout = ({params, children}) => {
    const {peerFundraisingPageInputs, peerFundraisingPageSections} = campaignType == "peer-to-peer" && useContext(PeerFundraisingPageContext)
    const {donationFormInputs, donationFormSections} = useContext(DonationFormContext)
    const {thankPageInputs, thankyouPageSections} = useContext(ThankYouPageContext)
+   const {ticketPurchaseInputs, ticketPurchaseSections} = useContext(TicketPurchasePageContext)
 
    const detailsLink  = `/org/${organizationId}/campaign/edit/${campaignId}/details/about`
    
    const pageLinks = [
-      campaignType == "ticketed-event" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/ticket-page/`, title: "Ticket Page", link: `/organization/${organizationId}/campaign/${campaignId}/ticket-page/`} : null,
+      campaignType == "ticketed-event" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/ticket-page/`, title: "Landing Page", link: `/organization/${organizationId}/campaign/${campaignId}/ticket-page/`} : null,
+      campaignType == "ticketed-event" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/ticket-purchase/`, title: "Purchase Page", link: `/organization/${organizationId}/campaign/${campaignId}/ticket-purchase/`} : null,
+
       campaignType == "crowdfunding" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/donation-page/`, title: "Landing Page", link: `/organization/${organizationId}/campaign/${campaignId}/donation-page/`} : null,
       campaignType == "peer-to-peer" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/peer-landing-page/`, title: "Landing Page", link: `/organization/${organizationId}/campaign/${campaignId}/peer-landing/`} : null,
       campaignType == "peer-to-peer" ? {path: `/org/${organizationId}/campaign/edit/${campaignId}/peer-fundraising-page/`, title: "Fundraising Page", link: `/organization/${organizationId}/campaign/${campaignId}/peer-fundraising/`} : null,
@@ -93,6 +97,7 @@ const EditLayout = ({params, children}) => {
          }
       } else if (campaignType == "ticketed-event") {
          await updateTicketPage(campaignId, ticketPageInputs)
+         await updateTicketPurchasePage(campaignId, ticketPurchaseInputs, currentUser.id)
          await updateCampaignTickets()
 
          for (const section of ticketPageSections) {

@@ -1,6 +1,4 @@
 "use client";
-
-import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { getCurrentUser } from "../services/fetchService";
 import { loginUser, logoutUser } from "../services/authService";
@@ -21,7 +19,6 @@ export const AuthContextProvider = ({children}) => {
    };
 
    useEffect(() => {
-      
       const fetchData = async () => {
          const response = await getCurrentUser()
          setCurrentUser(response)

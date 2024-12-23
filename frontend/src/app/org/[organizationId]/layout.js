@@ -19,7 +19,7 @@ const OrgLayout = ({params, children}) => {
    return (
       <LandingPageContextProvider>
          <Header organizationId={organizationId}/>
-         <div style={{height: "92vh"}}> 
+         <div style={{height: "90vh"}}> 
             {children} 
          </div>
       </LandingPageContextProvider>

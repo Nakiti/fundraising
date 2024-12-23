@@ -2,20 +2,79 @@
 import Link from "next/link";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
+import { FaUserCircle, FaRegUser, FaTachometerAlt, FaCog, FaSignOutAlt, } from "react-icons/fa";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+
 
 const Header = ({organizationId}) => {
    const {currentUser} = useContext(AuthContext)
    const [isClient, setIsClient] = useState(false);
+   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+   const toggleDropdown = () => {
+      setIsDropdownOpen(!isDropdownOpen);
+   };
 
    // Ensure this only runs on the client-side
    useEffect(() => {
+      console.log(currentUser && currentUser)
      setIsClient(true);
-   }, []);
+   }, [currentUser]);
 
    return (
-      <div className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-sm" style={{height: "8vh"}}>
-         <Link href="/" className="text-lg font-bold">Title</Link>
-         {isClient && <Link href={!currentUser ? "/login" : `/profile`} className="text-black font-semibold mr-4 hover:text-gray-700">{!currentUser ? "Login" : "Profile"}</Link>}
+      <div
+         className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-md"
+         style={{ height: "10vh" }}
+      >
+         <Link href="/" className="text-lg font-bold ml-8">
+            Title
+         </Link>
+
+         {/* Login/Profile Link */}
+         {/* {isClient && (
+            <Link
+               href={!currentUser ? "/login" : `/profile`}
+               className="text-black font-semibold mr-4 hover:text-gray-700"
+            >
+               {!currentUser ? "Login" : "Profile"}
+            </Link>
+         )} */}
+
+         {/* User Dropdown */}
+         <div className="flex items-center relative h-full border-l border-gray-300">
+            {/* User Icon and Name */}
+            {currentUser && (
+               <div
+                  className="flex flex-row items-center justify-between w-64 cursor-pointer hover:bg-gray-100 py-2 px-6 rounded-md"
+                  onClick={toggleDropdown}
+               >
+                  <div className="flex flex-row items-center space-x-2">
+                     <FaUserCircle size={32} className="text-gray-700" />
+                     <span className="text-lg text-gray-800">{currentUser.first_name} {currentUser.last_name}</span>
+                  </div>
+                  {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+               </div>
+            )}
+
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+               <div className="absolute right-0 p-2 mt-44 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                  <Link
+                     href="/profile"
+                     className="flex items-center text-lg px-4 py-3 text-gray-700 hover:bg-gray-100"
+                  >
+                     <FaRegUser className="mr-4" /> 
+                     Profile
+                  </Link>
+                  <button
+                     onClick={() => alert("Logging out...")}
+                     className="flex items-center w-full text-lg text-left px-4 py-3 text-red-600 hover:bg-gray-100"
+                  >
+                     <FaSignOutAlt className="mr-4" /> Logout
+                  </button>
+               </div>
+            )}
+         </div>
       </div>
    );
 }

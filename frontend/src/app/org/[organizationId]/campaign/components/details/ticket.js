@@ -49,9 +49,37 @@ const Ticket = () => {
       <div className="w-full  max-w-4xl mx-auto py-8 px-6">
          <h1 className="text-4xl font-light text-gray-900 mb-4">Tickets</h1>
          <h3 className="text-md text-gray-600 mb-10">Manage Tickets</h3>
+         <div className="border-b border-gray-300 my-4"/>
+
+         <div>
+            <h1 className="text-xl font-semibold pt-4">Ticket Settings</h1>
+            <p className="text-sm text-gray-600 mb-8">Manage settings regarding the purchase of tickets</p>
+
+            <div className="flex flex-row space-x-6 pb-4">
+               <div>
+                  <h2 className="text-md text-gray-800">Tickets Per Purchase</h2>
+                  <p className="text-xs text-gray-600">
+                     Specify the number of tickets you would like to purchase in a single transaction.
+                  </p>
+               </div>
+               
+               <input
+                  id="tickets"
+                  type="number"
+                  min={1}
+                  placeholder="Enter a number"
+                  className="text-sm mt-2 px-4 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+               />
+            </div>
+
+         </div>
+
+         <div className="border-b border-gray-300 my-4"/>
+         <h1 className="text-xl font-semibold mb-2 pt-4">Ticket Configuration</h1>
+         <p className="text-sm text-gray-600 mb-8">Create and Manage the avaiable tickets for your customers to purchase.</p>
 
          <div className="w-full mb-12">
-            <h1 className="text-sm text-gray-700 mb-1">Add Custom Question</h1>
+            <h1 className="text-sm text-gray-700 mb-1">Add Ticket</h1>
             <div className="border-b border-gray-600 mb-2"></div>
             
             <div className="bg-white p-6 border shadow-sm mb-4">

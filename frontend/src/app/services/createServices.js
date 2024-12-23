@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://fundraising-d5a9gdc2d9ctehbt.canadacentral-01.azurewebsites.net/api";
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000/api';
 
 export const createOrganization = async(data, userId) => {
    try {
@@ -44,6 +44,19 @@ export const createCampaignDetails = async (campaignId, currentUser, type, inter
 export const createThankYouPage = async (campaignId, currentUser) => {
    try {
       const pageId = await axios.post(`${API_BASE_URL}/thankYouPage/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.id
+      })
+
+      return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createTicketPurchasePage = async (campaignId, currentUser) => {
+   try {
+      const pageId = await axios.post(`${API_BASE_URL}/ticket_purchase_page/create`, {
          campaign_id: campaignId,
          user_id: currentUser.id
       })

@@ -10,6 +10,7 @@ import { PeerLandingPageContextProvider } from "@/app/context/campaignPages/peer
 import { PeerFundraisingPageContextProvider } from "@/app/context/campaignPages/peerFundraisingPageContext";
 import { DonationFormContextProvider } from "@/app/context/campaignPages/donationFormContext";
 import { getCampaignDetails } from "@/app/services/fetchService";
+import { TicketPurchasePageContextProvider } from "@/app/context/campaignPages/ticketPurchasePageContext";
 
 const CampaignLayout = ({ children }) => {
   const [isClient, setIsClient] = useState(false);
@@ -18,7 +19,6 @@ const CampaignLayout = ({ children }) => {
   const organizationId = params?.organizationId
   const [campaignType, setCampaignType] = useState(null)
 
-  // Ensure this only runs on the client-side
    useEffect(() => {
       setIsClient(true);
       
@@ -29,7 +29,6 @@ const CampaignLayout = ({ children }) => {
          } catch (err) {
             console.log(err)
          }
-
       }
 
       fetchData()
@@ -47,7 +46,9 @@ const CampaignLayout = ({ children }) => {
             <PeerLandingPageContextProvider campaignId={campaignId} campaignType={campaignType}>
             <PeerFundraisingPageContextProvider campaignId={campaignId} campaignType={campaignType}>
             <DonationFormContextProvider campaignId={campaignId} campaignType={campaignType}>
+            <TicketPurchasePageContextProvider campaignId={campaignId} campaignType={campaignType}>
                {children}
+            </TicketPurchasePageContextProvider>
             </DonationFormContextProvider>
             </PeerFundraisingPageContextProvider>
             </PeerLandingPageContextProvider>

@@ -38,6 +38,7 @@ const QuestionsComponent = () => {
          const questionsToRemove = existingQuestions.filter(item => !customQuestions.includes(item))
 
          console.log(questionsToAdd)
+         console.log(questionsToRemove)
 
          if (questionsToAdd.length > 0) {
             await createCustomQuestion(campaignId, questionsToAdd)
@@ -122,7 +123,7 @@ const QuestionsComponent = () => {
                         onChange={handleNewQuestionChange}
                      >
                         <option value="" disabled>Select an Option</option>
-                        <option value="checkbox">Yes/No</option>
+                        <option value="checkbox">Checkbox</option>
                         <option value="input">Single Line Response</option>
                         <option value="textArea">Multi Line Response</option>
                      </select>
@@ -151,7 +152,7 @@ const QuestionsComponent = () => {
                         </button>
                      </div>
 
-                     <div className="flex flex-row items-center w-full px-4 py-4 space-x-4">
+                     <div className="flex flex-row items-center w-full px-6 py-8 space-x-4">
                         <div className="flex flex-col w-3/4">
                            <label className="text-sm mb-1">Question</label>
                            <p className="p-3 border border-gray-300 rounded-md bg-white">

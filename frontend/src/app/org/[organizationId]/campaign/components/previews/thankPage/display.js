@@ -36,24 +36,31 @@ const Display = () => {
                <div className="bg-gray-100 px-10 py-6">
                   <h1 className="text-lg text-gray-800 border-b border-gray-400 py-2">Donation Information</h1>
 
-                  <div className="mt-2 w-1/2">
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
+                  <div className="mt-2 w-1/2 text-md">
+                     <div className="flex flex-row justify-between text-gray-700 py-2">
+                        <p>Fund Name</p>
                         <p>0</p>
                      </div>
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
+                     <div className="flex flex-row justify-between text-gray-700 py-2">
+                        <p>Fund Name</p>
                         <p>0</p>
                      </div>
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
+                     <div className="flex flex-row justify-between text-gray-700 py-2">
+                        <p>Fund Name</p>
                         <p>0</p>
                      </div>
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
+                     <div className="flex flex-row justify-between text-gray-700 py-2">
+                        <p>Fund Name</p>
                         <p>0</p>
                      </div>
 
+                  </div>
+
+                  <div className="w-2/3 border-t border-gray-300 mt-4">
+                     <div className="flex flex-row text-xl justify-between text-gray-700 py-2">
+                        <p className="text-xl">Total</p>
+                        <p>$ 0</p>
+                     </div>
                   </div>
 
                </div>

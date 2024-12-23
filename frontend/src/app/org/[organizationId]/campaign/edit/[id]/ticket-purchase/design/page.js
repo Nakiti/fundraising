@@ -1,5 +1,4 @@
-import DesignInputs from "../../../../components/previews/ticketLanding/designInputs"
-
+import DesignInputs from "../../../../components/previews/ticketPurchase/designInputs"
 
 const Design = () => {
 

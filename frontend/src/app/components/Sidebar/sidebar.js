@@ -55,7 +55,7 @@ const Sidebar = ({organizationId}) => {
 
          </div>
 
-         <div className={`border-t border-gray-200 ${isCollapsed ? 'flex flex-col mt-40' : 'flex flex-col mt-32'}`}>
+         <div className={`border-t border-gray-200 ${isCollapsed ? 'flex flex-col mt-32' : 'flex flex-col mt-32'}`}>
             <SidebarItem icon={<IoIosSettings className='h-full w-full'/>} text="Settings" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/settings`}/>
          </div>
       </div>

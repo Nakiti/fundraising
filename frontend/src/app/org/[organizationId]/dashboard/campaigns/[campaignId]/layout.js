@@ -7,14 +7,16 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getCampaignDetails } from "@/app/services/fetchService";
 import { MdOutlineCampaign } from "react-icons/md";
-
-
+import { IoTicketOutline } from "react-icons/io5";
+import { FaPeopleArrows } from "react-icons/fa";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 const CampaignPageLayout = ({children, params}) => {
    const campaignId = params.campaignId
    const organizationId = params.organizationId
    const pathname = usePathname()
    const [campaign, setCampaign] = useState(null)
+   const [campaignType, setCampaignType] = useState(null)
 
    const links = [
       {title: "Overview", pathName: `/org/${organizationId}/dashboard/campaigns/${campaignId}`},
@@ -25,15 +27,14 @@ const CampaignPageLayout = ({children, params}) => {
 
    useEffect(() => {
       const fetchData = async() => {
-         
          try {
             const response = await getCampaignDetails(campaignId)
             console.log(response)
             setCampaign(response)
+            setCampaignType(response.type)
          } catch (err) {
             console.log(err)
          }
-
       }
 
       fetchData()
@@ -46,10 +47,14 @@ const CampaignPageLayout = ({children, params}) => {
                <FaArrowLeft className="text-sm" />
                <p className="ml-2 text-sm font-semibold">Campaigns</p>
             </Link>
-
             <div className="flex flex-row px-6 py-4 w-full justify-between">
                <div className="flex flex-row items-center">
-                  <MdOutlineCampaign className="h-12 w-12 p-1 border-2 border-white rounded-sm mr-4"/>
+                  {campaignType &&
+                     campaignType == "crowdfunding" ? <MdOutlineCampaign className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
+                     campaignType == "ticketed-event" ? <IoTicketOutline className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
+                     campaignType == "peer-to-peer" ? <FaPeopleArrows className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
+                     <IoDocumentTextOutline className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/>
+                  }
                   <div className="flex flex-col text-gray-100">
                      <h1 className="text-2xl font-semibold">{campaign && campaign.internal_name}</h1>
                      <p className="text-sm mt-1 text-gray-400">{campaign && campaign.type}</p>
@@ -83,8 +88,6 @@ const CampaignPageLayout = ({children, params}) => {
                ))}
             </div>
          </div>
-
-
          {children}
       </div>
    )

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://fundraising-d5a9gdc2d9ctehbt.canadacentral-01.azurewebsites.net/api";
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000/api';
 
 //Campaign
 
@@ -44,6 +44,15 @@ export const getDonationPage = async (campaignId) => {
    try {
       const response = await axios.get(`${API_BASE_URL}/donationPage/get/${campaignId}`)
       console.log(response)
+      return response.data[0]
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const getTicketPurchasePage = async (campaignId) => {
+   try {
+      const response = await axios.get(`${API_BASE_URL}/ticket_purchase_page/get/${campaignId}`)
       return response.data[0]
    } catch (err) {
       console.log(err)

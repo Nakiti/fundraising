@@ -7,6 +7,10 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname, useSearchParams } from "next/navigation";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { MdOutlineCampaign } from "react-icons/md";
+import { IoTicketOutline } from "react-icons/io5";
+import { FaPeopleArrows } from "react-icons/fa";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 
 const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDeactivate, detailsLink, pageLinks, mode}) => {
@@ -41,20 +45,20 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                <IoMdArrowRoundBack className="text-2xl" />
             </Link>
          </div>
-
          <div className="flex items-center justify-between w-11/12 mx-auto py-2">
             <div className="flex items-center">
-               <img 
-                  src="404image" 
-                  className="h-16 w-16 rounded-lg mr-4 object-cover border border-dashed"
-               />
+               {
+                  campaignType == "crowdfunding" ? <MdOutlineCampaign className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
+                  campaignType == "ticketed-event" ? <IoTicketOutline className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
+                  campaignType == "peer-to-peer" ? <FaPeopleArrows className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
+                  <IoDocumentTextOutline className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/>
+               }
                <div className="flex flex-col text-gray-100">
-                  <p className="text-xs font-semibold">{mode === "new" ? "New Campaign" : "Edit Campaign"}</p>
+                  <p className="text-xs font-semibold">{"Edit Campaign"}</p>
                   <h1 className="text-2xl font-semibold">{campaignDetails.internalName || "Internal Campaign Name"}</h1>
                   <p className="text-md font-semibold text-gray-400 mt-1">{campaignType}</p>
                </div>
             </div>
-
             <div className="flex space-x-6 text-md">
                {status === "inactive" ? 
                   <button 
@@ -78,7 +82,6 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                </button>
             </div>
          </div>
-
          <div className="flex flex-row justify-between w-11/12 mx-auto mt-6 text-white">
             <div className="flex space-x-10">
                <Link
@@ -90,7 +93,6 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                >
                   Details
                </Link>
-
                <button
                   className="cursor-pointer text-md font-medium py-1 px-6 flex items-center border-b-4 border-transparent hover:text-blue-600"
                   onClick={() => setShowDropdown(!showDropdown)}
@@ -99,17 +101,14 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                   {showDropdown ? <IoIosArrowUp className="ml-2" /> : <IoIosArrowDown className="ml-2" />}
                </button>
             </div>
-
             <div className="relative inline-block" ref={dropdownRef}>
                <div
                   onClick={toggleDropdown}
                   className="cursor-pointer px-4 py-2 text-white text-sm flex flex-row justify-between items-center space-x-4"
-
                >
                   <p>Preview a Page</p>
                   {showLinks ? <IoIosArrowUp /> : <IoIosArrowDown />}
                </div>
-
                {showLinks && (
                   <div className="absolute left-0 bg-gray-800 border border-gray-200 shadow-xs w-48 z-50">
                      {pageLinks.filter(item => item != null).map((item, index) => (
@@ -124,10 +123,7 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                   </div>
                )}
             </div>
-
          </div>
-
-
          {showDropdown && (
             <div className="border-t border-gray-300 px-6 w-11/12 mx-auto py-4">
                <div className="mx-auto flex flex-row justify-center space-x-8">

@@ -5,10 +5,10 @@ import DonateSection from "../org/[organizationId]/campaign/components/previews/
 import TitleSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/titleSection";
 import BackgroundSection from "../org/[organizationId]/campaign/components/previews/thankPage/sections/backgroundSection";
 import MessageSection from "../org/[organizationId]/campaign/components/previews/thankPage/sections/messageSection";
-import LandingBanner from "../org/[organizationId]/campaign/components/previews/landingPage/sections/bannerSection";
-import LandingAbout from "../org/[organizationId]/campaign/components/previews/landingPage/sections/aboutSection";
-import PurchaseSection from "../org/[organizationId]/campaign/components/previews/landingPage/sections/purchaseSection";
-import EventSection from "../org/[organizationId]/campaign/components/previews/landingPage/sections/eventSection";
+import LandingBanner from "../org/[organizationId]/campaign/components/previews/ticketLanding/sections/bannerSection";
+import LandingAbout from "../org/[organizationId]/campaign/components/previews/ticketLanding/sections/aboutSection";
+import PurchaseSection from "../org/[organizationId]/campaign/components/previews/ticketLanding/sections/purchaseSection";
+import EventSection from "../org/[organizationId]/campaign/components/previews/ticketLanding/sections/eventSection";
 import PeerLandingBannerSection from "../org/[organizationId]/campaign/components/previews/peerLanding/sections/bannerSections";
 import DescriptionSection from "../org/[organizationId]/campaign/components/previews/peerLanding/sections/descriptionSections";
 import PeerFundraisingBannerSection from "../org/[organizationId]/campaign/components/previews/peerFundraising/sections/bannerSection";
@@ -17,6 +17,7 @@ import PeerFundraisingTitleSection from "../org/[organizationId]/campaign/compon
 import DonationFormBackgroundSection from "../org/[organizationId]/campaign/components/previews/donationForm/sections/backgroundSection";
 import DonationFormHeaderSection from "../org/[organizationId]/campaign/components/previews/donationForm/sections/headerSection";
 import DonationFormButtonsSection from "../org/[organizationId]/campaign/components/previews/donationForm/sections/buttonsSection";
+import TicketPurchaseTitleSection from "../org/[organizationId]/campaign/components/previews/ticketPurchase/sections/titleSection";
 
 export const initialDonationPageSections = [
    {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
@@ -34,7 +35,7 @@ export const initialTicketPageSections = [
    {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <LandingBanner />},
    {id: 1, name: "about", displayText: "About Section", active: true, required: true, dropdown: false, content: <LandingAbout />},
    {id: 2, name: "event", displayText: "Event Section", active: true, required: true, dropdown: false, content: <EventSection />},
-   {id: 3, name: "purchase", displayText: "Purchase Section", active: true, required: true, dropdown: false, content: <PurchaseSection />},
+   // {id: 3, name: "purchase", displayText: "Purchase Section", active: true, required: true, dropdown: false, content: <PurchaseSection />},
 ]
 
 export const initialPeerLandingPageSections = [
@@ -52,4 +53,9 @@ export const initialDonationFormSections = [
    {id: 0, name: "header", displayText: "Header Section", active: true, required: true, dropdown: false, content: <DonationFormHeaderSection />},
    {id: 1, name: "title", displayText: "Background Section", active: true, required: true, dropdown: false, content: <DonationFormBackgroundSection />},
    {id: 2, name: "desc", displayText: "Buttons Section", active: true, required: true, dropdown: false, content: <DonationFormButtonsSection />},
+]
+
+export const initialTicketPurchaseSections = [
+   {id: 1, name: "title", displayText: "Title Section", active: true, required: true, dropdown: false, content: <TicketPurchaseTitleSection />},
+
 ]
