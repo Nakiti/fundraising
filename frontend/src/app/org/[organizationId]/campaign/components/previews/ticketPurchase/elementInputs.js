@@ -12,9 +12,9 @@ const ElementInputs = () => {
    const handleSave = async() => {
       try {
          await updateTicketPurchasePage(campaignId, ticketPurchaseInputs, currentUser.id)
-         for (const section of ticketPurchaseSections) {
-            await updatePageSection(section.id, section.active)
-         }
+         // for (const section of ticketPurchaseSections) {
+         //    await updatePageSection(section.id, section.active)
+         // }
       } catch (err) {
          console.log(err)
       }
@@ -27,7 +27,7 @@ const ElementInputs = () => {
          })}
          <div className="w-full flex flex-row mt-6">
             <button 
-               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white"
+               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white hover:bg-blue-500"
                onClick={handleSave}
             >
                Save

@@ -19,10 +19,11 @@ export const AuthContextProvider = ({children}) => {
    };
 
    useEffect(() => {
+      
       const fetchData = async () => {
          const response = await getCurrentUser()
          setCurrentUser(response)
-         console.log(response)
+         console.log("respose", response)
       }
       
       fetchData()

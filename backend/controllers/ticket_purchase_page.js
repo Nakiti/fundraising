@@ -1,7 +1,7 @@
 import { db } from "../db.js";
 
-export const createTicketPurchasePage = () => {
-   const query = "INSERT INTO ticket_purchase_pages (`campaign_id`, `updated_at`, `updated_by`) VALUES ?"
+export const createTicketPurchasePage = (req, res) => {
+   const query = "INSERT INTO ticket_purchase_pages (`campaign_id`, `updated_at`, `updated_by`) VALUES (?)"
 
    const values = [
       req.body.campaign_id,

@@ -54,11 +54,11 @@ const Users = ({params}) => {
 
    useEffect(() => {
       fetchData();
-   }, []);
+   }, [currentUser]);
 
    const fetchData = async () => {
       try {
-         const response = await getAllUsers(currentUser.organization_id);
+         const response = await getAllUsers(currentUser.id);
          setUsers(response);
       } catch (err) {
          console.log(err);
@@ -95,15 +95,15 @@ const Users = ({params}) => {
                   </thead>
                   <tbody>
                      {users && users.map((user) => (
-                        <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-50">
+                        <tr key={user.id} className="border-b border-gray-200 text-md hover:bg-gray-50">
                            <td className="px-6 py-2 text-gray-700 whitespace-nowrap">{user.first_name}</td>
                            <td className="px-6 py-2 text-gray-700 whitespace-nowrap">{user.last_name}</td>
                            <td className="px-4 py-2 text-gray-700 whitespace-nowrap">{user.email}</td>
-                           <td className="px-6 py-1 border-b border-gray-300">
+                           <td className="px-6 py-2 border-b border-gray-300">
                               <select
                                  value={user.role}
                                  onChange={(e) => handleDesignationChange(user.id, 'status', e.target.value)}
-                                 className="w-full px-4 py-1 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                 className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                               >
                                  <option value="admin">Admin</option>
                                  <option value="user">User</option>

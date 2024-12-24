@@ -11,29 +11,36 @@ import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext
 const Ticket = () => {
    const {tickets, setTickets, campaignId} = useContext(TicketPageContext)
    const [newTicket, handleNewTicketChange, setNewTicket] = useFormInput(
-      {id: new Date(), title: "", quantity: 0, value: 0, descritpion: "", attendees: 0, maxPurchase: 0, dateStart: null, dateEnd: null}
+      {id: new Date(), title: "", quantity: 0, price: 0, unlimited: false, free: false, description: "", attendees: 0, max_purchase: 0, start_date: null, end_date: null}
    )
    const [showDropdown, setShowDropdown] = useState(false)
 
-
    const handleAdd = () => {
+      const empty = Object.values(newTicket).some(value => value == "" || value == null || value == 0)
+      if (empty) {
+         alert("Fill in all required ticket fields")
+         return
+      }
+
       setTickets(prev => [
          ...prev, 
          newTicket
       ])
 
       setNewTicket(
-         {id: new Date(), title: "", quantity: 0, value: 0, descritpion: "", attendees: 0, maxPurchase: 0, dateStart: null, dateEnd: null}
+         {id: new Date(), title: "", quantity: 0, price: 0, unlimited: false, free: false, description: "", attendees: 0, max_purchase: 0, start_date: null, end_date: null}
       )
    }
 
-   const handleSave = async () => {
+   const handleSave = async () => { //not sure this works right
       try {
          const existingTickets = await getCampaignTickets(campaignId)
          const ticketsToAdd = tickets.filter(item => !existingTickets.includes(item))
          const ticketsToRemove = existingTickets.filter(item => !tickets.includes(item))
 
-         console.log(ticketsToAdd)
+         console.log(existingTickets)
+         console.log(ticketsToAdd, ticketsToRemove)
+
          if (ticketsToAdd.length > 0) {
             await createCampaignTicket(campaignId, ticketsToAdd)
          }
@@ -55,7 +62,7 @@ const Ticket = () => {
             <h1 className="text-xl font-semibold pt-4">Ticket Settings</h1>
             <p className="text-sm text-gray-600 mb-8">Manage settings regarding the purchase of tickets</p>
 
-            <div className="flex flex-row space-x-6 pb-4">
+            <div className="flex flex-row space-x-10 pb-4">
                <div>
                   <h2 className="text-md text-gray-800">Tickets Per Purchase</h2>
                   <p className="text-xs text-gray-600">
@@ -68,12 +75,10 @@ const Ticket = () => {
                   type="number"
                   min={1}
                   placeholder="Enter a number"
-                  className="text-sm mt-2 px-4 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="text-sm mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                />
             </div>
-
          </div>
-
          <div className="border-b border-gray-300 my-4"/>
          <h1 className="text-xl font-semibold mb-2 pt-4">Ticket Configuration</h1>
          <p className="text-sm text-gray-600 mb-8">Create and Manage the avaiable tickets for your customers to purchase.</p>
@@ -108,11 +113,15 @@ const Ticket = () => {
                         className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         value={newTicket.quantity}
                         onChange={handleNewTicketChange}
+                        min={1}
                      />
                      <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                         <input 
                            type="checkbox"
                            className="h-4 w-4"
+                           name="unlimited"
+                           value={newTicket.unlimited}
+                           onChange={handleNewTicketChange}
                         />
                         <p className="text-sm text-gray-700">Unlimited</p>
                      </div>
@@ -122,24 +131,28 @@ const Ticket = () => {
                         Price <span className="text-red-500">*</span>
                      </label>
                      <input
-                        name="value"
-                        type="number"
+                        name="price"
+                        type="decimal"
                         placeholder="0"
                         className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={newTicket.value}
+                        value={newTicket.price}
                         onChange={handleNewTicketChange}
+                        min={0}
                      />
                      <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                         <input 
                            type="checkbox"
                            className="h-4 w-4"
+                           name="free"
+                           value={newTicket.free}
+                           onChange={handleNewTicketChange}
                         />
                         <p className="text-sm text-gray-700">Free</p>
                      </div>
                   </div>
                </div>
 
-               <div className="border-t border-gray-200 text-gray-700 mt-12 flex flex-row justify-between px-4 pt-4">
+               <div className="border-t border-gray-200 text-gray-700 mt-8 flex flex-row justify-between px-4 pt-4">
                   <div className="flex flex-row items-center space-x-4" onClick={() => setShowDropdown(!showDropdown)}>
                      <p className="text-md">Edit Details</p>
                      {showDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
@@ -151,7 +164,7 @@ const Ticket = () => {
                   <div className="w-3/4">
                      <div className="flex flex-col mb-4">
                         <label className="text-gray-700 text-sm mb-2">
-                           Description
+                           Description <span className="text-red-500">*</span>
                         </label>
                         <textarea
                            name="description"
@@ -165,7 +178,7 @@ const Ticket = () => {
                      <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col">
                            <label className="text-gray-700 text-sm mb-2">
-                              Attendees Per Ticket
+                              Attendees Per Ticket <span className="text-red-500">*</span>
                            </label>
                            <input
                               name="attendees"
@@ -174,42 +187,44 @@ const Ticket = () => {
                               className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                               value={newTicket.attendees}
                               onChange={handleNewTicketChange}
+                              min={1}
                            />
                         </div>
                         <div className="flex flex-col">
                            <label className="text-gray-700 text-sm mb-2">
-                              Maximum Tickets Per Order
+                              Maximum Tickets Per Order <span className="text-red-500">*</span>
                            </label>
                            <input
-                              name="maxPurchase"
+                              name="max_purchase"
                               type="number"
                               placeholder="1"
                               className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              value={newTicket.maxPurchase}
+                              value={newTicket.max_purchase}
+                              onChange={handleNewTicketChange}
+                              min={1}
+                           />
+                        </div>
+                        <div className="flex flex-col">
+                           <label className="text-gray-700 text-sm mb-2">
+                              Ticket Available From <span className="text-red-500">*</span>
+                           </label>
+                           <input
+                              name="start_date"
+                              type="date"
+                              className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              value={newTicket.start_date}
                               onChange={handleNewTicketChange}
                            />
                         </div>
                         <div className="flex flex-col">
                            <label className="text-gray-700 text-sm mb-2">
-                              Ticket Available From
+                              Ticket Available Until <span className="text-red-500">*</span>
                            </label>
                            <input
-                              name="dateStart"
+                              name="end_date"
                               type="date"
                               className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              value={newTicket.dateStart}
-                              onChange={handleNewTicketChange}
-                           />
-                        </div>
-                        <div className="flex flex-col">
-                           <label className="text-gray-700 text-sm mb-2">
-                              Ticket Available Until
-                           </label>
-                           <input
-                              name="dateEnd"
-                              type="date"
-                              className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              value={newTicket.dateEnd}
+                              value={newTicket.end_date}
                               onChange={handleNewTicketChange}
                            />
                         </div>

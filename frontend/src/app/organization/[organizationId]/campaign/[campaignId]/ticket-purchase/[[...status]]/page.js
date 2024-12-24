@@ -24,7 +24,11 @@ const TicketPurchasePage = ({params}) => {
 
                const ticketResponse = await getCampaignTickets(campaignId)
                setTickets(ticketResponse)
+
+               console.log("tickets", ticketResponse)
             }
+
+            
          } catch (err) {
             console.log(err)
          }
@@ -45,13 +49,16 @@ const TicketPurchasePage = ({params}) => {
                </p>
                </div>
                <div className="space-y-6">
-                  <div className="flex items-center space-x-4">
-                     <input
-                        type="checkbox"
-                        className="w-5 h-5 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
-                     />
-                     <Ticket />
-                  </div>
+                  
+                  {tickets && tickets.map((item, index) => (
+                     <div className="flex items-center space-x-4" key={index}>
+                        <input
+                           type="checkbox"
+                           className="w-5 h-5 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
+                        />
+                        <Ticket ticket={item} />
+                     </div>
+                  ))}
                </div>
             </div>
             <div className="w-1/3 shadow-md bg-white flex flex-col justify-between py-4 px-4 border-l border-gray-300">

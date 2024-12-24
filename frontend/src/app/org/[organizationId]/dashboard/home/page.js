@@ -1,7 +1,7 @@
 "use client"
 import { useState, useContext, useEffect, act } from "react"
 import { AuthContext } from "@/app/context/authContext"
-import { getAllCampaigns, getTransactionsOverTime, getUserData } from "@/app/services/fetchService"
+import { getAllCampaigns, getCampaignsFiltered, getTransactionsOverTime, getUserData } from "@/app/services/fetchService"
 import Link from "next/link"
 import { MdOpenInNew } from "react-icons/md";
 import { FaHandHoldingHeart, FaUserPlus, FaDollarSign } from "react-icons/fa";
@@ -50,10 +50,7 @@ const Home = ({params}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const userResponse = await getUserData(currentUser && currentUser.id)
-            setUserData(userResponse)
-            
-            const campaignsResponse = await getAllCampaigns(organizationId)
+            const campaignsResponse = await getCampaignsFiltered(organizationId, "active", "all")
             setCampaigns(campaignsResponse)
          } catch (err) {
             console.log(err)
@@ -75,13 +72,12 @@ const Home = ({params}) => {
    const handleClick = (active) => {
       setActive(active);
    };
-   
 
    return (
       <div className="w-full h-full">
          <div className="w-full h-full rounded-sm overflow-y-auto p-6 bg-gray-50">
             <h1 className="text-4xl font-semibold text-start mb-6 px-8 pt-4 text-gray-800">
-               Welcome Back, {userData && userData.first_name}!
+               Your Organization:
             </h1>
             <div className="flex justify-end w-3/4 mx-auto">
                <div className="flex space-x-6 mb-10">

@@ -44,7 +44,7 @@ export const getCurrentUser = (req, res) => {
       if (err) return res.status(403).json("Token is not Valid")
       
       console.log(data)
-      res.status(200).json({id: data.id, email: data.email, organization_id: data.organization_id  })
+      res.status(200).json({id: data.id })
    })
 }
 
@@ -107,7 +107,13 @@ export const getUser = (req, res) => {
 }
 
 export const getUsersbyOrg = (req, res) => {
-   const query = "SELECT * FROM users WHERE `organization_id` = ?"
+   // const query = "SELECT * FROM users WHERE `organization_id` = ?"
+   const query = `
+      SELECT users.* 
+      FROM user_organizations
+      JOIN users ON users.id = user_organizations.user_id
+      WHERE organization_id = ?
+   `
 
    const value = req.params.id
 

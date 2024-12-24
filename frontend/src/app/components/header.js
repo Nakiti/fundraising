@@ -10,12 +10,12 @@ const Header = ({organizationId}) => {
    const {currentUser} = useContext(AuthContext)
    const [isClient, setIsClient] = useState(false);
    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+   const [userData, setUserData] = useState(null)
 
    const toggleDropdown = () => {
       setIsDropdownOpen(!isDropdownOpen);
    };
 
-   // Ensure this only runs on the client-side
    useEffect(() => {
       console.log(currentUser && currentUser)
      setIsClient(true);
@@ -29,8 +29,6 @@ const Header = ({organizationId}) => {
          <Link href="/" className="text-lg font-bold ml-8">
             Title
          </Link>
-
-         {/* Login/Profile Link */}
          {/* {isClient && (
             <Link
                href={!currentUser ? "/login" : `/profile`}
@@ -40,9 +38,7 @@ const Header = ({organizationId}) => {
             </Link>
          )} */}
 
-         {/* User Dropdown */}
          <div className="flex items-center relative h-full border-l border-gray-300">
-            {/* User Icon and Name */}
             {currentUser && (
                <div
                   className="flex flex-row items-center justify-between w-64 cursor-pointer hover:bg-gray-100 py-2 px-6 rounded-md"
@@ -56,7 +52,6 @@ const Header = ({organizationId}) => {
                </div>
             )}
 
-            {/* Dropdown Menu */}
             {isDropdownOpen && (
                <div className="absolute right-0 p-2 mt-44 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                   <Link

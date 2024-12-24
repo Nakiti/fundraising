@@ -15,7 +15,7 @@ export const TicketPurchasePageContextProvider = ({campaignId, campaignType, chi
       const fetchData = async() => {
          try {
             const response = await getTicketPurchasePage(campaignId)
-            const pageId = response.id
+            // const pageId = response.id
             setTicketPurchaseInputs({
                headline: response.headline || "",
                description: response.description || "",

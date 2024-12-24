@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get("/get/:id", getCampaignTickets)
 router.post("/create/:id", createCampaignTicketBatch)
-router.delete("/delete", deleteCampaignTicketsBatch)
+router.delete("/deleteBatch", deleteCampaignTicketsBatch)
 
 export default router

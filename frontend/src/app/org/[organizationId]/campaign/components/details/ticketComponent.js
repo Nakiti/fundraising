@@ -33,9 +33,9 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                   Ticket Name <span className="text-red-500">*</span>
                </label>
                <p
-                  className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                >
-                  {ticket.name}
+                  {ticket.title}
                </p>
             </div>
             <div className="flex flex-col w-1/6">
@@ -43,38 +43,30 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                   Quantity <span className="text-red-500">*</span>
                </label>
                <p
-                  className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                >
                   {ticket.quantity}
                </p>
-               <div className="flex flex-row items-center space-x-2 mt-2 px-2">
-                  <input 
-                     type="checkbox"
-                     className="h-4 w-4"
-                  />
+               {ticket.unlimited && <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                   <p className="text-sm text-gray-700">Unlimited</p>
-               </div>
+               </div>}
             </div>
             <div className="flex flex-col w-1/6">
                <label className="text-gray-700 text-sm mb-2">
                   Price <span className="text-red-500">*</span>
                </label>
                <p
-                  className="p-2 border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                >
-                  {ticket.value}
+                  {ticket.price}
                </p>
-               <div className="flex flex-row items-center space-x-2 mt-2 px-2">
-                  <input 
-                     type="checkbox"
-                     className="h-4 w-4"
-                  />
+               {ticket.free && <div className="flex flex-row items-center space-x-2 mt-2 px-2">
                   <p className="text-sm text-gray-700">Free</p>
-               </div>
+               </div>}
             </div>
          </div>
 
-         <div className="border-t border-gray-200 text-gray-700 mt-12 flex flex-row justify-between px-4 pt-4">
+         <div className="border-t border-gray-200 text-gray-700 mt-6 flex flex-row justify-between px-4 pt-4">
             <div className="flex flex-row items-center space-x-4" onClick={() => setShowDropdown(!showDropdown)}>
                <p className="text-md">Show Details</p>
                {showDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
@@ -89,7 +81,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                      Description
                   </label>
                   <p
-                     className="p-2 border text-sm border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     className="p-2 text-sm rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                      {ticket.description}
                   </p>
@@ -100,7 +92,7 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         Attendees Per Ticket
                      </label>
                      <p
-                        className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="p-2 text-sm rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                      >
                         {ticket.attendees}
                      </p>
@@ -110,9 +102,9 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         Maximum Tickets Per Order
                      </label>
                      <p
-                        className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="p-2 text-sm rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                      >
-                        {ticket.maxPurchase}
+                        {ticket.max_purchase}
                      </p>
                   </div>
                   <div className="flex flex-col">
@@ -120,9 +112,9 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         Ticket Available From
                      </label>
                      <p
-                        className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="p-2 text-sm rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                      >
-                        {ticket.dateStart}
+                        {ticket.start_date}
                      </p>
                   </div>
                   <div className="flex flex-col">
@@ -130,9 +122,9 @@ const TicketComponent = ({tickets, setTickets, handleTicketsChange, ticket}) => 
                         Ticket Available Until
                      </label>
                      <p
-                        className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="p-2 text-sm rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                      >
-                        {ticket.dateEnd}
+                        {ticket.end_date}
                      </p>
                   </div>
                </div>

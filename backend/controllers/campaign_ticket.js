@@ -1,18 +1,18 @@
 import { db } from "../db.js";
 
 export const createCampaignTicketBatch = (req, res) => {
-   const query = "INSERT INTO campaign_tickets (`campaign_id`, `title`, `quantity`, `value`, `description`, `attendees`, `max_purchase`, `start_date`, `end_date`, `created_at`) VALUES ?"
+   const query = "INSERT INTO campaign_tickets (`campaign_id`, `title`, `quantity`, `price`, `description`, `attendees`, `max_purchase`, `start_date`, `end_date`, `created_at`) VALUES ?"
    
    const values = req.body.map(ticket => [
       Number(req.params.id),
       ticket.title,
       ticket.quantity,
-      ticket.value,
+      ticket.price,
       ticket.description,
       ticket.attendees,
-      ticket.maxPurchase,
-      ticket.startDate,
-      ticket.endDate,
+      ticket.max_purchase,
+      ticket.start_date,
+      ticket.end_date,
       (new Date()).toISOString().slice(0, 19).replace('T', ' ')
    ])
 

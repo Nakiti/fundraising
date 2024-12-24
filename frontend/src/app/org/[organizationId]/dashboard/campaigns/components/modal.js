@@ -1,7 +1,7 @@
 "use client"
 import { useState, useContext, act } from 'react';
 import { IoIosClose } from "react-icons/io";
-import { createCampaign, createCampaignDetails, createDonationForm, createPageSection, createPeerFundraisingPage, createPeerLandingPage, createThankYouPage, createTicketPage } from '@/app/services/createServices';
+import { createCampaign, createCampaignDetails, createDonationForm, createPageSection, createPeerFundraisingPage, createPeerLandingPage, createThankYouPage, createTicketPage, createTicketPurchasePage } from '@/app/services/createServices';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/app/context/authContext';
 import { createDonationPage, createPreview } from '@/app/services/campaignService';
@@ -27,6 +27,8 @@ const Modal = ({ show, setShow, organizationId }) => {
       }
       setError(false)
 
+      console.log("currentUser", currentUser)
+
       try {
          const id = await createCampaign(currentUser, organizationId);
          await createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
@@ -41,12 +43,15 @@ const Modal = ({ show, setShow, organizationId }) => {
 
          } else if (tabContent[activeTab].content == "ticketed-event") {
             const ticketPageId = await createTicketPage(id, currentUser)
+            const ticketPurchasePageId = await createTicketPurchasePage(id, currentUser)
 
             await createPageSection(ticketPageId, "banner", true, currentUser)
             await createPageSection(ticketPageId, "about", true, currentUser)
             await createPageSection(ticketPageId, "event", true, currentUser)
-            await createPageSection(ticketPageId, "purchase", true, currentUser)
 
+
+            console.log(ticketPurchasePageId)
+            await createPageSection(ticketPurchasePageId, "title", true, currentUser)
          } else if (tabContent[activeTab].content == "peer-to-peer") {
             const peerLandingPageId = await createPeerLandingPage(id, currentUser)
             const peerFundraisingPageId = await createPeerFundraisingPage(id, currentUser)
