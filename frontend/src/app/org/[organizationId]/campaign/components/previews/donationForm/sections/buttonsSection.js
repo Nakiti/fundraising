@@ -32,11 +32,11 @@ const DonationFormButtonsSection = () => {
                      name={button.name}
                      onChange={handleDonationFormInputsChange}
                   />
-                  <button
+                  {/* <button
                      className="w-4 h-4 flex items-center justify-center bg-red-600 text-white rounded-full text-sm font-bold"
                   >
                      <p className="text-sm font-bold">-</p>
-                  </button>
+                  </button> */}
                </div>
             </div>
 
