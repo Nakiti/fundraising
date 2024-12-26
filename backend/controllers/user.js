@@ -37,6 +37,7 @@ export const login = (req, res) => {
 
 export const getCurrentUser = (req, res) => {
    const token = req.cookies.session
+   console.log("tpoken", token)
 
    if (!token) return res.json("Not authenticated");
 

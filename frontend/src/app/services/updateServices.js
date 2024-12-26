@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_BASE_URL = "https://fundraising-d5a9gdc2d9ctehbt.canadacentral-01.azurewebsites.net/api";
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000/api';
 
 export const updateOrganization = async(organizationId, data) => {
    try {
@@ -179,6 +179,8 @@ export const updateThankYouPage = async(campaignId, data) => {
 
 export const updateTicketPage = async (campaignId, data) => {
    const formData = new FormData()
+
+   console.log(data)
 
    formData.append("title", data.title)
    formData.append("date", data.date)

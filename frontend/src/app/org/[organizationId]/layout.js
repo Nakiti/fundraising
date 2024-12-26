@@ -2,9 +2,11 @@
 import { useRouter } from "next/navigation"
 import Header from "@/app/components/header"
 import { LandingPageContextProvider } from "@/app/context/landingPageContext"
+import { useContext } from "react"
+import { AuthContext } from "@/app/context/authContext"
 
 const OrgLayout = ({params, children}) => {
-   // const {currentUser} = useContext(AuthContext)
+   const {currentUser} = useContext(AuthContext)
    const router = useRouter()
    const organizationId = params.organizationId
 
@@ -18,7 +20,7 @@ const OrgLayout = ({params, children}) => {
    //have to check that user is logged in
    return (
       <LandingPageContextProvider>
-         <Header organizationId={organizationId}/>
+         {currentUser && <Header organizationId={organizationId} user={currentUser}/>}
          <div style={{height: "90vh"}}> 
             {children} 
          </div>

@@ -28,9 +28,10 @@ const Display = () => {
                   <div className="mt-2">
                      <h3 className="text-xs text-gray-700 font-semibold mb-2" style={{color: donationFormInputs.s_color}}>I would like to give:</h3>
                      <div className="grid grid-cols-6 gap-2 w-full">
-                        {[donationFormInputs.button1, donationFormInputs.button2, donationFormInputs.button3, donationFormInputs.button4, donationFormInputs.button5, donationFormInputs.button6].map(item => {
+                        {[donationFormInputs.button1, donationFormInputs.button2, donationFormInputs.button3, donationFormInputs.button4, donationFormInputs.button5].map(item => {
                            return <div className="px-4 py-2 text-center text-xs bg-gray-200 text-gray-700 rounded-md">${item}</div>
                         })}
+                        <input className="px-4 py-2 text-center text-xs bg-gray-200 text-gray-700 rounded-md" placeholder="Custom: "/>
                         </div>
                      </div>
                   <div className="mt-4">

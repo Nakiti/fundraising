@@ -33,7 +33,7 @@ const EditLayout = ({params, children}) => {
    const {peerFundraisingPageInputs, peerFundraisingPageSections} = campaignType == "peer-to-peer" && useContext(PeerFundraisingPageContext)
    const {donationFormInputs, donationFormSections} = useContext(DonationFormContext)
    const {thankPageInputs, thankyouPageSections} = useContext(ThankYouPageContext)
-   const {ticketPurchaseInputs, ticketPurchaseSections} = useContext(TicketPurchasePageContext)
+   const {ticketPurchaseInputs, ticketPurchaseSections} = campaignType == "ticket" && useContext(TicketPurchasePageContext)
 
    const detailsLink  = `/org/${organizationId}/campaign/edit/${campaignId}/details/about`
    
@@ -51,7 +51,7 @@ const EditLayout = ({params, children}) => {
    const handlePublish = async() => {
       if (campaignDetails.campaignName == "" || campaignDetails.internalName == "" || 
          campaignDetails.goal == 0 || campaignDetails.shortUrl == "" || campaignDetails.designation == 0) {
-         setErrorMessage("Please Fill All Required Fields in Campaign Details")
+         setErrorMessage("Please Fill All Required Fields")
          setError(true)
       } else {
          try {

@@ -4,9 +4,10 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 import { FaUserCircle, FaRegUser, FaTachometerAlt, FaCog, FaSignOutAlt, } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { getUserData } from "../services/fetchService";
 
 
-const Header = ({organizationId}) => {
+const Header = ({organizationId, user}) => {
    const {currentUser} = useContext(AuthContext)
    const [isClient, setIsClient] = useState(false);
    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -17,9 +18,20 @@ const Header = ({organizationId}) => {
    };
 
    useEffect(() => {
-      console.log(currentUser && currentUser)
-     setIsClient(true);
-   }, [currentUser]);
+      console.log("user", user)
+      const fetchData = async() => {
+         try {
+            const response = await getUserData(currentUser.id)
+            setUserData(response)
+            console.log(response)
+         } catch (err) {
+            console.log(err)
+         }
+      }
+
+      fetchData()
+      setIsClient(true);
+   }, []);
 
    return (
       <div
@@ -39,14 +51,14 @@ const Header = ({organizationId}) => {
          )} */}
 
          <div className="flex items-center relative h-full border-l border-gray-300">
-            {currentUser && (
+            {userData && (
                <div
                   className="flex flex-row items-center justify-between w-64 cursor-pointer hover:bg-gray-100 py-2 px-6 rounded-md"
                   onClick={toggleDropdown}
                >
                   <div className="flex flex-row items-center space-x-2">
                      <FaUserCircle size={32} className="text-gray-700" />
-                     <span className="text-lg text-gray-800">{currentUser.first_name} {currentUser.last_name}</span>
+                     <span className="text-lg text-gray-800">{userData.first_name} {userData.last_name}</span>
                   </div>
                   {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
                </div>

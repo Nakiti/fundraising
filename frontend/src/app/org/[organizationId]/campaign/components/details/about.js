@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
 import { updateCampaignDetails } from "@/app/services/campaignService"
@@ -6,13 +6,20 @@ import { updateCampaignDetails } from "@/app/services/campaignService"
 const AboutComponent = () => {
    const {campaignDetails, handleCampaignDetailsChange, campaignId} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
+   const [disabled, setDisabled] = useState(true)
 
    const handleSave = async() => {
       try {
          await updateCampaignDetails(campaignId, campaignDetails, 'inactive', currentUser)
+         setDisabled(true)
       } catch (err) {
          console.log(err)
       }
+   }
+
+   const handleChange = (e) => {
+      handleCampaignDetailsChange(e)
+      setDisabled(false)
    }
 
    return (
@@ -33,7 +40,7 @@ const AboutComponent = () => {
                   placeholder="Enter a Name"
                   className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                   value={campaignDetails.campaignName}
-                  onChange={handleCampaignDetailsChange}
+                  onChange={(e) => handleChange(e)}
                />
             </div>
             
@@ -86,8 +93,9 @@ const AboutComponent = () => {
 
          <div className="w-full flex flex-row mt-6">
             <button 
-               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
+               className={`ml-auto ${disabled ? "bg-gray-300" : "bg-blue-700 hover:bg-blue-600"} px-6 py-3 w-40 rounded-md shadow-sm text-md text-white `}
                onClick={handleSave}
+               disabled={disabled}
             >
                Save
             </button>

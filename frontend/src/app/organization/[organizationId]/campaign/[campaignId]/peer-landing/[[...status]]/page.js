@@ -8,6 +8,7 @@ const PeerLandingPage = ({params}) => {
    const [campaignDetails, setCampaignDetails] = useState(null)
    const campaignId = params.campaignId
    const status = params.status
+   const organizationId = params.organizationId
 
    useEffect(() => {
       const fetchData = async() => {

@@ -10,7 +10,7 @@ const DonationFormButtonsSection = () => {
       { label: "Button Three Value", name: "button3" },
       { label: "Button Four Value", name: "button4" },
       { label: "Button Five Value", name: "button5" },
-      { label: "Button Six Value", name: "button6" },
+      // { label: "Button Six Value", name: "button6" },
    ];
 
    return (

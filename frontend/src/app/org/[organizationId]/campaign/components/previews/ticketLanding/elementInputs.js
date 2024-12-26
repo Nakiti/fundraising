@@ -6,11 +6,11 @@ import { updateTicketPage } from "@/app/services/updateServices"
 import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
 
 const ElementInputs = () => {
-   const {ticketPageSections, setTicketPageSections, ticketPageInputs, campaignId} = useContext(TicketPageContext)
+   const {ticketPageSections, setTicketPageSections, ticketsPageInputs, campaignId} = useContext(TicketPageContext)
 
    const handleSave = async() => {
       try {
-         await updateTicketPage(campaignId, ticketPageInputs)
+         await updateTicketPage(campaignId, ticketsPageInputs)
          for (const section of ticketPageSections) {
             await updatePageSection(section.id, section.active)
          }
