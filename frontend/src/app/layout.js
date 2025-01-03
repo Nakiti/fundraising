@@ -1,5 +1,4 @@
 import "./globals.css";
-import Header from "./components/header";
 import { AuthContextProvider } from "./context/authContext";
 
 export const metadata = {
@@ -11,13 +10,9 @@ export default function RootLayout({ children }) {
 
    return (
       <html lang="en">
-         
          <AuthContextProvider>
             <body className="bg-gray-50 font-lato">
-               {/* <Header /> */}
-               {/* <div style={{height: "90vh"}}> */}
-                  {children}
-               {/* </div> */}
+               {children}
             </body>
          </AuthContextProvider>
       </html>

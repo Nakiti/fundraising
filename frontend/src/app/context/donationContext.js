@@ -4,7 +4,6 @@ import { createContext, useState, useEffect } from "react"
 export const DonationContext = createContext()
 
 export const DonationContextProvider = ({children}) => {
-
    const [donations, setDonations] = useState(null)
 
    useEffect(() => {
@@ -17,3 +16,5 @@ export const DonationContextProvider = ({children}) => {
       </DonationContext.Provider>
    )
 }
+
+// for potential cart functionality

@@ -1,9 +1,7 @@
 "use client"
-import { getAllCampaigns, getCampaignsFiltered, getLandingPage, getOrganization } from "@/app/services/fetchService.js";
+import { getCampaignsFiltered, getLandingPage, getOrganization } from "@/app/services/fetchService.js";
 import { useEffect, useState, useRef } from "react";
 import Card from "./components/card";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay } from "swiper/modules";
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/autoplay';
@@ -75,7 +73,6 @@ const Organization = ({ params }) => {
                   </div>
                </div>
             </div>
-
             <div className="flex flex-row w-full px-8 mt-12 space-x-12">
                <div className="w-2/3">
                   <h1 className="text-5xl font-bold text-blue-800">YOUR HEADLINE</h1>
@@ -89,7 +86,6 @@ const Organization = ({ params }) => {
                      Now, more than ever, your support is essential to enabling UCLA’s excellence across all disciplines, along with sustaining our university’s mission of education, research and service. It demonstrates confidence in our ability to adapt during this time of growth and transition—tackling the major challenges facing our communities and helping to build a better, brighter future with Bruins leading the way.
                   </p>
                </div>
-
                <div className="w-1/3">
                   <h1 className="text-2xl font-bold text-center mt-12">Featured Campaigns:</h1>
                   <div className="mt-6 space-y-4">
@@ -118,7 +114,6 @@ const Organization = ({ params }) => {
                   <button className="text-md w-full px-10 py-3 bg-blue-800 text-white rounded-md mt-8">Explore Campaigns</button>
                </div>
             </div>
-
             <div className="flex flex-col md:flex-row items-center space-x-12 justify-between w-full py-8 px-8 mt-16">
                <div className="md:w-1/2 space-y-6">
                   <h2 style={{color: landingPageStyles.s_color}} className="text-3xl text-gray-800">
@@ -127,12 +122,10 @@ const Organization = ({ params }) => {
                   <p style={{color: landingPageStyles.s_color}} className="text-lg text-gray-600">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore                  </p>
                   <button 
-                     // onClick={() => router.push('/about')} 
                      className="bg-blue-600 hover:bg-blue-700 text-white py-2 text-md px-8 rounded-sm transition">
                      Learn More
                   </button>
                </div>
-
                <div className="mt-8 md:mt-0 md:w-1/2 flex justify-center">
                   <img
                      className="w-full h-80 object-cover rounded-sm"
@@ -141,7 +134,6 @@ const Organization = ({ params }) => {
                   />
                </div>
             </div>
-
             <div className="flex flex-col md:flex-row items-center space-x-12 mt-16 justify-between w-full px-8">
                <div className="mt-8 md:mt-0 md:w-1/2 flex justify-center">
                   <img
@@ -163,7 +155,6 @@ const Organization = ({ params }) => {
                   </button>
                </div>
             </div>
-
             <div className="flex flex-col md:flex-row items-center space-x-12 justify-between w-full py-8 px-8 mt-16">
                <div className="md:w-1/2 space-y-6">
                   <h2 style={{color: landingPageStyles.s_color}} className="text-3xl text-gray-800">
@@ -186,9 +177,7 @@ const Organization = ({ params }) => {
                   />
                </div>
             </div>
-
             <div className="mx-8 grid grid-cols-3 gap-16 mt-16">
-
                <div className="flex flex-col">
                   <img
                      className="w-full h-48 object-cover rounded-sm"
@@ -198,7 +187,6 @@ const Organization = ({ params }) => {
                   <h1 className="text-2xl my-4 text-blue-800">Title</h1>
                   <p className="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis</p>
                </div>
-
                <div className="flex flex-col">
                   <img
                      className="w-full h-48 object-cover rounded-sm"
@@ -208,7 +196,6 @@ const Organization = ({ params }) => {
                   <h1 className="text-2xl my-4 text-blue-800">Title</h1>
                   <p className="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis</p>
                </div>
-
                <div className="flex flex-col">
                   <img
                      className="w-full h-48 object-cover rounded-sm"
@@ -219,8 +206,6 @@ const Organization = ({ params }) => {
                   <p className="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis</p>
                </div>
             </div>
-
-
             <div className="mt-24 mx-8 pb-12" ref={campaignsRef}>
                <h2 className="text-3xl mb-8 text-gray-800 ">Active Campaigns:</h2>
                <div className="grid grid-cols-3 gap-6">

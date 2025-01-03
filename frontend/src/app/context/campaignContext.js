@@ -1,22 +1,19 @@
 "use client"
-import axios from "axios"
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "../hooks/useFormInput";
-import { AuthContext } from "./authContext";
 import { getActiveDesignations, getCampaignDetails, getCustomQuestions, getPageSections, getThankYouPage, getTicketPage } from "../services/fetchService.js";
 import { initialThankyouPageSections } from "../constants/pageSectionsConfig";
 import { getCampaignDesignations } from "../services/fetchService.js";
+
 export const CampaignContext = createContext();
 
 export const CampaignContextProvider = ({ children, campaignId, organizationId }) => {
-   const organization_id = organizationId
-
    const [thankyouPageSections, setThankyouPageSections] = useState(initialThankyouPageSections)
-
    const [campaignType, setCampaignType] = useState("")
+   const [campaignStatus, setCampaignStatus] = useState("")
    const [thankPageInputs, handleThankPageInputsChange, setThankPageInputs] = useFormInput({})
    const [campaignDetails, handleCampaignDetailsChange, setCampaignDetails] = useFormInput({})
-
+   
    const [questionInputs, handleQuestionInputsChange, setQuestionInputs] = useFormInput({
       phoneNumber: false,
       title: false,
@@ -29,7 +26,6 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    const [faqs, setFaqs] = useState([])
    const [designations, setDesignations] = useState([])
    const [defaultDesignation, setDefaultDesignation] = useState(0)
-   const [status, setStatus] = useState("inactive")
    const [selectedDesignations, setSelectedDesignations] = useState([])
 
 
@@ -47,7 +43,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
                })
 
                setCampaignType(settingsResponse.type)
-               setStatus(settingsResponse.status)
+               setCampaignStatus(settingsResponse.status)
 
                const thankyouPageResponse = await getThankYouPage(campaignId)
                const thankyouPageId = thankyouPageResponse.id
@@ -73,7 +69,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
                const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
                setSelectedDesignations(selectedDesignationsResponse)
             }
-            const designationResponse = await getActiveDesignations(organization_id)
+            const designationResponse = await getActiveDesignations(organizationId)
             setDesignations(designationResponse)
          } catch (err) {
             console.log(err)
@@ -85,7 +81,7 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
 
    return (
       <CampaignContext.Provider value={{
-         status, designations, customQuestions, setCustomQuestions, questionInputs, handleQuestionInputsChange, 
+         campaignStatus, designations, customQuestions, setCustomQuestions, questionInputs, handleQuestionInputsChange, 
          defaultDesignation, setDefaultDesignation, thankyouPageSections, setThankyouPageSections,
          thankPageInputs, handleThankPageInputsChange, campaignType, campaignDetails, handleCampaignDetailsChange, faqs, setFaqs, campaignId,
          selectedDesignations, setSelectedDesignations

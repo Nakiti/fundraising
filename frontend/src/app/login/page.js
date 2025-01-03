@@ -5,6 +5,7 @@ import useFormInput from "../hooks/useFormInput"
 import { useContext, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Header from "../components/header"
+import Link from "next/link"
 
 const Login = () => {
    const {login, currentUser} = useContext(AuthContext)
@@ -63,6 +64,10 @@ const Login = () => {
                      </button>
                   </div>
                </form>
+               <p className="text-sm text-center mt-4">
+                  Don't Have an Account? 
+                   <Link href="/register" className="text-blue-700 hover:underline"> Register</Link>
+               </p>
             </div>
          </div>
       </div>

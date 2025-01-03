@@ -10,7 +10,6 @@ const DonationFormButtonsSection = () => {
       { label: "Button Three Value", name: "button3" },
       { label: "Button Four Value", name: "button4" },
       { label: "Button Five Value", name: "button5" },
-      // { label: "Button Six Value", name: "button6" },
    ];
 
    return (
@@ -32,14 +31,8 @@ const DonationFormButtonsSection = () => {
                      name={button.name}
                      onChange={handleDonationFormInputsChange}
                   />
-                  {/* <button
-                     className="w-4 h-4 flex items-center justify-center bg-red-600 text-white rounded-full text-sm font-bold"
-                  >
-                     <p className="text-sm font-bold">-</p>
-                  </button> */}
                </div>
             </div>
-
          ))}
       </div>
    );

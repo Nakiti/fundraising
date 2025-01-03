@@ -1,10 +1,38 @@
-import ElementInputs from "@/app/org/[organizationId]/campaign/components/previews/donationPage/elementInputs"
-
+"use client"
+import { useContext } from "react"
+import SectionManager from "@/app/components/sectionManager"
+import { updateDonationPage } from "@/app/services/campaignService"
+import { updatePageSection } from "@/app/services/updateServices"
+import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 
 const DonationPage = () => {
+   const {donationPageSections, setDonationPageSections, donationPageInputs, campaignId} = useContext(DonationPageContext)
+
+   const handleSave = async() => {
+      try {
+         await updateDonationPage(campaignId, donationPageInputs)
+         for (const section of donationPageSections) {
+            await updatePageSection(section.id, section.active)
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
 
    return (
-      <ElementInputs />
+      <div className="w-full">
+         {donationPageSections.map((section, index) => {
+            return <SectionManager key={index} section={section} sections={donationPageSections} setSections={setDonationPageSections}/>
+         })}
+         <div className="w-full flex flex-row mt-6">
+            <button 
+               className="bg-blue-700 px-4 py-2 w-40 rounded-md shadow-sm text-md text-white hover:bg-blue-800"
+               onClick={handleSave}
+            >
+               Save
+            </button>
+         </div>
+      </div>
    )
 }
 

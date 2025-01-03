@@ -1,3 +1,4 @@
+import Link from "next/link"
 
 
 const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
@@ -12,7 +13,7 @@ const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
                   name="firstName"
                   type="text"
                   placeholder="Enter an First Name"
-                  className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={userData.firstName}
                   onChange={handleUserDataChange}
                />
@@ -23,7 +24,7 @@ const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
                   name="lastName"
                   type="text"
                   placeholder="Enter Last Name"
-                  className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={userData.lastName}
                   onChange={handleUserDataChange}
                />
@@ -34,7 +35,7 @@ const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
                   name="email"
                   type="text"
                   placeholder="Enter an Email"
-                  className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={userData.email}
                   onChange={handleUserDataChange}
                />
@@ -45,18 +46,22 @@ const UserCard = ({userData, handleUserDataChange, setTab, handleRegister}) => {
                   name="password"
                   type="password"
                   placeholder="Enter a Password"
-                  className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={userData.password}
                   onChange={handleUserDataChange}
                />
             </div>
          </div>
-         <div className="w-full flex items-center justify-center mt-8 space-x-6">
+         <div className="w-full flex items-center justify-center mt-2 space-x-6">
             <button 
                className="p-2 bg-blue-600 hover:bg-blue-800 rounded-md text-white w-1/4"
                onClick={handleRegister}
             >Register</button>
          </div>
+         <p className="text-sm text-center mt-4">
+            Have an Account? 
+               <Link href="/login" className="text-blue-700 hover:underline"> Login</Link>
+         </p>
       </div>
    )
 }

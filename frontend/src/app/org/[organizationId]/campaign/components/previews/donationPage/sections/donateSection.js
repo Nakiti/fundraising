@@ -1,9 +1,17 @@
 import { useContext } from "react"
-import { CampaignContext } from "@/app/context/campaignContext"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 
 const DonateSection = () => {
    const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
+
+   const buttonConfigs = [
+      { name: "button1", label: "Button One Value" },
+      { name: "button2", label: "Button Two Value" },
+      { name: "button3", label: "Button Three Value" },
+      { name: "button4", label: "Button Four Value" },
+      { name: "button5", label: "Button Five Value" },
+      { name: "button6", label: "Button Six Value" },
+   ]
 
    return (
       <div>
@@ -13,102 +21,19 @@ const DonateSection = () => {
                <p className="text-xs font-semibold text-gray-600">Amount</p>
                {/* <p className="text-xs font-semibold text-gray-600">Show on Page?</p> */}
             </div>
-
-            
-            <div className="flex flex-row justify-between p-2 w-full items-center">
-               <label className="text-gray-600 text-xs font-bold">Button One Value</label>
-               <input 
-                  placeholder="Enter a Value for Button One"
-                  type="number"
-                  className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={donationPageInputs.button1}
-                  name="button1"
-                  onChange={handleDonationPageInputsChange}
-               />
-               {/* <input 
-                  className="h-5 w-5" 
-                  type="checkbox"
-               /> */}
-            </div>
-            <div className="flex flex-row justify-between p-2 w-full items-center">
-               <label className="text-gray-600 text-xs font-bold">Button Two Value</label>
-               <input 
-                  placeholder="Enter a Value for Button One"
-                  type="number"
-                  className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={donationPageInputs.button2}
-                  name="button2"
-                  onChange={handleDonationPageInputsChange}
-               />
-               {/* <input 
-                  className="h-5 w-5" 
-                  type="checkbox"
-               /> */}
-            </div>
-            <div className="flex flex-row justify-between p-2 w-full items-center">
-               <label className="text-gray-600 text-xs font-bold">Button Three Value</label>
-
-               <input 
-                  placeholder="Enter a Value for Button One"
-                  type="number"
-                  className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={donationPageInputs.button3}
-                  name="button3"
-                  onChange={handleDonationPageInputsChange}
-               />
-               {/* <input 
-                  className="h-5 w-5" 
-                  type="checkbox"
-               /> */}
-            </div>
-            <div className="flex flex-row justify-between p-2 w-full items-center">
-               <label className="text-gray-600 text-xs font-bold">Button Four Value</label>
-
-               <input 
-                  placeholder="Enter a Value for Button One"
-                  type="number"
-                  className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={donationPageInputs.button4}
-                  name="button4"
-                  onChange={handleDonationPageInputsChange}
-               />
-               {/* <input 
-                  className="h-5 w-5" 
-                  type="checkbox"
-               /> */}
-            </div>
-            <div className="flex flex-row justify-between p-2 w-full items-center">
-               <label className="text-gray-600 text-xs font-bold">Button Five Value</label>
-
-               <input 
-                  placeholder="Enter a Value for Button One"
-                  type="number"
-                  className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={donationPageInputs.button5}
-                  name="button5"
-                  onChange={handleDonationPageInputsChange}
-               />
-               {/* <input 
-                  className="h-5 w-5" 
-                  type="checkbox"
-               /> */}
-            </div>
-            <div className="flex flex-row justify-between p-2 w-full items-center">
-               <label className="text-gray-600 text-xs font-bold">Button Six Value</label>
-
-               <input 
-                  placeholder="Enter a Value for Button One"
-                  type="number"
-                  className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
-                  value={donationPageInputs.button6}
-                  name="button6"
-                  onChange={handleDonationPageInputsChange}
-               />
-               {/* <input 
-                  className="h-5 w-5" 
-                  type="checkbox"
-               /> */}
-            </div>
+            {buttonConfigs.map((item, index) => (
+               <div key={index} className="flex flex-row justify-between p-2 w-full items-center">
+                  <label className="text-gray-600 text-xs font-bold">{item.label}</label>
+                  <input
+                     placeholder={`Enter a Value for ${item.label}`}
+                     type="number"
+                     className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
+                     value={donationPageInputs[item.name]}
+                     name={item.name}
+                     onChange={handleDonationPageInputsChange}
+                  />
+               </div>
+            ))}
          </div>
       </div>
    )

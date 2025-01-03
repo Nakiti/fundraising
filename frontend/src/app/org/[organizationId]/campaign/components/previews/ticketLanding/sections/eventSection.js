@@ -2,6 +2,7 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import useImageUpload from "@/app/hooks/useImageUpload"
 import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
+import TextAreaInputEdit from "@/app/components/textAreaInputEdit";
 
 const EventSection = () => {
    const {ticketsPageInputs, handleTicketsPageInputs} = useContext(TicketPageContext)
@@ -24,32 +25,8 @@ const EventSection = () => {
                />
             </label>                  
          </div> */}
-         <div className="mb-4">
-            <p className="text-sm font-bold text-gray-600 mb-2">
-               Enter Location Name <span className="text-red-500">*</span>
-            </p>
-            <textarea 
-               className="text-black text-lg w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
-               rows={2}
-               placeholder="Enter Location Name "
-               name="venue"
-               value={ticketsPageInputs.venue}
-               onChange={handleTicketsPageInputs}
-            />
-         </div>
-         <div className="mb-4">
-            <p className="text-sm font-bold text-gray-600 mb-2">
-               Enter Instructions <span className="text-red-500">*</span>
-            </p>
-            <textarea 
-               className="text-black text-md w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
-               rows={4}
-               placeholder="Enter Instructions For Guests"
-               name="instructions"
-               value={ticketsPageInputs.instructions}
-               onChange={handleTicketsPageInputs}
-            />
-         </div>
+         <TextAreaInputEdit title={"Location Name"} rows={2} placeholder={"Enter Location Name"} name={"venue"} value={ticketsPageInputs.venue} changeFunc={handleTicketsPageInputs}/>
+         <TextAreaInputEdit title={"Instructions"} rows={5} placeholder={"Enter Instructions For Guests"} name={"venue"} value={ticketsPageInputs.instructions} changeFunc={handleTicketsPageInputs}/>
       </div>
    )
 }

@@ -41,17 +41,8 @@ const Header = ({organizationId, user}) => {
          <Link href="/" className="text-lg font-bold ml-8">
             Title
          </Link>
-         {/* {isClient && (
-            <Link
-               href={!currentUser ? "/login" : `/profile`}
-               className="text-black font-semibold mr-4 hover:text-gray-700"
-            >
-               {!currentUser ? "Login" : "Profile"}
-            </Link>
-         )} */}
-
          <div className="flex items-center relative h-full border-l border-gray-300">
-            {userData && (
+            {userData ? (
                <div
                   className="flex flex-row items-center justify-between w-64 cursor-pointer hover:bg-gray-100 py-2 px-6 rounded-md"
                   onClick={toggleDropdown}
@@ -62,7 +53,16 @@ const Header = ({organizationId, user}) => {
                   </div>
                   {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
                </div>
-            )}
+            ) : 
+            <div
+               className="flex flex-row items-center justify-between w-48 cursor-pointer hover:bg-gray-100 py-2 px-6 rounded-md"
+            >
+            <div className="flex flex-row items-center">
+                  <Link href={"/login"} className="text-lg text-gray-800">Login</Link>
+               </div>
+            </div>
+            
+            }
 
             {isDropdownOpen && (
                <div className="absolute right-0 p-2 mt-44 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-10">

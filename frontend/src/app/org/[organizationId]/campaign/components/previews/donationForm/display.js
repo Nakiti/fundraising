@@ -1,6 +1,5 @@
 "use client";
 import { useContext } from "react";
-import { IoIosClose } from "react-icons/io";
 import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext";
 
 const Display = () => {
@@ -11,9 +10,7 @@ const Display = () => {
          className="w-full mb-4 max-w-6xl mx-auto bg-gray-700 rounded-sm shadow-md mt-6 overflow-y-auto" 
          style={{ backgroundColor: donationFormInputs.bg_color }}
       >
-         <div 
-            className="w-full text-lg font-bold bg-white text-start text-gray-600 px-4 py-2 border-b border-gray-200"
-         >
+         <div className="w-full text-lg font-bold bg-white text-start text-gray-600 px-4 py-2 border-b border-gray-200">
             <h1 className="px-2 py-1" name="heading">Header</h1>
          </div>
          <div className="px-6 py-4">

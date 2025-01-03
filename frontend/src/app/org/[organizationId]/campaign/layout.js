@@ -13,15 +13,12 @@ import { getCampaignDetails } from "@/app/services/fetchService";
 import { TicketPurchasePageContextProvider } from "@/app/context/campaignPages/ticketPurchasePageContext";
 
 const CampaignLayout = ({ children }) => {
-  const [isClient, setIsClient] = useState(false);
   const params = useParams();
   const campaignId = params?.id;
   const organizationId = params?.organizationId
   const [campaignType, setCampaignType] = useState(null)
 
-   useEffect(() => {
-      setIsClient(true);
-      
+   useEffect(() => {      
       const fetchData = async() => {
          try {
             const response = await getCampaignDetails(campaignId)
@@ -33,8 +30,6 @@ const CampaignLayout = ({ children }) => {
 
       fetchData()
    }, []);
-
-  if (!isClient) return null; 
 
    return (
       <CampaignContextProvider campaignId={campaignId} organizationId={organizationId}>

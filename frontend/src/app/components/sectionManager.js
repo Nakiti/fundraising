@@ -1,15 +1,31 @@
+//imports
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
-
+/*
+   Component: Section Manager
+   Description: Component to manage the sections that contain fields to customize page displays
+               - Has toggles to allow user to hide and show components on the display
+   Props: 
+      - setSections: Function to update the state of the sections array
+      - sections: Array of sections
+      - section: Individual section
+*/
 const SectionManager = ({setSections, sections, section}) => {
 
-
+   /*
+      Function: toggleSwitch
+      Description: Toggles the active state of a section -- either showing or hiding it on the display
+   */
    const toggleSwitch = (sectionName) => {
       setSections(sections.map(item =>
         item.name === sectionName ? { ...item, active: !item.active } : item
       ));
    };
   
+   /* 
+      Function: handleDropdown
+      Description: Collapses and opens the input section for increased accesibility 
+   */
    const handleDropdown = (sectionName) => {
       setSections(sections.map(item =>
          item.name === sectionName ? { ...item, dropdown: !item.dropdown } : item
@@ -18,7 +34,7 @@ const SectionManager = ({setSections, sections, section}) => {
 
    return (
       <div key={section.name} className="">
-         <div className="flex flex-row justify-between py-4 items-center border-b border-gray-500">
+         <div className="flex flex-row justify-between py-4 items-center border-b border-gray-500" >
             <h2 className="text-md font-bold text-gray-600">{section.displayText}</h2>
             <div className="flex flex-row space-x-4">
                {!section.required && <button

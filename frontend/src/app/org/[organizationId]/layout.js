@@ -7,24 +7,15 @@ import { AuthContext } from "@/app/context/authContext"
 
 const OrgLayout = ({params, children}) => {
    const {currentUser} = useContext(AuthContext)
-   const router = useRouter()
    const organizationId = params.organizationId
 
-   // useEffect(() => {
-   //    if (currentUser == null) {
-   //       router.push("/login")
-   //    }
-   //    console.log("asdads", currentUser)
-   // }, [currentUser])
-   
-   //have to check that user is logged in
    return (
-      <LandingPageContextProvider>
+      <div>
          {currentUser && <Header organizationId={organizationId} user={currentUser}/>}
          <div style={{height: "90vh"}}> 
             {children} 
          </div>
-      </LandingPageContextProvider>
+      </div>
    )
 }
 

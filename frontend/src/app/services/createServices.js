@@ -28,6 +28,20 @@ export const createCampaign = async(currentUser, organizationId) => {
    }
 }
 
+
+export const createDonationPage = async (campaignId, currentUser) => {
+   try {
+      const pageId = await axios.post(`${API_BASE_URL}/donationPage/create`, {
+         campaign_id: campaignId,
+         user_id: currentUser.user_id
+      })
+
+      return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
 export const createCampaignDetails = async (campaignId, currentUser, type, internalName) => {
    try {
       await axios.post(`${API_BASE_URL}/campaign_details/create`, {
@@ -75,6 +89,25 @@ export const createPeerLandingPage = async (campaignId, currentUser) => {
       })
 
       return pageId.data
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createCustomQuestion = async(campaignId, questions) => {
+
+   console.log(questions)
+
+   try {
+      await axios.post(`${API_BASE_URL}/campaign_question/create/${campaignId}`, questions)
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const createCampaignDesignation = async(campaignId, designations) => {
+   try {
+      await axios.post(`${API_BASE_URL}/campaign_designation/create/${campaignId}`, designations)
    } catch (err) {
       console.log(err)
    }

@@ -42,3 +42,21 @@ export const deleteFaqsBatch = async(faqs) => {
       console.log(err)
    }
 } 
+
+export const deleteCustomQuestion = async(campaignId) => {
+   try {
+      await axios.post(`${API_BASE_URL}/campaign_question/delete/${campaignId}`)
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+export const deleteCampaignDesignation = async(campaignId) => {
+   try {
+      await axios.delete(`${API_BASE_URL}/campaign_designation/delete/${campaignId}`)
+   } catch (err) {
+      console.log(err)
+   }
+}
+
+

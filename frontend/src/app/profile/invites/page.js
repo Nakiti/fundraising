@@ -1,7 +1,6 @@
 "use client"
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "@/app/context/authContext"
-import Link from "next/link"
 import { getPendingUserOrganizations } from "@/app/services/fetchService"
 import { updateUserOrganizationRelation } from "@/app/services/updateServices"
 import { useRouter } from "next/navigation"
@@ -22,11 +21,9 @@ const Invites = () => {
    }, [currentUser])
 
    const handleAccept = async(id) => {
-
       try {
          await updateUserOrganizationRelation(id)
          router.push("/profile")
-
       } catch (err) {
          console.log(err)
       }
@@ -53,7 +50,6 @@ const Invites = () => {
                      Accept
                   </button>
                </div>
-
             )) :
                <p className="text-center text-xl">No Orgnization Invites</p>
             }

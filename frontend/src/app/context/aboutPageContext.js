@@ -6,7 +6,6 @@ import WhySection from "../org/[organizationId]/page/about/components/sections/w
 import TeamSection from "../org/[organizationId]/page/about/components/sections/teamSection";
 export const AboutPageContext = createContext()
 
-
 export const AboutPageContextProvider = ({children}) => {
 
    const [inputs, handleInputsChange, setInputs] = useFormInput({
