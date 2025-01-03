@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { AboutPageContext } from "@/app/context/aboutPageContext"
+import { AboutPageContext } from "@/app/context/organizationPages/aboutPageContext"
 
 const WhatSection = () => {
 

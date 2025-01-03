@@ -1,5 +1,5 @@
 "use client"
-import { AboutPageContextProvider } from "@/app/context/aboutPageContext"
+import { AboutPageContextProvider } from "@/app/context/organizationPages/aboutPageContext"
 import Navbar from "../components/navbar"
 import AboutPageDisplay from "./components/aboutPageDisplay"
 

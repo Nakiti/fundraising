@@ -10,16 +10,12 @@ export const PeerFundraisingPageContextProvider = ({campaignId, campaignType, ch
    const [peerFundraisingPageInputs, handlePeerFundraisingPageInputsChange, setPeerFundraisingPageInputs] = useFormInput({})
 
    useEffect(() => {
-      console.log(campaignType)
-
       if (campaignType !== "peer-to-peer") return
 
       const fetchData = async() => {
          try {
             const peerFundraisingResponse = await getPeerFundraisingPage(campaignId)
             const peerFundraisingPageId = peerFundraisingResponse.id
-
-            console.log(peerFundraisingResponse)
 
             setPeerFundraisingPageInputs({
                headline: peerFundraisingResponse.headline || "",

@@ -1,7 +1,5 @@
 "use client"
-import { useRouter } from "next/navigation"
 import Header from "@/app/components/header"
-import { LandingPageContextProvider } from "@/app/context/landingPageContext"
 import { useContext } from "react"
 import { AuthContext } from "@/app/context/authContext"
 

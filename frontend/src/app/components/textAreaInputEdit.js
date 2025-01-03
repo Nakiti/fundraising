@@ -1,3 +1,15 @@
+
+/*
+   Component: TextAreaInputEdit
+   Description: A customized text area input
+   Props:
+      - title: the header for the input
+      - rows: the number of rows for the textarea
+      - placeholder: the placeholder text
+      - name: the name property of the input
+      - value: the value property of the input
+      - changeFunc: the onChange function
+*/
 const TextAreaInputEdit = ({title, rows, placeholder, name, value, changeFunc}) => {
 
    return (

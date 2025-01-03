@@ -1,6 +1,6 @@
 "use client"
 import Header from "./components/header"
-import { DonationContextProvider } from "@/app/context/donationContext"
+import { DonationContextProvider } from "@/app/context/organizationPages/donationContext"
 
 
 const OrganizationLayout = ({children, params}) => {

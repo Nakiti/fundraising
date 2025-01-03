@@ -1,3 +1,4 @@
+// imports
 "use client"
 import Link from "next/link";
 import { useContext, useState, useEffect } from "react";
@@ -6,19 +7,24 @@ import { FaUserCircle, FaRegUser, FaTachometerAlt, FaCog, FaSignOutAlt, } from "
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { getUserData } from "../services/fetchService";
 
-
-const Header = ({organizationId, user}) => {
+/*
+   Component: Header
+   Description: The header that is displayed on all pages related to the organization dashboard
+*/
+const Header = () => {
    const {currentUser} = useContext(AuthContext)
-   const [isClient, setIsClient] = useState(false);
    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
    const [userData, setUserData] = useState(null)
 
+   /*
+      Function: toggleDropdown
+      Description: toggles the state of the dropdown that displays options
+   */
    const toggleDropdown = () => {
       setIsDropdownOpen(!isDropdownOpen);
    };
 
    useEffect(() => {
-      console.log("user", user)
       const fetchData = async() => {
          try {
             const response = await getUserData(currentUser.id)
@@ -30,17 +36,11 @@ const Header = ({organizationId, user}) => {
       }
 
       fetchData()
-      setIsClient(true);
    }, []);
 
    return (
-      <div
-         className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-md"
-         style={{ height: "10vh" }}
-      >
-         <Link href="/" className="text-lg font-bold ml-8">
-            Title
-         </Link>
+      <div className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-md" style={{ height: "10vh" }}>
+         <Link href="/" className="text-lg font-bold ml-8">Title</Link>
          <div className="flex items-center relative h-full border-l border-gray-300">
             {userData ? (
                <div
@@ -54,16 +54,12 @@ const Header = ({organizationId, user}) => {
                   {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
                </div>
             ) : 
-            <div
-               className="flex flex-row items-center justify-between w-48 cursor-pointer hover:bg-gray-100 py-2 px-6 rounded-md"
-            >
-            <div className="flex flex-row items-center">
+            <div className="flex flex-row items-center justify-between w-48 cursor-pointer hover:bg-gray-100 py-2 px-6 rounded-md">
+               <div className="flex flex-row items-center">
                   <Link href={"/login"} className="text-lg text-gray-800">Login</Link>
                </div>
             </div>
-            
             }
-
             {isDropdownOpen && (
                <div className="absolute right-0 p-2 mt-44 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                   <Link

@@ -1,6 +1,6 @@
 "use client"
 import { useContext, useEffect } from "react";
-import { DonationContext } from "@/app/context/donationContext";
+import { DonationContext } from "@/app/context/organizationPages/donationContext";
 import Link from "next/link";
 import { IoIosClose } from "react-icons/io";
 

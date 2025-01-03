@@ -1,12 +1,15 @@
 "use client"
 import useFormInput from "@/app/hooks/useFormInput"
 import {useEffect } from "react"
-import { FaCheck } from "react-icons/fa";
 import { getOrganization } from "@/app/services/fetchService";
 import { updateOrganization } from "@/app/services/updateServices";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 
+/*
+   Component: Organization
+   Description: renders organization page and allows user to manage settings
+*/
 const Organization = ({params}) => {
    const organizationId = params.organizationId
 
@@ -20,6 +23,10 @@ const Organization = ({params}) => {
       zip: ""
    })
 
+   /*
+      Function: fetchData
+      Description: fetches organization information
+   */
    const fetchData = async() => {
       try {
          const response = await getOrganization(organizationId)
@@ -32,6 +39,10 @@ const Organization = ({params}) => {
       }
    }
 
+   /*
+      Function: handleUpdate
+      Description: update organization information
+   */
    const handleUpdate = async() => {
       try {
          await updateOrganization(organizationId, info)

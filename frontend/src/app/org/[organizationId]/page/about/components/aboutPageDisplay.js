@@ -1,6 +1,6 @@
 "use client"
 import { useContext } from "react"
-import { AboutPageContext } from "@/app/context/aboutPageContext"
+import { AboutPageContext } from "@/app/context/organizationPages/aboutPageContext"
 
 const AboutPageDisplay = () => {
    const {inputs} = useContext(AboutPageContext)

@@ -1,6 +1,16 @@
+//imports
 import useImageUpload from "../hooks/useImageUpload"
 
+/*
+   Component: ImageInputEdit
+   Description: A reusrable component for uploading images with a styled input field
+   Props: 
+      - title: header of the input
+      - name: name property of the input
+      - changeFunc: a function to handle the onChange property of the input
+*/
 const ImageInputEdit = ({title, name, changeFunc}) => {
+   // Destructure the handleImageUpload function from the custom hook
    const {handleImageUpload} = useImageUpload()
 
    return (

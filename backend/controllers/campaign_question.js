@@ -1,19 +1,14 @@
 import { db } from "../db.js";
 
 export const createCustomQuestion = (req, res) => {
-
    const query = "INSERT INTO campaign_questions (`campaign_id`, `question`, `type`, `created_at`) VALUES ?"
    
-   console.log(req.body)
-
    const values = req.body.map(question => [
       Number(req.params.id),
       question.question,
       question.type,
       (new Date()).toISOString().slice(0, 19).replace('T', ' ')
    ])
-
-   console.log(values)
    
    db.query(query, [values], (err, data) => {
       if (err) return console.log(err)

@@ -2,6 +2,10 @@
 import { getTransactionsByCampaign } from "@/app/services/fetchService"
 import { useState, useEffect } from "react"
 
+/*
+   Component: Transactions
+   Description: Renders transactions relevant to a single campaign
+*/
 const Transactions = ({params}) => {
    const campaignId = params.campaignId
    const [data, setData] = useState(null)
@@ -21,7 +25,6 @@ const Transactions = ({params}) => {
          try {
             const response = await getTransactionsByCampaign(campaignId)
             setData(response)
-            console.log(response)
          } catch (err) {
             console.log(err)
          }

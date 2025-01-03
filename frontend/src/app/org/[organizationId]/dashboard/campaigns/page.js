@@ -5,15 +5,21 @@ import Modal from "./components/modal"
 import { useState, useEffect, useContext } from "react"
 import Searchbar from "./components/searchbar"
 import Filters from "./components/filters"
-import { AuthContext } from "@/app/context/authContext"
 import { getAllCampaigns } from "@/app/services/fetchService"
 
+/*
+   Component: Campaigns
+   Description: renders campaigns page
+*/
 const Campaigns = ({params}) => {
    const organizationId = params.organizationId
    const [showModal, setShowModal] = useState(false)
    const [data, setData] = useState(null)
 
    useEffect(() => {
+      /*
+         Description: Fetches all organizations corresponding to the organization
+      */
       const fetchData = async() => {
          try {
             const response = await getAllCampaigns(organizationId)
@@ -34,9 +40,6 @@ const Campaigns = ({params}) => {
             <div className="max-w-full h-full rounded-lg p-4">
                <div className="flex flex-row p-6 w-full justify-between items-center">
                   <h1 className="text-4xl font-semibold">Campaigns</h1>
-                  {/* <Link href="/org/campaign/new/details/about" >
-                     <p className="bg-blue-700 py-3 px-8 rounded-md text-md text-white">Create New Campaign</p>
-                  </Link> */}
                   <button className="bg-blue-800 font-semibold py-3 px-8 rounded-md text-md text-white" onClick={() => setShowModal(true)}>
                      Create New Campaign
                   </button>

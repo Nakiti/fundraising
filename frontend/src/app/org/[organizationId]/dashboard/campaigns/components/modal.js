@@ -5,7 +5,14 @@ import { createCampaign, createCampaignDetails, createDonationForm, createPageSe
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/app/context/authContext';
 
-const Modal = ({ show, setShow, organizationId }) => {
+/*
+   Component: Modal
+   Description: A modal that allows the user to create campaigns of varying types
+   Props:
+      setShow: controls the state of the modal
+      organizationId: id of the organization
+*/
+const Modal = ({setShow, organizationId }) => {
    const [activeTab, setActiveTab] = useState(0);
    const router = useRouter();
    const { currentUser } = useContext(AuthContext);
@@ -19,14 +26,21 @@ const Modal = ({ show, setShow, organizationId }) => {
       { title: 'Ticketed Event', content: 'ticketed-event' },
    ];
 
-   const handleClick = async (type) => {
+   /*
+      Description: Depending on the type of campaign that is created, pages corresponding to that campaign
+                  type are created
+                  Donation Form and Thank You Page are created for all campaign Types
+   */
+   /*
+      Currently page sections are created but not used. They are created to potentially give the user to
+      enable and disable components of the display
+   */
+   const handleClick = async () => {
       if (internalName === "") {
          setError(true)
          return
       }
       setError(false)
-
-      console.log("currentUser", currentUser)
 
       try {
          const id = await createCampaign(currentUser, organizationId);
@@ -47,7 +61,6 @@ const Modal = ({ show, setShow, organizationId }) => {
             await createPageSection(ticketPageId, "banner", true, currentUser)
             await createPageSection(ticketPageId, "about", true, currentUser)
             await createPageSection(ticketPageId, "event", true, currentUser)
-
 
             console.log(ticketPurchasePageId)
             await createPageSection(ticketPurchasePageId, "title", true, currentUser)
@@ -108,8 +121,6 @@ const Modal = ({ show, setShow, organizationId }) => {
             <div className="w-3/4 px-6 py-6 bg-gray-100 flex flex-col">
                <h2 className="text-2xl font-semibold mb-4">{tabContent[activeTab].title}</h2>
                <div className='mt-4 mb-8 text-gray-700'>
-
-
                   {tabContent[activeTab].content == "donation" ? 
                      <p>Create a standard donation form that allows users to donate funds while collecting user information</p> :
                   tabContent[activeTab].content == "crowdfunding" ?

@@ -45,7 +45,6 @@ export const TicketPageContextProvider = ({campaignId, campaignType, children}) 
          } catch (err) {
             console.log(err)
          }
-
       }
 
       fetchData()

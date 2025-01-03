@@ -1,4 +1,10 @@
-
+/*
+   Component: Error Modal
+   Description: A component that appears on the screen to display an error message
+   Props:
+      - message: the error message
+      - setError: to set the state of the display of the error modal
+*/
 
 const ErrorModal = ({message, setError}) => {
    return (

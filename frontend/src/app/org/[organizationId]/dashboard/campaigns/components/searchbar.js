@@ -3,30 +3,43 @@ import debounce from "lodash/debounce"
 import { getCampaignSearch } from "@/app/services/fetchService"
 import { IoIosSearch } from "react-icons/io";
 
+/*
+   Component: Searchbar
+   Description: Searchbar to find campaigns by title
+   Props:
+      setData: change the campaign data displayed
+      organizationId: id of the organization
+*/
 const Searchbar = ({setData, organizationId}) => {
    const [query, setQuery] = useState("")
 
+   /*
+      Description: handle change of the query input
+   */
    const handleInputsChange = async (e) => {
       setQuery(e.target.value)
       debouncedSearch(e.target.value)
    }
 
+   /*
+      Description: debounced search to search campaigns after every user key press (300ms delay)
+   */
    const debouncedSearch = debounce(async (query) => {
       try {
          const response = await getCampaignSearch(query, organizationId);
          setData(response)
-         console.log("ASasas", response)
-
       } catch (err) {
          console.error(err);
       }
    }, 300);
 
+   /*
+      Description: retrieves campaigns that matched query
+   */
    const handleSearch = async() => {
       try {
          const response = await getCampaignSearch(query, organizationId)
          setData(response)
-         console.log("ASasas", response)
       } catch (err) {
          console.log(err)
       }
@@ -51,7 +64,6 @@ const Searchbar = ({setData, organizationId}) => {
             onClick={handleSearch}
          />
       </div>
-
    )
 }
 

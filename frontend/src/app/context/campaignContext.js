@@ -28,7 +28,6 @@ export const CampaignContextProvider = ({ children, campaignId, organizationId }
    const [defaultDesignation, setDefaultDesignation] = useState(0)
    const [selectedDesignations, setSelectedDesignations] = useState([])
 
-
    useEffect(() => {
       const fetchData = async () => {
          try {

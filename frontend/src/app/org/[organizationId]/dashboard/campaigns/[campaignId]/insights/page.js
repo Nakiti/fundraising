@@ -1,6 +1,6 @@
 
 
-const Insights = () => {
+const Insights = () => { //campaign insight, TODO
 
    return (
       <div className="p-8 w-full grid grid-cols-4 gap-4 grid-rows-3">

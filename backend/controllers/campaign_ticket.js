@@ -15,8 +15,6 @@ export const createCampaignTicketBatch = (req, res) => {
       ticket.end_date,
       (new Date()).toISOString().slice(0, 19).replace('T', ' ')
    ])
-
-   console.log(values)
    
    db.query(query, [values], (err, data) => {
       if (err) return console.log(err)

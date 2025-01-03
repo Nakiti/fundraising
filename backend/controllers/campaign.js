@@ -1,8 +1,8 @@
 import { db } from "../db.js"
 
 export const createCampaign = (req, res) => {
-   const q = "SELECT * FROM campaigns WHERE url = ?"
-   // if (data.length > 0) return res.status(409).json("Short URL already in use")
+   const q = "SELECT * FROM campaigns WHERE url = ?" //need to check url isnt already taken
+   // if (data.length > 0) return res.status(409).json("Short URL already in use") 
 
    const query = "INSERT INTO campaigns (`organization_id`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES (?)"
 
@@ -16,7 +16,6 @@ export const createCampaign = (req, res) => {
       
    db.query(query, [values], (err, data) => {
       if (err) return res.json(err)
-      console.log(data)
       return res.status(200).json(data.insertId)
    })
 }
@@ -67,12 +66,6 @@ export const searchCampaigns = (req, res) => {
 }
 
 export const getCampaignsByOrg = (req, res) => {
-   // const query = `
-   //    SELECT campaigns.id, campaigns.created_at, campaign_details.*
-   //    FROM campaigns
-   //    INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-   //    WHERE campaigns.organization_id = ? ORDER BY campaigns.id DESC
-   // `
    const query = `
       SELECT campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.type, campaign_details.status, SUM(transactions.amount) AS amount_raised
       FROM campaigns
@@ -82,8 +75,6 @@ export const getCampaignsByOrg = (req, res) => {
       GROUP BY campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.type, campaign_details.status
       ORDER BY campaigns.id DESC
    `
-
-
    const value = [req.params.id]
 
    db.query(query, value, (err, data) => {
@@ -102,9 +93,7 @@ export const getActive = (req, res) => {
 }
 
 export const getFiltered = (req, res) => {
-   // let query = "SELECT * FROM campaigns WHERE `organization_id` = ? AND `status` = ?"
    const {status, type} = req.query
-   // const id = req.params.id
    const params = [req.params.id]
 
    let query = `

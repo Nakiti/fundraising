@@ -5,6 +5,14 @@ import { FaSortDown } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
+/*
+   Component: Table
+   Description: A table of all campaigns in an organization
+   Props: 
+      - setData: function to change data state
+      - data: contains all the campaigns
+      - organizationId: id of the organization
+*/
 const Table = ({setData, data, organizationId}) => {
    const columns = [
       { id: 'id', label: 'Id', sortable: true},
@@ -19,30 +27,35 @@ const Table = ({setData, data, organizationId}) => {
    ];
    
    const router = useRouter()
-   
-   // const [data, setData] = useState(null)
    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
-   const [currentPage, setCurrentPage] = useState(1);
+   const [currentPage, setCurrentPage] = useState(1); // creates pagination of campaigns table
    const rowsPerPage = 10; 
-
    const indexOfLastRow = currentPage * rowsPerPage;
    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
    const currentRows = data && data.slice(indexOfFirstRow, indexOfLastRow);
-
    const totalPages = data && data.length > 0 ? Math.ceil(data && data.length / rowsPerPage) : 1;
 
+   /*
+      Description: Go to previous page if available
+   */
    const handlePreviousPage = () => {
       if (currentPage > 1) {
          setCurrentPage(currentPage - 1);
       }
    };
 
+   /*
+      Description: Go to next page if available
+   */
    const handleNextPage = () => {
       if (currentPage < totalPages) {
          setCurrentPage(currentPage + 1);
       }
    };
 
+   /*
+      Description: Sort data by eithre ascending or descending
+   */
    const sortData = (key) => {
       let direction = 'ascending';
       if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -57,6 +70,7 @@ const Table = ({setData, data, organizationId}) => {
       setSortConfig({ key, direction });
    };
 
+   //navigation to campaign page
    const handleClick = (id) => {
       router.push(`/org/${organizationId}/dashboard/campaigns/${id}`)
    }
@@ -67,27 +81,26 @@ const Table = ({setData, data, organizationId}) => {
             <table className="border-gray-300 w-full">
                <thead className="border-b border-gray-300">
                   <tr>
-                  {columns.map((column, index) => (
-                     <th
-                        key={index}
-                        className="px-4 py-3 whitespace-nowrap text-center text-gray-700 text-sm font-semibold cursor-pointer hover:text-gray-900 transition-colors"
-                        onClick={() => sortData(column.id)}
-                     >
-                        <div className="flex flex-row items-center">
-                        {column.label}
-                        {column.sortable && (
-                           <span className="ml-1 text-gray-500">
-                              {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
-                              <FaSortUp className="ml-2 text-blue-600" />) : (<FaSortDown className="ml-2 text-blue-600" />
-                              )}
-                           </span>
-                        )}
-                        </div>
-                     </th>
-                  ))}
+                     {columns.map((column, index) => (
+                        <th
+                           key={index}
+                           className="px-4 py-3 whitespace-nowrap text-center text-gray-700 text-sm font-semibold cursor-pointer hover:text-gray-900 transition-colors"
+                           onClick={() => sortData(column.id)}
+                        >
+                           <div className="flex flex-row items-center">
+                           {column.label}
+                           {column.sortable && (
+                              <span className="ml-1 text-gray-500">
+                                 {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
+                                 <FaSortUp className="ml-2 text-blue-600" />) : (<FaSortDown className="ml-2 text-blue-600" />
+                                 )}
+                              </span>
+                           )}
+                           </div>
+                        </th>
+                     ))}
                   </tr>
                </thead>
-
                {currentRows && currentRows.length > 0 && <tbody>
                   {currentRows.map((row, index) => (
                   <tr

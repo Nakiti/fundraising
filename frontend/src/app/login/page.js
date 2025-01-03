@@ -1,5 +1,4 @@
 "use client"
-
 import { AuthContext } from "../context/authContext"
 import useFormInput from "../hooks/useFormInput"
 import { useContext, useEffect } from "react"
@@ -7,15 +6,19 @@ import { useRouter } from "next/navigation"
 import Header from "../components/header"
 import Link from "next/link"
 
+/*
+   Components: Login
+   Description: Handles login functionality into the dashboard
+*/
 const Login = () => {
-   const {login, currentUser} = useContext(AuthContext)
+   const {login} = useContext(AuthContext) //login function desctructred from AuthContext
    const router = useRouter()
+   const [inputs, handleInputsChange, setInputs] = useFormInput({email: "", password: ""})
 
-   const [inputs, handleInputsChange, setInputs] = useFormInput({
-      email: "",
-      password: ""
-   })
-
+   /*
+      Function: handleSubmit
+      Description: Logs user in and reroutes page
+   */
    const handleSubmit = async(e) => {
       e.preventDefault()
       await login(inputs)

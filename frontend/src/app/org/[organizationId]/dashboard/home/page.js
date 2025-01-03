@@ -6,26 +6,26 @@ import Link from "next/link"
 import { MdOpenInNew } from "react-icons/md";
 import { FaHandHoldingHeart, FaUserPlus, FaDollarSign } from "react-icons/fa";
 
+/*
+   Component: Home
+   Description: Renders the home page
+ */
 const Home = ({params}) => {
-   const [active, setActive] = useState("week")
    const {currentUser} = useContext(AuthContext)
    const organizationId = params.organizationId
-   const [userData, setUserData] = useState(null)
    const [campaigns, setCampaigns] = useState(null)
+   const [active, setActive] = useState("week")
+   const [summaryData, setSummaryData] = useState({donation: 0, newSupporters: 0, raised: 0,}) // newSupporters is not configured currently
 
-   const [summaryData, setSummaryData] = useState({
-      donation: 0,
-      // supporter: 0,
-      raised: 0,
-   })
+   const statistics = [
+      { label: "Donations", value: summaryData.donation, icon: <FaHandHoldingHeart size={36} className="text-blue-700 mb-3" /> },
+      { label: "New Supporters", value: summaryData.newSupporters, icon: <FaUserPlus size={36} className="text-blue-700 mb-3" /> },
+      { label: "Raised", value: `$${summaryData.raised || 0}`, icon: <FaDollarSign size={36} className="text-blue-700 mb-3" /> },
+   ]
 
-   const [statuses, setStatuses] = useState({
-      organization: true,
-      landingPage: true,
-      aboutPage: true,
-      impactPage: true,
-   })
-
+   /*
+      Description: Updates summary statistices based on the active state
+   */
    useEffect(() => {
       let start;
       let end = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -60,6 +60,13 @@ const Home = ({params}) => {
       fetchData()
    }, [currentUser])
 
+   /*
+      Function: fetchTransactions
+      Description: Retrieves transactions over a given time period
+      Arguments:
+         - start: start date
+         - end: end date
+   */
    const fetchTransactions = async(start, end) => {
       try {
          const response = await getTransactionsOverTime(organizationId, start, end)
@@ -69,7 +76,7 @@ const Home = ({params}) => {
       }
    }
 
-   const handleClick = (active) => {
+   const handleFilterClick = (active) => {
       setActive(active);
    };
 
@@ -87,7 +94,7 @@ const Home = ({params}) => {
                      className={`px-5 py-2 text-md font-medium ${
                      active === period ? "border-b-4 border-blue-700 text-blue-700" : "text-gray-500"
                      }`}
-                     onClick={() => handleClick(period)}
+                     onClick={() => handleFilterClick(period)}
                   >
                      {`This ${period.charAt(0).toUpperCase() + period.slice(1)}`}
                   </button>
@@ -95,11 +102,7 @@ const Home = ({params}) => {
                </div>
             </div>
             <div className="w-5/6 mx-auto grid grid-cols-3 gap-6 mb-6">
-               {[
-                  { label: "Donations", value: summaryData.donation, icon: <FaHandHoldingHeart size={36} className="text-blue-700 mb-3" /> },
-                  { label: "New Supporters", value: summaryData.newSupporters, icon: <FaUserPlus size={36} className="text-blue-700 mb-3" /> },
-                  { label: "Raised", value: `$${summaryData.raised || 0}`, icon: <FaDollarSign size={36} className="text-blue-700 mb-3" /> },
-               ].map((item) => (
+               {statistics.map((item) => (
                   <div
                   key={item.label}
                   className="relative bg-white rounded-lg h-44 shadow-sm px-8 py-6 flex flex-col items-center justify-start text-center"

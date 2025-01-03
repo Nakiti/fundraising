@@ -33,7 +33,6 @@ export const ThankYouPageContextProvider = ({campaignId, campaignType, children}
          }
       }
 
-
       fetchData()
    }, [])
 

@@ -1,6 +1,5 @@
 import { db } from "../db.js";
 
-
 export const createCampaignDetails = (req, res) => {
    const query = "INSERT INTO campaign_details (`campaign_id`, `internal_name`, `raised`, `visits`, `status`, `type`, `updated_at`, `updated_by`) VALUES (?)"
 

@@ -6,6 +6,10 @@ import { AuthContext } from "@/app/context/authContext"
 import { deactivateCampaign } from "@/app/services/updateServices"
 import { FaExternalLinkAlt } from "react-icons/fa"
 
+/*
+   Component: Campaign Page
+   Description: Renders campaign page
+*/
 const CampaignPage = ({params}) => {
    const campaignId = params.campaignId
    const [campaign, setCampaign] = useState(null)
@@ -13,6 +17,9 @@ const CampaignPage = ({params}) => {
    const {currentUser} = useContext(AuthContext)
    const organizationId = params.organizationId
 
+   /*
+      Description: deactivate campaign
+   */
    const handleDeactivate = async () => {
       try {
          await deactivateCampaign(campaignId, currentUser.id)
@@ -26,11 +33,13 @@ const CampaignPage = ({params}) => {
       fetchData()
    }, [])
 
+   /*
+      Description: get campaign
+   */
    const fetchData = async() => {
       const campaignResponse = await getCampaign(campaignId)
       setCampaign(campaignResponse)
       setCampaignType(campaignResponse.type)
-      console.log("asas", campaignResponse)
    }
 
    return (

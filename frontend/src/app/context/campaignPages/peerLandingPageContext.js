@@ -10,7 +10,6 @@ export const PeerLandingPageContextProvider = ({campaignId, campaignType, childr
    const [peerLandingPageInputs, handlePeerLandingPageInputsChange, setPeerLandingPageInputs] = useFormInput({})
 
    useEffect(() => {
-      console.log("campaigntype" , campaignType)
       if (campaignType !== "peer-to-peer") return
 
       const fetchData = async() => {
@@ -39,7 +38,6 @@ export const PeerLandingPageContextProvider = ({campaignId, campaignType, childr
          } catch (err) {
             console.log(err)
          }
-
       }
 
       fetchData()

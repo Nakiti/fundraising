@@ -1,7 +1,5 @@
 "use client"
-
 import { useState, useEffect, useContext } from "react"
-import axios from "axios"
 import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
 import { getAllDesignations } from "@/app/services/fetchService"
@@ -12,26 +10,36 @@ import { FaPlus } from "react-icons/fa"
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 
+/*
+   Component: Designations
+   Description: renders designation page and allows user to add and manage designations
+*/
 const Designations = ({params}) => {
    const [designations, setDesignations] = useState([]);
-
-   const [newDesignation, handleNewDesignationChange, setNewDesignation] = useFormInput({
-      title: '', 
-      goal: ''
-   })
-
+   const [newDesignation, handleNewDesignationChange, setNewDesignation] = useFormInput({title: '', goal: ''})
    const organizationId = params.organizationId
    const { currentUser } = useContext(AuthContext);
 
+   /*
+      Function: handleDesignationChange
+      Description: Changes values of a single designation in a list of designations
+      Props:
+         - id: designation id
+         - field: field to be changed
+         - value: new value to be inputted
+   */
    const handleDesignationChange = (id, field, value) => {
       setDesignations(designations.map(designation => 
          designation.id === id ? { ...designation, [field]: value } : designation
       ));
    };
 
+   /*
+      Function: handleAddDesignation
+      Description: creates a new designation
+   */
    const handleAddDesignation = async (e) => {
       e.preventDefault();
-
       try {
          await createDesignation({
             organization_id: organizationId,
@@ -40,17 +48,19 @@ const Designations = ({params}) => {
             created_by: currentUser.id,
             updated_by: currentUser.id
          });
-
          setNewDesignation({ title: "", goal: 0 });
-         fetchData();
+         await fetchData();
       } catch (err) {
          console.log(err);
       }
    };
 
+   /*
+      Function: handleConfirm
+      Description: updates changes made to designation
+   */
    const handleConfirm = async (id) => {
       const updatedDesignation = designations.find(designation => designation.id === id);
-
       try {
          await updateDesignation(id, {title: updatedDesignation.title, goal: updatedDesignation.goal, status: updatedDesignation.status})
       } catch (err) {

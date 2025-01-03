@@ -1,5 +1,9 @@
 import Link from "next/link"
 
+/*
+   Componenet: Settings
+   Description: renders the settings page
+*/
 const Settings = ({params}) => {
    const organizationId = params.organizationId
 

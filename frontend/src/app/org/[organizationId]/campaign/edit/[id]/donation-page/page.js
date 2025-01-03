@@ -1,9 +1,9 @@
 "use client"
 import { useContext } from "react"
 import SectionManager from "@/app/components/sectionManager"
-import { updateDonationPage } from "@/app/services/campaignService"
 import { updatePageSection } from "@/app/services/updateServices"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
+import { updateDonationPage } from "@/app/services/updateServices"
 
 const DonationPage = () => {
    const {donationPageSections, setDonationPageSections, donationPageInputs, campaignId} = useContext(DonationPageContext)
