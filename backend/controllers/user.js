@@ -36,7 +36,7 @@ export const login = (req, res) => {
 
 export const getCurrentUser = (req, res) => {
    const token = req.cookies.session
-   console.log("token", token)
+   console.log("token", req.cookies)
 
    if (!token) return res.status(401).json("Not authenticated");
 
