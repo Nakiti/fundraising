@@ -4,7 +4,7 @@ import { initialThankyouPageSections } from "../../constants/pageSectionsConfig"
 import { getThankYouPage, getPageSections } from "@/app/services/fetchService";
 export const ThankYouPageContext = createContext()
 
-export const ThankYouPageContextProvider = ({campaignId, campaignType, children}) => {
+export const ThankYouPageContextProvider = ({campaignId, children}) => {
    const [thankPageInputs, handleThankPageInputsChange, setThankPageInputs] = useFormInput({})
    const [thankyouPageSections, setThankyouPageSections] = useState(initialThankyouPageSections)
 

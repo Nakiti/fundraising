@@ -31,8 +31,6 @@ export const getTransaction = (req, res) => {
 }
 
 export const getTransactionsbyCampaign = (req, res) => {
-   // const query = "SELECT * FROM transactions WHERE `campaign_id` = ?"
-
    const query = `
       SELECT transactions.*, campaign_details.external_name 
       FROM transactions 
@@ -118,8 +116,6 @@ export const getFiltered = (req, res) => {
    `
    const status = req.query.status
    const id = req.params.id
-
-   console.log(id)
 
    if (status == "all") {
       query = `

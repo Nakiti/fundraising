@@ -1,6 +1,6 @@
 "use client"
 
-import FilePreview from "./filePreview"
+import FilePreview from "../components/filePreview"
 import { useState } from "react"
 const Share = () => {
    const [files, setFiles] = useState([{file: "", fileURL: ""}])

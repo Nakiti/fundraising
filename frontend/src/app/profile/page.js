@@ -10,10 +10,11 @@ const Profile = () => {
    const [organizations, setOrganizations] = useState(null)
 
    useEffect(() => {
-      console.log(currentUser)
 
       const fetchData = async() => {
-         const response = await getUserOrganizations(currentUser && currentUser.id)
+         console.log(currentUser)
+
+         const response = await getUserOrganizations(currentUser.id)
          setOrganizations(response)
       }
 

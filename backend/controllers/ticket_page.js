@@ -5,12 +5,11 @@ const upload = multer({
    limits: { 
       fileSize: 5 * 1024 * 1024,
       fieldSize: 25 * 1024 * 1024
-   }, // 5MB limit
-});
+   }, 
+})
 
 export const createTicketPage = (req, res) => {
    const query = "INSERT INTO ticket_pages (`campaign_id`) VALUES ?"
-
    const value = [[req.body.campaignId]]
 
    db.query(query, [value], (err, data) => {

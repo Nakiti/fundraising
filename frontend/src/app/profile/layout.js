@@ -14,13 +14,13 @@ const ProfileLayout = ({children}) => {
 
    useEffect(() => {
       const fetchData = async() => {
-         const userResponse = await getUserData(currentUser && currentUser.id)
+         console.log("user from layout", currentUser)
+         const userResponse = await getUserData(currentUser.id)
          setUserData(userResponse)
       }
 
       fetchData()
    }, [currentUser])
-
 
    return (
       <div>

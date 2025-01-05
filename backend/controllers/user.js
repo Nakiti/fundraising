@@ -5,7 +5,6 @@ import { serialize } from "cookie"
 
 export const login = (req, res) => {
    const query = "SELECT * FROM users WHERE email = ?"
-   console.log("userid", req.body)
 
    db.query(query, [req.body.email], (err, data) => {
       if (err) return console.log(err)
@@ -25,7 +24,7 @@ export const login = (req, res) => {
       const cookie = serialize("session", token, {
          httpOnly: true,
          secure: false,
-         maxAge: 60 * 60 * 24, // 1 day in seconds
+         maxAge: 60 * 60 * 24,
          path: "/"
       });
 
@@ -37,14 +36,13 @@ export const login = (req, res) => {
 
 export const getCurrentUser = (req, res) => {
    const token = req.cookies.session
-   console.log("tpoken", token)
+   console.log("token", token)
 
-   if (!token) return res.json("Not authenticated");
+   if (!token) return res.status(401).json("Not authenticated");
 
    jwt.verify(token, "jwtkey", (err, data) => {
       if (err) return res.status(403).json("Token is not Valid")
       
-      console.log(data)
       res.status(200).json({id: data.id })
    })
 }

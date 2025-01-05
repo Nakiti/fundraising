@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 export const middleware = (req) => {
-
    const token = req.cookies.get("session");
    console.log("Token found: ", token);
 
@@ -15,7 +14,7 @@ export const middleware = (req) => {
 
    if (token && isAuthPage) {
       console.log("Redirecting to dashboard...");
-      return NextResponse.redirect(new URL("/org/dashboard/campaigns", req.url));
+      return NextResponse.redirect(new URL(`/profile`, req.url));
    }
 
    return NextResponse.next();

@@ -92,7 +92,7 @@ const CampaignPage = ({params}) => {
                      campaignType && campaignType == "crowdfunding" ?
                      `/organization/${organizationId}/campaign/${campaignId}/donation-page/`
                      : campaignType == "peer-to-peer" ?
-                     `/organization/${organizationId}/campaign/${campaignId}/peer-landing-page/`
+                     `/organization/${organizationId}/campaign/${campaignId}/peer-landing/`
                      : campaignType == "donation" ?
                      `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
                      : `/organization/${organizationId}/campaign/${campaignId}/ticket/`

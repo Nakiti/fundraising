@@ -5,13 +5,11 @@ import { createContext, useState, useEffect } from "react";
 
 export const PeerLandingPageContext = createContext()
 
-export const PeerLandingPageContextProvider = ({campaignId, campaignType, children}) => {
+export const PeerLandingPageContextProvider = ({campaignId, children}) => {
    const [peerLandingPageSections, setPeerLandingPageSections] = useState(initialPeerLandingPageSections)
    const [peerLandingPageInputs, handlePeerLandingPageInputsChange, setPeerLandingPageInputs] = useFormInput({})
 
    useEffect(() => {
-      if (campaignType !== "peer-to-peer") return
-
       const fetchData = async() => {
          try {
             const peerLandingResponse = await getPeerLandingPage(campaignId)
@@ -42,10 +40,6 @@ export const PeerLandingPageContextProvider = ({campaignId, campaignType, childr
 
       fetchData()
    }, [])
-
-   if (campaignType !== "peer-to-peer") {
-      return <>{children}</>
-   }
 
    return (
       <PeerLandingPageContext.Provider value={{campaignId, peerLandingPageInputs, 

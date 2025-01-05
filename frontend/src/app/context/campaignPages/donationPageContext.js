@@ -11,8 +11,6 @@ export const DonationPageContextProvider = ({campaignId, campaignType, children}
    const [selectedDesignations, setSelectedDesignations] = useState([]);
 
    useEffect(() => {
-      if (campaignType != "crowdfunding") return
-
       const fetchData = async() => {
          try {
             const donationResponse = await getDonationPage(campaignId)
@@ -54,11 +52,6 @@ export const DonationPageContextProvider = ({campaignId, campaignType, children}
 
       fetchData()
    }, [])
-
-
-   if (campaignType !== "crowdfunding") {
-      return <>{children}</>
-   }
 
    return (
       <DonationPageContext.Provider value={{donationPageInputs, handleDonationPageInputsChange, 

@@ -2,8 +2,8 @@ import { db } from "../db.js";
 import multer from "multer"
 const upload = multer({
    dest: 'uploads/',
-   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-});
+   limits: { fileSize: 5 * 1024 * 1024 },
+})
 
 export const createThankYouPage = (req, res) => {
    const query = "INSERT INTO thankyou_pages (`campaign_id`, `updated_at`, `updated_by`) VALUES (?)"

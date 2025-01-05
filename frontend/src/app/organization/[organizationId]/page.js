@@ -20,7 +20,7 @@ const Organization = ({ params }) => {
 
    const scrollToCampaigns = () => {
       if (campaignsRef.current) {
-      campaignsRef.current.scrollIntoView({ behavior: "smooth" });
+         campaignsRef.current.scrollIntoView({ behavior: "smooth" });
       }
    };
 

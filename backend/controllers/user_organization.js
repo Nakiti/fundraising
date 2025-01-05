@@ -1,7 +1,6 @@
 import { db } from "../db.js"
 
 export const createUserOrganizationRelation = (req, res) => {
-
    const query = "INSERT INTO user_organizations (`user_id`, `organization_id`, `status`, `role`, `created_at`) VALUES ?"
 
    const values = [
@@ -57,7 +56,6 @@ export const updateUserOrganizationRelation = (req, res) => {
    `
 
    const value = [req.params.id]
-   console.log(value)
 
    db.query(query, value, (err, data) => {
       if (err) return console.log(err)

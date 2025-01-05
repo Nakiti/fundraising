@@ -5,14 +5,12 @@ import { getTicketPage, getPageSections, getCampaignTickets } from "@/app/servic
 
 export const TicketPageContext = createContext()
 
-export const TicketPageContextProvider = ({campaignId, campaignType, children}) => {
+export const TicketPageContextProvider = ({campaignId, children}) => {
    const [ticketPageSections, setTicketPageSections] = useState(initialTicketPageSections)
    const [ticketsPageInputs, handleTicketsPageInputs, setTicketsPageInputs] = useFormInput({})
    const [tickets, setTickets] = useState([])
 
    useEffect(() => {
-      if (campaignType != "ticketed-event") return
-
       const fetchData = async() =>{
          try {
             const ticketPageResponse = await getTicketPage(campaignId)
@@ -49,10 +47,6 @@ export const TicketPageContextProvider = ({campaignId, campaignType, children}) 
 
       fetchData()
    }, [])
-
-   if (campaignType !== "ticketed-event") {
-      return <>{children}</>
-   }
 
    return (
       <TicketPageContext.Provider value={{campaignId, ticketPageSections, 

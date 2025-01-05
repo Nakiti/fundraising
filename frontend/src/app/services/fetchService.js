@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://fundraising-d5a9gdc2d9ctehbt.canadacentral-01.azurewebsites.net/api";
+const API_BASE_URL = "http://localhost:4000/api";
 
 //Campaign
 
@@ -222,7 +222,7 @@ export const getCurrentUser = async() => {
       const response = await axios.get(`${API_BASE_URL}/user/getCurrentUser`, {
          withCredentials: true,
       });
-      console.log(response.data)
+      console.log("data", response.data)
       return response.data
    } catch (err) {
       console.log(err)

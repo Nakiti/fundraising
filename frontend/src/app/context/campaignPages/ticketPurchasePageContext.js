@@ -5,13 +5,11 @@ import { initialTicketPurchaseSections } from "@/app/constants/pageSectionsConfi
 
 export const TicketPurchasePageContext = createContext()
 
-export const TicketPurchasePageContextProvider = ({campaignId, campaignType, children}) => {
+export const TicketPurchasePageContextProvider = ({campaignId, children}) => {
    const [ticketPurchaseInputs, handleTicketPurchaseInputsChange, setTicketPurchaseInputs] = useFormInput({})
    const [ticketPurchaseSections, setTicketPurchaseSections] = useState(initialTicketPurchaseSections)
 
    useEffect(() => {
-      if (campaignType != "ticketed-event") return
-
       const fetchData = async() => {
          try {
             const response = await getTicketPurchasePage(campaignId)
@@ -39,10 +37,6 @@ export const TicketPurchasePageContextProvider = ({campaignId, campaignType, chi
 
       fetchData()
    }, [])
-
-   if (campaignType !== "ticketed-event") {
-      return <>{children}</>
-   }
 
    return (
       <TicketPurchasePageContext.Provider value={{campaignId, ticketPurchaseInputs, handleTicketPurchaseInputsChange, 

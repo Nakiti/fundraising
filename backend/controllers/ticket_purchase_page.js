@@ -17,7 +17,6 @@ export const createTicketPurchasePage = (req, res) => {
 
 export const updateTicketPurchasePage = (req, res) => {
    const query = "UPDATE ticket_purchase_pages SET `headline` = ?, `description` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `t_color` = ? WHERE `campaign_id` = ?"
-
    const values = [
       req.body.headline,
       req.body.description,

@@ -39,7 +39,7 @@ const Header = () => {
    }, []);
 
    return (
-      <div className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-md" style={{ height: "10vh" }}>
+      <div className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-sm" style={{ height: "10vh" }}>
          <Link href="/" className="text-lg font-bold ml-8">Title</Link>
          <div className="flex items-center relative h-full border-l border-gray-300">
             {userData ? (
@@ -61,7 +61,7 @@ const Header = () => {
             </div>
             }
             {isDropdownOpen && (
-               <div className="absolute right-0 p-2 mt-44 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+               <div className="absolute right-0 p-2 mt-44 w-72 bg-white border border-gray-200 rounded-md shadow-sm z-10">
                   <Link
                      href="/profile"
                      className="flex items-center text-lg px-4 py-3 text-gray-700 hover:bg-gray-100"
