@@ -1,12 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { AuthContext } from "./authContext";
-import useFormInput from "../hooks/useFormInput";
-import BannerSection from "../org/[organizationId]/page/landing/components/sections/bannerSection";
-import AboutSection from "../org/[organizationId]/page/landing/components/sections/aboutSection";
-import ImpactSection from "../org/[organizationId]/page/landing/components/sections/impactSection";
-import LargeTextSection from "../org/[organizationId]/page/landing/components/sections/largeTextSection";
-import TripleSection from "../org/[organizationId]/page/landing/components/sections/tripleSection";
-import { getLandingPage, getPageSections } from "../services/fetchService";
+import BannerSection from "@/app/org/[organizationId]/page/landing/components/sections/bannerSection";
+import AboutSection from "@/app/org/[organizationId]/page/landing/components/sections/aboutSection";
+import ImpactSection from "@/app/org/[organizationId]/page/landing/components/sections/impactSection";
+import LargeTextSection from "@/app/org/[organizationId]/page/landing/components/sections/largeTextSection";
+import TripleSection from "@/app/org/[organizationId]/page/landing/components/sections/tripleSection";
+import { getLandingPage, getPageSections } from "@/app/services/fetchService";
+import useFormInput from "@/app/hooks/useFormInput";
 
 export const LandingPageContext = createContext()
 

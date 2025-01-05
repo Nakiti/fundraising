@@ -1,6 +1,6 @@
 "use client"
 import { useContext } from "react"
-import { LandingPageContext } from "@/app/context/landingPageContext"
+import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
 
 const LandingPageDesign = () => {
    const {inputs, handleInputsChange} = useContext(LandingPageContext)

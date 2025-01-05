@@ -1,6 +1,6 @@
 "use client"
 import { useContext, useState } from "react"
-import { LandingPageContext } from "@/app/context/landingPageContext"
+import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
 import SectionManager from "@/app/components/sectionManager";
 
 const Landing = () => {

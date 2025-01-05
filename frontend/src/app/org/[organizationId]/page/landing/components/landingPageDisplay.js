@@ -1,7 +1,7 @@
 "use client";
 import { CgProfile } from "react-icons/cg";
 import { useContext, useState } from "react";
-import { LandingPageContext } from "@/app/context/landingPageContext";
+import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
 
 import { IoIosClose } from "react-icons/io";
 

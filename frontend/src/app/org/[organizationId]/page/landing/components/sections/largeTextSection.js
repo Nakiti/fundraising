@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { LandingPageContext } from "@/app/context/landingPageContext";
+import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
 
 const LargeTextSection = () => {
 

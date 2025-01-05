@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { LandingPageContext } from "@/app/context/landingPageContext";
+import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
 
 const ImpactSection = () => {
    const {inputs, handleInputsChange} = useContext(LandingPageContext)
