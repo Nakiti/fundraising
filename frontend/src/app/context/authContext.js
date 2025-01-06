@@ -19,9 +19,10 @@ export const AuthContextProvider = ({children}) => {
    };
 
    useEffect(() => {
+      // always checks that user is logged in
       const fetchData = async () => {
          const response = await getCurrentUser()
-         console.log("respose", response)
+         console.log("response", window.location.href, response)
          setCurrentUser(response)
       }
       
