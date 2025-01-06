@@ -9,7 +9,7 @@ const OrgLayout = ({params, children}) => {
 
    return (
       <div>
-         {currentUser && <Header organizationId={organizationId} user={currentUser}/>}
+         {<Header organizationId={organizationId}/>}
          <div style={{height: "90vh"}}> 
             {children} 
          </div>
