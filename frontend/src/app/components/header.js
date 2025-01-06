@@ -27,9 +27,9 @@ const Header = () => {
    useEffect(() => {
       const fetchData = async() => {
          try {
+            console.log("current user form header \n", currentUser)
             const response = await getUserData(currentUser.id)
             setUserData(response)
-            console.log(response)
          } catch (err) {
             console.log(err)
          }

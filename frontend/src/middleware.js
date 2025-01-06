@@ -7,19 +7,19 @@ export const middleware = (req) => {
    const isAuthPage = req.nextUrl.pathname == "/login";
    console.log("Is login page: ", isAuthPage);
 
-   // if (!token && !isAuthPage) {
-   //    console.log("Redirecting to login...");
-   //    return NextResponse.redirect(new URL("/login", req.url));
-   // }
+   if (!token && !isAuthPage) {
+      console.log("Redirecting to login...");
+      return NextResponse.redirect(new URL("/login", req.url));
+   }
 
-   // if (token && isAuthPage) {
-   //    console.log("Redirecting to dashboard...");
-   //    return NextResponse.redirect(new URL(`/profile`, req.url));
-   // }
+   if (token && isAuthPage) {
+      console.log("Redirecting to dashboard...");
+      return NextResponse.redirect(new URL(`/profile`, req.url));
+   }
 
    return NextResponse.next();
 };
 
 export const config = {
-   matcher: ["/org/:path*", "/profile", "/organization/:organizationId/campaign/:campaignId/preview"],
+   matcher: ["/org/:path*", "/profile", "/login", "/organization/:organizationId/campaign/:campaignId/preview"],
 };

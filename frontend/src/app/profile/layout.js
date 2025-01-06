@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoIosAdd } from "react-icons/io";
 
+//problem with loading currentUser from AuthContext, temp fixed by not loading header until currentUser is loaded
 const ProfileLayout = ({children}) => {
    const {currentUser} = useContext(AuthContext)
    const [userData, setUserData] = useState(null)
@@ -24,7 +25,7 @@ const ProfileLayout = ({children}) => {
 
    return (
       <div>
-         <Header />
+         {currentUser && <Header />}
          <div className="min-h-screen bg-gray-50">
             <h1 className="text-5xl mt-12 text-center mb-12">Welcome, {userData && userData.first_name} {userData && userData.last_name}</h1>
             <Link href="/createOrganization" className="flex flex-col items-center mb-4 w-1/4 mx-auto cursor-pointer">
