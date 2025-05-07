@@ -19,7 +19,7 @@ const Home = ({params}) => {
 
    const statistics = [
       { label: "Donations", value: summaryData.donation, icon: <FaHandHoldingHeart size={36} className="text-blue-700 mb-3" /> },
-      { label: "New Supporters", value: summaryData.newSupporters, icon: <FaUserPlus size={36} className="text-blue-700 mb-3" /> },
+      { label: "New Supporters", value: 6, icon: <FaUserPlus size={36} className="text-blue-700 mb-3" /> },
       { label: "Raised", value: `$${summaryData.raised || 0}`, icon: <FaDollarSign size={36} className="text-blue-700 mb-3" /> },
    ]
 

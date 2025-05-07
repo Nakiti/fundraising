@@ -7,6 +7,8 @@ import { FaUserCircle, FaRegUser, FaTachometerAlt, FaCog, FaSignOutAlt, } from "
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { getUserData } from "../services/fetchService";
 
+//bug with header, need to fix getCurrentUser in Auth
+
 /*
    Component: Header
    Description: The header that is displayed on all pages related to the organization dashboard
@@ -36,7 +38,7 @@ const Header = () => {
       }
 
       fetchData()
-   }, []);
+   }, [currentUser]);
 
    return (
       <div className="flex justify-between items-center px-4 bg-white border-b border-gray-200 shadow-sm" style={{ height: "10vh" }}>

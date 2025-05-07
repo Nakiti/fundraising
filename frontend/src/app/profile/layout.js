@@ -9,19 +9,20 @@ import { IoIosAdd } from "react-icons/io";
 
 //problem with loading currentUser from AuthContext, temp fixed by not loading header until currentUser is loaded
 const ProfileLayout = ({children}) => {
-   const {currentUser} = useContext(AuthContext)
+   const {currentUser, isLoggedIn} = useContext(AuthContext)
    const [userData, setUserData] = useState(null)
    const pathName = usePathname()
 
    useEffect(() => {
       const fetchData = async() => {
-         console.log("user from layout", currentUser)
-         const userResponse = await getUserData(currentUser.id)
-         setUserData(userResponse)
+         if (currentUser && isLoggedIn) {
+            const userResponse = await getUserData(currentUser.id)
+            setUserData(userResponse)
+         }
       }
 
       fetchData()
-   }, [currentUser])
+   }, [currentUser, isLoggedIn])
 
    return (
       <div>

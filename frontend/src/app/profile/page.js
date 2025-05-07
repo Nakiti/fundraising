@@ -6,20 +6,20 @@ import { getUserData, getUserOrganizations } from "../services/fetchService";
 import Link from "next/link";
 
 const Profile = () => {
-   const {currentUser} = useContext(AuthContext)
+   const {currentUser, isLoggedIn} = useContext(AuthContext)
    const [organizations, setOrganizations] = useState(null)
 
    useEffect(() => {
 
       const fetchData = async() => {
-         console.log(currentUser)
-
-         const response = await getUserOrganizations(currentUser.id)
-         setOrganizations(response)
+         if (isLoggedIn && currentUser) {
+            const response = await getUserOrganizations(currentUser.id)
+            setOrganizations(response)
+         }
       }
 
       fetchData()
-   }, [currentUser])
+   }, [currentUser, isLoggedIn])
 
 
    return (

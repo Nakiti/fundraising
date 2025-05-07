@@ -5,12 +5,16 @@ import { loginUser, logoutUser } from "../services/authService";
 
 export const AuthContext = createContext()
 
+//need to fix getCurrentUser, 
+
 export const AuthContextProvider = ({children}) => {
    const [currentUser, setCurrentUser] = useState(null);
+   const [isLoggedIn, setIsLoggedIn] = useState(false)
  
    const login = async (inputs) => {
       const response = await loginUser(inputs)
       setCurrentUser(response)
+      setIsLoggedIn(true)
    };
 
    const logout = async () => {
@@ -30,7 +34,7 @@ export const AuthContextProvider = ({children}) => {
    }, []);
 
    return (
-      <AuthContext.Provider value={{currentUser, login, logout}}>
+      <AuthContext.Provider value={{currentUser, login, logout, isLoggedIn}}>
          {children}
       </AuthContext.Provider>
    );

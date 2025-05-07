@@ -1,11 +1,11 @@
 import mysql from "mysql2"
 
 let config = {
-   host: "mysql-ehundi.mysql.database.azure.com",
-   user: "nakiti",
-   password: "Nikhil05$",
-   database: "fundraising",
-   port: 3306,
+   host: process.env.DB_HOST,
+   user: process.env.DB_USER,
+   password: process.env.DB_PASSWORD,
+   database: process.env.DB,
+   port: process.env.DB_PORT,
    ssl: {
       rejectUnauthorized: true, 
    },

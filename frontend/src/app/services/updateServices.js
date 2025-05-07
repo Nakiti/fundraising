@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_BASE_URL = "https://fundraising-d5a9gdc2d9ctehbt.canadacentral-01.azurewebsites.net/api";
+const API_BASE_URL = process.env.API_BASE_URL;
 
 export const updateOrganization = async(organizationId, data) => {
    try {
