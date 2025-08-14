@@ -1,53 +1,114 @@
 import { db } from "../db.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
+import { 
+  sendCreated, 
+  sendUpdated, 
+  sendSuccess, 
+  sendNotFound,
+  sendDatabaseError 
+} from "../utils/response.js";
+import { 
+  ValidationError, 
+  NotFoundError, 
+  DatabaseError 
+} from "../utils/errors.js";
 
-export const createCampaignDetails = (req, res) => {
+export const createCampaignDetails = asyncHandler(async (req, res) => {
+   // Validate required fields
+   const { campaign_id, internalName, type, user_id } = req.body;
+   
+   if (!campaign_id || !internalName || !type || !user_id) {
+      throw new ValidationError('Missing required fields: campaign_id, internalName, type, user_id');
+   }
+
    const query = "INSERT INTO campaign_details (`campaign_id`, `internal_name`, `raised`, `visits`, `status`, `type`, `updated_at`, `updated_by`) VALUES (?)"
 
    const values = [
-      req.body.campaign_id,
-      req.body.internalName,
+      campaign_id,
+      internalName,
       0,
       0,
       "inactive",
-      req.body.type,
+      type,
       (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-      req.body.user_id
+      user_id
    ]
 
-   db.query(query, [values], (err, data) => {
-      if (err) return console.log(err)
-      return res.status(200).json(data)
-   })
-}
+   return new Promise((resolve, reject) => {
+      db.query(query, [values], (err, data) => {
+         if (err) {
+            reject(new DatabaseError('Failed to create campaign details', err));
+         } else {
+            resolve(sendCreated(res, data, 'Campaign details created successfully'));
+         }
+      });
+   });
+});
 
-export const updateCampaignDetails = (req, res) => {
+export const updateCampaignDetails = asyncHandler(async (req, res) => {
+   // Validate required fields
+   const { internalName, externalName, goal, defaultDesignation, status, url, userId } = req.body;
+   const { id } = req.params;
+   
+   if (!id) {
+      throw new ValidationError('Campaign ID is required');
+   }
+
+   if (!internalName || !userId) {
+      throw new ValidationError('Missing required fields: internalName, userId');
+   }
+
    const query = "UPDATE campaign_details SET `internal_name` = ?, `external_name` = ?, `goal` = ?, `default_designation` = ?, `status` = ?, `url` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
 
    const values = [
-      req.body.internalName,
-      req.body.externalName,
-      req.body.goal,
-      req.body.defaultDesignation,
-      req.body.status,
-      req.body.url,
+      internalName,
+      externalName,
+      goal,
+      defaultDesignation,
+      status,
+      url,
       (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-      req.body.userId,
-      req.params.id
+      userId,
+      id
    ]
 
-   db.query(query, values, (err, data) => {
-      if (err) return console.log(err)
-      return res.status(200).json(data)
-   })
-}
+   return new Promise((resolve, reject) => {
+      db.query(query, values, (err, data) => {
+         if (err) {
+            reject(new DatabaseError('Failed to update campaign details', err));
+         } else {
+            if (data.affectedRows === 0) {
+               reject(new NotFoundError('Campaign details'));
+            } else {
+               resolve(sendUpdated(res, data, 'Campaign details updated successfully'));
+            }
+         }
+      });
+   });
+});
 
-export const getCampaignDetails = (req, res) => {
+export const getCampaignDetails = asyncHandler(async (req, res) => {
+   // Validate required fields
+   const { id } = req.params;
+   
+   if (!id) {
+      throw new ValidationError('Campaign ID is required');
+   }
+
    const query = "SELECT * FROM campaign_details WHERE campaign_id = ?"
+   const value = [id]
 
-   const value = [req.params.id]
-
-   db.query(query, value, (err, data) => {
-      if (err) return console.log(err)
-      return res.json(data)
-   })
-}
+   return new Promise((resolve, reject) => {
+      db.query(query, value, (err, data) => {
+         if (err) {
+            reject(new DatabaseError('Failed to fetch campaign details', err));
+         } else {
+            if (!data || data.length === 0) {
+               reject(new NotFoundError('Campaign details'));
+            } else {
+               resolve(sendSuccess(res, data[0], 'Campaign details retrieved successfully'));
+            }
+         }
+      });
+   });
+});

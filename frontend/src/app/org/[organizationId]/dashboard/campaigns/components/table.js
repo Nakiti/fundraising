@@ -54,7 +54,7 @@ const Table = ({setData, data, organizationId}) => {
    };
 
    /*
-      Description: Sort data by eithre ascending or descending
+      Description: Sort data by either ascending or descending
    */
    const sortData = (key) => {
       let direction = 'ascending';
@@ -76,82 +76,130 @@ const Table = ({setData, data, organizationId}) => {
    }
 
    return (
-      <div className="px-6 mt-6 mb-4">
-         <div className="overflow-x-auto bg-white">
-            <table className="border-gray-300 w-full">
-               <thead className="border-b border-gray-300">
+      <div className="overflow-hidden">
+         <div className="overflow-x-auto">
+            <table className="w-full">
+               <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                      {columns.map((column, index) => (
                         <th
                            key={index}
-                           className="px-4 py-3 whitespace-nowrap text-center text-gray-700 text-sm font-semibold cursor-pointer hover:text-gray-900 transition-colors"
-                           onClick={() => sortData(column.id)}
+                           className={`px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                              column.sortable ? 'cursor-pointer hover:text-gray-700 transition-colors' : ''
+                           }`}
+                           onClick={() => column.sortable && sortData(column.id)}
                         >
-                           <div className="flex flex-row items-center">
-                           {column.label}
-                           {column.sortable && (
-                              <span className="ml-1 text-gray-500">
-                                 {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
-                                 <FaSortUp className="ml-2 text-blue-600" />) : (<FaSortDown className="ml-2 text-blue-600" />
-                                 )}
-                              </span>
-                           )}
+                           <div className="flex items-center space-x-1">
+                              <span>{column.label}</span>
+                              {column.sortable && (
+                                 <span className="text-gray-400">
+                                    {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
+                                       <FaSortUp className="w-3 h-3 text-blue-600" />
+                                    ) : (
+                                       <FaSortDown className="w-3 h-3 text-blue-600" />
+                                    )}
+                                 </span>
+                              )}
                            </div>
                         </th>
                      ))}
                   </tr>
                </thead>
-               {currentRows && currentRows.length > 0 && <tbody>
-                  {currentRows.map((row, index) => (
-                  <tr
-                     key={index}
-                     className="border-b border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
-                     onClick={() => handleClick(row.id)}
-                  >
-                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.id}</td>
-                     <td className="px-4 py-4 whitespace-nowrap text-center text-md text-gray-900">{row.internal_name}</td>
-                     <td className="px-4 py-4 text-center text-md text-gray-900">
-                        {new Date(row.created_at).toLocaleDateString("en-US")}
-                     </td>
-                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : "$"+ (row.amount_raised || 0)}</td>
-                     {/* <td className="px-4 py-4 text-center text-md text-gray-600">{row.status == "inactive" ? "-" : "$"+row.goal}</td> */}
-                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : row.donations}</td>
-                     <td className="px-4 py-4 text-center text-md text-gray-900">{row.status == "inactive" ? "-" : row.visits}</td>
-                     <td className="px-4 py-4 text-center text-md text-gray-900">
-                        {row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase()}
-                     </td>
-                     <td className="px-4 py-4 text-center">
-                        <span
-                        className={`px-4 py-1 w-24 rounded-full text-white text-xs font-medium ${
-                           row.status === "inactive" ? "bg-red-800" : "bg-green-800"
-                        }`}
+               {currentRows && currentRows.length > 0 && (
+                  <tbody className="bg-white divide-y divide-gray-200">
+                     {currentRows.map((row, index) => (
+                        <tr
+                           key={index}
+                           className="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                           onClick={() => handleClick(row.id)}
                         >
-                        {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
-                        </span>
-                     </td>
-                  </tr>
-                  ))}
-               </tbody>}
+                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              #{row.id}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {row.internal_name}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {new Date(row.created_at).toLocaleDateString("en-US", {
+                                 year: 'numeric',
+                                 month: 'short',
+                                 day: 'numeric'
+                              })}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {row.status === "inactive" ? "-" : `$${(row.amount_raised || 0).toLocaleString()}`}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {row.status === "inactive" ? "-" : row.donations.toLocaleString()}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {row.status === "inactive" ? "-" : row.visits.toLocaleString()}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <span className="capitalize">
+                                 {row.type.replace('-', ' ')}
+                              </span>
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                 className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                                    row.status === "inactive" 
+                                       ? "bg-red-100 text-red-800" 
+                                       : "bg-green-100 text-green-800"
+                                 }`}
+                              >
+                                 {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
+                              </span>
+                           </td>
+                        </tr>
+                     ))}
+                  </tbody>
+               )}
             </table>
          </div>
-         {currentRows && currentRows.length == 0 && <p className="text-gray-700 text-center mx-auto p-4 ">No Campaigns</p>}
-         <div className="flex justify-between items-center my-2 pb-4 text-gray-600 text-sm w-1/2 mx-auto">
-            <button
-               className="flex items-center px-3 py-2 rounded-full hover:bg-gray-200 transition-colors"
-               onClick={handlePreviousPage}
-            >
-               <FaAngleLeft />
-               <span className="ml-1">Previous</span>
-            </button>
-            <p>Page {currentPage} / {totalPages}</p>
-            <button
-               className="flex items-center px-3 py-2 rounded-full hover:bg-gray-200 transition-colors"
-               onClick={handleNextPage}
-            >
-               <span className="mr-1">Next</span>
-               <FaAngleRight />
-            </button>
-         </div>
+         
+         {currentRows && currentRows.length === 0 && (
+            <div className="text-center py-12">
+               <p className="text-gray-500 text-sm">No campaigns found</p>
+            </div>
+         )}
+         
+         {data && data.length > 0 && (
+            <div className="bg-white px-6 py-4 border-t border-gray-200">
+               <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                     Showing {indexOfFirstRow + 1} to {Math.min(indexOfLastRow, data.length)} of {data.length} results
+                  </div>
+                  <div className="flex items-center space-x-2">
+                     <button
+                        className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                           currentPage === 1
+                              ? 'text-gray-400 cursor-not-allowed'
+                              : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                     >
+                        <FaAngleLeft className="w-4 h-4" />
+                     </button>
+                     <span className="text-sm text-gray-700">
+                        Page {currentPage} of {totalPages}
+                     </span>
+                     <button
+                        className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                           currentPage === totalPages
+                              ? 'text-gray-400 cursor-not-allowed'
+                              : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                     >
+                        <FaAngleRight className="w-4 h-4" />
+                     </button>
+                  </div>
+               </div>
+            </div>
+         )}
       </div>
    );
 };

@@ -1,79 +1,132 @@
 import { db } from "../db.js"
 import multer from "multer"
+import { asyncHandler } from "../middleware/errorHandler.js"
+import {
+  sendSuccess,
+  sendCreated,
+  sendUpdated,
+  sendNotFound,
+  sendDatabaseError
+} from "../utils/response.js"
+import {
+  ValidationError,
+  NotFoundError,
+  DatabaseError
+} from "../utils/errors.js"
+
 const upload = multer({
-   dest: 'uploads/',
-   limits: { 
-      fileSize: 5 * 1024 * 1024,
-      fieldSize: 25 * 1024 * 1024
-   }, // 5MB limit
+  dest: 'uploads/',
+  limits: { 
+    fileSize: 5 * 1024 * 1024,
+    fieldSize: 25 * 1024 * 1024
+  }, // 5MB limit
 });
 
-export const createDonationForm = (req, res) => {
-   const query = "INSERT INTO donation_forms (`campaign_id`, `updated_at`, `updated_by`) VALUES (?)"
+export const createDonationForm = asyncHandler(async (req, res) => {
+  const { campaign_id, user_id } = req.body;
+  
+  if (!campaign_id || !user_id) {
+    throw new ValidationError('Missing required fields: campaign_id, user_id');
+  }
 
-   const values = [
-      req.body.campaign_id,
-      (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-      req.body.user_id
-   ]
+  const query = "INSERT INTO donation_forms (`campaign_id`, `updated_at`, `updated_by`) VALUES (?, ?, ?)"
 
-   db.query(query, [values], (err, data) => {
-      if (err) return console.log(err)
-      return res.status(200).json(data.insertId)
-   })
-}
+  const values = [
+    campaign_id,
+    (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+    user_id
+  ]
 
-export const getDonationForm = (req, res) => {
-   const query = "SELECT * FROM donation_forms WHERE `campaign_id` = ?"
-   const value = req.params.id 
-
-   console.log(value)
-
-   db.query(query, [value], (err, data) => {
-      if (err) return console.log(err)
-      console.log("id", data[0].id)
-      return res.status(200).json(data)
-   })
-}
-
-export const updateDonationForm = (req, res) => {
-   upload.single('image')(req, res, (err) => {
+  return new Promise((resolve, reject) => {
+    db.query(query, values, (err, data) => {
       if (err) {
-         if (err.code === 'LIMIT_FILE_SIZE') {
-           return res.status(400).json({ error: "File is too large. Max size is 5MB" });
-         }
-         console.log(err);
-         return res.status(500).json({ error: "Image upload failed" });
+        reject(new DatabaseError('Failed to create donation form', err));
+        return;
+      }
+      resolve(sendCreated(res, { formId: data.insertId }, 'Donation form created successfully'));
+    })
+  })
+})
+
+export const getDonationForm = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
+
+  const query = "SELECT * FROM donation_forms WHERE `campaign_id` = ?"
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) {
+        reject(new DatabaseError('Failed to fetch donation form', err));
+        return;
+      }
+      if (!data || data.length === 0) {
+        reject(new NotFoundError('Donation form'));
+        return;
+      }
+      resolve(sendSuccess(res, data[0], 'Donation form retrieved successfully'));
+    })
+  })
+})
+
+export const updateDonationForm = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { 
+    bg_image, headline, description, button1, button2, button3, 
+    button4, button5, button6, p_color, s_color, bg_color, t_color, user_id 
+  } = req.body;
+  
+  if (!id || !user_id) {
+    throw new ValidationError('Missing required fields: campaign_id, user_id');
+  }
+
+  return new Promise((resolve, reject) => {
+    upload.single('image')(req, res, (err) => {
+      if (err) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          reject(new ValidationError('File is too large. Max size is 5MB'));
+          return;
+        }
+        reject(new DatabaseError('Image upload failed', err));
+        return;
       } 
 
       const query = "UPDATE donation_forms SET `bg_image` = ?, `headline` = ?, `description` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
 
       const values = [
-         req.body.bg_image,
-         req.body.headline,
-         req.body.description,
-         req.body.button1,
-         req.body.button2,
-         req.body.button3,
-         req.body.button4, 
-         req.body.button5,
-         req.body.button6,
-         req.body.p_color,
-         req.body.s_color,
-         req.body.bg_color,
-         req.body.t_color,
-         (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-         req.body.user_id,
-         req.params.id
+        bg_image,
+        headline,
+        description,
+        button1,
+        button2,
+        button3,
+        button4, 
+        button5,
+        button6,
+        p_color,
+        s_color,
+        bg_color,
+        t_color,
+        (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+        user_id,
+        id
       ]
 
-      console.log(values)
-
       db.query(query, values, (err, data) => {
-         if (err) return console.log(err)
-         console.log(data)
-         return res.status(200).json(data)
+        if (err) {
+          reject(new DatabaseError('Failed to update donation form', err));
+          return;
+        }
+        if (data.affectedRows === 0) {
+          reject(new NotFoundError('Donation form'));
+          return;
+        }
+        resolve(sendUpdated(res, data, 'Donation form updated successfully'));
       })
-   })
-}
+    })
+  })
+})
 

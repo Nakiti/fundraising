@@ -1,21 +1,49 @@
 "use client"
-import { useState, useContext, useEffect, act } from "react"
+import { useState, useContext, useEffect } from "react"
 import { AuthContext } from "@/app/context/authContext"
 import { getAllCampaigns, getCampaignsFiltered, getTransactionsOverTime, getUserData } from "@/app/services/fetchService"
 import Link from "next/link"
-import { MdOpenInNew } from "react-icons/md";
-import { FaHandHoldingHeart, FaUserPlus, FaDollarSign } from "react-icons/fa";
+import { MdOpenInNew, MdTrendingUp, MdTrendingDown, MdMoreVert } from "react-icons/md";
+import { FaHandHoldingHeart, FaUserPlus, FaDollarSign, FaCalendarAlt, FaChartLine, FaBell, FaPlus, FaEye } from "react-icons/fa";
+import { IoIosStats } from "react-icons/io";
+import { BsArrowUpRight, BsArrowDownRight } from "react-icons/bs";
 
 /*
    Component: Home
-   Description: Renders the home page
+   Description: Renders the modern home dashboard
  */
 const Home = ({params}) => {
    const {currentUser} = useContext(AuthContext)
    const organizationId = params.organizationId
    const [campaigns, setCampaigns] = useState(null)
    const [active, setActive] = useState("week")
-   const [summaryData, setSummaryData] = useState({donation: 0, newSupporters: 0, raised: 0,}) // newSupporters is not configured currently
+   const [summaryData, setSummaryData] = useState({donation: 0, newSupporters: 0, raised: 0,})
+
+   // Dummy data for enhanced features
+   const dummyData = {
+      recentDonations: [
+         { id: 1, name: "Sarah Johnson", amount: 150, campaign: "Temple Renovation", time: "2 hours ago", avatar: "SJ" },
+         { id: 2, name: "Michael Chen", amount: 75, campaign: "Community Outreach", time: "4 hours ago", avatar: "MC" },
+         { id: 3, name: "Priya Patel", amount: 200, campaign: "Temple Renovation", time: "6 hours ago", avatar: "PP" },
+         { id: 4, name: "David Kim", amount: 50, campaign: "Youth Programs", time: "8 hours ago", avatar: "DK" },
+      ],
+      topCampaigns: [
+         { name: "Temple Renovation", raised: 12500, goal: 20000, donors: 89, trend: "+12%" },
+         { name: "Community Outreach", raised: 8200, goal: 15000, donors: 67, trend: "+8%" },
+         { name: "Youth Programs", raised: 5600, goal: 10000, donors: 45, trend: "+15%" },
+      ],
+      quickStats: [
+         { label: "Total Donations", value: summaryData.donation || 156, change: "+23%", trend: "up", icon: <FaHandHoldingHeart className="text-blue-500" /> },
+         { label: "New Supporters", value: 6, change: "+12%", trend: "up", icon: <FaUserPlus className="text-green-500" /> },
+         { label: "Total Raised", value: `$${summaryData.raised || 26300}`, change: "+18%", trend: "up", icon: <FaDollarSign className="text-purple-500" /> },
+         { label: "Active Campaigns", value: campaigns?.length || 5, change: "+2", trend: "up", icon: <IoIosStats className="text-orange-500" /> },
+      ],
+      notifications: [
+         { id: 1, message: "New donation received from Sarah Johnson", time: "2 hours ago", type: "donation" },
+         { id: 2, message: "Campaign 'Temple Renovation' reached 60% of goal", time: "4 hours ago", type: "milestone" },
+         { id: 3, message: "New supporter registered", time: "6 hours ago", type: "supporter" },
+      ]
+   }
 
    const statistics = [
       { label: "Donations", value: summaryData.donation, icon: <FaHandHoldingHeart size={36} className="text-blue-700 mb-3" /> },
@@ -81,72 +109,191 @@ const Home = ({params}) => {
    };
 
    return (
-      <div className="w-full h-full">
-         <div className="w-full h-full rounded-sm overflow-y-auto p-6 bg-gray-50">
-            <h1 className="text-4xl font-semibold text-start mb-6 px-8 pt-4 text-gray-800">
-               Your Organization:
-            </h1>
-            <div className="flex justify-end w-3/4 mx-auto">
-               <div className="flex space-x-6 mb-10">
-               {["week", "month", "year"].map((period) => (
-                  <button
-                     key={period}
-                     className={`px-5 py-2 text-md font-medium ${
-                     active === period ? "border-b-4 border-blue-700 text-blue-700" : "text-gray-500"
-                     }`}
-                     onClick={() => handleFilterClick(period)}
-                  >
-                     {`This ${period.charAt(0).toUpperCase() + period.slice(1)}`}
+      <div className="w-full h-full bg-gray-50">
+         <div className="p-6 space-y-6">
+            {/* Header Section */}
+            <div className="flex justify-between items-center">
+               <div>
+                  <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+                  <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your organization.</p>
+               </div>
+               <div className="flex items-center space-x-3">
+                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors duration-200">
+                     <FaBell className="w-5 h-5" />
                   </button>
-               ))}
+                  <Link href={`/org/${organizationId}/dashboard/campaigns`} className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                     <FaPlus className="w-4 h-4" />
+                     <span>New Campaign</span>
+                  </Link>
                </div>
             </div>
-            <div className="w-5/6 mx-auto grid grid-cols-3 gap-6 mb-6">
-               {statistics.map((item) => (
-                  <div
-                  key={item.label}
-                  className="relative bg-white rounded-lg h-44 shadow-sm px-8 py-6 flex flex-col items-center justify-start text-center"
-               >
-                  <div className="absolute -top-6 px-4 py-2 rounded-full bg-white">
-                     {item.icon}
-                  </div>
-                  <h2 className="text-4xl font-semibold mt-6 mb-1 text-gray-700">{item.value}</h2>
-                  <p className="text-md font-medium text-gray-500">{item.label}</p>
+
+            {/* Time Filter */}
+            <div className="flex justify-end">
+               <div className="flex bg-white rounded-lg p-1 shadow-sm">
+                  {["week", "month", "year"].map((period) => (
+                     <button
+                        key={period}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                        active === period 
+                           ? "bg-blue-600 text-white shadow-sm" 
+                           : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        }`}
+                        onClick={() => handleFilterClick(period)}
+                     >
+                        {`This ${period.charAt(0).toUpperCase() + period.slice(1)}`}
+                     </button>
+                  ))}
                </div>
+            </div>
+
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+               {dummyData.quickStats.map((stat, index) => (
+                  <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                     <div className="flex items-center justify-between">
+                        <div className="p-2 bg-gray-50 rounded-lg">
+                           {stat.icon}
+                        </div>
+                        <div className={`flex items-center text-sm font-medium ${
+                           stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                           {stat.trend === 'up' ? <BsArrowUpRight className="w-4 h-4 mr-1" /> : <BsArrowDownRight className="w-4 h-4 mr-1" />}
+                           {stat.change}
+                        </div>
+                     </div>
+                     <div className="mt-4">
+                        <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                        <p className="text-sm text-gray-600 mt-1">{stat.label}</p>
+                     </div>
+                  </div>
                ))}
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm w-3/4 mx-auto mb-10">
-               <p className="p-6 text-lg font-semibold text-gray-600 border-b border-gray-200">
-               Your Organization
-               </p>
-               <div className="p-6 grid grid-cols-2 gap-8 text-gray-700">
-               <div>
-                  <div className="flex items-center justify-between mb-5">
-                     <h2 className="text-lg font-medium">Organization Status</h2>
-                     <p className="px-3 py-1 bg-green-700 text-sm text-white rounded-full">Active</p>
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+               {/* Recent Activity */}
+               <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="p-6 border-b border-gray-100">
+                     <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
+                     <p className="text-sm text-gray-600 mt-1">Latest donations and updates</p>
                   </div>
-                  {["Landing", "Impact", "About"].map((page) => (
-                     <div key={page} className="flex justify-between items-center mb-3">
-                     <div className="flex items-center space-x-3">
-                        <h2 className="text-md font-medium text-gray-600">{page} Page</h2>
-                        <Link href={`/org/${organizationId}/page/${page.toLowerCase()}`}>
-                           <MdOpenInNew className="text-gray-500 hover:text-gray-700" />
-                        </Link>
+                  <div className="p-6">
+                     <div className="space-y-4">
+                        {dummyData.recentDonations.map((donation) => (
+                           <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                              <div className="flex items-center space-x-3">
+                                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <span className="text-sm font-medium text-blue-600">{donation.avatar}</span>
+                                 </div>
+                                 <div>
+                                    <p className="font-medium text-gray-900">{donation.name}</p>
+                                    <p className="text-sm text-gray-600">{donation.campaign}</p>
+                                 </div>
+                              </div>
+                              <div className="text-right">
+                                 <p className="font-semibold text-green-600">${donation.amount}</p>
+                                 <p className="text-xs text-gray-500">{donation.time}</p>
+                              </div>
+                           </div>
+                        ))}
                      </div>
-                     <p className="px-3 py-1 bg-green-700 text-sm text-white rounded-full">Active</p>
+                  </div>
+               </div>
+
+               {/* Top Campaigns */}
+               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="p-6 border-b border-gray-100">
+                     <h2 className="text-xl font-semibold text-gray-900">Top Campaigns</h2>
+                     <p className="text-sm text-gray-600 mt-1">Most successful fundraising</p>
+                  </div>
+                  <div className="p-6">
+                     <div className="space-y-4">
+                        {dummyData.topCampaigns.map((campaign, index) => (
+                           <div key={index} className="p-4 border border-gray-100 rounded-lg">
+                              <div className="flex items-center justify-between mb-2">
+                                 <h3 className="font-medium text-gray-900">{campaign.name}</h3>
+                                 <span className="text-sm font-medium text-green-600">{campaign.trend}</span>
+                              </div>
+                              <div className="mb-3">
+                                 <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>${campaign.raised.toLocaleString()}</span>
+                                    <span>${campaign.goal.toLocaleString()}</span>
+                                 </div>
+                                 <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                       className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                       style={{ width: `${(campaign.raised / campaign.goal) * 100}%` }}
+                                    ></div>
+                                 </div>
+                              </div>
+                              <div className="flex justify-between text-xs text-gray-500">
+                                 <span>{campaign.donors} donors</span>
+                                 <span>{Math.round((campaign.raised / campaign.goal) * 100)}% funded</span>
+                              </div>
+                           </div>
+                        ))}
                      </div>
-                  ))}
-               </div>
-               <div>
-                  <div className="flex items-center justify-between mb-5">
-                     <h2 className="text-lg font-medium">Organization Information</h2>
-                  </div>
-                  <div className="flex justify-between mb-3">
-                     <h2 className="text-md font-medium text-gray-600">Active Campaigns:</h2>
-                     <p className="px-3 py-1 text-md font-medium text-gray-700">{campaigns && campaigns.length}</p>
                   </div>
                </div>
+            </div>
+
+            {/* Organization Status */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+               <div className="p-6 border-b border-gray-100">
+                  <h2 className="text-xl font-semibold text-gray-900">Organization Status</h2>
+                  <p className="text-sm text-gray-600 mt-1">Overview of your organization's health</p>
+               </div>
+               <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div>
+                        <div className="flex items-center justify-between mb-6">
+                           <h3 className="text-lg font-medium text-gray-900">Organization Status</h3>
+                           <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">Active</span>
+                        </div>
+                        <div className="space-y-4">
+                           {["Landing", "Impact", "About"].map((page) => (
+                              <div key={page} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                 <div className="flex items-center space-x-3">
+                                    <h4 className="text-sm font-medium text-gray-700">{page} Page</h4>
+                                    <Link href={`/org/${organizationId}/page/${page.toLowerCase()}`}>
+                                       <FaEye className="text-gray-400 hover:text-gray-600 transition-colors duration-200" />
+                                    </Link>
+                                 </div>
+                                 <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Active</span>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                     <div>
+                        <div className="flex items-center justify-between mb-6">
+                           <h3 className="text-lg font-medium text-gray-900">Quick Actions</h3>
+                        </div>
+                        <div className="space-y-3">
+                           <Link href={`/org/${organizationId}/dashboard/campaigns`} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200">
+                              <div className="flex items-center space-x-3">
+                                 <IoIosStats className="text-blue-600" />
+                                 <span className="text-sm font-medium text-blue-900">Manage Campaigns</span>
+                              </div>
+                              <BsArrowUpRight className="text-blue-600" />
+                           </Link>
+                           <Link href={`/org/${organizationId}/dashboard/transactions`} className="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-200">
+                              <div className="flex items-center space-x-3">
+                                 <FaDollarSign className="text-green-600" />
+                                 <span className="text-sm font-medium text-green-900">View Transactions</span>
+                              </div>
+                              <BsArrowUpRight className="text-green-600" />
+                           </Link>
+                           <Link href={`/org/${organizationId}/dashboard/settings`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                              <div className="flex items-center space-x-3">
+                                 <FaCalendarAlt className="text-gray-600" />
+                                 <span className="text-sm font-medium text-gray-900">Organization Settings</span>
+                              </div>
+                              <BsArrowUpRight className="text-gray-600" />
+                           </Link>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </div>
          </div>

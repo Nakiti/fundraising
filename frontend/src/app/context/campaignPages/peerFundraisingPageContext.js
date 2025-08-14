@@ -1,6 +1,6 @@
 import { initialPeerFundraisingPageSections } from "@/app/constants/pageSectionsConfig";
 import useFormInput from "@/app/hooks/useFormInput";
-import { getPageSections, getPeerFundraisingPage } from "@/app/services/fetchService";
+import { PageService } from "@/app/services/fetchService";
 import { createContext, useState, useEffect } from "react";
 
 export const PeerFundraisingPageContext = createContext()
@@ -12,7 +12,7 @@ export const PeerFundraisingPageContextProvider = ({campaignId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const peerFundraisingResponse = await getPeerFundraisingPage(campaignId)
+            const peerFundraisingResponse = await PageService.getPeerFundraisingPage(campaignId)
             const peerFundraisingPageId = peerFundraisingResponse.id
 
             setPeerFundraisingPageInputs({
@@ -27,7 +27,7 @@ export const PeerFundraisingPageContextProvider = ({campaignId, children}) => {
                t_color: peerFundraisingResponse.t_color || "",
             })
 
-            const peerFundraisingSections = await getPageSections(peerFundraisingPageId)
+            const peerFundraisingSections = await PageService.getPageSections(peerFundraisingPageId)
             handlePeerFundraisingPageInputsChange((prevSections) => {
                return prevSections.map(section => {
                   const match = peerFundraisingSections.find((item) => item.name == section.name)

@@ -1,32 +1,38 @@
-import { createContext, useContext, useState } from "react";
-import useFormInput from "../../hooks/useFormInput";
-import BannerSection from "../../org/[organizationId]/page/about/components/sections/bannerSection";
-import WhatSection from "../../org/[organizationId]/page/about/components/sections/whatSection";
-import WhySection from "../../org/[organizationId]/page/about/components/sections/whySection";
-import TeamSection from "../../org/[organizationId]/page/about/components/sections/teamSection";
+import { createContext, useEffect, useState } from "react";
+import useFormInput from "@/app/hooks/useFormInput";
+import { PageService } from "@/app/services/fetchService";
+
 export const AboutPageContext = createContext()
 
-export const AboutPageContextProvider = ({children}) => {
+export const AboutPageContextProvider = ({organizationId, children}) => {
+   const [aboutPageInputs, handleAboutPageInputsChange, setAboutPageInputs] = useFormInput({})
 
-   const [inputs, handleInputsChange, setInputs] = useFormInput({
-      headline: "",
-      bannerImage: "",
-      whatText: "",
-      whyText: "",
-      bg_color: "",
-      p_color: "",
-      s_color: ""
-   })
+   useEffect(() => {
+      const fetchData = async() => {
+         try {
+            const response = await PageService.getAboutPage(organizationId)
+            setAboutPageInputs({
+               title: response.title || "",
+               description: response.description || "",
+               bgImage: response.bgImage || "",
+               aboutText: response.aboutText || "",
+               aboutImage: response.aboutImage || "",
+               teamText: response.teamText || "",
+               teamImage: response.teamImage || "",
+               bg_color: response.bg_color || "#FFFFFF",
+               p_color: response.p_color || "#000000",
+               s_color: response.s_color || "gray",
+            })
+         } catch (err) {
+            console.log(err)
+         }
+      }
 
-   const [sections, setSections] = useState([
-      {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
-      {name: "what", displayText: "What Section", active: true, required: true, dropdown: false, content: <WhatSection />},
-      {name: "why", displayText: "Why Section", active: true, required: true, dropdown: false, content: <WhySection />},
-      {name: "team", displayText: "Team Section", active: true, required: true, dropdown: false, content: <TeamSection />},
-   ])
+      fetchData()
+   }, [])
 
    return (
-      <AboutPageContext.Provider value={{sections, setSections, inputs, handleInputsChange, setInputs}}>
+      <AboutPageContext.Provider value={{aboutPageInputs, handleAboutPageInputsChange, setAboutPageInputs}}>
          {children}
       </AboutPageContext.Provider>
    )

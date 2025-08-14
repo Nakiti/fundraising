@@ -1,380 +1,501 @@
-import axios from 'axios';
+import { api, validators, errorHandler } from './apiClient.js';
 
-const API_BASE_URL = process.env.API_BASE_URL;
-
-//Campaign
-
-export const getCampaign = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign/get/${campaignId}`);
-      return response.data[0];
-   } catch (err) {
-      console.log(err)
+// Campaign Services
+export class CampaignService {
+   // Get campaign by ID
+   static async getCampaign(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/campaign/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching campaign:', error);
+         throw error;
+      }
    }
-};
 
-export const getSingleDesignation = async(id) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/designation/getSingle/${id}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
+   // Get campaign details
+   static async getCampaignDetails(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/campaign_details/get/${campaignId}`);
+         console.log("omg a response ", response)
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching campaign details:', error);
+         throw error;
+      }
    }
-}
 
-export const getCampaignDetails = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign_details/get/${campaignId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
+   // Get all campaigns by organization
+   static async getAllCampaigns(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/campaign/getByOrg/${organizationId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching campaigns:', error);
+         throw error;
+      }
    }
-}
 
-export const getPageSections = async (pageId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/sections/getSectionsByPage/${pageId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
+   // Search campaigns
+   static async searchCampaigns(query, organizationId) {
+      try {
+         validators.required(query, 'Search Query');
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/campaign/search/${organizationId}?q=${encodeURIComponent(query)}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error searching campaigns:', error);
+         throw error;
+      }
    }
-}
 
-export const getDonationPage = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/donationPage/get/${campaignId}`)
-      console.log(response)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
+   // Get filtered campaigns
+   static async getFilteredCampaigns(organizationId, status, type) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/campaign/getFiltered/${organizationId}`, {
+            params: { status, type }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching filtered campaigns:', error);
+         throw error;
+      }
    }
-}
 
-export const getTicketPurchasePage = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/ticket_purchase_page/get/${campaignId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
-   }
-}
+   // Get campaigns by date range
+   static async getCampaignsByDateRange(start, end, organizationId) {
+      try {
+         validators.date(start, 'Start Date');
+         validators.date(end, 'End Date');
+         validators.id(organizationId, 'Organization ID');
 
-export const getThankYouPage = async(campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/thankYouPage/get/${campaignId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
-   }
-}
+         const startFormatted = new Date(start).toISOString().slice(0, 19).replace('T', ' ');
+         const endFormatted = new Date(end).toISOString().slice(0, 19).replace('T', ' ');
 
-export const getTicketPage = async(campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/ticket_page/get/${campaignId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getPeerLandingPage = async(campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/peer_landing_page/get/${campaignId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getPeerFundraisingPage = async(campaignId) =>{
-   try {
-      const response = await axios.get(`${API_BASE_URL}/peer_fundraising_page/get/${campaignId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
+         const response = await api.get(`/campaign/getDateRange/${organizationId}`, {
+            params: { start: startFormatted, end: endFormatted }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching campaigns by date range:', error);
+         throw error;
+      }
    }
 }
 
-export const getDonationForm = async(campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/donation_form/get/${campaignId}`)
-      console.log("fonrted", response.data[0])
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
+// Page Services
+export class PageService {
+   // Get donation page
+   static async getDonationPage(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/donationPage/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching donation page:', error);
+         throw error;
+      }
+   }
+
+   // Get ticket purchase page
+   static async getTicketPurchasePage(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/ticket_purchase_page/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching ticket purchase page:', error);
+         throw error;
+      }
+   }
+
+   // Get thank you page
+   static async getThankYouPage(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/thankYouPage/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching thank you page:', error);
+         throw error;
+      }
+   }
+
+   // Get ticket page
+   static async getTicketPage(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/ticket_page/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching ticket page:', error);
+         throw error;
+      }
+   }
+
+   // Get peer landing page
+   static async getPeerLandingPage(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/peer_landing_page/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching peer landing page:', error);
+         throw error;
+      }
+   }
+
+   // Get peer fundraising page
+   static async getPeerFundraisingPage(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/peer_fundraising_page/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching peer fundraising page:', error);
+         throw error;
+      }
+   }
+
+   // Get donation form
+   static async getDonationForm(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/donation_form/get/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching donation form:', error);
+         throw error;
+      }
+   }
+
+   // Get page sections
+   static async getPageSections(pageId) {
+      try {
+         validators.id(pageId, 'Page ID');
+         const response = await api.get(`/sections/getSectionsByPage/${pageId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching page sections:', error);
+         throw error;
+      }
+   }
+
+   // Get landing page
+   static async getLandingPage(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/landing_page/get/${organizationId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching landing page:', error);
+         throw error;
+      }
+   }
+
+   // Get about page
+   static async getAboutPage(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/about_page/get/${organizationId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching about page:', error);
+         throw error;
+      }
    }
 }
 
-export const getAllCampaigns = async(organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign/getByOrg/${organizationId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
+// Organization Services
+export class OrganizationService {
+   // Get organization
+   static async getOrganization(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/organization/get/${organizationId}`);
+         return response.success ? response.data[0] : null;
+      } catch (error) {
+         console.error('Error fetching organization:', error);
+         throw error;
+      }
    }
 }
 
-// export const getActiveCampaigns = async(organizationId) => {
-//    try {
-//       const response = await axios.get(`${API_BASE_URL}/campaign/getActive/${organizationId}`)
-//       return response.data
-//    } catch (err) {
-//       console.log(err)
-//    }
-// }
+// Designation Services
+export class DesignationService {
+   // Get campaign designations
+   static async getCampaignDesignations(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/campaign_designation/get/${campaignId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching campaign designations:', error);
+         throw error;
+      }
+   }
 
-export const getCampaignSearch = async (query, organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign/search/${organizationId}?q=${query}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
+   // Get single designation
+   static async getSingleDesignation(id) {
+      try {
+         validators.id(id, 'Designation ID');
+         const response = await api.get(`/designation/getSingle/${id}`);
+         return response.success ? response.data[0] : null;
+      } catch (error) {
+         console.error('Error fetching designation:', error);
+         throw error;
+      }
+   }
+
+   // Get active designations
+   static async getActiveDesignations(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/designation/getActive/${organizationId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching active designations:', error);
+         throw error;
+      }
+   }
+
+   // Get all designations
+   static async getAllDesignations(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/designation/get/${organizationId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching designations:', error);
+         throw error;
+      }
    }
 }
 
-export const getCampaignsFiltered = async(organizationId, status, type) => {
-   try {
-      console.log(status, type)
-      const response = await axios.get(`${API_BASE_URL}/campaign/getFiltered/${organizationId}`, {
-         params: { status, type }
-      });      
-      return response.data
-   } catch (err) {
-      console.log("err", err)
+// User Services
+export class UserService {
+   // Get all users by organization
+   static async getAllUsers(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/user/getByOrg/${organizationId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching users:', error);
+         throw error;
+      }
+   }
+
+   // Get user data
+   static async getUserData(userId) {
+      try {
+         validators.id(userId, 'User ID');
+         const response = await api.get(`/user/get/${userId}`);
+         console.log("da response for da user data ", response)
+         return response.success ? response.data.user : null;
+      } catch (error) {
+         console.error('Error fetching user data:', error);
+         throw error;
+      }
+   }
+
+   // Get user organizations
+   static async getUserOrganizations(userId) {
+      try {
+         validators.id(userId, 'User ID');
+         const response = await api.get(`/user_organization/get/${userId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching user organizations:', error);
+         throw error;
+      }
+   }
+
+   // Get pending user organizations
+   static async getPendingUserOrganizations(userId) {
+      try {
+         validators.id(userId, 'User ID');
+         const response = await api.get(`/user_organization/getPending/${userId}`);
+         return response.success ? response.data.data : [];
+      } catch (error) {
+         console.error('Error fetching pending user organizations:', error);
+         throw error;
+      }
    }
 }
 
-export const getCampaignsDateRange = async(start, end, organizationId) => {
+// Transaction Services
+export class TransactionService {
+   // Get transactions by organization
+   static async getTransactionsByOrg(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/transaction/getByOrg/${organizationId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching transactions by org:', error);
+         throw error;
+      }
+   }
 
-   start = (new Date(start)).toISOString().slice(0, 19).replace('T', ' ')
-   end = (new Date(end)).toISOString().slice(0, 19).replace('T', ' ')
+   // Get transactions by campaign
+   static async getTransactionsByCampaign(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/transaction/getByCampaign/${campaignId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching transactions by campaign:', error);
+         throw error;
+      }
+   }
 
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign/getDateRange/${organizationId}`, {
-         params: {
-            start, 
-            end
-         }
-      })
-      return response.data
-   } catch (err) {
-      console.log(err)
+   // Get transactions over time
+   static async getTransactionsOverTime(organizationId, start, end) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.date(start, 'Start Date');
+         validators.date(end, 'End Date');
+         
+         const response = await api.get(`/transaction/getTimeframe/${organizationId}`, {
+            params: { start, end }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching transactions over time:', error);
+         throw error;
+      }
+   }
+
+   // Get transactions by date range
+   static async getTransactionsByDateRange(start, end, organizationId) {
+      try {
+         validators.date(start, 'Start Date');
+         validators.date(end, 'End Date');
+         validators.id(organizationId, 'Organization ID');
+
+         const startFormatted = new Date(start).toISOString().slice(0, 19).replace('T', ' ');
+         const endFormatted = new Date(end).toISOString().slice(0, 19).replace('T', ' ');
+
+         const response = await api.get(`/campaign/getDateRange/${organizationId}`, {
+            params: { start: startFormatted, end: endFormatted }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching transactions by date range:', error);
+         throw error;
+      }
+   }
+
+   // Get filtered transactions
+   static async getFilteredTransactions(organizationId, status) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/transaction/getFiltered/${organizationId}`, {
+            params: { status }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching filtered transactions:', error);
+         throw error;
+      }
+   }
+
+   // Search transactions
+   static async searchTransactions(query, organizationId) {
+      try {
+         validators.required(query, 'Search Query');
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/transaction/search/${organizationId}?q=${encodeURIComponent(query)}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error searching transactions:', error);
+         throw error;
+      }
    }
 }
 
-//Organization
+// Content Services
+export class ContentService {
+   // Get custom questions
+   static async getCustomQuestions(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/campaign_question/get/${campaignId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching custom questions:', error);
+         throw error;
+      }
+   }
 
-export const getOrganization = async(organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/organization/get/${organizationId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
+   // Get campaign tickets
+   static async getCampaignTickets(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/campaign_ticket/get/${campaignId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching campaign tickets:', error);
+         throw error;
+      }
+   }
+
+   // Get FAQs
+   static async getFaqs(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/faq/get/${campaignId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching FAQs:', error);
+         throw error;
+      }
    }
 }
 
-//Designations
+// Legacy function exports for backward compatibility
+export const getCampaign = CampaignService.getCampaign;
+export const getCampaignDetails = CampaignService.getCampaignDetails;
+export const getAllCampaigns = CampaignService.getAllCampaigns;
+export const getCampaignSearch = CampaignService.searchCampaigns;
+export const getCampaignsFiltered = CampaignService.getFilteredCampaigns;
+export const getCampaignsDateRange = CampaignService.getCampaignsByDateRange;
 
-export const getCampaignDesignations = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign_designation/get/${campaignId}`);
-      console.log(response.data)
-      return response.data;
-   } catch (err) {
-      console.error('Error fetching campaign designations:', err);
-      throw err;
-   }
-};
+export const getDonationPage = PageService.getDonationPage;
+export const getTicketPurchasePage = PageService.getTicketPurchasePage;
+export const getThankYouPage = PageService.getThankYouPage;
+export const getTicketPage = PageService.getTicketPage;
+export const getPeerLandingPage = PageService.getPeerLandingPage;
+export const getPeerFundraisingPage = PageService.getPeerFundraisingPage;
+export const getDonationForm = PageService.getDonationForm;
+export const getPageSections = PageService.getPageSections;
+export const getLandingPage = PageService.getLandingPage;
+export const getAboutPage = PageService.getAboutPage;
 
-export const getActiveDesignations = async (organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/designation/getActive/${organizationId}`);
-      return response.data;
-   } catch (err) {
-      console.error('Error fetching active designations:', err);
-      throw err;
-   }
-};
+export const getOrganization = OrganizationService.getOrganization;
 
-export const getAllDesignations = async (organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/designation/get/${organizationId}`);
-      return response.data;
-   } catch (err) {
-      console.error('Error fetching active designations:', err);
-      throw err;
-   }
-};
+export const getCampaignDesignations = DesignationService.getCampaignDesignations;
+export const getSingleDesignation = DesignationService.getSingleDesignation;
+export const getActiveDesignations = DesignationService.getActiveDesignations;
+export const getAllDesignations = DesignationService.getAllDesignations;
 
-// User
+export const getAllUsers = UserService.getAllUsers;
+export const getUserData = UserService.getUserData;
+export const getUserOrganizations = UserService.getUserOrganizations;
+export const getPendingUserOrganizations = UserService.getPendingUserOrganizations;
 
-export const getAllUsers = async(organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/user/getByOrg/${organizationId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
+export const getTransactionsByOrg = TransactionService.getTransactionsByOrg;
+export const getTransactionsByCampaign = TransactionService.getTransactionsByCampaign;
+export const getTransactionsOverTime = TransactionService.getTransactionsOverTime;
+export const getTransactionsDateRange = TransactionService.getTransactionsByDateRange;
+export const getTransactionsFiltered = TransactionService.getFilteredTransactions;
+export const getTransactionSearch = TransactionService.searchTransactions;
 
-export const getCurrentUser = async() => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/user/getCurrentUser`, {
-         withCredentials: true,
-      });
-      console.log("data", response.data)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getUserData = async(userId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/user/get/${userId}`)
-      return response.data[0]
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-// Transactions
-export const getTransactionsByOrg = async (organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/transaction/getByOrg/${organizationId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getTransactionsByCampaign = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/transaction/getByCampaign/${campaignId}`)
-      // console.log(response.data)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getTransactionsOverTime = async(organizationId, start, end) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/transaction/getTimeframe/${organizationId}`, {params: {start, end}})
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getTransactionsDateRange = async(start, end, organizationId) => {
-
-   start = (new Date(start)).toISOString().slice(0, 19).replace('T', ' ')
-   end = (new Date(end)).toISOString().slice(0, 19).replace('T', ' ')
-
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign/getDateRange/${organizationId}`, {
-         params: {
-            start, 
-            end
-         }
-      })
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getTransactionsFiltered = async(organizationId, status) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/transaction/getFiltered/${organizationId}`, {
-         params: { status }
-      });      
-      return response.data
-   } catch (err) {
-      console.log("err", err)
-   }
-}
-
-export const getTransactionSearch = async (query, organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/transaction/search/${organizationId}?q=${query}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-//Custom Questions
-
-export const getCustomQuestions = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign_question/get/${campaignId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-//tickets
-export const getCampaignTickets = async (campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/campaign_ticket/get/${campaignId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-//faqs
-export const getFaqs = async(campaignId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/faq/get/${campaignId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-//landing page
-
-export const getLandingPage = async(organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/landing_page/get/${organizationId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-//about page
-
-export const getAboutPage = async(organizationId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/about_page/get/${organizationId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-// user organizations
-
-export const getUserOrganizations = async(userId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/user_organization/get/${userId}`)
-      return response.data 
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const getPendingUserOrganizations = async(userId) => {
-   try {
-      const response = await axios.get(`${API_BASE_URL}/user_organization/getPending/${userId}`)
-      return response.data
-   } catch (err) {
-      console.log(err)
-   }
-
-}
+export const getCustomQuestions = ContentService.getCustomQuestions;
+export const getCampaignTickets = ContentService.getCampaignTickets;
+export const getFaqs = ContentService.getFaqs;

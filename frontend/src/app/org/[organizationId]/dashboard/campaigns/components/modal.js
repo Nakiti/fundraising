@@ -1,9 +1,11 @@
 "use client"
 import { useState, useContext, act } from 'react';
 import { IoIosClose } from "react-icons/io";
-import { createCampaign, createCampaignDetails, createDonationForm, createPageSection, createDonationPage, createPeerFundraisingPage, createPeerLandingPage, createThankYouPage, createTicketPage, createTicketPurchasePage } from '@/app/services/createServices';
+import { CampaignCreateService, PageCreateService } from '@/app/services/createServices';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/app/context/authContext';
+import { errorHandler } from '@/app/services/apiClient';
+import ErrorModal from '@/app/components/errorModal';
 
 /*
    Component: Modal
@@ -18,6 +20,7 @@ const Modal = ({setShow, organizationId }) => {
    const { currentUser } = useContext(AuthContext);
    const [internalName, setInternalName] = useState("");
    const [error, setError] = useState(false);
+   const [errorMessage, setErrorMessage] = useState("");
 
    const tabContent = [
       { title: 'Donation Form', content: 'donation' },
@@ -43,59 +46,62 @@ const Modal = ({setShow, organizationId }) => {
       setError(false)
 
       try {
-         const id = await createCampaign(currentUser, organizationId);
-         await createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
+         const id = await CampaignCreateService.createCampaign(currentUser, organizationId);
+         await CampaignCreateService.createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
 
          if (tabContent[activeTab].content === "crowdfunding") {
-            const donationPageId = await createDonationPage(id, currentUser);
+            const donationPageId = await PageCreateService.createDonationPage(id, currentUser);
 
-            await createPageSection(donationPageId, "banner", true, currentUser);
-            await createPageSection(donationPageId, "title", true, currentUser);
-            await createPageSection(donationPageId, "desc", true, currentUser);
-            await createPageSection(donationPageId, "donate", true, currentUser);
+            await PageCreateService.createPageSection(donationPageId, "banner", true, currentUser);
+            await PageCreateService.createPageSection(donationPageId, "title", true, currentUser);
+            await PageCreateService.createPageSection(donationPageId, "desc", true, currentUser);
+            await PageCreateService.createPageSection(donationPageId, "donate", true, currentUser);
 
          } else if (tabContent[activeTab].content == "ticketed-event") {
-            const ticketPageId = await createTicketPage(id, currentUser)
-            const ticketPurchasePageId = await createTicketPurchasePage(id, currentUser)
+            const ticketPageId = await PageCreateService.createTicketPage(id, currentUser)
+            const ticketPurchasePageId = await PageCreateService.createTicketPurchasePage(id, currentUser)
 
-            await createPageSection(ticketPageId, "banner", true, currentUser)
-            await createPageSection(ticketPageId, "about", true, currentUser)
-            await createPageSection(ticketPageId, "event", true, currentUser)
+            await PageCreateService.createPageSection(ticketPageId, "banner", true, currentUser)
+            await PageCreateService.createPageSection(ticketPageId, "about", true, currentUser)
+            await PageCreateService.createPageSection(ticketPageId, "event", true, currentUser)
 
             console.log(ticketPurchasePageId)
-            await createPageSection(ticketPurchasePageId, "title", true, currentUser)
+            await PageCreateService.createPageSection(ticketPurchasePageId, "title", true, currentUser)
          } else if (tabContent[activeTab].content == "peer-to-peer") {
-            const peerLandingPageId = await createPeerLandingPage(id, currentUser)
-            const peerFundraisingPageId = await createPeerFundraisingPage(id, currentUser)
+            const peerLandingPageId = await PageCreateService.createPeerLandingPage(id, currentUser)
+            const peerFundraisingPageId = await PageCreateService.createPeerFundraisingPage(id, currentUser)
 
             console.log("pageid", peerFundraisingPageId)
 
-            await createPageSection(peerLandingPageId, "banner", true, currentUser);
-            await createPageSection(peerLandingPageId, "description", true, currentUser);
+            await PageCreateService.createPageSection(peerLandingPageId, "banner", true, currentUser);
+            await PageCreateService.createPageSection(peerLandingPageId, "description", true, currentUser);
 
-            await createPageSection(peerFundraisingPageId, "banner", true, currentUser);
-            await createPageSection(peerFundraisingPageId, "description", true, currentUser);
-            await createPageSection(peerFundraisingPageId, "title", true, currentUser);
+            await PageCreateService.createPageSection(peerFundraisingPageId, "banner", true, currentUser);
+            await PageCreateService.createPageSection(peerFundraisingPageId, "description", true, currentUser);
+            await PageCreateService.createPageSection(peerFundraisingPageId, "title", true, currentUser);
             // await createPageSection(peerFundraisingPageId, "description", true, currentUser);
 
          }
-         const donationFormId = await createDonationForm(id, currentUser)
-         await createPageSection(donationFormId, "header", currentUser)
-         await createPageSection(donationFormId, "background", currentUser)
-         await createPageSection(donationFormId, "buttons", currentUser)
+         const donationFormId = await PageCreateService.createDonationForm(id, currentUser)
+         await PageCreateService.createPageSection(donationFormId, "header", currentUser)
+         await PageCreateService.createPageSection(donationFormId, "background", currentUser)
+         await PageCreateService.createPageSection(donationFormId, "buttons", currentUser)
 
-         const thankyouPageId = await createThankYouPage(id, currentUser);
-         await createPageSection(thankyouPageId, "message", true, currentUser);
-         await createPageSection(thankyouPageId, "background", true, currentUser);
+         const thankyouPageId = await PageCreateService.createThankYouPage(id, currentUser);
+         await PageCreateService.createPageSection(thankyouPageId, "message", true, currentUser);
+         await PageCreateService.createPageSection(thankyouPageId, "background", true, currentUser);
 
          router.push(`/org/${organizationId}/campaign/edit/${id}/details/about`);
       } catch (err) {
-         console.log(err);
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
       }
    };
 
    return (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex flex-col items-center justify-center z-50">
+         {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="bg-blue-800 p-6 w-2/3 rounded-t-lg flex flex-row justify-between">
             <h2 className="text-white text-2xl">Create New Campaign</h2>
             <button className="text-white" onClick={() => setShow(false)}>

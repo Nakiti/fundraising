@@ -2,9 +2,11 @@
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
-import { getAllDesignations } from "@/app/services/fetchService"
-import { updateDesignation } from "@/app/services/updateServices"
-import { createDesignation } from "@/app/services/createServices"
+import { DesignationService } from "@/app/services/fetchService"
+import { DesignationUpdateService } from "@/app/services/updateServices"
+import { DesignationCreateService } from "@/app/services/createServices"
+import { errorHandler } from "@/app/services/apiClient"
+import ErrorModal from "@/app/components/errorModal"
 import { FaCheck } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa"
 import Link from "next/link";
@@ -17,6 +19,8 @@ import { FaArrowLeft } from "react-icons/fa";
 const Designations = ({params}) => {
    const [designations, setDesignations] = useState([]);
    const [newDesignation, handleNewDesignationChange, setNewDesignation] = useFormInput({title: '', goal: ''})
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
    const organizationId = params.organizationId
    const { currentUser } = useContext(AuthContext);
 
@@ -41,7 +45,7 @@ const Designations = ({params}) => {
    const handleAddDesignation = async (e) => {
       e.preventDefault();
       try {
-         await createDesignation({
+         await DesignationCreateService.createDesignation({
             organization_id: organizationId,
             title: newDesignation.title,
             goal: newDesignation.goal,
@@ -51,7 +55,9 @@ const Designations = ({params}) => {
          setNewDesignation({ title: "", goal: 0 });
          await fetchData();
       } catch (err) {
-         console.log(err);
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
       }
    };
 
@@ -62,9 +68,11 @@ const Designations = ({params}) => {
    const handleConfirm = async (id) => {
       const updatedDesignation = designations.find(designation => designation.id === id);
       try {
-         await updateDesignation(id, {title: updatedDesignation.title, goal: updatedDesignation.goal, status: updatedDesignation.status})
+         await DesignationUpdateService.updateDesignation(id, {title: updatedDesignation.title, goal: updatedDesignation.goal, status: updatedDesignation.status})
       } catch (err) {
-         console.log(err);
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
       }
    };
 
@@ -74,15 +82,18 @@ const Designations = ({params}) => {
 
    const fetchData = async () => {
       try {
-         const response = await getAllDesignations(organizationId)
+         const response = await DesignationService.getAllDesignations(organizationId)
          setDesignations(response);
       } catch (err) {
-         console.log(err);
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
       }
    };
 
    return (
       <div className="w-full h-full overflow-y-auto">
+         {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="p-6 bg-gray-50">
          <div className="w-full h-full p-8 bg-white rounded-lg">
             <Link 

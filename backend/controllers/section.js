@@ -1,54 +1,98 @@
 import { db } from "../db.js";
+import { asyncHandler } from "../middleware/errorHandler.js"
+import {
+  sendSuccess,
+  sendCreated,
+  sendUpdated,
+  sendNotFound,
+  sendDatabaseError
+} from "../utils/response.js"
+import {
+  ValidationError,
+  NotFoundError,
+  DatabaseError
+} from "../utils/errors.js"
 
-export const createSection = (req, res) => {
-   const query = "INSERT INTO sections (`page_id`, `name`, `active`, `updated_at`, `updated_by`) VALUES (?)"
+export const createSection = asyncHandler(async (req, res) => {
+  const { page_id, name, active, user_id } = req.body;
+  
+  if (!page_id || !name || !user_id) {
+    throw new ValidationError('Missing required fields: page_id, name, user_id');
+  }
 
-   const values = [
-      req.body.page_id,
-      req.body.name, 
-      req.body.active,
-      (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-      req.body.user_id
-   ]
+  const query = "INSERT INTO sections (`page_id`, `name`, `active`, `updated_at`, `updated_by`) VALUES (?)"
 
-   db.query(query, [values], (err, data) => {
-      if (err) return console.log(err)
-      return res.status(200).json(data)
-   })
-}
+  const values = [
+    page_id,
+    name, 
+    active || false,
+    (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+    user_id
+  ]
 
-export const updateSection = (req, res) => {
-   const query = "UPDATE sections SET `active` = ? WHERE `id` = ?"
+  return new Promise((resolve, reject) => {
+    db.query(query, [values], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to create section', err));
+      resolve(sendCreated(res, { sectionId: data.insertId }, 'Section created successfully'));
+    })
+  })
+})
 
-   const values = [
-      req.body.active,
-      req.params.id
-   ]
+export const updateSection = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { active } = req.body;
+  
+  if (!id) {
+    throw new ValidationError('Section ID is required');
+  }
 
-   db.query(query, values, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+  const query = "UPDATE sections SET `active` = ? WHERE `id` = ?"
 
-export const getSection = (req, res) => {
-   const query = "SELECT * FROM sections WHERE id = ?"
+  const values = [
+    active,
+    id
+  ]
 
-   const value = [req.params.id]
+  return new Promise((resolve, reject) => {
+    db.query(query, values, (err, data) => {
+      if (err) reject(new DatabaseError('Failed to update section', err));
+      if (data.affectedRows === 0) reject(new NotFoundError('Section'));
+      resolve(sendUpdated(res, data, 'Section updated successfully'));
+    })
+  })
+})
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+export const getSection = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Section ID is required');
+  }
 
-export const getSectionByPage = (req, res) => {
-   const query = "SELECT * FROM sections WHERE page_id = ?"
+  const query = "SELECT * FROM sections WHERE id = ?"
 
-   const value = [req.params.id]
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch section', err));
+      if (!data || data.length === 0) reject(new NotFoundError('Section'));
+      resolve(sendSuccess(res, data[0], 'Section retrieved successfully'));
+    })
+  })
+})
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+export const getSectionByPage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Page ID is required');
+  }
+
+  const query = "SELECT * FROM sections WHERE page_id = ?"
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch sections by page', err));
+      resolve(sendSuccess(res, data, 'Sections retrieved successfully'));
+    })
+  })
+})

@@ -1,19 +1,21 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import useFormInput from "../../hooks/useFormInput";
-import { getDonationPage, getPageSections, getCampaignDesignations } from "../../services/fetchService";
+import { PageService, DesignationService } from "../../services/fetchService";
 import { initialDonationPageSections } from "../../constants/pageSectionsConfig";
+import { CampaignContext } from "../campaignContext";
 
 export const DonationPageContext = createContext()
 
-export const DonationPageContextProvider = ({campaignId, campaignType, children}) => {
+export const DonationPageContextProvider = ({campaignId, children}) => {
    const [donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs] = useFormInput({})
    const [donationPageSections, setDonationPageSections] = useState(initialDonationPageSections)
    const [selectedDesignations, setSelectedDesignations] = useState([]);
+   const {campaignType} = useContext(CampaignContext)
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const donationResponse = await getDonationPage(campaignId)
+            const donationResponse = await PageService.getDonationPage(campaignId)
             const donationPageId = donationResponse.id
             setDonationPageInputs({
                headline: donationResponse.headline || "",
@@ -35,7 +37,7 @@ export const DonationPageContextProvider = ({campaignId, campaignType, children}
                bt_color: donationResponse.bt_color || ""
             })
 
-            const donationSections = await getPageSections(donationPageId)
+            const donationSections = await PageService.getPageSections(donationPageId)
             setDonationPageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = donationSections.find((item) => item.name == section.name)
@@ -43,14 +45,16 @@ export const DonationPageContextProvider = ({campaignId, campaignType, children}
                })
             })
 
-            const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
+            const selectedDesignationsResponse = await DesignationService.getCampaignDesignations(campaignId)
             setSelectedDesignations(selectedDesignationsResponse)
          } catch (err) {
             console.log(err)
          }
       }
 
-      fetchData()
+      if (campaignType == "donation") {
+         fetchData()
+      }
    }, [])
 
    return (

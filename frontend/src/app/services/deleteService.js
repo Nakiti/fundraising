@@ -1,62 +1,117 @@
-import axios from 'axios';
+import { api, validators, errorHandler } from './apiClient.js';
 
-const API_BASE_URL = process.env.API_BASE_URL;
+// FAQ Services
+export class FaqDeleteService {
+   // Delete single FAQ
+   static async deleteFaq(id) {
+      try {
+         validators.id(id, 'FAQ ID');
 
-export const deleteFaq = async(id) => {
-   try {
-      await axios.delete(`${API_BASE_URL}/faq/delete/${id}`)
-   } catch (err) {
-      console.log(err)
+         const response = await api.delete(`/faq/delete/${id}`);
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error deleting FAQ:', error);
+         throw error;
+      }
+   }
+
+   // Delete FAQs batch
+   static async deleteFaqsBatch(faqs) {
+      try {
+         validators.required(faqs, 'FAQs Array');
+
+         const response = await api.delete('/faq/deleteBatch', { data: faqs });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error deleting FAQs batch:', error);
+         throw error;
+      }
    }
 }
 
-export const deleteCampaignDesignationBatch = async(designations) => {
-   try {
-      console.log(designations)
-      await axios.delete(`${API_BASE_URL}/campaign_designation/deleteBatch`, {data: designations})
-   } catch (err) {
-      console.log(err)
+// Campaign Services
+export class CampaignDeleteService {
+   // Delete campaign designation batch
+   static async deleteCampaignDesignationBatch(designations) {
+      try {
+         validators.required(designations, 'Designations Array');
+
+         const response = await api.delete('/campaign_designation/deleteBatch', { data: designations });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error deleting campaign designation batch:', error);
+         throw error;
+      }
+   }
+
+   // Delete campaign designation
+   static async deleteCampaignDesignation(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+
+         const response = await api.delete(`/campaign_designation/delete/${campaignId}`);
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error deleting campaign designation:', error);
+         throw error;
+      }
+   }
+
+   // Delete campaign questions batch
+   static async deleteCampaignQuestionsBatch(questions) {
+      try {
+         validators.required(questions, 'Questions Array');
+
+         const response = await api.delete('/campaign_question/deleteBatch', { data: questions });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error deleting campaign questions batch:', error);
+         throw error;
+      }
+   }
+
+   // Delete custom question
+   static async deleteCustomQuestion(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+
+         const response = await api.post(`/campaign_question/delete/${campaignId}`);
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error deleting custom question:', error);
+         throw error;
+      }
+   }
+
+   // Delete campaign tickets batch
+   static async deleteCampaignTicketsBatch(tickets) {
+      try {
+         validators.required(tickets, 'Tickets Array');
+
+         const response = await api.delete('/campaign_ticket/deleteBatch', { data: tickets });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error deleting campaign tickets batch:', error);
+         throw error;
+      }
    }
 }
 
-export const deleteCampaignQuestionsBatch = async(questions) => {
-   try {
-      await axios.delete(`${API_BASE_URL}/campaign_question/deleteBatch`, {data: questions})
-   } catch (err) {
-      console.log(err)
-   }
-}
+// Legacy function exports for backward compatibility
+export const deleteFaq = FaqDeleteService.deleteFaq;
+export const deleteFaqsBatch = FaqDeleteService.deleteFaqsBatch;
 
-export const deleteCampaignTicketsBatch = async(tickets) => {
-   try {
-      await axios.delete(`${API_BASE_URL}/campaign_ticket/deleteBatch`, {data: tickets})
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const deleteFaqsBatch = async(faqs) => {
-   try {
-      await axios.delete(`${API_BASE_URL}/faq/deleteBatch`, {data: faqs})
-   } catch (err) {
-      console.log(err)
-   }
-} 
-
-export const deleteCustomQuestion = async(campaignId) => {
-   try {
-      await axios.post(`${API_BASE_URL}/campaign_question/delete/${campaignId}`)
-   } catch (err) {
-      console.log(err)
-   }
-}
-
-export const deleteCampaignDesignation = async(campaignId) => {
-   try {
-      await axios.delete(`${API_BASE_URL}/campaign_designation/delete/${campaignId}`)
-   } catch (err) {
-      console.log(err)
-   }
-}
+export const deleteCampaignDesignationBatch = CampaignDeleteService.deleteCampaignDesignationBatch;
+export const deleteCampaignDesignation = CampaignDeleteService.deleteCampaignDesignation;
+export const deleteCampaignQuestionsBatch = CampaignDeleteService.deleteCampaignQuestionsBatch;
+export const deleteCustomQuestion = CampaignDeleteService.deleteCustomQuestion;
+export const deleteCampaignTicketsBatch = CampaignDeleteService.deleteCampaignTicketsBatch;
 
 

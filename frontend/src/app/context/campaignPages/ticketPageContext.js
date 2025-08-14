@@ -1,21 +1,24 @@
-import { createContext, useState, useEffect } from "react";
-import { initialTicketPageSections } from "../../constants/pageSectionsConfig";
-import useFormInput from "../../hooks/useFormInput";
-import { getTicketPage, getPageSections, getCampaignTickets } from "@/app/services/fetchService";
+import { initialTicketPageSections } from "@/app/constants/pageSectionsConfig";
+import useFormInput from "@/app/hooks/useFormInput";
+import { PageService, ContentService } from "@/app/services/fetchService";
+import { createContext, useState, useEffect, useContext } from "react";
+import { CampaignContext } from "../campaignContext";
 
 export const TicketPageContext = createContext()
 
 export const TicketPageContextProvider = ({campaignId, children}) => {
    const [ticketPageSections, setTicketPageSections] = useState(initialTicketPageSections)
-   const [ticketsPageInputs, handleTicketsPageInputs, setTicketsPageInputs] = useFormInput({})
+   const [ticketPageInputs, handleTicketPageInputsChange, setTicketPageInputs] = useFormInput({})
    const [tickets, setTickets] = useState([])
+   const {campaignType} = useContext(CampaignContext)
 
    useEffect(() => {
-      const fetchData = async() =>{
+      const fetchData = async() => {
          try {
-            const ticketPageResponse = await getTicketPage(campaignId)
+            const ticketPageResponse = await PageService.getTicketPage(campaignId)
             const ticketPageId = ticketPageResponse.id
-            setTicketsPageInputs({
+
+            setTicketPageInputs({
                title: ticketPageResponse.title || "",
                date: ticketPageResponse.date || "",
                address: ticketPageResponse.address || "",
@@ -27,30 +30,32 @@ export const TicketPageContextProvider = ({campaignId, children}) => {
                bg_color2: ticketPageResponse.bg_color2 || "",
                p_color: ticketPageResponse.p_color || "",
                s_color: ticketPageResponse.s_color || "",
-               b1_color: ticketPageResponse.b1_color || ""
+               b1_color: ticketPageResponse.b1_color || "",
             })
 
-            const ticketSections = await getPageSections(ticketPageId)
+            const ticketPageSections = await PageService.getPageSections(ticketPageId)
             setTicketPageSections((prevSections) => {
                return prevSections.map(section => {
-                  const match = ticketSections.find((item) => item.name == section.name)
+                  const match = ticketPageSections.find((item) => item.name == section.name)
                   return {...section, id: match.id, active: match.active }
                })
             })
 
-            const ticketsResponse = await getCampaignTickets(campaignId)
+            const ticketsResponse = await ContentService.getCampaignTickets(campaignId)
             setTickets(ticketsResponse)
          } catch (err) {
             console.log(err)
          }
       }
 
-      fetchData()
+      if (campaignType == "ticketed-event") {
+         fetchData()
+      }
    }, [])
 
    return (
-      <TicketPageContext.Provider value={{campaignId, ticketPageSections, 
-         ticketsPageInputs, handleTicketsPageInputs, tickets, setTickets, setTicketPageSections}}
+      <TicketPageContext.Provider value={{campaignId, ticketPageInputs, 
+         handleTicketPageInputsChange, ticketPageSections, setTicketPageSections, tickets, setTickets}}
       >
          {children}
       </TicketPageContext.Provider>

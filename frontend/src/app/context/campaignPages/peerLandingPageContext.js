@@ -1,6 +1,6 @@
 import { initialPeerLandingPageSections } from "@/app/constants/pageSectionsConfig";
 import useFormInput from "@/app/hooks/useFormInput";
-import { getPageSections, getPeerLandingPage } from "@/app/services/fetchService";
+import { PageService } from "@/app/services/fetchService";
 import { createContext, useState, useEffect } from "react";
 
 export const PeerLandingPageContext = createContext()
@@ -12,7 +12,7 @@ export const PeerLandingPageContextProvider = ({campaignId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const peerLandingResponse = await getPeerLandingPage(campaignId)
+            const peerLandingResponse = await PageService.getPeerLandingPage(campaignId)
             const peerLandingPageId = peerLandingResponse.id
 
             setPeerLandingPageInputs({
@@ -26,7 +26,7 @@ export const PeerLandingPageContextProvider = ({campaignId, children}) => {
                t_color: peerLandingResponse.t_color || "",
             })
 
-            const peerLandingSections = await getPageSections(peerLandingPageId)
+            const peerLandingSections = await PageService.getPageSections(peerLandingPageId)
             setPeerLandingPageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = peerLandingSections.find((item) => item.name == section.name)

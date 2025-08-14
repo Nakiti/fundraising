@@ -15,12 +15,11 @@ const DashboardLayout = ({params, children }) => {
   return (
     <div className="flex h-screen overflow-y-hidden" style={{ height: "90vh"}}>
       {/* Sidebar */}
-      
-        {isClient && <Sidebar organizationId={organizationId}/>} {/* Render a placeholder on the server */}
+      {isClient && <Sidebar organizationId={organizationId}/>}
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 overflow-x-hidden">
-        {isClient && children} {/* Placeholder for children on the server */}
+        {isClient && children}
       </div>
     </div>
   );

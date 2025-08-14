@@ -1,33 +1,36 @@
+import { initialThankyouPageSections } from "@/app/constants/pageSectionsConfig";
+import useFormInput from "@/app/hooks/useFormInput";
+import { PageService } from "@/app/services/fetchService";
 import { createContext, useState, useEffect } from "react";
-import useFormInput from "../../hooks/useFormInput";
-import { initialThankyouPageSections } from "../../constants/pageSectionsConfig";
-import { getThankYouPage, getPageSections } from "@/app/services/fetchService";
+
 export const ThankYouPageContext = createContext()
 
 export const ThankYouPageContextProvider = ({campaignId, children}) => {
-   const [thankPageInputs, handleThankPageInputsChange, setThankPageInputs] = useFormInput({})
-   const [thankyouPageSections, setThankyouPageSections] = useState(initialThankyouPageSections)
+   const [thankYouPageSections, setThankYouPageSections] = useState(initialThankyouPageSections)
+   const [thankYouPageInputs, handleThankYouPageInputsChange, setThankYouPageInputs] = useFormInput({})
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const thankyouPageResponse = await getThankYouPage(campaignId)
-            const thankyouPageId = thankyouPageResponse.id
-            setThankPageInputs({
-               headline: thankyouPageResponse.headline || "",
-               description: thankyouPageResponse.description || "",
-               bg_image: thankyouPageResponse.bg_image || "",
-               bg_color: thankyouPageResponse.bg_color || "",
-               p_color: thankyouPageResponse.p_color || "",
-               s_color: thankyouPageResponse.s_color || ""
+            const thankYouResponse = await PageService.getThankYouPage(campaignId)
+            const thankYouPageId = thankYouResponse.id
+
+            setThankYouPageInputs({
+               headline: thankYouResponse.headline || "",
+               description: thankYouResponse.description || "",
+               bg_image: thankYouResponse.bg_image || "",
+               bg_color: thankYouResponse.bg_color || "",
+               p_color: thankYouResponse.p_color || "",
+               s_color: thankYouResponse.s_color || "",
             })
-            const thankSections = await getPageSections(thankyouPageId)
-            setThankyouPageSections((prevSections) => {
+
+            const thankYouSections = await PageService.getPageSections(thankYouPageId)
+            setThankYouPageSections((prevSections) => {
                return prevSections.map(section => {
-                  const match = thankSections.find((item) => item.name == section.name)
-                  return { ...section, id: match.id, active: match.active }
+                  const match = thankYouSections.find((item) => item.name == section.name)
+                  return {...section, id: match.id, active: match.active }
                })
-            }) 
+            })
          } catch (err) {
             console.log(err)
          }
@@ -37,7 +40,9 @@ export const ThankYouPageContextProvider = ({campaignId, children}) => {
    }, [])
 
    return (
-      <ThankYouPageContext.Provider value={{campaignId, thankPageInputs, thankyouPageSections, handleThankPageInputsChange, setThankyouPageSections}}>
+      <ThankYouPageContext.Provider value={{campaignId, thankYouPageInputs, 
+         handleThankYouPageInputsChange, thankYouPageSections, setThankYouPageSections}}
+      >
          {children}
       </ThankYouPageContext.Provider>
    )

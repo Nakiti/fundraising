@@ -8,7 +8,7 @@ import Box from "./box"
       - data: the campaigns
 */
 const Summary = ({data}) => {
-   // calculates each statistic appropriatly 
+   // calculates each statistic appropriately 
    const summary = {
       totalDonations: data.reduce((acc, campaign) => acc + campaign.donations, 0),
       totalRaised: data.reduce((acc, campaign) => acc + Number(campaign.amount_raised), 0),
@@ -21,13 +21,27 @@ const Summary = ({data}) => {
    }
 
    return (
-      <div className="flex justify-between items-center gap-4 p-6">
-         <Box text={"Total Raised: " + (summary.totalRaised || "-")}/>
-         <Box text={"Total Donations: " + (summary.totalDonations || "-")}/>
-         {/* <Box text={"Total Visits: " + summary.totalVisits}/> */}
-         <Box text={"Average Raised: " + (summary.averageRaised || "-")}/>
-         <Box text={"Average Conversion Rate: " + (summary.averageConversionRate || "-")}/>
-         {/* <Box text={"Average Conversion Rate: " + summary.averageConversionRate}/> */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+         <Box 
+            title="Total Raised" 
+            value={summary.totalRaised ? `$${summary.totalRaised.toLocaleString()}` : "$0"}
+            subtitle="Across all campaigns"
+         />
+         <Box 
+            title="Total Donations" 
+            value={summary.totalDonations ? summary.totalDonations.toLocaleString() : "0"}
+            subtitle="Total contributions"
+         />
+         <Box 
+            title="Total Visits" 
+            value={summary.totalVisits ? summary.totalVisits.toLocaleString() : "0"}
+            subtitle="Page visits"
+         />
+         <Box 
+            title="Avg. Conversion" 
+            value={summary.averageConversionRate ? `${summary.averageConversionRate.toFixed(1)}%` : "0%"}
+            subtitle="Donation rate"
+         />
       </div>
    )
 }

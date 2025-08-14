@@ -1,8 +1,10 @@
 "use client"
 import useFormInput from "@/app/hooks/useFormInput"
-import {useEffect } from "react"
-import { getOrganization } from "@/app/services/fetchService";
-import { updateOrganization } from "@/app/services/updateServices";
+import {useEffect, useState } from "react"
+import { OrganizationService } from "@/app/services/fetchService";
+import { OrganizationUpdateService } from "@/app/services/updateServices";
+import { errorHandler } from "@/app/services/apiClient";
+import ErrorModal from "@/app/components/errorModal";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -12,6 +14,8 @@ import { FaArrowLeft } from "react-icons/fa";
 */
 const Organization = ({params}) => {
    const organizationId = params.organizationId
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
 
    const [info, handleInfoChange, setInfo] = useFormInput({
       name: "",
@@ -29,13 +33,15 @@ const Organization = ({params}) => {
    */
    const fetchData = async() => {
       try {
-         const response = await getOrganization(organizationId)
+         const response = await OrganizationService.getOrganization(organizationId)
          setInfo((prevInfo) => ({
             ...prevInfo, 
             name: response.name,
          }))
       } catch (err) {
-         console.log(err)
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
       }
    }
 
@@ -45,10 +51,12 @@ const Organization = ({params}) => {
    */
    const handleUpdate = async() => {
       try {
-         await updateOrganization(organizationId, info)
+         await OrganizationUpdateService.updateOrganization(organizationId, info)
          fetchData()
       } catch (err) {
-         console.log(err)
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
       }
    }
 
@@ -58,6 +66,7 @@ const Organization = ({params}) => {
 
    return (
       <div className="w-full h-full overflow-y-auto">
+         {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="p-6 bg-gray-50">
          <div className="w-full h-full p-8 bg-white rounded-lg shadow-sm ">
             <Link 

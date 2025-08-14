@@ -1,63 +1,116 @@
 import { db } from "../db.js";
 import multer from "multer"
+import { asyncHandler } from "../middleware/errorHandler.js"
+import {
+  sendSuccess,
+  sendCreated,
+  sendUpdated,
+  sendNotFound,
+  sendDatabaseError
+} from "../utils/response.js"
+import {
+  ValidationError,
+  NotFoundError,
+  DatabaseError
+} from "../utils/errors.js"
+
 const upload = multer({
-   dest: 'uploads/',
-   limits: { fileSize: 5 * 1024 * 1024 },
+  dest: 'uploads/',
+  limits: { fileSize: 5 * 1024 * 1024 },
 })
 
-export const createThankYouPage = (req, res) => {
-   const query = "INSERT INTO thankyou_pages (`campaign_id`, `updated_at`, `updated_by`) VALUES (?)"
+export const createThankYouPage = asyncHandler(async (req, res) => {
+  const { campaign_id, user_id } = req.body;
+  
+  if (!campaign_id || !user_id) {
+    throw new ValidationError('Missing required fields: campaign_id, user_id');
+  }
 
-   const values = [
-      req.body.campaign_id,
-      (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-      req.body.user_id
-   ]  
-   
-   db.query(query, [values], (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data.insertId)
-   })
-}
+  const query = "INSERT INTO thankyou_pages (`campaign_id`, `updated_at`, `updated_by`) VALUES (?, ?, ?)"
 
-export const updateThankYouPage = (req, res) => {
-   upload.single('image')(req, res, (err) => {
+  const values = [
+    campaign_id,
+    (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+    user_id
+  ]  
+  
+  return new Promise((resolve, reject) => {
+    db.query(query, values, (err, data) => {
       if (err) {
-         if (err.code === 'LIMIT_FILE_SIZE') {
-           return res.status(400).json({ error: "File is too large. Max size is 5MB" });
-         }
-         console.log(err);
-         return res.status(500).json({ error: "Image upload failed" });
+        reject(new DatabaseError('Failed to create thank you page', err));
+        return;
+      }
+      resolve(sendCreated(res, { pageId: data.insertId }, 'Thank you page created successfully'));
+    })
+  })
+})
+
+export const updateThankYouPage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { headline, description, bg_image, bg_color, p_color, s_color } = req.body;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
+
+  return new Promise((resolve, reject) => {
+    upload.single('image')(req, res, (err) => {
+      if (err) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          reject(new ValidationError('File is too large. Max size is 5MB'));
+          return;
+        }
+        reject(new DatabaseError('Image upload failed', err));
+        return;
       } 
 
       const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ? WHERE `campaign_id` = ?"
 
       const values = [
-         req.body.headline,
-         req.body.description,
-         req.body.bg_image,
-         req.body.bg_color,
-         req.body.p_color,
-         req.body.s_color,
-         req.params.id
+        headline,
+        description,
+        bg_image,
+        bg_color,
+        p_color,
+        s_color,
+        id
       ]
 
-      console.log(values)
-
       db.query(query, values, (err, data) => {
-         if (err) return console.log(err)
-         return res.status(200).json(data)
+        if (err) {
+          reject(new DatabaseError('Failed to update thank you page', err));
+          return;
+        }
+        if (data.affectedRows === 0) {
+          reject(new NotFoundError('Thank you page'));
+          return;
+        }
+        resolve(sendUpdated(res, data, 'Thank you page updated successfully'));
       })
-   })
-}
+    })
+  })
+})
 
-export const getThankYouPage = (req, res) => {
-   const query = "SELECT * FROM thankyou_pages WHERE `campaign_id` = ?"
-   
-   const value = [req.params.id]
+export const getThankYouPage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.json(data)
-   })
-}
+  const query = "SELECT * FROM thankyou_pages WHERE `campaign_id` = ?"
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) {
+        reject(new DatabaseError('Failed to fetch thank you page', err));
+        return;
+      }
+      if (!data || data.length === 0) {
+        reject(new NotFoundError('Thank you page'));
+        return;
+      }
+      resolve(sendSuccess(res, data[0], 'Thank you page retrieved successfully'));
+    })
+  })
+})

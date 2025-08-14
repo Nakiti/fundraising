@@ -1,99 +1,180 @@
 import { db } from "../db.js"
+import { asyncHandler } from "../middleware/errorHandler.js"
+import {
+  sendSuccess,
+  sendCreated,
+  sendUpdated,
+  sendNotFound,
+  sendConflict,
+  sendDatabaseError
+} from "../utils/response.js"
+import {
+  ValidationError,
+  NotFoundError,
+  ConflictError,
+  DatabaseError
+} from "../utils/errors.js"
 
-export const createDesignation = (req, res) => {
-   const q = "SELECT * FROM designations WHERE title = ?"
+export const createDesignation = asyncHandler(async (req, res) => {
+  const { organization_id, title, goal, created_by, updated_by } = req.body;
+  
+  if (!organization_id || !title || !created_by || !updated_by) {
+    throw new ValidationError('Missing required fields: organization_id, title, created_by, updated_by');
+  }
 
-   db.query(q, [req.body.title], (err, data) => {
-      if (err) return res.json(err)
-      if (data.length > 0) return res.status(409).json("Designation already exists")
+  const q = "SELECT * FROM designations WHERE title = ?"
+
+  return new Promise((resolve, reject) => {
+    db.query(q, [title], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to check existing designation', err));
+      if (data.length > 0) reject(new ConflictError('Designation already exists'));
 
       const query = "INSERT INTO designations (`organization_id`, `title`, `raised`, `goal`, `donations`, `status`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES (?)"
 
       const values = [
-         req.body.organization_id,
-         req.body.title,
-         0,
-         req.body.goal,
-         0,
-         "active",
-         (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-         (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-         req.body.created_by,
-         req.body.updated_by
+        organization_id,
+        title,
+        0,
+        goal || 0,
+        0,
+        "active",
+        (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+        (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+        created_by,
+        updated_by
       ]
    
-      console.log(values)
-   
       db.query(query, [values], (err, data) => {
-         if (err) return console.log(err)
-         return res.status(200).json(data)
+        if (err) reject(new DatabaseError('Failed to create designation', err));
+        resolve(sendCreated(res, { designationId: data.insertId }, 'Designation created successfully'));
       })
-   })
-}
+    })
+  })
+})
 
-export const updateDesignation = (req, res) => {
-   if (req.body.status === "inactive") {
-      const query = "SELECT * FROM campaign_designations WHERE designation_id = ?";
+export const updateDesignation = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { title, goal, status, updated_by } = req.body;
+  
+  if (!id) {
+    throw new ValidationError('Designation ID is required');
+  }
+  
+  if (!title || !updated_by) {
+    throw new ValidationError('Missing required fields: title, updated_by');
+  }
 
-      db.query(query, [req.params.id], (err, data) => {
-         if (err) return res.status(500).json(err);         
-         if (data.length > 0) return res.status(409).json({ error: "Designation currently in use" });
-         
-         updateDesignationDetails(req, res);
+  if (status === "inactive") {
+    const query = "SELECT * FROM campaign_designations WHERE designation_id = ?";
+
+    return new Promise((resolve, reject) => {
+      db.query(query, [id], (err, data) => {
+        if (err) reject(new DatabaseError('Failed to check designation usage', err));        
+        if (data.length > 0) reject(new ConflictError('Designation currently in use'));
+        
+        updateDesignationDetails(req, res).then(resolve).catch(reject);
       });
-   } else {
-      updateDesignationDetails(req, res);
-   }
+    });
+  } else {
+    return updateDesignationDetails(req, res);
+  }
+});
+
+const updateDesignationDetails = async (req, res) => {
+  const { id } = req.params;
+  const { title, goal, status } = req.body;
+
+  const query = "UPDATE designations SET `title` = ?, `goal` = ?, `status` = ? WHERE id = ?";
+
+  const values = [
+    title,
+    goal,
+    status,
+    id
+  ];
+
+  return new Promise((resolve, reject) => {
+    db.query(query, values, (err, data) => {
+      if (err) reject(new DatabaseError('Failed to update designation', err));
+      if (data.affectedRows === 0) reject(new NotFoundError('Designation'));
+      resolve(sendUpdated(res, data, 'Designation updated successfully'));
+    });
+  });
 };
 
-const updateDesignationDetails = (req, res) => {
-   const query = "UPDATE designations SET `title` = ?, `goal` = ?, `status` = ? WHERE id = ?";
+export const getDesignations = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Organization ID is required');
+  }
 
-   const values = [
-      req.body.title,
-      req.body.goal,
-      req.body.status,
-      req.params.id
-   ];
+  const query = "SELECT * FROM designations WHERE organization_id = ?"
 
-   db.query(query, values, (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json(data);
-   });
-};
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch designations', err));
+      resolve(sendSuccess(res, data, 'Designations retrieved successfully'));
+    })
+  })
+})
 
+export const getActiveDesignations = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Organization ID is required');
+  }
 
-export const getDesignations = (req, res) => {
-   const query = "SELECT * FROM designations WHERE organization_id = ?"
+  const query = "SELECT * FROM designations WHERE status = 'active' AND organization_id = ?"
 
-   const value = req.params.id
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch active designations', err));
+      resolve(sendSuccess(res, data, 'Active designations retrieved successfully'));
+    })
+  })
+})
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+export const getDesignation = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Designation ID is required');
+  }
 
-export const getActiveDesignations = (req, res) => {
-   const query = "SELECT * FROM designations WHERE status = 'active' AND organization_id = ?"
-   const value = req.params.id
+  const query = "SELECT * FROM designations WHERE id = ?"
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch designation', err));
+      if (!data || data.length === 0) reject(new NotFoundError('Designation'));
+      resolve(sendSuccess(res, data[0], 'Designation retrieved successfully'));
+    })
+  })
+})
 
-export const getDesignation = (req, res) => {
-   const query = "SELECT * FROM designations WHERE id = ?"
-   const value = req.params.id
+export const deleteDesignation = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Designation ID is required');
+  }
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+  // Check if designation is in use
+  const checkQuery = "SELECT * FROM campaign_designations WHERE designation_id = ?";
 
-export const deleteDesignation = (req, res) => {
+  return new Promise((resolve, reject) => {
+    db.query(checkQuery, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to check designation usage', err));
+      if (data.length > 0) reject(new ConflictError('Cannot delete designation that is currently in use'));
 
-}
+      const deleteQuery = "DELETE FROM designations WHERE id = ?";
+      db.query(deleteQuery, [id], (err, data) => {
+        if (err) reject(new DatabaseError('Failed to delete designation', err));
+        if (data.affectedRows === 0) reject(new NotFoundError('Designation'));
+        resolve(sendSuccess(res, null, 'Designation deleted successfully'));
+      });
+    });
+  });
+})

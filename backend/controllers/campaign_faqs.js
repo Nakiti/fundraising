@@ -1,50 +1,98 @@
 import { db } from "../db.js";
+import { asyncHandler } from "../middleware/errorHandler.js"
+import {
+  sendSuccess,
+  sendCreated,
+  sendUpdated,
+  sendDeleted,
+  sendNotFound,
+  sendDatabaseError
+} from "../utils/response.js"
+import {
+  ValidationError,
+  NotFoundError,
+  DatabaseError
+} from "../utils/errors.js"
 
-export const createFaqs = (req, res) => {
-   const query = "INSERT INTO campaign_faqs (`campaign_id`, `question`, `answer`, `created_at`) VALUES ?"
+export const createFaqs = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const faqs = req.body;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
+  
+  if (!faqs || !Array.isArray(faqs) || faqs.length === 0) {
+    throw new ValidationError('FAQs array is required and must not be empty');
+  }
 
-   const values = req.body.map(faq => [
-      Number(req.params.id),
-      faq.question,
-      faq.answer,
-      (new Date()).toISOString().slice(0, 19).replace('T', ' ')
-   ])
+  const query = "INSERT INTO campaign_faqs (`campaign_id`, `question`, `answer`, `created_at`) VALUES ?"
 
-   db.query(query, [values], (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+  const values = faqs.map(faq => [
+    Number(id),
+    faq.question,
+    faq.answer,
+    (new Date()).toISOString().slice(0, 19).replace('T', ' ')
+  ])
 
-export const getFaqs = (req, res) => {
-   const query = "SELECT * FROM campaign_faqs WHERE `campaign_id` = ?"
+  return new Promise((resolve, reject) => {
+    db.query(query, [values], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to create FAQs', err));
+      resolve(sendCreated(res, { insertedCount: data.affectedRows }, 'FAQs created successfully'));
+    })
+  })
+})
 
-   const value = req.params.id
+export const getFaqs = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+  const query = "SELECT * FROM campaign_faqs WHERE `campaign_id` = ?"
 
-export const deleteFaq = (req, res) => {
-   const query = "DELETE FROM campaign_faqs WHERE `id` = ?"
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch FAQs', err));
+      resolve(sendSuccess(res, data, 'FAQs retrieved successfully'));
+    })
+  })
+})
 
-   const value = req.params.id
+export const deleteFaq = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('FAQ ID is required');
+  }
 
-   db.query(query, value, (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+  const query = "DELETE FROM campaign_faqs WHERE `id` = ?"
 
-export const deleteFaqsBatch = (req, res) =>{
-   const query = "DELETE FROM campaign_faqs WHERE `id` IN (?)"
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to delete FAQ', err));
+      if (data.affectedRows === 0) reject(new NotFoundError('FAQ'));
+      resolve(sendDeleted(res, 'FAQ deleted successfully'));
+    })
+  })
+})
 
-   const values = req.body.map(item => item.id)
+export const deleteFaqsBatch = asyncHandler(async (req, res) => {
+  const items = req.body;
+  
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    throw new ValidationError('Items array is required and must not be empty');
+  }
 
-   db.query(query, [values], (err, data) => {
-      if (err) return res.json(err)
-      return res.status(200).json(data)
-   })
-}
+  const query = "DELETE FROM campaign_faqs WHERE `id` IN (?)"
+
+  const values = items.map(item => item.id)
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [values], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to delete FAQs batch', err));
+      resolve(sendDeleted(res, `Deleted ${data.affectedRows} FAQs successfully`));
+    })
+  })
+})

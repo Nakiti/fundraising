@@ -8,7 +8,7 @@ const DetailsLayout = ({params, children}) => {
    const campaignId = params.id
    const organizationId = params.organizationId
    const pathName = usePathname()
-   const {campaignType} = useContext(CampaignContext)
+   const {campaignType, loading} = useContext(CampaignContext)
 
    const links = [
       {title: "About", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/about`},
@@ -19,6 +19,31 @@ const DetailsLayout = ({params, children}) => {
       {title: "Sharing", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/sharing`},
       {title: "FAQs", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/faqs`},
    ]
+
+   // Show loading state while data is being fetched
+   if (loading) {
+      return (
+         <div className="bg-white rounded-lg shadow-sm w-11/12 mx-auto flex flex-row">
+            <div className="animate-pulse">
+               <div className="flex flex-col border-r-4 border-gray-100 w-1/4 py-8">
+                  <div className="h-12 bg-gray-200 rounded mx-4 mb-4"></div>
+                  <div className="h-12 bg-gray-200 rounded mx-4 mb-4"></div>
+                  <div className="h-12 bg-gray-200 rounded mx-4 mb-4"></div>
+                  <div className="h-12 bg-gray-200 rounded mx-4 mb-4"></div>
+               </div>
+               <div className="p-8 w-3/4">
+                  <div className="h-8 bg-gray-200 rounded mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-8"></div>
+                  <div className="space-y-4">
+                     <div className="h-32 bg-gray-200 rounded"></div>
+                     <div className="h-32 bg-gray-200 rounded"></div>
+                     <div className="h-32 bg-gray-200 rounded"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      )
+   }
 
    return (
       <div className="bg-white rounded-lg shadow-sm w-11/12 mx-auto flex flex-row">

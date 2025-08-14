@@ -7,10 +7,9 @@ import { createCampaignTicket } from "@/app/services/createServices"
 import { deleteCampaignTicketsBatch } from "@/app/services/deleteService"
 import useFormInput from "@/app/hooks/useFormInput"
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext"
 
 const Tickets = () => {
-   const {tickets, setTickets, campaignId} = useContext(TicketPageContext)
+   const {tickets, setTickets, campaignId, loading} = useContext(CampaignContext)
    const [newTicket, handleNewTicketChange, setNewTicket] = useFormInput({id: new Date(), title: "", quantity: 0, price: 0, unlimited: false, free: false, description: "", attendees: 0, max_purchase: 0, start_date: null, end_date: null})
    const [showDropdown, setShowDropdown] = useState(false)
 
@@ -40,6 +39,23 @@ const Tickets = () => {
       } catch (err) {
          console.log(err)
       }
+   }
+
+   // Show loading state while data is being fetched
+   if (loading) {
+      return (
+         <div className="w-full max-w-4xl mx-auto py-8 px-6">
+            <div className="animate-pulse">
+               <div className="h-8 bg-gray-200 rounded mb-4"></div>
+               <div className="h-4 bg-gray-200 rounded mb-8"></div>
+               <div className="space-y-4">
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+               </div>
+            </div>
+         </div>
+      )
    }
 
    return (
@@ -110,7 +126,7 @@ const Tickets = () => {
                            type="checkbox"
                            className="h-4 w-4"
                            name="unlimited"
-                           value={newTicket.unlimited}
+                           checked={newTicket.unlimited}
                            onChange={handleNewTicketChange}
                         />
                         <p className="text-sm text-gray-700">Unlimited</p>
@@ -134,7 +150,7 @@ const Tickets = () => {
                            type="checkbox"
                            className="h-4 w-4"
                            name="free"
-                           value={newTicket.free}
+                           checked={newTicket.free}
                            onChange={handleNewTicketChange}
                         />
                         <p className="text-sm text-gray-700">Free</p>
@@ -223,15 +239,14 @@ const Tickets = () => {
                   <div className="w-1/4">
                      <div className="flex flex-col">
                         <label className="text-gray-700 text-sm mb-2">
-                           Fee Estiamte
+                           Fee Estimate
                         </label>
                         <input
-                           name="attendess"
+                           name="fee_estimate"
                            type="text"
                            placeholder="$1.00"
                            className="p-2 text-sm border border-gray-400 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           value={newTicket.name}
-                           onChange={handleNewTicketChange}
+                           value="$1.00"
                            disabled
                         />
                      </div>
@@ -249,9 +264,9 @@ const Tickets = () => {
          <div className="border-b border-gray-600 mb-2" />
          <div className="bg-gray-100 px-8 py-4">
             <div className="mb-4">
-               <p>Tickets ({tickets.length})</p>
+               <p>Tickets ({tickets && tickets.length})</p>
             </div>
-            {tickets.map((item, index) => (
+            {tickets && tickets.map((item, index) => (
                <TicketComponent key={index} ticket={item} tickets={tickets} setTickets={setTickets}/>
             ))}
          </div>

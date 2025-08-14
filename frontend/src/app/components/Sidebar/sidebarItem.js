@@ -2,25 +2,31 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const SidebarItem = ({ icon, text, isCollapsed, link }) => {
-   const pathname = usePathname()
+   const pathname = usePathname();
+   const isActive = pathname === link;
 
    return (
       <Link href={link}>
          <div 
-            className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 transition-all duration-300 
-               ${isCollapsed ? 'justify-center' : 'justify-start'} 
-               ${pathname == link ? "bg-gray-100 border-l-4 border-blue-700 font-semibold" : "bg-white"} 
-               w-full`}
+            className={`flex items-center px-4 py-3 cursor-pointer transition-all duration-200 ease-in-out
+               ${isCollapsed ? 'justify-center mx-2 rounded-lg' : 'justify-start mx-2 rounded-lg'} 
+               ${isActive 
+                  ? "bg-blue-50 border-l-4 border-blue-600 text-blue-700 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+               } 
+               ${isCollapsed && isActive ? 'bg-blue-50 text-blue-700' : ''}
+            `}
          >
-            <div className="text-gray-800 text-lg h-5 w-5">
+            <div className={`${isActive ? 'text-blue-600' : 'text-gray-500'} ${!isCollapsed ? 'mr-3' : ''}`}>
                {icon}
             </div>
             {!isCollapsed && (
-               <span className="text-gray-800 ml-2 text-md font-medium">{text}</span>
+               <span className={`text-sm font-medium ${isActive ? 'text-blue-700' : 'text-gray-700'}`}>
+                  {text}
+               </span>
             )}
          </div>
       </Link>
-
    );
 }
 

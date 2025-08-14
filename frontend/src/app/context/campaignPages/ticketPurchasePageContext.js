@@ -1,46 +1,51 @@
-import { getTicketPurchasePage } from "@/app/services/fetchService";
-import { createContext, useState, useEffect } from "react";
-import useFormInput from "@/app/hooks/useFormInput";
 import { initialTicketPurchaseSections } from "@/app/constants/pageSectionsConfig";
+import useFormInput from "@/app/hooks/useFormInput";
+import { PageService } from "@/app/services/fetchService";
+import { createContext, useState, useEffect, useContext } from "react";
+import { CampaignContext } from "../campaignContext";
 
 export const TicketPurchasePageContext = createContext()
 
 export const TicketPurchasePageContextProvider = ({campaignId, children}) => {
-   const [ticketPurchaseInputs, handleTicketPurchaseInputsChange, setTicketPurchaseInputs] = useFormInput({})
-   const [ticketPurchaseSections, setTicketPurchaseSections] = useState(initialTicketPurchaseSections)
+   const [ticketPurchasePageSections, setTicketPurchasePageSections] = useState(initialTicketPurchaseSections)
+   const [ticketPurchasePageInputs, handleTicketPurchasePageInputsChange, setTicketPurchasePageInputs] = useFormInput({})
+   const {campaignType} = useContext(CampaignContext)
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await getTicketPurchasePage(campaignId)
-            // const pageId = response.id
-            setTicketPurchaseInputs({
-               headline: response.headline || "",
-               description: response.description || "",
-               bg_color: response.bg_color || "",
-               p_color: response.p_color || "",
-               s_color: response.s_color || "",
-               t_color: response.b1_color || "",
+            const ticketPurchaseResponse = await PageService.getTicketPurchasePage(campaignId)
+            const ticketPurchasePageId = ticketPurchaseResponse.id
+
+            setTicketPurchasePageInputs({
+               headline: ticketPurchaseResponse.headline || "",
+               description: ticketPurchaseResponse.description || "",
+               bg_image: ticketPurchaseResponse.bg_image || "",
+               bg_color: ticketPurchaseResponse.bg_color || "",
+               p_color: ticketPurchaseResponse.p_color || "",
+               s_color: ticketPurchaseResponse.s_color || "",
             })
 
-            // const ticketSections = await getPageSections(ticketPageId)
-            // setTicketPurchaseSections((prevSections) => {
-            //    return prevSections.map(section => {
-            //       const match = ticketSections.find((item) => item.name == section.name)
-            //       return {...section, id: match.id, active: match.active }
-            //    })
-            // })
+            const ticketPurchaseSections = await PageService.getPageSections(ticketPurchasePageId)
+            setTicketPurchasePageSections((prevSections) => {
+               return prevSections.map(section => {
+                  const match = ticketPurchaseSections.find((item) => item.name == section.name)
+                  return {...section, id: match.id, active: match.active }
+               })
+            })
          } catch (err) {
             console.log(err)
          }
       }
 
-      fetchData()
+      if (campaignType == "ticketed-event") {
+         fetchData()
+      }
    }, [])
 
    return (
-      <TicketPurchasePageContext.Provider value={{campaignId, ticketPurchaseInputs, handleTicketPurchaseInputsChange, 
-         setTicketPurchaseInputs, ticketPurchaseSections, setTicketPurchaseSections}}
+      <TicketPurchasePageContext.Provider value={{campaignId, ticketPurchasePageInputs, 
+         handleTicketPurchasePageInputsChange, ticketPurchasePageSections, setTicketPurchasePageSections}}
       >
          {children}
       </TicketPurchasePageContext.Provider>

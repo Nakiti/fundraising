@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignsFiltered, getLandingPage, getOrganization } from "@/app/services/fetchService.js";
+import { Services, useApi, useToast } from "@/app/services";
 import { useEffect, useState, useRef } from "react";
 import Card from "./components/card";
 import 'swiper/css';
@@ -13,6 +13,13 @@ const Organization = ({ params }) => {
   const campaignsRef = useRef(null)
   const [visibleCampaigns, setVisibleCampaigns] = useState(3)
   const [landingPageStyles, setLandingPageStyles] = useState(null)
+  
+  const { showError } = useToast();
+
+  // API hooks for data fetching
+  const { execute: fetchOrganization, loading: orgLoading } = useApi(Services.Organization.getOrganization);
+  const { execute: fetchCampaigns, loading: campaignsLoading } = useApi(Services.Campaign.getCampaignsFiltered);
+  const { execute: fetchLandingPage, loading: landingLoading } = useApi(Services.Page.getLandingPage);
 
    const showMoreCampaigns = () => {
       setVisibleCampaigns((prev) => prev + 3);
@@ -27,23 +34,44 @@ const Organization = ({ params }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const organizationResponse = await getOrganization(organizationId);
-        setOrganization(organizationResponse);
+        // Fetch organization data
+        const organizationResponse = await fetchOrganization(organizationId);
+        if (organizationResponse) {
+          setOrganization(organizationResponse);
+        }
 
-        const campaignResponse = await getCampaignsFiltered(organizationId, "active");
-        setCampaigns(campaignResponse);
+        // Fetch campaigns data
+        const campaignResponse = await fetchCampaigns(organizationId, "active");
+        if (campaignResponse) {
+          setCampaigns(campaignResponse);
+        }
 
-        const landingPageResponse = await getLandingPage(organizationId)
-        setLandingPageStyles(landingPageResponse)
+        // Fetch landing page data
+        const landingPageResponse = await fetchLandingPage(organizationId);
+        if (landingPageResponse) {
+          setLandingPageStyles(landingPageResponse);
+        }
 
-        console.log(landingPageResponse)
       } catch (err) {
-        console.log(err);
+        console.error('Error fetching organization data:', err);
+        showError('Error', 'Failed to load organization data. Please try again.');
       }
     };
 
     fetchData();
-  }, [organizationId]);
+  }, [organizationId, fetchOrganization, fetchCampaigns, fetchLandingPage, showError]);
+
+  // Show loading state
+  if (orgLoading || campaignsLoading || landingLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading organization...</p>
+        </div>
+      </div>
+    );
+  }
 
    return (
       <div 
@@ -80,10 +108,10 @@ const Organization = ({ params }) => {
                      As UCLA moves into its second century, we look back on the achievements and accomplishments that have made us the No. 1 public research university in the nation—and with your help, we look forward to a new era of innovation and transformation.
                   </p>
                   <p className="text-xl text-gray-700 mt-8">
-                     Now, more than ever, your support is essential to enabling UCLA’s excellence across all disciplines, along with sustaining our university’s mission of education, research and service. It demonstrates confidence in our ability to adapt during this time of growth and transition—tackling the major challenges facing our communities and helping to build a better, brighter future with Bruins leading the way.
+                     Now, more than ever, your support is essential to enabling UCLA's excellence across all disciplines, along with sustaining our university's mission of education, research and service. It demonstrates confidence in our ability to adapt during this time of growth and transition—tackling the major challenges facing our communities and helping to build a better, brighter future with Bruins leading the way.
                   </p>
                   <p className="text-xl text-gray-700 mt-8">
-                     Now, more than ever, your support is essential to enabling UCLA’s excellence across all disciplines, along with sustaining our university’s mission of education, research and service. It demonstrates confidence in our ability to adapt during this time of growth and transition—tackling the major challenges facing our communities and helping to build a better, brighter future with Bruins leading the way.
+                     Now, more than ever, your support is essential to enabling UCLA's excellence across all disciplines, along with sustaining our university's mission of education, research and service. It demonstrates confidence in our ability to adapt during this time of growth and transition—tackling the major challenges facing our communities and helping to build a better, brighter future with Bruins leading the way.
                   </p>
                </div>
                <div className="w-1/3">

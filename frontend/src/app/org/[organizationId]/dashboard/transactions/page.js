@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getTransactionsByOrg } from "@/app/services/fetchService";
+import { TransactionService } from "@/app/services/fetchService";
+import { errorHandler } from "@/app/services/apiClient";
+import ErrorModal from "@/app/components/errorModal";
 import Searchbar from "./components/searchbar";
 import Filters from "./components/filters";
 import Summary from "./components/summary";
@@ -9,16 +11,20 @@ import Table from "./components/table";
 
 const Transactions = ({params}) => {
    const [data, setData] = useState(null)
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
    const organizationId = params.organizationId
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await getTransactionsByOrg(organizationId)
+            const response = await TransactionService.getTransactionsByOrg(organizationId)
             console.log(response)
             setData(response)
          } catch (err) {
-            console.log(err)
+            const handledError = errorHandler.handle(err)
+            setErrorMessage(handledError.message)
+            setError(true)
          }
       }
 
@@ -27,6 +33,7 @@ const Transactions = ({params}) => {
 
    return (
       <div className="w-full h-full">
+         {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="bg-gray-100 w-full overflow-y-auto rounded-sm p-6">
             <div className="bg-white p-4 rounded-md h-full">
                <div className="flex flex-row p-6 w-full justify-between items-center">

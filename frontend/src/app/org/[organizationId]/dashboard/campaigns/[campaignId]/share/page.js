@@ -2,6 +2,7 @@
 
 import FilePreview from "../components/filePreview"
 import { useState } from "react"
+
 const Share = () => {
    const [files, setFiles] = useState([{file: "", fileURL: ""}])
 
@@ -16,69 +17,76 @@ const Share = () => {
       if (file.type === 'application/pdf') {
          return (
             <div className="flex flex-col">
-               <iframe key={index} src={url} className="overflow-x-hidden w-full h-36 border rounded-lg" title="PDF Preview" />
-               <p className="mt-2 text-sm text-center">{file.name}</p>
+               <iframe 
+                  key={index} 
+                  src={url} 
+                  className="w-full h-48 border border-gray-200 rounded-lg shadow-sm" 
+                  title="PDF Preview" 
+               />
+               <p className="mt-3 text-sm text-gray-600 text-center font-medium">{file.name}</p>
             </div>
-            
-            );
+         );
       } else {
          return <p className="text-gray-500 mt-4">Unsupported file type</p>;
       }
    };
 
    return (
-      <div className="w-full p-8 mb-8">
-         <div className="flex flex-row space-x-4">
-
-            <div className="w-2/3 bg-white rounded-lg shadow-sm mb-8">
-               <div className="flex flex-row w-full justify-between items-center px-6 py-4 border-b border-gray-300">
-                  <p className="text-2xl text-gray-800 font-semibold">Campaign Fliers:</p>
+      <div className="p-6 space-y-6">
+         <div className="flex flex-col lg:flex-row gap-6">
+            {/* Campaign Fliers Section */}
+            <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+               <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                  <h2 className="text-xl font-semibold text-gray-900">Campaign Materials</h2>
                </div>
 
-               <div className="w-full p-6">
-                  <label className="relative inline-block w-1/3 text-center bg-blue-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-600">
-                  Upload a New Flyer
-                  <input
-                     type="file"
-                     onChange={handleFileChange}
-                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  </label>
-               </div>
+               <div className="p-6">
+                  <div className="mb-6">
+                     <label className="relative inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Upload New Material
+                        <input
+                           type="file"
+                           onChange={handleFileChange}
+                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                     </label>
+                  </div>
 
-               <div className="grid grid-cols-4 gap-4 px-6 pb-4">
-                  {files.map((item, index) => renderPreview(item.file, item.fileURL, index))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     {files.map((item, index) => renderPreview(item.file, item.fileURL, index))}
+                  </div>
                </div>
-               
-
             </div>
 
-            <div className="w-1/3 bg-white rounded-lg shadow-sm mb-8">
-               <div className="flex flex-row w-full justify-between items-center px-6 py-4 border-b border-gray-300">
-                  <p className="text-2xl text-gray-800 font-semibold">Quick Info:</p>
+            {/* Quick Info Section */}
+            <div className="w-full lg:w-96 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+               <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                  <h2 className="text-xl font-semibold text-gray-900">Quick Info</h2>
                </div>
 
-               <div className="px-6 pb-6 py-4 flex flex-col space-y-6">
-
-                  <div className="flex flex-col">
-                     <p className="flex items-center text-gray-800 font-semibold text-md mb-2">
-                        Campaign URL: 
-                     </p>
-
-                     <p className="text-lg text-gray-700">https://loclahostl:sdfsdfsdf/sd</p>
+               <div className="p-6 space-y-6">
+                  <div className="space-y-3">
+                     <h3 className="text-sm font-semibold text-gray-900">Campaign URL</h3>
+                     <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-sm text-gray-700 break-all">
+                           https://localhost:3000/campaign/example-url
+                        </p>
+                     </div>
                   </div>
 
-                  <div className="flex flex-col">
-                     <p className="flex items-center text-gray-800 font-semibold text-md mb-2">
-                        QR Code: 
-                     </p>
-
-                     <img
-                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example"
-                        className="h-36 w-36 object-contain"
-                     />
+                  <div className="space-y-3">
+                     <h3 className="text-sm font-semibold text-gray-900">QR Code</h3>
+                     <div className="flex justify-center">
+                        <img
+                           src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example"
+                           className="w-32 h-32 object-contain border border-gray-200 rounded-lg"
+                           alt="QR Code"
+                        />
+                     </div>
                   </div>
-
                </div>
             </div>
          </div>

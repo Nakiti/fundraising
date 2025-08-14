@@ -4,7 +4,8 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import {getAllCampaigns, getTransactionsByCampaign, getTransactionsByOrg, getTransactionsFiltered, getTransactionsOverTime } from "@/app/services/fetchService";
+import { CampaignService, TransactionService } from "@/app/services/fetchService";
+import { errorHandler } from "@/app/services/apiClient";
 
 const Filters = ({setData, organizationId}) => {
    const [startDate, setStartDate] = useState(null);
@@ -12,8 +13,13 @@ const Filters = ({setData, organizationId}) => {
    const [campaigns, setCampaigns] = useState(null)
 
    const handleFilter = async (e) => {
-      const response = await getTransactionsFiltered(organizationId, e.target.value)
-      setData(response)
+      try {
+         const response = await TransactionService.getFilteredTransactions(organizationId, e.target.value)
+         setData(response)
+      } catch (err) {
+         const handledError = errorHandler.handle(err)
+         console.error('Transaction filter error:', handledError.message);
+      }
    }
 
    const handleDateChange = async (dates) => {
@@ -21,31 +27,38 @@ const Filters = ({setData, organizationId}) => {
       setStartDate(start)
       setEndDate(end)
 
-      if (start && end) {
-         const response = await getTransactionsOverTime(start, end, organizationId);
-         setData(response);
-      } else {
-         const response = await getTransactionsByOrg(organizationId)
-         setData(response)
+      try {
+         if (start && end) {
+            const response = await TransactionService.getTransactionsOverTime(start, end, organizationId);
+            setData(response);
+         } else {
+            const response = await TransactionService.getTransactionsByOrg(organizationId)
+            setData(response)
+         }
+      } catch (err) {
+         const handledError = errorHandler.handle(err)
+         console.error('Transaction date filter error:', handledError.message);
       }
    };
 
    const handleCampaignFilter = async(e) => {
       try {
-         const response = await getTransactionsByCampaign(e.target.value)
+         const response = await TransactionService.getTransactionsByCampaign(e.target.value)
          setData(response)
       } catch (err) {
-         console.log(err)
+         const handledError = errorHandler.handle(err)
+         console.error('Transaction campaign filter error:', handledError.message);
       }
    }
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await getAllCampaigns(organizationId)
+            const response = await CampaignService.getAllCampaigns(organizationId)
             setCampaigns(response)
          } catch (err) {
-            console.log(err)
+            const handledError = errorHandler.handle(err)
+            console.error('Campaign fetch error:', handledError.message);
          }
       }
 

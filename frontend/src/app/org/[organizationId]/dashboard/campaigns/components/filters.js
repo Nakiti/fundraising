@@ -4,7 +4,8 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import { getCampaignsFiltered, getCampaignsDateRange } from "@/app/services/fetchService";
+import { CampaignService } from "@/app/services/fetchService";
+import { errorHandler } from "@/app/services/apiClient";
 
 /*
    Component: Filters
@@ -41,64 +42,77 @@ const Filters = ({setData, organizationId}) => {
       setStartDate(start)
       setEndDate(end)
 
-      if (start && end) {
-         const response = await getCampaignsDateRange(start, end, organizationId);
-         setData(response);
-      } else {
-         const response = await getCampaignsFiltered(organizationId, "all")
-         setData(response)
+      try {
+         if (start && end) {
+            const response = await CampaignService.getCampaignsByDateRange(start, end, organizationId);
+            setData(response);
+         } else {
+            const response = await CampaignService.getFilteredCampaigns(organizationId, "all")
+            setData(response)
+         }
+      } catch (err) {
+         const handledError = errorHandler.handle(err)
+         console.error('Date filter error:', handledError.message);
       }
    }
 
    useEffect(() => {
       const fetchData = async() => {
-         const response = await getCampaignsFiltered(organizationId, status, type)
-         setData(response)
+         try {
+            const response = await CampaignService.getFilteredCampaigns(organizationId, status, type)
+            setData(response)
+         } catch (err) {
+            const handledError = errorHandler.handle(err)
+            console.error('Filter error:', handledError.message);
+         }
       }
 
       fetchData()
    }, [status, type])
 
    return (
-      <div className="flex flex-row mt-2 space-x-2">
-         
+      <div className="flex flex-wrap gap-3">
          {/* Status Dropdown */}
-         <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-md shadow-sm">
-            <FaRegCheckCircle className="absolute left-3 text-gray-500" />
+         <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+               <FaRegCheckCircle className="h-4 w-4 text-gray-400" />
+            </div>
             <select
-               className="pl-10 pr-4 py-2 text-sm text-gray-700 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-               defaultValue="temp"
+               className="pl-10 pr-8 py-3 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 appearance-none cursor-pointer"
+               value={status}
                onChange={handleFilter}
                name="status"
             >
-               <option value="temp" disabled>Status</option>
-               <option value="all">All</option>
+               <option value="all">All Status</option>
                <option value="active">Active</option>
                <option value="inactive">Inactive</option>
             </select>
          </div>
 
          {/* Type Dropdown */}
-         <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-md shadow-sm">
-            <IoMegaphoneOutline className="absolute left-3 text-gray-500" />
+         <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+               <IoMegaphoneOutline className="h-4 w-4 text-gray-400" />
+            </div>
             <select
-               className="pl-10 pr-4 py-2 text-sm text-gray-700 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-               defaultValue="temp"
+               className="pl-10 pr-8 py-3 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 appearance-none cursor-pointer"
+               value={type}
                onChange={handleFilter}
                name="type"
             >
-               <option value="temp" disabled>Campaign Type</option>
-               <option value="all">All</option>
+               <option value="all">All Types</option>
                <option value="donation">Donation</option>
                <option value="ticketed-event">Ticketed Event</option>
             </select>
          </div>
 
-         {/* Date Dropdown */}
-         <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-4 py-2">
-            <FaRegCalendarAlt className="text-gray-500" />
+         {/* Date Range Picker */}
+         <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+               <FaRegCalendarAlt className="h-4 w-4 text-gray-400" />
+            </div>
             <DatePicker
-               className="ml-3 text-gray-700 font-semibold text-sm focus:outline-none"
+               className="pl-10 pr-4 py-3 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full"
                placeholderText="Select date range"
                selected={startDate}
                onChange={handleDateChange}
@@ -106,10 +120,10 @@ const Filters = ({setData, organizationId}) => {
                endDate={endDate}
                selectsRange
                isClearable
+               dateFormat="MMM dd, yyyy"
             />
          </div>
       </div>
-
    )
 }
 

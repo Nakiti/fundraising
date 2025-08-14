@@ -10,8 +10,8 @@ import { AuthContext } from "@/app/context/authContext"
 import { updateCampaignDetails } from "@/app/services/updateServices"
 import { createCampaignDesignation } from "@/app/services/createServices"
 
-const Desingations = () => {
-   const {designations, campaignDetails, handleCampaignDetailsChange, campaignId, campaignStatus, selectedDesignations, setSelectedDesignations} = useContext(CampaignContext)
+const Designations = () => {
+   const {designations, campaignDetails, handleCampaignDetailsChange, campaignId, campaignStatus, selectedDesignations, setSelectedDesignations, loading} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
 
    const handleChange = (designation, isChecked) => {
@@ -53,6 +53,23 @@ const Desingations = () => {
       }
    }
 
+   // Show loading state while data is being fetched
+   if (loading) {
+      return (
+         <div className="w-full max-w-4xl mx-auto py-8 px-6">
+            <div className="animate-pulse">
+               <div className="h-8 bg-gray-200 rounded mb-4"></div>
+               <div className="h-4 bg-gray-200 rounded mb-8"></div>
+               <div className="space-y-4">
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+               </div>
+            </div>
+         </div>
+      )
+   }
+
    return (
       <div className="w-full max-w-4xl mx-auto py-8 px-6">
          <h1 className="text-4xl font-light text-gray-900 mb-4">Designations</h1>
@@ -69,12 +86,12 @@ const Desingations = () => {
             <div className="w-2/3 p-4">
                <select 
                   className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={campaignDetails.defaultDesignation == 0 ? "" : campaignDetails.defaultDesignation}
+                  value={campaignDetails && (campaignDetails.defaultDesignation == 0 ? "" : campaignDetails.defaultDesignation)}
                   name="defaultDesignation"
                   onChange={handleCampaignDetailsChange}
                >
                   <option value="" disabled>Select an Option</option>
-                  {designations.map(item => (
+                  {designations && designations.map(item => (
                      <option value={item.id} key={item.id}>{item.title}</option>
                   ))}
                </select>
@@ -87,7 +104,7 @@ const Desingations = () => {
             <h1 className="text-xl font-semibold mb-2">Active Designations</h1>
             <p className="text-sm text-gray-600 w-1/2 mb-4">These are the designations that users will be able to direct their donations towards for this campaign.</p>
 
-            {selectedDesignations.map((item, index) => (
+            {selectedDesignations && selectedDesignations.map((item, index) => (
                <div key={index} className="w-full p-4 bg-gray-100 flex flex-row justify-between rounded-md mb-2">
                   <p>{item.title}</p>
                   <button onClick={() => handleRemove(item.id)} className="text-gray-600 hover:text-red-500">
@@ -111,14 +128,14 @@ const Desingations = () => {
                      </tr>
                   </thead>
                   <tbody>
-                     {designations.map((item, index) => (
+                     {designations && designations.map((item, index) => (
                         <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
                            <td className="px-4 py-2 text-sm">
                               <input 
                                  type="checkbox" 
                                  value={item.id} 
                                  onChange={(e) => handleChange(item, e.target.checked)}
-                                 checked={selectedDesignations.some(designation => designation.id === item.id)}
+                                 checked={selectedDesignations && selectedDesignations.some(designation => designation.id === item.id)}
                                  className="focus:ring-2 focus:ring-blue-500"
                               />
                            </td>
@@ -141,4 +158,4 @@ const Desingations = () => {
    )
 }
 
-export default Desingations
+export default Designations

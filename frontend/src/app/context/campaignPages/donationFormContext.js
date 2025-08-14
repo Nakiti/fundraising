@@ -1,5 +1,5 @@
 import { initialDonationFormSections } from "@/app/constants/pageSectionsConfig";
-import { getCustomQuestions, getDonationForm, getPageSections } from "@/app/services/fetchService";
+import { ContentService, PageService, DesignationService } from "@/app/services/fetchService";
 import { createContext, useState, useEffect } from "react";
 import useFormInput from "@/app/hooks/useFormInput";
 
@@ -13,7 +13,7 @@ export const DonationFormContextProvider = ({campaignId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const donationResponse = await getDonationForm(campaignId)
+            const donationResponse = await PageService.getDonationForm(campaignId)
             const donationPageId = donationResponse.id
             setDonationFormInputs({ //can also redo this to have default values in SQL DB
                bg_image: donationResponse.bg_image || "",
@@ -31,10 +31,10 @@ export const DonationFormContextProvider = ({campaignId, children}) => {
                button6: donationResponse.button6 || 0,
             })
 
-            const customQuestionsResponse = await getCustomQuestions(campaignId)
+            const customQuestionsResponse = await ContentService.getCustomQuestions(campaignId)
             setCustomQuestions(customQuestionsResponse)
 
-            // const donationSections = await getPageSections(donationPageId)
+            // const donationSections = await PageService.getPageSections(donationPageId)
             // setDonationFormSections((prevSections) => {
             //    return prevSections.map(section => {
             //       const match = donationSections.find((item) => item.name == section.name)
@@ -42,7 +42,7 @@ export const DonationFormContextProvider = ({campaignId, children}) => {
             //    })
             // })
 
-            // const selectedDesignationsResponse = await getCampaignDesignations(campaignId)
+            // const selectedDesignationsResponse = await DesignationService.getCampaignDesignations(campaignId)
             // setSelectedDesignations(selectedDesignationsResponse)
          } catch (err) {
             console.log(err)

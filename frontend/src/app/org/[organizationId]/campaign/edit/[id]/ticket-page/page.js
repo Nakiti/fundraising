@@ -1,26 +1,33 @@
 "use client"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import SectionManager from "@/app/components/sectionManager"
-import { updateTicketPage } from "@/app/services/updateServices"
+import { PageUpdateService } from "@/app/services/updateServices"
 import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
+import { errorHandler } from "@/app/services/apiClient"
+import ErrorModal from "@/app/components/errorModal"
 
 const LandingPage = () => {
    const {ticketPageSections, setTicketPageSections, ticketsPageInputs, campaignId} = useContext(TicketPageContext)
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
 
    const handleSave = async() => {
       try {
-         await updateTicketPage(campaignId, ticketsPageInputs)
+         await PageUpdateService.updateTicketPage(campaignId, ticketsPageInputs)
          for (const section of ticketPageSections) {
-            await updatePageSection(section.id, section.active)
+            await PageUpdateService.updatePageSection(section.id, section.active)
          }
       } catch (err) {
-         console.log(err)
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
       }
    }
 
    return (
       <div className="w-full">
+         {error && <ErrorModal message={errorMessage} setError={setError} />}
          {ticketPageSections.map(section => {
             return <SectionManager section={section} sections={ticketPageSections} setSections={setTicketPageSections}/>
          })}

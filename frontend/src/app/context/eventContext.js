@@ -5,10 +5,10 @@ export const EventContext = createContext()
 
 export const EventContextProvider = ({children, eventId}) => {
    const {currentUser} = useContext(AuthContext)
-   const organizationId = currentUser.organization_id
+   const organizationId = currentUser?.organization_id
 
    return (
-      <EventContext.Provider>
+      <EventContext.Provider value={{ organizationId, eventId }}>
          {children}
       </EventContext.Provider>
    )

@@ -4,7 +4,7 @@ import AboutSection from "@/app/org/[organizationId]/page/landing/components/sec
 import ImpactSection from "@/app/org/[organizationId]/page/landing/components/sections/impactSection";
 import LargeTextSection from "@/app/org/[organizationId]/page/landing/components/sections/largeTextSection";
 import TripleSection from "@/app/org/[organizationId]/page/landing/components/sections/tripleSection";
-import { getLandingPage, getPageSections } from "@/app/services/fetchService";
+import { PageService } from "@/app/services/fetchService";
 import useFormInput from "@/app/hooks/useFormInput";
 
 export const LandingPageContext = createContext()
@@ -27,7 +27,7 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
 
-         const response = await getLandingPage(organizationId)
+         const response = await PageService.getLandingPage(organizationId)
          const landingPageId = response.id
          setInputs({
             title: response.title || "",
@@ -58,7 +58,7 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
             active: response.active || false
          })
 
-         const sectionsResponse = await getPageSections(landingPageId)
+         const sectionsResponse = await PageService.getPageSections(landingPageId)
          setSections((prevSections) => {
             return prevSections.map(section => {
                const match = sectionsResponse.find((item) => item.name == section.name)

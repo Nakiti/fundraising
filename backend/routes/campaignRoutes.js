@@ -11,7 +11,7 @@ router.put("/update/:id", updateCampaign)
 router.get("/getActive", getActive)
 router.get("/getFiltered/:id", getFiltered)
 router.get("/search/:id", searchCampaigns)
-router.put("/deactivate/:id", deactivateCampaign)
+router.put("/deactivate/:id", deactivateCampaign)  
 router.get("/getDateRange/:id", getDateRange)
 
 export default router

@@ -12,7 +12,9 @@ const CampaignPageLayout = ({children, params}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
+            console.log(campaignId)
             const response = await getCampaignDetails(campaignId)
+            console.log("response from campaign ", response)
             setCampaign(response)
             setCampaignType(response.type)
          } catch (err) {

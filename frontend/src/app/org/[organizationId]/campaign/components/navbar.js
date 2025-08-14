@@ -13,8 +13,8 @@ import { FaPeopleArrows } from "react-icons/fa";
 import { IoDocumentTextOutline } from "react-icons/io5";
 
 
-const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDeactivate, detailsLink, pageLinks, mode}) => {
-   const {status, campaignDetails, campaignType} = useContext(CampaignContext)
+const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDeactivate, detailsLink, pageLinks, mode, status}) => {
+   const {campaignDetails, campaignType} = useContext(CampaignContext)
    const pathName = usePathname()
    const [showDropdown, setShowDropdown] = useState(false)
    const [showLinks, setShowLinks] = useState(false)
@@ -37,6 +37,33 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
       document.addEventListener("click", handleOutsideClick);
       return () => document.removeEventListener("click", handleOutsideClick);
    }, []);
+
+   // Show loading state if campaignDetails is not loaded
+   if (!campaignDetails) {
+      return (
+         <div className="border-b border-gray-200 bg-gray-800 text-white">
+            <div className="flex flex-row py-2 px-6">
+               <Link href={`/org/${organizationId}/dashboard/campaigns/${campaignId}`} className="flex items-center text-gray-200 hover:text-gray-100">
+                  <IoMdArrowRoundBack className="text-2xl" />
+               </Link>
+            </div>
+            <div className="flex items-center justify-between w-11/12 mx-auto py-2">
+               <div className="flex items-center">
+                  <div className="h-16 w-16 bg-gray-600 rounded-sm mr-4 animate-pulse"></div>
+                  <div className="flex flex-col text-gray-100">
+                     <p className="text-xs font-semibold">{"Edit Campaign"}</p>
+                     <h1 className="text-2xl font-semibold animate-pulse bg-gray-600 h-8 w-48 rounded"></h1>
+                     <p className="text-md font-semibold text-gray-400 mt-1 animate-pulse bg-gray-600 h-4 w-24 rounded"></p>
+                  </div>
+               </div>
+               <div className="flex space-x-6 text-md">
+                  <div className="bg-gray-600 h-12 w-24 rounded animate-pulse"></div>
+                  <div className="bg-gray-600 h-12 w-24 rounded animate-pulse"></div>
+               </div>
+            </div>
+         </div>
+      );
+   }
 
    return (
       <div className="border-b border-gray-200 bg-gray-800 text-white">

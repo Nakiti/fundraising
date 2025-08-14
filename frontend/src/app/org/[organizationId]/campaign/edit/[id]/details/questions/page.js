@@ -1,6 +1,6 @@
 "use client"
 import { FaTrash } from "react-icons/fa"
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import useFormInput from "@/app/hooks/useFormInput"
 import { getCustomQuestions } from "@/app/services/fetchService"
@@ -8,7 +8,7 @@ import { deleteCampaignQuestionsBatch } from "@/app/services/deleteService"
 import { createCustomQuestion } from "@/app/services/createServices"
 
 const Questions = () => {
-   const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestions, campaignId} = useContext(CampaignContext)
+   const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestions, campaignId, loading} = useContext(CampaignContext)
 
    const [newQuestion, handleNewQuestionChange, setNewQuestion] = useFormInput({
       id: new Date(),
@@ -49,6 +49,22 @@ const Questions = () => {
       }
    }
 
+   // Show loading state while data is being fetched
+   if (loading) {
+      return (
+         <div className="w-full max-w-4xl mx-auto py-8 px-6">
+            <div className="animate-pulse">
+               <div className="h-8 bg-gray-200 rounded mb-4"></div>
+               <div className="h-4 bg-gray-200 rounded mb-8"></div>
+               <div className="space-y-4">
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+               </div>
+            </div>
+         </div>
+      )
+   }
 
    return (
       <div className="w-full max-w-4xl mx-auto py-8 px-6">
@@ -68,7 +84,7 @@ const Questions = () => {
                         type="checkbox"
                         className="w-4 h-4"
                         name={field.toLowerCase()}
-                        checked={questionInputs[field.toLowerCase()]}
+                        checked={questionInputs?.[field.toLowerCase()] || false}
                         onChange={handleQuestionInputsChange}
                      />
                   </div>
@@ -89,7 +105,7 @@ const Questions = () => {
                         type="checkbox"
                         className="w-4 h-4"
                         name={field.toLowerCase().replace(/\//g, '')}
-                        checked={questionInputs[field.toLowerCase().replace(/\//g, '')]}
+                        checked={questionInputs?.[field.toLowerCase().replace(/\//g, '')] || false}
                         onChange={handleQuestionInputsChange}
                      />
                   </div>
@@ -141,7 +157,7 @@ const Questions = () => {
             <h1 className="text-sm text-gray-700 mb-1">Manage Custom Question(s)</h1>
             <div className="border-b border-gray-600 mb-2"></div>
             <div>
-               {customQuestions.map((item, index) => (
+               {customQuestions && customQuestions.map((item, index) => (
                   <div className="bg-gray-100 mb-2" key={index}>
                      <div className="w-full flex flex-row justify-between bg-gray-300 p-3">
                         <p>Question {index + 1}</p>

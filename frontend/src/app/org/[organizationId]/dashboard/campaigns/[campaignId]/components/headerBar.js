@@ -17,48 +17,86 @@ const HeaderBar = ({organizationId, campaignType, campaign, campaignId}) => {
    ]
 
    return (
-      <div className="bg-gray-800 w-full px-4 pt-2 text-white">
-         <Link href={`/org/${organizationId}/dashboard/campaigns`} className="flex flex-row px-4 py-2 items-center cursor-pointer hover:text-gray-200">
-            <FaArrowLeft className="text-sm" />
-            <p className="ml-2 text-sm font-semibold">Campaigns</p>
-         </Link>
-         <div className="flex flex-row px-6 py-4 w-full justify-between">
-            <div className="flex flex-row items-center">
-               {campaignType &&
-                  campaignType == "crowdfunding" ? <MdOutlineCampaign className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
-                  campaignType == "ticketed-event" ? <IoTicketOutline className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
-                  campaignType == "peer-to-peer" ? <FaPeopleArrows className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/> :
-                  <IoDocumentTextOutline className="h-16 w-16 p-1 border-2 border-white rounded-sm mr-4"/>
-               }
-               <div className="flex flex-col text-gray-100">
-                  <h1 className="text-2xl font-semibold">{campaign && campaign.internal_name}</h1>
-                  <p className="text-sm mt-1 text-gray-400">{campaign && campaign.type}</p>
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+         {/* Back Navigation */}
+         <div className="px-6 py-3 border-b border-gray-100">
+            <Link 
+               href={`/org/${organizationId}/dashboard/campaigns`} 
+               className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            >
+               <FaArrowLeft className="w-4 h-4 mr-2" />
+               <span className="font-medium">Back to Campaigns</span>
+            </Link>
+         </div>
+
+         {/* Main Header */}
+         <div className="px-6 py-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+               <div className="flex items-center gap-4">
+                  {/* Campaign Icon */}
+                  <div className="flex-shrink-0">
+                     {campaignType &&
+                        campaignType == "crowdfunding" ? 
+                           <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center">
+                              <MdOutlineCampaign className="h-8 w-8 text-blue-600" />
+                           </div> :
+                        campaignType == "ticketed-event" ? 
+                           <div className="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center">
+                              <IoTicketOutline className="h-8 w-8 text-purple-600" />
+                           </div> :
+                        campaignType == "peer-to-peer" ? 
+                           <div className="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center">
+                              <FaPeopleArrows className="h-8 w-8 text-green-600" />
+                           </div> :
+                           <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
+                              <IoDocumentTextOutline className="h-8 w-8 text-gray-600" />
+                           </div>
+                     }
+                  </div>
+
+                  {/* Campaign Info */}
+                  <div className="flex-1">
+                     <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                        {campaign && campaign.internal_name}
+                     </h1>
+                     <p className="text-sm text-gray-500 capitalize">
+                        {campaign && campaign.type.replace('-', ' ')} Campaign
+                     </p>
+                  </div>
+               </div>
+
+               {/* Actions */}
+               <div className="flex items-center gap-3">
+                  <Link 
+                     href={`/org/${organizationId}/campaign/edit/${campaignId}/details/about`} 
+                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                     Edit Campaign
+                  </Link>
+                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                     <SlOptionsVertical className="h-5 w-5" />
+                  </button>
                </div>
             </div>
-            <div className="w-1/5 flex flex-row justify-between h-1/2">
-               <Link 
-                  href={`/org/${organizationId}/campaign/edit/${campaignId}/details/about`} 
-                  className="bg-blue-600 hover:bg-blue-500 text-white py-3 px-6 rounded-md text-md font-semibold transition duration-200"
-               >
-                  Edit Campaign
-               </Link>
-               <button className="text-gray-200 hover:text-gray-100">
-                  <SlOptionsVertical className="h-6 w-6" />
-               </button>
-            </div>
          </div>
-         <div className="w-1/3 px-6 space-x-4 flex flex-row justify-between">
-            {links.map((item, index) => (
-               <Link 
-                  key={index} 
-                  href={item.pathName} 
-                  className={`px-8 py-2 text-md font-medium border-b-4 ${
-                     pathname === item.pathName ? "border-blue-600 text-white" : "border-transparent text-gray-400"
-                  } hover:border-blue-600 hover:text-white transition-all duration-200`}
-               >
-                  {item.title}
-               </Link>
-            ))}
+
+         {/* Navigation Tabs */}
+         <div className="px-6 border-t border-gray-100">
+            <nav className="flex space-x-8">
+               {links.map((item, index) => (
+                  <Link 
+                     key={index} 
+                     href={item.pathName} 
+                     className={`px-1 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+                        pathname === item.pathName 
+                           ? "border-blue-600 text-blue-600" 
+                           : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                     }`}
+                  >
+                     {item.title}
+                  </Link>
+               ))}
+            </nav>
          </div>
       </div>
    )

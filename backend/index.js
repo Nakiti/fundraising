@@ -1,6 +1,9 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import rateLimit from "express-rate-limit"
+import helmet from "helmet"
+import { config } from "./config.js"
 import organizationRoutes from "./routes/organizationRoutes.js"
 import campaignRoutes from "./routes/campaignRoutes.js"
 import donationPageRoutes from "./routes/donation_pageRoutes.js"
@@ -21,24 +24,71 @@ import peerFundraisingPageRoutes from "./routes/peer_fundraising_pageRoutes.js"
 import peerLandingPageRoutes from "./routes/peer_landing_pageRoutes.js"
 import donationFormRoutes from "./routes/donation_formRoutes.js"
 import ticketPurchasePageRoutes from "./routes/ticket_purchase_pageRoutes.js"
+import { 
+  globalErrorHandler, 
+  notFoundHandler, 
+  handleUnhandledRejection, 
+  handleUncaughtException 
+} from "./middleware/errorHandler.js"
 
 const app = express()
 
+// Security middleware
+app.use(helmet({
+   contentSecurityPolicy: false, // Disable CSP for development
+   crossOriginEmbedderPolicy: false
+}))
+
+// Rate limiting
+const limiter = rateLimit({
+   windowMs: config.rateLimit.windowMs,
+   max: config.rateLimit.maxRequests,
+   message: {
+      success: false,
+      message: "Too many requests from this IP, please try again later."
+   },
+   standardHeaders: true,
+   legacyHeaders: false,
+})
+
+// Apply rate limiting to all routes
+app.use(limiter)
+
+// Stricter rate limiting for auth routes
+const authLimiter = rateLimit({
+   windowMs: 15 * 60 * 1000, // 15 minutes
+   max: 5, // limit each IP to 5 requests per windowMs
+   message: {
+      success: false,
+      message: "Too many authentication attempts, please try again later."
+   },
+   standardHeaders: true,
+   legacyHeaders: false,
+})
+
 const corsOptions = {
-   origin: true,
+   origin: config.server.nodeEnv === "production" 
+      ? ["https://yourdomain.com"] // Replace with your actual domain
+      : ["http://localhost:3000", "http://localhost:3001"],
    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
    allowedHeaders: ['Content-Type', 'Authorization'],
    credentials: true, // Enable credentials (cookies, etc.)
+   optionsSuccessStatus: 200
 };
-
-app.use(express.json())
+ 
+app.use(express.json({ limit: '10mb' }))
 app.use(cors(corsOptions))
 app.use(cookieParser())
 
+// Apply auth rate limiting to login routes
+app.use("/api/user/login", authLimiter)
+app.use("/api/user/create", authLimiter)
+
+// Routes
 app.use("/api/organization", organizationRoutes)
 app.use("/api/campaign", campaignRoutes)
-app.use("/api/donationPage", donationPageRoutes)
-app.use("/api/transaction", transactionRoutes)
+app.use("/api/donationPage", donationPageRoutes)   
+app.use("/api/transaction", transactionRoutes) 
 app.use("/api/user", userRoutes)
 app.use("/api/designation", designationRoutes)
 app.use("/api/campaign_designation", campaign_designationRoutes)
@@ -47,21 +97,41 @@ app.use("/api/landing_page", landing_pageRoutes)
 app.use("/api/user_organization", user_organizationRoutes)
 app.use("/api/campaign_details", campaign_detailRoutes)
 app.use("/api/sections", sectionRoutes)
-app.use("/api/thankyouPage", thankYouPageRoutes)
+app.use("/api/thankYouPage", thankYouPageRoutes)
 app.use("/api/faq", faqRoutes)
 app.use("/api/ticket_page", ticketPageRoutes)
 app.use("/api/campaign_ticket", campaignTicketRoutes)
-app.use("/api/peer_landing_page", peerLandingPageRoutes)
 app.use("/api/peer_fundraising_page", peerFundraisingPageRoutes)
+app.use("/api/peer_landing_page", peerLandingPageRoutes)
 app.use("/api/donation_form", donationFormRoutes)
 app.use("/api/ticket_purchase_page", ticketPurchasePageRoutes)
 
-const port = process.env.PORT || 4000
+// Global error handling middleware (must be last)
+app.use(notFoundHandler);
+app.use(globalErrorHandler);
 
-app.get("/", (req, res) => {
-   res.send("its running!")
-})
+// Handle unhandled promise rejections
+process.on('unhandledRejection', handleUnhandledRejection);
 
-app.listen(port, (req, res) => {
-   console.log("runninnnnnnnnnnnn")
-})
+// Handle uncaught exceptions
+process.on('uncaughtException', handleUncaughtException);
+
+app.listen(config.server.port, () => {
+   console.log(`Server running on port ${config.server.port} in ${config.server.nodeEnv} mode`);
+}).on('error', (err) => {
+   console.error('Server error:', err);
+   if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${config.server.port} is already in use`);
+   }
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+   console.log('SIGTERM received, shutting down gracefully');
+   process.exit(0);
+});
+
+process.on('SIGINT', () => {
+   console.log('SIGINT received, shutting down gracefully');
+   process.exit(0);
+});
