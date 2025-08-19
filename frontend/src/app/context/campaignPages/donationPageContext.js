@@ -10,13 +10,15 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
    const [donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs] = useFormInput({})
    const [donationPageSections, setDonationPageSections] = useState(initialDonationPageSections)
    const [selectedDesignations, setSelectedDesignations] = useState([]);
-   const {campaignType} = useContext(CampaignContext)
+   const {campaignType, campaignDetails} = useContext(CampaignContext)
 
    useEffect(() => {
       const fetchData = async() => {
          try {
             const donationResponse = await PageService.getDonationPage(campaignId)
             const donationPageId = donationResponse.id
+            const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
+            
             setDonationPageInputs({
                // Basic Content
                headline: donationResponse.headline || "",
@@ -85,7 +87,7 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
                overlayOpacity: donationResponse.overlayOpacity || "0.3",
             })
 
-            const donationSections = await PageService.getPageSections(donationPageId)
+            const donationSections = await PageService.getPageSectionsByPage(organizationId, 'campaign_donation', donationPageId)
             setDonationPageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = donationSections.find((item) => item.name == section.name)

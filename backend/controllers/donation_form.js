@@ -13,9 +13,10 @@ import {
   NotFoundError,
   DatabaseError
 } from "../utils/errors.js"
+import imageService from "../services/imageService.js"
 
 const upload = multer({
-  dest: 'uploads/',
+  storage: multer.memoryStorage(),
   limits: { 
     fileSize: 5 * 1024 * 1024,
     fieldSize: 25 * 1024 * 1024
@@ -58,8 +59,8 @@ export const getDonationForm = asyncHandler(async (req, res) => {
 
   const query = "SELECT * FROM donation_forms WHERE `campaign_id` = ?"
 
-  return new Promise((resolve, reject) => {
-    db.query(query, [id], (err, data) => {
+  return new Promise(async (resolve, reject) => {
+    db.query(query, [id], async (err, data) => {
       if (err) {
         reject(new DatabaseError('Failed to fetch donation form', err));
         return;
@@ -68,8 +69,24 @@ export const getDonationForm = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Donation form'));
         return;
       }
-      sendSuccess(res, data[0], 'Donation form retrieved successfully');
-      resolve();
+
+      try {
+        const donationForm = data[0];
+        
+        // Generate SAS URL for background image (or return local path in development)
+        const bgImageUrl = await imageService.getImageUrl(donationForm.bg_image, 'public');
+
+        // Replace image path with URL
+        const result = {
+          ...donationForm,
+          bg_image: bgImageUrl
+        };
+
+        sendSuccess(res, result, 'Donation form retrieved successfully');
+        resolve();
+      } catch (error) {
+        reject(new DatabaseError('Failed to generate image URL', error));
+      }
     })
   })
 })
@@ -82,7 +99,7 @@ export const updateDonationForm = asyncHandler(async (req, res) => {
   }
 
   return new Promise((resolve, reject) => {
-    upload.single('bg_image')(req, res, (err) => {
+    upload.single('bg_image')(req, res, async (err) => {
       if (err) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           reject(new ValidationError('File is too large. Max size is 5MB'));
@@ -92,64 +109,92 @@ export const updateDonationForm = asyncHandler(async (req, res) => {
         return;
       } 
 
-      // Destructure after multer has processed the form data
-      const { 
-        bg_image, headline, description, button1, button2, button3, 
-        button4, button5, button6, p_color, s_color, bg_color, t_color, b1_color,
-        heroTitleSize, sectionTitleSize, bodyTextSize, buttonTextSize,
-        cardRadius, buttonRadius, user_id 
-      } = req.body;
-      
-      if (!user_id) {
-        reject(new ValidationError('Missing required field: user_id'));
-        return;
+      try {
+        // First, get current donation form to access existing image path and organization_id
+        const getQuery = "SELECT df.*, c.organization_id FROM donation_forms df JOIN campaigns c ON df.campaign_id = c.id WHERE df.id = ?";
+        
+        db.query(getQuery, [id], async (err, data) => {
+          if (err) {
+            reject(new DatabaseError('Failed to fetch donation form', err));
+            return;
+          }
+          
+          if (!data || data.length === 0) {
+            reject(new NotFoundError('Donation form'));
+            return;
+          }
+
+          const currentForm = data[0];
+          const organization_id = currentForm.organization_id;
+
+          // Destructure after multer has processed the form data
+          const { 
+            bg_image, headline, description, button1, button2, button3, 
+            button4, button5, button6, p_color, s_color, bg_color, t_color, b1_color,
+            heroTitleSize, sectionTitleSize, bodyTextSize, buttonTextSize,
+            cardRadius, buttonRadius, user_id 
+          } = req.body;
+          
+          if (!user_id) {
+            reject(new ValidationError('Missing required field: user_id'));
+            return;
+          }
+
+          // Handle image update
+          let bgImagePath = currentForm.bg_image;
+
+          if (req.file) {
+            imageService.validateFile(req.file);
+            bgImagePath = await imageService.updateImage(organization_id, 'donation-forms', id, 'background', req.file, currentForm.bg_image);
+          }
+
+          const query = "UPDATE donation_forms SET `bg_image` = ?, `headline` = ?, `description` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `b1_color` = ?, `heroTitleSize` = ?, `sectionTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardRadius` = ?, `buttonRadius` = ?, `updated_at` = ?, `updated_by` = ? WHERE `id` = ?"
+
+          const values = [
+            bgImagePath,
+            headline,
+            description,
+            button1,
+            button2,
+            button3,
+            button4,
+            button5,
+            button6,
+            p_color,
+            s_color,
+            bg_color,
+            t_color,
+            b1_color,
+            heroTitleSize,
+            sectionTitleSize,
+            bodyTextSize,
+            buttonTextSize,
+            cardRadius,
+            buttonRadius,
+            (new Date()).toISOString().slice(0, 19).replace('T', ' '),
+            user_id,
+            id
+          ]
+
+          db.query(query, values, (err, data) => {
+            if (err) {
+              console.error('SQL Error:', err);
+              console.error('Query:', query);
+              console.error('Values:', values);
+              reject(new DatabaseError(`SQL Error: ${err.message}`, err));
+              return;
+            }
+            if (data.affectedRows === 0) {
+              reject(new NotFoundError('Donation form'));
+              return;
+            }
+            sendUpdated(res, data, 'Donation form updated successfully');
+            resolve();
+          })
+        })
+      } catch (error) {
+        reject(new DatabaseError('Failed to process donation form update', error));
       }
-
-      const imagePath = req.file?.path || bg_image;
-
-      const query = "UPDATE donation_forms SET `bg_image` = ?, `headline` = ?, `description` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `b1_color` = ?, `heroTitleSize` = ?, `sectionTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardRadius` = ?, `buttonRadius` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
-
-      const values = [
-        imagePath,
-        headline,
-        description,
-        button1,
-        button2,
-        button3,
-        button4,
-        button5,
-        button6,
-        p_color,
-        s_color,
-        bg_color,
-        t_color,
-        b1_color,
-        heroTitleSize,
-        sectionTitleSize,
-        bodyTextSize,
-        buttonTextSize,
-        cardRadius,
-        buttonRadius,
-        (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-        user_id,
-        id
-      ]
-
-      db.query(query, values, (err, data) => {
-        if (err) {
-          console.error('SQL Error:', err);
-          console.error('Query:', query);
-          console.error('Values:', values);
-          reject(new DatabaseError(`SQL Error: ${err.message}`, err));
-          return;
-        }
-        if (data.affectedRows === 0) {
-          reject(new NotFoundError('Donation form'));
-          return;
-        }
-        sendUpdated(res, data, 'Donation form updated successfully');
-        resolve();
-      })
     })
   })
 })

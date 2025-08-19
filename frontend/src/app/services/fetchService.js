@@ -173,11 +173,32 @@ export class PageService {
       }
    }
 
-   // Get page sections
+   // Get page sections (legacy method for backward compatibility)
    static async getPageSections(pageId) {
       try {
          validators.id(pageId, 'Page ID');
          const response = await api.get(`/sections/getSectionsByPage/${pageId}`);
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching page sections:', error);
+         throw error;
+      }
+   }
+
+   // Get page sections with new structure
+   static async getPageSectionsByPage(organizationId, pageType, pageReferenceId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.required(pageType, 'Page Type');
+         validators.id(pageReferenceId, 'Page Reference ID');
+         
+         const response = await api.get(`/sections/getSectionsByPage`, {
+            params: {
+               organization_id: organizationId,
+               page_type: pageType,
+               page_reference_id: pageReferenceId
+            }
+         });
          return response.success ? response.data : [];
       } catch (error) {
          console.error('Error fetching page sections:', error);

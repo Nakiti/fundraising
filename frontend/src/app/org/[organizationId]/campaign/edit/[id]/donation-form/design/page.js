@@ -1,19 +1,52 @@
 "use client"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext";
-import { updateDonationForm } from "@/app/services/updateServices";
+import { PageUpdateService } from "@/app/services/updateServices";
 import { AuthContext } from "@/app/context/authContext";
+import { errorHandler } from "@/app/services/apiClient"
+import ErrorModal from "@/app/components/errorModal"
 import { FaPalette, FaFont, FaMousePointer, FaRuler, FaSave } from "react-icons/fa";
 
 const Design = () => {
-   const {campaignId, donationFormInputs, handleDonationFormInputsChange} = useContext(DonationFormContext)
+   const {campaignId, donationFormInputs, handleDonationFormInputsChange, donationFormSections, donationFormId} = useContext(DonationFormContext)
    const {currentUser} = useContext(AuthContext)
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
+   const [isLoading, setIsLoading] = useState(false)
+   const [successMessage, setSuccessMessage] = useState("")
    
    const handleSave = async() => {
+      if (!donationFormId) {
+         setErrorMessage("Donation form not found")
+         setError(true)
+         return
+      }
+      
+      setIsLoading(true)
+      setError(false)
+      setSuccessMessage("")
+      
       try {
-         await updateDonationForm(campaignId, donationFormInputs, currentUser.id)
+         // Update donation form
+         await PageUpdateService.updateDonationForm(donationFormId, donationFormInputs, currentUser.id)
+         
+         // Update all sections in parallel (only those with valid IDs)
+         const validSections = donationFormSections.filter(section => section.id && section.id > 0)
+         if (validSections.length > 0) {
+            const sectionPromises = validSections.map(section => 
+               PageUpdateService.updatePageSection(section.id, section.active)
+            )
+            await Promise.all(sectionPromises)
+         }
+         
+         setSuccessMessage("Donation form updated successfully!")
+         setTimeout(() => setSuccessMessage(""), 3000)
       } catch (err) {
-         console.log(err)
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
+      } finally {
+         setIsLoading(false)
       }
    }
 
@@ -231,24 +264,39 @@ const Design = () => {
             </div>
          </div>
 
-        
-
          {/* Save Button */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center justify-between">
                <div>
                   <h3 className="text-sm font-medium text-gray-900">Save Changes</h3>
-                  {/* <p className="text-xs text-gray-500">Save your design customizations</p> */}
+                  {successMessage && (
+                     <p className="text-xs text-green-600 mt-1">{successMessage}</p>
+                  )}
                </div>
                <button 
-                  className="bg-blue-600 px-6 py-3 rounded-lg shadow-sm text-sm font-medium text-white hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2"
+                  className={`px-6 py-3 rounded-lg shadow-sm text-sm font-medium flex items-center space-x-2 transition-colors duration-200 ${
+                     isLoading 
+                        ? 'bg-gray-400 text-white cursor-not-allowed' 
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
                   onClick={handleSave}
+                  disabled={isLoading}
                >
                   <FaSave className="w-4 h-4" />
-                  <span>Save</span>
+                  <span>{isLoading ? 'Saving...' : 'Save'}</span>
                </button>
             </div>
          </div>
+
+         {/* Error Modal */}
+         {error && (
+            <ErrorModal
+               isOpen={error}
+               onClose={() => setError(false)}
+               title="Error"
+               message={errorMessage}
+            />
+         )}
       </div>
    )
 }

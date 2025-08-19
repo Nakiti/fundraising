@@ -82,24 +82,24 @@ const DonationForm = ({params}) => {
    return (
       <div 
          className="w-full mb-4 mx-auto overflow-y-auto" 
-         style={{ backgroundColor: display?.bg_color || '#f3f4f6' }}
+         style={{ 
+            backgroundColor: display?.bg_color || '#f3f4f6',
+            backgroundImage: display?.bg_image ? `url('${display.bg_image}')` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+         }}
       >
          {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
          {display && <div className="px-6 py-4">
-            <div 
-               className="p-6 mx-auto max-w-2xl"
-               style={{ 
-                  backgroundColor: display.bg_color || '#ffffff',
-                  borderRadius: display.cardRadius ? `${display.cardRadius}px` : '4px'
-               }}
-            >
+            <div className={`max-w-xl mx-auto ${display.bg_image ? 'relative z-10' : ''}`}>
                {/* Header */}
-               <div className="text-center mb-8">
+               <div className="text-center mb-6">
                   <h1 
-                     className="font-bold mb-4 leading-tight"
+                     className="font-bold mb-3 leading-tight"
                      style={{ 
                         color: display.p_color || '#1f2937',
-                        fontSize: display.heroTitleSize ? `${display.heroTitleSize}px` : '36px'
+                        fontSize: Math.min(parseInt(display.heroTitleSize) || 36, 40) + 'px'
                      }}
                   >
                      {display.headline || "Make a Donation"}
@@ -108,324 +108,413 @@ const DonationForm = ({params}) => {
                      className="leading-relaxed"
                      style={{ 
                         color: display.s_color || '#6b7280',
-                        fontSize: display.bodyTextSize ? `${display.bodyTextSize}px` : '16px'
+                        fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
                      }}
                   >
                      {display.description || "Your generous contribution helps us continue our mission and make a positive impact in our community."}
                   </p>
                </div>
 
-               <div className="w-full border-gray-200 border my-6" />
-
-               {/* Giving Information */}
-               <div>
-                  <h2 
-                     className="text-lg font-semibold mb-4"
-                     style={{ 
-                        color: display.p_color || '#1f2937',
-                        fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '20px'
-                     }}
-                  >
-                     Giving Information
-                  </h2>
-                  <div className="mt-2">
-                     <h3 
-                        className="text-xs font-semibold mb-2"
-                        style={{ color: display.s_color || '#6b7280' }}
+               {/* Main Form */}
+               <div 
+                  className="bg-white border border-gray-100 p-6"
+                  style={{ borderRadius: display.cardRadius ? `${display.cardRadius}px` : '4px' }}
+               >
+                  {/* Donation Amount Section */}
+                  <div className="mb-6">
+                     <h2 
+                        className="font-semibold mb-3"
+                        style={{ 
+                           color: display.p_color || '#1f2937',
+                           fontSize: Math.min(parseInt(display.sectionTitleSize) || 20, 22) + 'px'
+                        }}
                      >
-                        I would like to give:
-                     </h3>
-                     <div className="grid grid-cols-6 gap-2 w-full">
-                        <button 
-                           className={`px-4 py-2 text-xs rounded-md transition-colors duration-200 ${
-                              amount === display.button1 ? 'text-white' : 'text-gray-700'
-                           }`}
-                           style={{ 
-                              backgroundColor: amount === display.button1 ? (display.b1_color || '#3b82f6') : '#f3f4f6',
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                           }}
-                           onClick={() => handleAmountChange(display.button1)}
-                        >
-                           ${display.button1}
-                        </button>
-                        <button 
-                           className={`px-4 py-2 text-xs rounded-md transition-colors duration-200 ${
-                              amount === display.button2 ? 'text-white' : 'text-gray-700'
-                           }`}
-                           style={{ 
-                              backgroundColor: amount === display.button2 ? (display.b1_color || '#3b82f6') : '#f3f4f6',
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                           }}
-                           onClick={() => handleAmountChange(display.button2)}
-                        >
-                           ${display.button2}
-                        </button>
-                        <button 
-                           className={`px-4 py-2 text-xs rounded-md transition-colors duration-200 ${
-                              amount === display.button3 ? 'text-white' : 'text-gray-700'
-                           }`}
-                           style={{ 
-                              backgroundColor: amount === display.button3 ? (display.b1_color || '#3b82f6') : '#f3f4f6',
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                           }}
-                           onClick={() => handleAmountChange(display.button3)}
-                        >
-                           ${display.button3}
-                        </button>
-                        <button 
-                           className={`px-4 py-2 text-xs rounded-md transition-colors duration-200 ${
-                              amount === display.button4 ? 'text-white' : 'text-gray-700'
-                           }`}
-                           style={{ 
-                              backgroundColor: amount === display.button4 ? (display.b1_color || '#3b82f6') : '#f3f4f6',
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                           }}
-                           onClick={() => handleAmountChange(display.button4)}
-                        >
-                           ${display.button4}
-                        </button>
-                        <button 
-                           className={`px-4 py-2 text-xs rounded-md transition-colors duration-200 ${
-                              amount === display.button5 ? 'text-white' : 'text-gray-700'
-                           }`}
-                           style={{ 
-                              backgroundColor: amount === display.button5 ? (display.b1_color || '#3b82f6') : '#f3f4f6',
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                           }}
-                           onClick={() => handleAmountChange(display.button5)}
-                        >
-                           ${display.button5}
-                        </button>
+                        Choose Your Amount
+                     </h2>
+                     <div className="grid grid-cols-3 gap-2 mb-3">
+                        {[display.button1, display.button2, display.button3, display.button4, display.button5].map((amount, index) => (
+                           <button
+                              key={index}
+                              className={`p-3 border transition-colors duration-200 text-center ${
+                                 amount === display.button1 ? 'border-gray-300' : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                              style={{ borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px' }}
+                              onClick={() => handleAmountChange(amount)}
+                           >
+                              <div 
+                                 className="font-semibold"
+                                 style={{ 
+                                    color: display.p_color || '#1f2937',
+                                    fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                                 }}
+                              >
+                                 ${amount || '25'}
+                              </div>
+                           </button>
+                        ))}
                         <input 
-                           className="px-4 py-2 col-span-1 text-xs border border-gray-300 text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           style={{ 
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                           }}
-                           type="number" 
-                           onChange={handleCustomAmountChange} 
-                           value={customAmount} 
+                           className="p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200 text-center"
                            placeholder="Custom"
+                           type="number"
+                           value={customAmount}
+                           onChange={handleCustomAmountChange}
+                           style={{ 
+                              gridColumn: 'span 2',
+                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
                         />
                      </div>
                   </div>
-                  <div className="mt-4">
-                     <h3 
-                        className="text-xs font-semibold mb-1"
-                        style={{ color: display.s_color || '#6b7280' }}
-                     >
-                        I would like to give to:
-                     </h3>
-                     <select 
-                        className="w-3/4 border text-sm border-gray-300 rounded-sm p-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+
+                  {/* Fund Selection */}
+                  <div className="mb-6">
+                     <h2 
+                        className="font-semibold mb-3"
                         style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
+                           color: display.p_color || '#1f2937',
+                           fontSize: Math.min(parseInt(display.sectionTitleSize) || 20, 22) + 'px'
                         }}
+                     >
+                        Select Fund
+                     </h2>
+                     <select 
+                        className="w-full p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200 bg-white"
                         defaultValue="select"
                         onChange={handleFundChange}
+                        style={{ 
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                           fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                        }}
                      >
-                        <option value="select" disabled>Select a Designation</option>
+                        <option value="select" disabled>Choose a fund</option>
                         {designations && designations.length > 0 ?
                          designations.map((item, index) => {
                            return <option key={item.id} value={index}>{item.title}</option>
                         }) :
-                        defaultDesignation && <option className="text-sm" value={defaultDesignation.id}>{defaultDesignation.title}</option>
+                        defaultDesignation && <option value={defaultDesignation.id}>{defaultDesignation.title}</option>
                         }
                      </select>
                   </div>
-               </div>
 
-               <div className="w-full border-gray-200 border my-6" />
-
-               {/* Your Information */}
-               <div>
-                  <h2 
-                     className="text-lg font-semibold mb-4"
-                     style={{ 
-                        color: display.p_color || '#1f2937',
-                        fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '20px'
-                     }}
-                  >
-                     Your Information
-                  </h2>
-                  <div className="grid grid-cols-4 gap-x-2 gap-y-4">
-                     <input 
-                        className="p-2 text-xs border border-gray-300 bg-gray-50 col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {/* Personal Information */}
+                  <div className="mb-6">
+                     <h2 
+                        className="font-semibold mb-3"
                         style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
+                           color: display.p_color || '#1f2937',
+                           fontSize: Math.min(parseInt(display.sectionTitleSize) || 20, 22) + 'px'
                         }}
-                        placeholder="First Name"
-                        value={formData.firstName}
-                        onChange={(e) => handleFormDataChange('firstName', e.target.value)}
-                     />
+                     >
+                        Your Information
+                     </h2>
+                     <div className="grid grid-cols-2 gap-3 mb-3">
+                        <input 
+                           className="p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200"
+                           placeholder="First Name"
+                           value={formData.firstName}
+                           onChange={(e) => handleFormDataChange('firstName', e.target.value)}
+                           style={{ 
+                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
+                        />
+                        <input 
+                           className="p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200"
+                           placeholder="Last Name"
+                           value={formData.lastName}
+                           onChange={(e) => handleFormDataChange('lastName', e.target.value)}
+                           style={{ 
+                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
+                        />
+                     </div>
                      <input 
-                        className="p-2 text-xs border border-gray-300 bg-gray-50 col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                        }}
-                        placeholder="Last Name"
-                        value={formData.lastName}
-                        onChange={(e) => handleFormDataChange('lastName', e.target.value)}
-                     />
-                     <input 
-                        className="p-2 text-xs border border-gray-300 bg-gray-50 col-span-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                        }}
+                        className="w-full p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200 mb-3"
                         placeholder="Email Address"
+                        type="email"
                         value={formData.email}
                         onChange={(e) => handleFormDataChange('email', e.target.value)}
+                        style={{ 
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                           fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                        }}
                      />
                      <input 
-                        className="p-2 text-xs border border-gray-300 bg-gray-50 col-span-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                        }}
+                        className="w-full p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200 mb-3"
                         placeholder="Street Address"
                         value={formData.address}
                         onChange={(e) => handleFormDataChange('address', e.target.value)}
-                     />
-                     <input 
-                        className="p-2 text-xs border border-gray-300 bg-gray-50 col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                           fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
                         }}
-                        placeholder="Zip Code"
-                        value={formData.zipCode}
-                        onChange={(e) => handleFormDataChange('zipCode', e.target.value)}
                      />
+                     <div className="grid grid-cols-3 gap-3 mb-3">
+                        <input 
+                           className="p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200"
+                           placeholder="City"
+                           value={formData.city}
+                           onChange={(e) => handleFormDataChange('city', e.target.value)}
+                           style={{ 
+                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
+                        />
+                        <input 
+                           className="p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200"
+                           placeholder="State"
+                           style={{ 
+                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
+                        />
+                        <input 
+                           className="p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200"
+                           placeholder="ZIP Code"
+                           value={formData.zipCode}
+                           onChange={(e) => handleFormDataChange('zipCode', e.target.value)}
+                           style={{ 
+                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
+                        />
+                     </div>
                      <input 
-                        className="p-2 text-xs border border-gray-300 bg-gray-50 col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                        }}
-                        placeholder="City"
-                        value={formData.city}
-                        onChange={(e) => handleFormDataChange('city', e.target.value)}
-                     />
-                     <input 
-                        className="p-2 text-xs border border-gray-300 bg-gray-50 col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        style={{ 
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                        }}
+                        className="w-full p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200"
                         placeholder="Phone Number"
+                        type="tel"
                         value={formData.phone}
                         onChange={(e) => handleFormDataChange('phone', e.target.value)}
+                        style={{ 
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                           fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                        }}
                      />
                   </div>
-               </div>
 
-               {/* Campaign Questions */}
-               {questions && questions.length > 0 && (
-                  <>
-                     <div className="w-full border-gray-200 border my-6" />
-                     <div>
+                  {/* Custom Questions */}
+                  {questions && questions.length > 0 && (
+                     <div className="mb-6">
                         <h2 
-                           className="text-lg font-semibold mb-4"
+                           className="font-semibold mb-3"
                            style={{ 
                               color: display.p_color || '#1f2937',
-                              fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '20px'
+                              fontSize: Math.min(parseInt(display.sectionTitleSize) || 20, 22) + 'px'
                            }}
                         >
-                           Campaign Questions
+                           Additional Questions
                         </h2>
-                        <div className="">
-                        {questions.map((item, index) => (
-                           <div key={index} className="mb-4 flex flex-row items-center space-x-4">
-                           <p 
-                              className="text-sm"
-                              style={{ color: display.s_color || '#6b7280' }}
-                           >
-                              {item.question}
-                           </p>
-                           {item.type === "checkbox" ? (
-                              <input
-                                 type="checkbox"
-                                 className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                                 style={{ 
-                                    accentColor: display.b1_color || '#3b82f6'
-                                 }}
-                              />
-                           ) : item.type === "input" ? (
-                              <input
-                                 type="text"
-                                 placeholder="Enter your response"
-                                 className="p-2 w-1/2 text-xs border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                 style={{ 
-                                    borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                                 }}
-                              />
-                           ) : (
-                              <textarea
-                                 rows={5}
-                                 placeholder="Enter your response"
-                                 className="w-3/4 border border-gray-300 text-xs py-2 px-3 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                 style={{ 
-                                    borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                                 }}
-                              />
-                           )}
+                        <div className="space-y-3">
+                           {questions.map((item, index) => (
+                              <div key={index}>
+                                 <label 
+                                    className="block font-medium mb-1"
+                                    style={{ 
+                                       color: display.p_color || '#1f2937',
+                                       fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                                    }}
+                                 >
+                                    {item.question}
+                                 </label>
+                                 {item.type === "checkbox" ? (
+                                    <input
+                                       type="checkbox"
+                                       className="w-4 h-4 rounded focus:ring-2 focus:ring-blue-500"
+                                       style={{ 
+                                          accentColor: display.b1_color || '#3b82f6'
+                                       }}
+                                    />
+                                 ) : item.type === "input" ? (
+                                    <input
+                                       type="text"
+                                       placeholder="Enter your response"
+                                       className="w-full p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200"
+                                       style={{ 
+                                          borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                                          fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                                       }}
+                                    />
+                                 ) : (
+                                    <textarea
+                                       rows={3}
+                                       placeholder="Enter your response"
+                                       className="w-full p-3 border border-gray-200 focus:border-gray-300 focus:outline-none transition-colors duration-200 resize-none"
+                                       style={{ 
+                                          borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                                          fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                                       }}
+                                    />
+                                 )}
+                              </div>
+                           ))}
                         </div>
-                     ))}
+                     </div>
+                  )}
+
+                  {/* Summary */}
+                  <div 
+                     className="bg-gray-50 p-4 mb-6"
+                     style={{ borderRadius: display.cardRadius ? `${display.cardRadius}px` : '4px' }}
+                  >
+                     <h3 
+                        className="font-semibold mb-3"
+                        style={{ 
+                           color: display.p_color || '#1f2937',
+                           fontSize: Math.min(parseInt(display.sectionTitleSize) || 20, 22) + 'px'
+                        }}
+                     >
+                        Donation Summary
+                     </h3>
+                     <div className="flex justify-between items-center mb-1">
+                        <span 
+                           className="text-sm"
+                           style={{ color: display.s_color || '#6b7280' }}
+                        >
+                           Amount:
+                        </span>
+                        <span 
+                           className="font-semibold"
+                           style={{ 
+                              color: display.p_color || '#1f2937',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
+                        >
+                           ${amount.toFixed(2)}
+                        </span>
+                     </div>
+                     <div className="flex justify-between items-center mb-1">
+                        <span 
+                           className="text-sm"
+                           style={{ color: display.s_color || '#6b7280' }}
+                        >
+                           Fund:
+                        </span>
+                        <span 
+                           className="font-semibold"
+                           style={{ 
+                              color: display.p_color || '#1f2937',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           }}
+                        >
+                           {designations && designations.length > 0  ? selectedFund && designations[selectedFund].title :
+                              defaultDesignation && defaultDesignation.title
+                           }
+                        </span>
+                     </div>
+                     <div className="border-t border-gray-200 pt-2 mt-3">
+                        <div className="flex justify-between items-center">
+                           <span 
+                              className="font-semibold"
+                              style={{ 
+                                 color: display.p_color || '#1f2937',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                              }}
+                           >
+                              Total:
+                           </span>
+                           <span 
+                              className="font-bold"
+                              style={{ 
+                                 color: display.b1_color || '#3b82f6',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                              }}
+                           >
+                              ${amount.toFixed(2)}
+                           </span>
+                        </div>
+                     </div>
                   </div>
+
+                  {/* Payment Methods */}
+                  <div className="mb-6">
+                     <h2 
+                        className="font-semibold mb-3"
+                        style={{ 
+                           color: display.p_color || '#1f2937',
+                           fontSize: Math.min(parseInt(display.sectionTitleSize) || 20, 22) + 'px'
+                        }}
+                     >
+                        Payment Method
+                     </h2>
+                     <div className="space-y-2">
+                        <button 
+                           className="w-full p-3 border border-gray-200 hover:border-gray-300 transition-colors duration-200 flex items-center justify-center space-x-2"
+                           style={{ borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px' }}
+                        >
+                           <FaPaypal className="text-blue-600 w-4 h-4" />
+                           <span 
+                              className="font-semibold"
+                              style={{ 
+                                 color: display.p_color || '#1f2937',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                              }}
+                           >
+                              PayPal
+                           </span>
+                        </button>
+                        <Link 
+                           href={status ?
+                              `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/preview` :
+                              `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/`
+                           }
+                           className="w-full p-3 border border-gray-200 hover:border-gray-300 transition-colors duration-200 flex items-center justify-center space-x-2"
+                           style={{ 
+                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                              borderColor: display.b1_color || '#3b82f6'
+                           }}
+                        >
+                           <FaCreditCard className="w-4 h-4" style={{ color: display.b1_color || '#3b82f6' }} />
+                           <span 
+                              className="font-semibold"
+                              style={{ 
+                                 color: display.p_color || '#1f2937',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                              }}
+                           >
+                              Credit Card
+                           </span>
+                        </Link>
+                     </div>
                   </div>
-                  </>
-               )}
 
-               <div className="w-full border-gray-200 border my-6" />
+                  {/* Security Notice */}
+                  <div className="flex items-center justify-center space-x-2 mb-4">
+                     <FaLock className="text-green-600 w-3 h-3" />
+                     <span 
+                        className="text-xs"
+                        style={{ color: display.s_color || '#6b7280' }}
+                     >
+                        Your payment information is secure and encrypted
+                     </span>
+                  </div>
 
-               {/* Summary */}
-               <div className="text-center flex flex-col mb-6">
-                  <p 
-                     className="text-lg font-semibold"
-                     style={{ color: display.p_color || '#1f2937' }}
-                  >
-                     ${amount.toFixed(2)}
-                  </p>
-                  <p 
-                     className="text-sm"
-                     style={{ color: display.s_color || '#6b7280' }}
-                  >
-                     {designations && designations.length > 0  ? selectedFund && designations[selectedFund].title :
-                        defaultDesignation && defaultDesignation.title
-                     }
-                  </p>
-               </div>
-
-               {/* Payment Buttons */}
-               <div className="flex flex-col w-1/3 mx-auto space-y-2">
-                  <button 
-                     className="px-4 py-2 text-xs bg-yellow-400 hover:bg-yellow-500 transition-colors duration-200 rounded-md"
-                     style={{ 
-                        borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                     }}
-                  >
-                     <FaPaypal className="inline mr-1" />
-                     PayPal
-                  </button>
+                  {/* Submit Button */}
                   <Link 
-                     className="px-4 py-2 text-xs text-white text-center hover:opacity-90 transition-colors duration-200 rounded-md"
-                     style={{ 
-                        backgroundColor: display.b1_color || '#3b82f6',
-                        borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
-                     }}
                      href={status ?
                         `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/preview` :
                         `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/`
                      }
+                     className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 hover:opacity-90"
+                     style={{ 
+                        backgroundColor: display.b1_color || '#3b82f6',
+                        borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px',
+                        fontSize: Math.min(parseInt(display.buttonTextSize) || 16, 18) + 'px'
+                     }}
                   >
-                     <FaCreditCard className="inline mr-1" />
-                     Credit Card
+                     <FaHeart className="w-3 h-3" />
+                     <span>Complete Donation</span>
                   </Link>
                </div>
 
-               {/* Security Notice */}
+               {/* Footer */}
                <div className="text-center mt-4">
                   <p 
                      className="text-xs"
                      style={{ color: display.s_color || '#6b7280' }}
                   >
-                     <FaLock className="inline mr-1" />
-                     Your payment information is secure and encrypted
+                     By making a donation, you agree to our Terms of Service and Privacy Policy
                   </p>
                </div>
             </div>

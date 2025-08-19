@@ -290,6 +290,7 @@ export const Services = {
       getPeerFundraisingPage: PageService.getPeerFundraisingPage,
       getDonationForm: PageService.getDonationForm,
       getPageSections: PageService.getPageSections,
+      getPageSectionsByPage: PageService.getPageSectionsByPage,
       getLandingPage: PageService.getLandingPage,
       getAboutPage: PageService.getAboutPage
    },
@@ -344,7 +345,8 @@ export const Services = {
          createDonationForm: PageCreateService.createDonationForm,
          createPeerFundraisingPage: PageCreateService.createPeerFundraisingPage,
          createTicketPage: PageCreateService.createTicketPage,
-         createPageSection: PageCreateService.createPageSection
+         createPageSection: PageCreateService.createPageSection,
+         createPageSectionByPage: PageCreateService.createPageSectionByPage
       },
       User: {
          createUser: UserCreateService.createUser,

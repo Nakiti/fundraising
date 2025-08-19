@@ -9,13 +9,14 @@ export const TicketPurchasePageContext = createContext()
 export const TicketPurchasePageContextProvider = ({campaignId, children}) => {
    const [ticketPurchasePageSections, setTicketPurchasePageSections] = useState(initialTicketPurchaseSections)
    const [ticketPurchasePageInputs, handleTicketPurchasePageInputsChange, setTicketPurchasePageInputs] = useFormInput({})
-   const {campaignType} = useContext(CampaignContext)
+   const {campaignType, campaignDetails} = useContext(CampaignContext)
 
    useEffect(() => {
       const fetchData = async() => {
          try {
             const ticketPurchaseResponse = await PageService.getTicketPurchasePage(campaignId)
             const ticketPurchasePageId = ticketPurchaseResponse.id
+            const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
 
             setTicketPurchasePageInputs({
                headline: ticketPurchaseResponse.headline || "",
@@ -26,7 +27,7 @@ export const TicketPurchasePageContextProvider = ({campaignId, children}) => {
                s_color: ticketPurchaseResponse.s_color || "",
             })
 
-            const ticketPurchaseSections = await PageService.getPageSections(ticketPurchasePageId)
+            const ticketPurchaseSections = await PageService.getPageSectionsByPage(organizationId, 'ticket_purchase', ticketPurchasePageId)
             setTicketPurchasePageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = ticketPurchaseSections.find((item) => item.name == section.name)

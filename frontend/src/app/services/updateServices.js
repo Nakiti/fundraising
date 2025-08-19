@@ -300,14 +300,21 @@ export class PageUpdateService {
          formData.append("bg_image", data.bg_image);
          formData.append("p_color", data.p_color);
          formData.append("s_color", data.s_color);
-         formData.append("bg_color", data.b1_color);
-         formData.append("t_color", data.b2_color);
+         formData.append("bg_color", data.bg_color);
+         formData.append("t_color", data.t_color);
+         formData.append("b1_color", data.b1_color);
          formData.append("button1", data.button1);
          formData.append("button2", data.button2);
          formData.append("button3", data.button3);
          formData.append("button4", data.button4);
          formData.append("button5", data.button5);
          formData.append("button6", data.button6);
+         formData.append("heroTitleSize", data.heroTitleSize);
+         formData.append("sectionTitleSize", data.sectionTitleSize);
+         formData.append("bodyTextSize", data.bodyTextSize);
+         formData.append("buttonTextSize", data.buttonTextSize);
+         formData.append("cardRadius", data.cardRadius);
+         formData.append("buttonRadius", data.buttonRadius);
          formData.append("user_id", userId);
 
          const response = await api.put(`/donation_form/update/${id}`, formData, {
@@ -386,6 +393,11 @@ export class PageUpdateService {
          formData.append("bg_color", data.bg_color);
          formData.append("p_color", data.p_color);
          formData.append("s_color", data.s_color);
+         formData.append("heroTitleSize", data.heroTitleSize);
+         formData.append("bodyTextSize", data.bodyTextSize);
+         formData.append("buttonTextSize", data.buttonTextSize);
+         formData.append("cardRadius", data.cardRadius);
+         formData.append("buttonRadius", data.buttonRadius);
 
          const response = await api.put(`/thankyouPage/update/${campaignId}`, formData, {
             headers: {

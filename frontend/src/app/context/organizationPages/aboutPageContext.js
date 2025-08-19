@@ -89,7 +89,7 @@ export const AboutPageContextProvider = ({organizationId, children}) => {
                active: response.active || false
             })
 
-            const sectionsResponse = await PageService.getPageSections(aboutPageId)
+            const sectionsResponse = await PageService.getPageSectionsByPage(organizationId, 'about', aboutPageId)
             setSections((prevSections) => {
                return prevSections.map(section => {
                   const match = sectionsResponse.find((item) => item.name == section.name)

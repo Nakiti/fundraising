@@ -1,17 +1,44 @@
 "use client"
-import { useContext } from "react"
-import { updateThankYouPage } from "@/app/services/updateServices"
+import { useContext, useState } from "react"
+import { PageUpdateService } from "@/app/services/updateServices"
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
+import { errorHandler } from "@/app/services/apiClient"
+import ErrorModal from "@/app/components/errorModal"
 import { FaPalette, FaFont, FaSave, FaRuler, FaMousePointer } from "react-icons/fa";
 
 const Design = () => {
-   const {campaignId, thankPageInputs, handleThankInputsChange} = useContext(ThankYouPageContext)
+   const {campaignId, thankPageInputs, handleThankInputsChange, thankPageSections} = useContext(ThankYouPageContext)
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
+   const [isLoading, setIsLoading] = useState(false)
+   const [successMessage, setSuccessMessage] = useState("")
 
    const handleSave = async() => {
+      setIsLoading(true)
+      setError(false)
+      setSuccessMessage("")
+      
       try {
-         await updateThankYouPage(campaignId, thankPageInputs)
+         // Update thank you page
+         await PageUpdateService.updateThankYouPage(campaignId, thankPageInputs)
+         
+         // Update all sections in parallel (only those with valid IDs)
+         const validSections = thankPageSections.filter(section => section.id && section.id > 0)
+         if (validSections.length > 0) {
+            const sectionPromises = validSections.map(section => 
+               PageUpdateService.updatePageSection(section.id, section.active)
+            )
+            await Promise.all(sectionPromises)
+         }
+         
+         setSuccessMessage("Thank you page updated successfully!")
+         setTimeout(() => setSuccessMessage(""), 3000)
       } catch (err) {
-         console.log(err)
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
+      } finally {
+         setIsLoading(false)
       }
    }
 
@@ -158,16 +185,34 @@ const Design = () => {
             <div className="flex items-center justify-between">
                <div>
                   <h3 className="text-sm font-medium text-gray-900">Save Changes</h3>
+                  {successMessage && (
+                     <p className="text-xs text-green-600 mt-1">{successMessage}</p>
+                  )}
                </div>
                <button 
-                  className="bg-blue-600 px-6 py-3 rounded-lg shadow-sm text-sm font-medium text-white hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2"
+                  className={`px-6 py-3 rounded-lg shadow-sm text-sm font-medium flex items-center space-x-2 transition-colors duration-200 ${
+                     isLoading 
+                        ? 'bg-gray-400 text-white cursor-not-allowed' 
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
                   onClick={handleSave}
+                  disabled={isLoading}
                >
                   <FaSave className="w-4 h-4" />
-                  <span>Save</span>
+                  <span>{isLoading ? 'Saving...' : 'Save'}</span>
                </button>
             </div>
          </div>
+
+         {/* Error Modal */}
+         {error && (
+            <ErrorModal
+               isOpen={error}
+               onClose={() => setError(false)}
+               title="Error"
+               message={errorMessage}
+            />
+         )}
       </div>
    )
 }

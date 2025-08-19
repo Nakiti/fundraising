@@ -10,8 +10,8 @@ import {
 const router = express.Router()
 
 // Get dashboard summary statistics
-router.get("/summary/:id", getDashboardSummary)
-
+router.get("/summary/:id", getDashboardSummary) 
+ 
 // Get recent donations
 router.get("/recent-donations/:id", getRecentDonations)
 

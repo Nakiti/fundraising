@@ -442,7 +442,7 @@ export class PageCreateService {
       }
    }
 
-   // Create page section
+   // Create page section (legacy method for backward compatibility)
    static async createPageSection(pageId, name, active, currentUser) {
       try {
          validators.id(pageId, 'Page ID');
@@ -451,6 +451,31 @@ export class PageCreateService {
 
          const response = await api.post('/sections/create', {
             page_id: pageId,
+            name: name,
+            active: active,
+            user_id: currentUser.id
+         });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating page section:', error);
+         throw error;
+      }
+   }
+
+   // Create page section with new structure
+   static async createPageSectionByPage(organizationId, pageType, pageReferenceId, name, active, currentUser) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.required(pageType, 'Page Type');
+         validators.id(pageReferenceId, 'Page Reference ID');
+         validators.required(name, 'Section Name');
+         validators.id(currentUser?.id, 'User ID');
+
+         const response = await api.post('/sections/create', {
+            organization_id: organizationId,
+            page_type: pageType,
+            page_reference_id: pageReferenceId,
             name: name,
             active: active,
             user_id: currentUser.id
@@ -549,6 +574,7 @@ export const createDonationForm = PageCreateService.createDonationForm;
 export const createPeerFundraisingPage = PageCreateService.createPeerFundraisingPage;
 export const createTicketPage = PageCreateService.createTicketPage;
 export const createPageSection = PageCreateService.createPageSection;
+export const createPageSectionByPage = PageCreateService.createPageSectionByPage;
 
 export const createUser = UserCreateService.createUser;
 export const createUserOrganizationRelation = UserCreateService.createUserOrganizationRelation;

@@ -10,13 +10,14 @@ export const TicketPageContextProvider = ({campaignId, children}) => {
    const [ticketPageSections, setTicketPageSections] = useState(initialTicketPageSections)
    const [ticketPageInputs, handleTicketPageInputsChange, setTicketPageInputs] = useFormInput({})
    const [tickets, setTickets] = useState([])
-   const {campaignType} = useContext(CampaignContext)
+   const {campaignType, campaignDetails} = useContext(CampaignContext)
 
    useEffect(() => {
       const fetchData = async() => {
          try {
             const ticketPageResponse = await PageService.getTicketPage(campaignId)
             const ticketPageId = ticketPageResponse.id
+            const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
 
             setTicketPageInputs({
                title: ticketPageResponse.title || "",
@@ -33,7 +34,7 @@ export const TicketPageContextProvider = ({campaignId, children}) => {
                b1_color: ticketPageResponse.b1_color || "",
             })
 
-            const ticketPageSections = await PageService.getPageSections(ticketPageId)
+            const ticketPageSections = await PageService.getPageSectionsByPage(organizationId, 'ticket_landing', ticketPageId)
             setTicketPageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = ticketPageSections.find((item) => item.name == section.name)

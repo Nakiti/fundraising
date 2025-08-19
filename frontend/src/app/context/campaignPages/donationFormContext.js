@@ -1,34 +1,40 @@
 import { initialDonationFormSections } from "@/app/constants/pageSectionsConfig";
 import { ContentService, PageService, DesignationService } from "@/app/services/fetchService";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "@/app/hooks/useFormInput";
+import { CampaignContext } from "@/app/context/campaignPages/campaignContext";
 
 export const DonationFormContext = createContext()
 
 export const DonationFormContextProvider = ({campaignId, children}) => {
    const [donationFormInputs, handleDonationFormInputsChange, setDonationFormInputs] = useFormInput({})
    const [donationFormSections, setDonationFormSections] = useState(initialDonationFormSections)
-   const [customQuestions, setCustomQuestions] = useState(null)
+   const [customQuestions, setCustomQuestions] = useState([])
    const [donationFormId, setDonationFormId] = useState(null)
+   const {campaignType, campaignDetails} = useContext(CampaignContext)
 
    useEffect(() => {
       const fetchData = async() => {
          try {
             const donationResponse = await PageService.getDonationForm(campaignId)
             const donationPageId = donationResponse.id
+            const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
             setDonationFormId(donationPageId)
-            setDonationFormInputs({ //can also redo this to have default values in SQL DB
+            
+            setDonationFormInputs({
                // Basic Content
-               bg_image: donationResponse.bg_image || "",
                headline: donationResponse.headline || "",
                description: donationResponse.description || "",
+               subtitle: donationResponse.subtitle || "Donation Form",
                
                // Colors
                bg_color: donationResponse.bg_color || "#ffffff",
                p_color: donationResponse.p_color || "#1f2937",
                s_color: donationResponse.s_color || "#6b7280",
-               t_color: donationResponse.t_color || "#3b82f6",
                b1_color: donationResponse.b1_color || "#3b82f6",
+               b2_color: donationResponse.b2_color || "#6b7280",
+               b3_color: donationResponse.b3_color || "#10b981",
+               bt_color: donationResponse.bt_color || "#ffffff",
                
                // Donation Amounts
                button1: donationResponse.button1 || 25,
@@ -40,7 +46,8 @@ export const DonationFormContextProvider = ({campaignId, children}) => {
                
                // Typography
                heroTitleSize: donationResponse.heroTitleSize || "36",
-               sectionTitleSize: donationResponse.sectionTitleSize || "20",
+               heroSubtitleSize: donationResponse.heroSubtitleSize || "16",
+               sectionTitleSize: donationResponse.sectionTitleSize || "28",
                bodyTextSize: donationResponse.bodyTextSize || "16",
                buttonTextSize: donationResponse.buttonTextSize || "16",
                
@@ -52,7 +59,7 @@ export const DonationFormContextProvider = ({campaignId, children}) => {
             const customQuestionsResponse = await ContentService.getCustomQuestions(campaignId)
             setCustomQuestions(customQuestionsResponse)
 
-            const donationSections = await PageService.getPageSections(donationPageId)
+            const donationSections = await PageService.getPageSectionsByPage(organizationId, 'campaign_form', donationPageId)
             setDonationFormSections((prevSections) => {
                return prevSections.map(section => {
                   const match = donationSections.find((item) => item.name == section.name)

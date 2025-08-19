@@ -76,7 +76,6 @@ export const CampaignContextProvider = ({ children }) => {
          [name]: checked
       }));
       setHasUnsavedChanges(true);
-      setPageHasChanges('questions', true);
    };
 
    const handleCampaignDetailsChange = (e) => {
@@ -86,15 +85,6 @@ export const CampaignContextProvider = ({ children }) => {
          [name]: value
       }));
       setHasUnsavedChanges(true);
-      
-      // Determine which page this change affects based on the field name
-      if (['campaignName', 'internalName', 'goal', 'shortUrl'].includes(name)) {
-         setPageHasChanges('about', true);
-      } else if (['contactEmail', 'contactPhone'].includes(name)) {
-         setPageHasChanges('contact', true);
-      } else if (['socialTitle', 'socialDescription', 'campaignUrl'].includes(name)) {
-         setPageHasChanges('sharing', true);
-      }
    };
 
    // Function to mark changes as saved
@@ -148,25 +138,21 @@ export const CampaignContextProvider = ({ children }) => {
    const setSelectedDesignationsWithTracking = (designations) => {
       setSelectedDesignations(designations);
       setHasUnsavedChanges(true);
-      setPageHasChanges('designations', true);
    };
 
    const setTicketsWithTracking = (tickets) => {
       setTickets(tickets);
       setHasUnsavedChanges(true);
-      setPageHasChanges('tickets', true);
    };
 
    const setFaqsWithTracking = (faqs) => {
       setFaqs(faqs);
       setHasUnsavedChanges(true);
-      setPageHasChanges('faqs', true);
    };
 
    const setCustomQuestionsWithTracking = (questions) => {
       setCustomQuestions(questions);
       setHasUnsavedChanges(true);
-      setPageHasChanges('questions', true);
    };
 
    // Main function to fetch all campaign data

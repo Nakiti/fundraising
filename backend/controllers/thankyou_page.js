@@ -13,11 +13,15 @@ import {
   NotFoundError,
   DatabaseError
 } from "../utils/errors.js"
+import imageService from "../services/imageService.js"
 
 const upload = multer({
-  dest: 'uploads/',
-  limits: { fileSize: 5 * 1024 * 1024 },
-})
+  storage: multer.memoryStorage(),
+  limits: { 
+    fileSize: 5 * 1024 * 1024,
+    fieldSize: 25 * 1024 * 1024
+  }, // 5MB limit
+});
 
 export const createThankYouPage = asyncHandler(async (req, res) => {
   const { campaign_id, user_id } = req.body;
@@ -58,7 +62,7 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
   }
 
   return new Promise((resolve, reject) => {
-    upload.single('image')(req, res, (err) => {
+    upload.single('image')(req, res, async (err) => {
       if (err) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           reject(new ValidationError('File is too large. Max size is 5MB'));
@@ -68,37 +72,65 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
         return;
       } 
 
-      const imagePath = req.file?.path || bg_image;
+      try {
+        // First, get current thank you page to access existing image path and organization_id
+        const getQuery = "SELECT typ.*, c.organization_id FROM thankyou_pages typ JOIN campaigns c ON typ.campaign_id = c.id WHERE typ.campaign_id = ?";
+        
+        db.query(getQuery, [id], async (err, data) => {
+          if (err) {
+            reject(new DatabaseError('Failed to fetch thank you page', err));
+            return;
+          }
+          
+          if (!data || data.length === 0) {
+            reject(new NotFoundError('Thank you page'));
+            return;
+          }
 
-      const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `heroTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardRadius` = ?, `buttonRadius` = ? WHERE `campaign_id` = ?"
+          const currentPage = data[0];
+          const organization_id = currentPage.organization_id;
 
-      const values = [
-        headline,
-        description,
-        imagePath,
-        bg_color,
-        p_color,
-        s_color,
-        heroTitleSize,
-        bodyTextSize,
-        buttonTextSize,
-        cardRadius,
-        buttonRadius,
-        id
-      ]
+          // Handle image update
+          let bgImagePath = currentPage.bg_image;
 
-      db.query(query, values, (err, data) => {
-        if (err) {
-          reject(new DatabaseError('Failed to update thank you page', err));
-          return;
-        }
-        if (data.affectedRows === 0) {
-          reject(new NotFoundError('Thank you page'));
-          return;
-        }
-        sendUpdated(res, data, 'Thank you page updated successfully');
-      resolve();
-      })
+          if (req.file) {
+            imageService.validateFile(req.file);
+            bgImagePath = await imageService.updateImage(organization_id, 'thankyou-pages', id, 'background', req.file, currentPage.bg_image);
+          }
+
+          const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `heroTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardRadius` = ?, `buttonRadius` = ? WHERE `campaign_id` = ?"
+
+          const values = [
+            headline,
+            description,
+            bgImagePath,
+            bg_color,
+            p_color,
+            s_color,
+            heroTitleSize,
+            bodyTextSize,
+            buttonTextSize,
+            cardRadius,
+            buttonRadius,
+            id
+          ]
+
+          db.query(query, values, (err, data) => {
+            if (err) {
+              reject(new DatabaseError('Failed to update thank you page', err));
+              return;
+            }
+            if (data.affectedRows === 0) {
+              reject(new NotFoundError('Thank you page'));
+              return;
+            }
+            sendUpdated(res, data, 'Thank you page updated successfully');
+            resolve();
+          })
+        })
+      } catch (error) {
+        reject(new DatabaseError('Failed to process thank you page update', error));
+      }
     })
   })
 })
@@ -112,8 +144,8 @@ export const getThankYouPage = asyncHandler(async (req, res) => {
 
   const query = "SELECT * FROM thankyou_pages WHERE `campaign_id` = ?"
 
-  return new Promise((resolve, reject) => {
-    db.query(query, [id], (err, data) => {
+  return new Promise(async (resolve, reject) => {
+    db.query(query, [id], async (err, data) => {
       if (err) {
         reject(new DatabaseError('Failed to fetch thank you page', err));
         return;
@@ -122,8 +154,24 @@ export const getThankYouPage = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Thank you page'));
         return;
       }
-      sendSuccess(res, data[0], 'Thank you page retrieved successfully');
-      resolve();
+
+      try {
+        const thankYouPage = data[0];
+        
+        // Generate SAS URL for background image (or return local path in development)
+        const bgImageUrl = await imageService.getImageUrl(thankYouPage.bg_image, 'public');
+
+        // Replace image path with URL
+        const result = {
+          ...thankYouPage,
+          bg_image: bgImageUrl
+        };
+
+        sendSuccess(res, result, 'Thank you page retrieved successfully');
+        resolve();
+      } catch (error) {
+        reject(new DatabaseError('Failed to generate image URL', error));
+      }
     })
   })
 })
