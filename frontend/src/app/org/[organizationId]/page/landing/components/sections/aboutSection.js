@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
+import { FaUpload, FaInfoCircle } from "react-icons/fa";
 
 const AboutSection = () => {
    const {inputs, handleInputsChange} = useContext(LandingPageContext)
@@ -17,39 +18,56 @@ const AboutSection = () => {
    }
 
    return (
-      <div>
-         <div className="my-4">
-            <p className="text-sm font-bold text-gray-600 mb-2">
-               Enter About Text <span className="text-red-500">*</span>
-            </p>
+      <div className="space-y-6">
+
+         {/* About Text Input */}
+         <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-700">
+               About Text <span className="text-red-500">*</span>
+            </label>
             <textarea 
-               className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
+               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-colors duration-200"
                rows={5}
-               placeholder="Enter about text"
+               placeholder="Tell visitors about your organization, mission, and values..."
                name="aboutText"
                value={inputs.aboutText}
                onChange={handleInputsChange} 
             />
+            <p className="text-xs text-gray-500">This content will appear in the about section of your landing page</p>
          </div>
-         <div className="mb-4">
-            <p className="text-sm font-bold text-gray-600 mb-2">
-               About Image Upload <span className="text-red-500">*</span>
-            </p>
-            <label className="w-full h-20 flex items-center justify-center border border-dashed border-gray-400 rounded-sm bg-white cursor-pointer">
-               <span className="text-gray-500 p-4">Click to upload an image</span>
-               <input 
-                  type="file"
-                  className="hidden" 
-                  name="aboutImage"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-               />
-            </label>                  
-            {/* <img
-               src=''
-               alt="image"
-               className="w-full h-36 object-cover border border-dashed border-gray-400 rounded-md bg-gray-50"
-            /> */}
+
+         {/* About Image Upload */}
+         <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-700">
+               About Image <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+               <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors duration-200">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                     <FaUpload className="w-8 h-8 text-gray-400 mb-2" />
+                     <p className="text-sm text-gray-500">
+                        <span className="font-medium">Click to upload</span> or drag and drop
+                     </p>
+                     <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                  </div>
+                  <input 
+                     type="file"
+                     className="hidden" 
+                     name="aboutImage"
+                     accept="image/*"
+                     onChange={handleImageUpload}
+                  />
+               </label>
+               {inputs.aboutImage && (
+                  <div className="mt-3">
+                     <img 
+                        src={inputs.aboutImage} 
+                        alt="About Preview" 
+                        className="w-full h-20 object-cover rounded-lg border border-gray-200"
+                     />
+                  </div>
+               )}
+            </div>
          </div>
       </div>
    )

@@ -3,6 +3,8 @@ import { useState, useContext, useEffect } from "react"
 import { AuthContext } from "../context/authContext"
 import { Services, useApi, useToast } from "../services";
 import Link from "next/link";
+import { FiRefreshCw, FiExternalLink, FiUsers } from "react-icons/fi";
+import { IoIosAdd } from "react-icons/io";
 
 const Profile = () => {
    const { currentUser, isLoggedIn, loading: authLoading, refetchAuth } = useContext(AuthContext)
@@ -61,10 +63,10 @@ const Profile = () => {
    // Show loading state while authentication is being checked
    if (authLoading) {
       return (
-         <div className="flex items-center justify-center min-h-screen">
+         <div className="flex items-center justify-center min-h-64">
             <div className="text-center">
-               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-               <p className="mt-4 text-gray-600">Checking authentication...</p>
+               <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+               <p className="text-slate-600 font-medium">Checking authentication...</p>
             </div>
          </div>
       );
@@ -73,10 +75,10 @@ const Profile = () => {
    // Show loading state only if we've initiated the fetch and are still loading
    if (hasInitiatedFetch && loading) {
       return (
-         <div className="flex items-center justify-center min-h-screen">
+         <div className="flex items-center justify-center min-h-64">
             <div className="text-center">
-               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-               <p className="mt-4 text-gray-600">Loading your organizations...</p>
+               <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+               <p className="text-slate-600 font-medium">Loading your organizations...</p>
             </div>
          </div>
       );
@@ -85,52 +87,109 @@ const Profile = () => {
    // Show message if user is not logged in
    if (!isLoggedIn || !currentUser) {
       return (
-         <div className="flex items-center justify-center min-h-screen">
+         <div className="flex items-center justify-center min-h-64">
             <div className="text-center">
-               <p className="text-xl text-gray-600">Please log in to view your profile.</p>
+               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FiUsers className="w-8 h-8 text-slate-400" />
+               </div>
+               <p className="text-xl text-slate-600 font-medium">Please log in to view your profile.</p>
             </div>
          </div>
       );
    }
 
    return (
-      <div>
-         <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Your Organizations</h1>
+      <div className="space-y-6">
+         {/* Header */}
+         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+               <h1 className="text-3xl font-bold text-slate-900">Your Organizations</h1>
+               <p className="text-slate-600 mt-1">
+                  {organizations ? `${organizations.length} organization${organizations.length !== 1 ? 's' : ''}` : 'Loading...'}
+               </p>
+            </div>
             <button
                onClick={handleRefresh}
-               className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                disabled={loading}
+               className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
-               {/* <FaRefresh className={`${loading ? 'animate-spin' : ''}`} /> */}
-               <span>Refresh</span>
+               <FiRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+               <span className="font-medium">Refresh</span>
             </button>
          </div>
          
-         <div className="mx-auto">
-            {organizations && organizations.length > 0 ? organizations.map((item, index) => (
-               <div key={index} className="bg-white p-4 shadow-md flex flex-row rounded-lg space-x-4 mb-4">
-                  <img 
-                     src="https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"
-                     className="h-20 w-20 object-cover rounded-lg"
-                     alt="Organization"
-                  />
-                  <div className="flex flex-col space-y-2">
-                     <h2 className="text-xl font-semibold">{item.name}</h2>
-                     <Link 
-                        className="rounded-lg border-2 border-blue-800 px-4 py-2 text-sm font-semibold text-blue-800"
-                        href={`/org/${item.organization_id}/dashboard/home`}
-                     >
-                        Open Organization
-                     </Link>
+         {/* Organizations Grid */}
+         <div className="space-y-4">
+            {organizations && organizations.length > 0 ? (
+               organizations.map((item, index) => (
+                  <div 
+                     key={index} 
+                     className="group bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-slate-300"
+                  >
+                     <div className="flex items-start gap-6">
+                        {/* Organization Image */}
+                        <div className="flex-shrink-0">
+                           <div className="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                              <img 
+                                 src="https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"
+                                 className="w-full h-full object-cover"
+                                 alt={`${item.name} logo`}
+                                 onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.nextSibling.style.display = 'flex';
+                                 }}
+                              />
+                              <div className="hidden w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 items-center justify-center text-white font-bold text-lg">
+                                 {item.name.charAt(0).toUpperCase()}
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Organization Details */}
+                        <div className="flex-1 min-w-0">
+                           <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1 min-w-0">
+                                 <h2 className="text-xl font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
+                                    {item.name}
+                                 </h2>
+                                 <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                       {item.role}
+                                    </span>
+                                 </div>
+                              </div>
+                              
+                              {/* Action Button */}
+                              <Link 
+                                 href={`/org/${item.organization_id}/dashboard/home`}
+                                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm shadow-sm hover:shadow-md"
+                              >
+                                 <span>Open Organization</span>
+                                 <FiExternalLink className="w-4 h-4" />
+                              </Link>
+                           </div>
+                        </div>
+                     </div>
                   </div>
-                  <div>
-                     <p>Role: {item.role}</p>
+               ))
+            ) : (
+               <div className="text-center py-12">
+                  <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                     <FiUsers className="w-10 h-10 text-slate-400" />
                   </div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No Organizations Yet</h3>
+                  <p className="text-slate-600 mb-6 max-w-md mx-auto">
+                     You haven't joined any organizations yet. Create your own or wait for an invitation to join an existing one.
+                  </p>
+                  <Link 
+                     href="/createOrganization"
+                     className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
+                  >
+                     <IoIosAdd className="w-5 h-5" />
+                     Create Organization
+                  </Link>
                </div>
-            )) :
-            <p className="text-center text-xl">No Active Organizations</p>
-         }
+            )}
          </div>
       </div>
    )

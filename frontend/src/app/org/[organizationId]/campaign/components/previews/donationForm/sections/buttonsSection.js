@@ -14,26 +14,22 @@ const DonationFormButtonsSection = () => {
 
    return (
       <div className="my-4">
-         <p className="text-sm font-bold text-gray-600 mb-2">Donation Amount Options</p>
-         <div className="flex flex-row justify-between border-b border-gray-500 p-2">
-            <p className="text-xs font-semibold text-gray-600">Amount</p>
-         </div>
-
-         {buttonValues.map((button) => (
-            <div key={button.name} className="flex flex-row justify-between p-2 w-full items-center">
-               <label className="text-gray-600 text-xs font-bold">{button.label}</label>
-               <div className="flex flex-row items-center space-x-2 ml-auto">
+         <h3 className="text-sm font-semibold text-gray-900 mb-4">Donation Amount Options</h3>
+         <div className="space-y-3">
+            {buttonValues.map((button) => (
+               <div key={button.name} className="flex flex-col space-y-2">
+                  <label className="text-sm font-medium text-gray-700">{button.label}</label>
                   <input
                      placeholder={`Enter a Value for ${button.label}`}
                      type="number"
-                     className="border border-gray-400 rounded-sm py-1 px-2 text-sm"
+                     className="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                      value={donationFormInputs[button.name]}
                      name={button.name}
                      onChange={handleDonationFormInputsChange}
                   />
                </div>
-            </div>
-         ))}
+            ))}
+         </div>
       </div>
    );
 };

@@ -44,7 +44,8 @@ export const createCampaignTicketBatch = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create campaign tickets', err));
-      resolve(sendCreated(res, { insertedCount: data.affectedRows }, 'Campaign tickets created successfully'));
+      sendCreated(res, { insertedCount: data.affectedRows }, 'Campaign tickets created successfully');
+      resolve();
     })
   })
 })
@@ -63,7 +64,8 @@ export const deleteCampaignTicketsBatch = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to delete campaign tickets batch', err));
-      resolve(sendDeleted(res, `Deleted ${data.affectedRows} campaign tickets successfully`));
+      sendDeleted(res, `Deleted ${data.affectedRows} campaign tickets successfully`);
+      resolve();
     })
   })
 })
@@ -80,7 +82,8 @@ export const getCampaignTickets = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch campaign tickets', err));
-      resolve(sendSuccess(res, data, 'Campaign tickets retrieved successfully'));
+      sendSuccess(res, data, 'Campaign tickets retrieved successfully');
+      resolve();
     })
   })
 })

@@ -37,7 +37,8 @@ export const createTicketPage = asyncHandler(async (req, res) => {
         reject(new DatabaseError('Failed to create ticket page', err));
         return;
       }
-      resolve(sendCreated(res, { pageId: data.insertId }, 'Ticket page created successfully'));
+      sendCreated(res, { pageId: data.insertId }, 'Ticket page created successfully');
+      resolve();
     })
   })
 })
@@ -63,7 +64,8 @@ export const getTicketPage = asyncHandler(async (req, res) => {
         return;
       }
       
-      resolve(sendSuccess(res, data[0], 'Ticket page retrieved successfully'));
+      sendSuccess(res, data[0], 'Ticket page retrieved successfully');
+      resolve();
     })
   })
 })
@@ -119,7 +121,8 @@ export const updateTicketPage = asyncHandler(async (req, res) => {
           return;
         }
         
-        resolve(sendUpdated(res, data, 'Ticket page updated successfully'));
+        sendUpdated(res, data, 'Ticket page updated successfully');
+      resolve();
       })
     })
   })

@@ -8,28 +8,35 @@ const PreviewNavbar = ({heading, links}) => {
    const type = searchParams.get("type")
 
    return (
-      <div className="border-b border-gray-400 w-11/12 mx-auto mb-8 flex flex-row justify-between items-center">
-         <h1 className="text-3xl font-semibold text-gray-800">{heading}</h1>
-         <div className="space-x-6 text-lg flex items-center">
-            <Link 
-               href={links[0]}
-               className={`px-6 py-3 font-medium ${
-                  links[0] == pathname ? "border-b-2 border-blue-700 text-blue-700" : "border-b-2 border-transparent text-gray-600 hover:text-gray-800"
-               } transition-all duration-300 ease-in-out`}
-            >
-               Elements
-            </Link>
-            <Link 
-               href={links[1]}
-               className={`px-6 py-3 font-medium ${
-                  links[1] == pathname ? "border-b-2 border-blue-700 text-blue-700" : "border-b-2 border-transparent text-gray-600 hover:text-gray-800"
-               } transition-all duration-300 ease-in-out`}
-            >
-               Design
-            </Link>
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+         <div className="px-4 py-4">
+            <div className="flex items-center justify-between">
+               <h2 className="text-lg font-semibold text-gray-900">{heading}</h2>
+               <div className="flex space-x-1">
+                  <Link 
+                     href={links[0]}
+                     className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        links[0] == pathname 
+                           ? "bg-blue-50 text-blue-700 border border-blue-200" 
+                           : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                     }`}
+                  >
+                     Elements
+                  </Link>
+                  <Link 
+                     href={links[1]}
+                     className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        links[1] == pathname 
+                           ? "bg-blue-50 text-blue-700 border border-blue-200" 
+                           : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                     }`}
+                  >
+                     Design
+                  </Link>
+               </div>
+            </div>
          </div>
       </div>
-
    )
 }
 

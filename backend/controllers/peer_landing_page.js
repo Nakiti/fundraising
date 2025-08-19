@@ -40,7 +40,8 @@ export const createPeerLandingPage = asyncHandler(async (req, res) => {
         reject(new DatabaseError('Failed to create peer landing page', err));
         return;
       }
-      resolve(sendCreated(res, { pageId: data.insertId }, 'Peer landing page created successfully'));
+      sendCreated(res, { pageId: data.insertId }, 'Peer landing page created successfully');
+      resolve();
     })
   })
 })
@@ -92,7 +93,8 @@ export const updatePeerLandingPage = asyncHandler(async (req, res) => {
           reject(new NotFoundError('Peer landing page'));
           return;
         }
-        resolve(sendUpdated(res, data, 'Peer landing page updated successfully'));
+        sendUpdated(res, data, 'Peer landing page updated successfully');
+      resolve();
       })
     })
   })
@@ -117,7 +119,8 @@ export const getPeerLandingPage = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Peer landing page'));
         return;
       }
-      resolve(sendSuccess(res, data[0], 'Peer landing page retrieved successfully'));
+      sendSuccess(res, data[0], 'Peer landing page retrieved successfully');
+      resolve();
     })
   })
 })

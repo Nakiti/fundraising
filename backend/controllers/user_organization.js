@@ -33,7 +33,8 @@ export const createUserOrganizationRelation = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create user organization relation', err));
-      resolve(sendCreated(res, { relationId: data.insertId }, 'User organization relation created successfully'));
+      sendCreated(res, { relationId: data.insertId }, 'User organization relation created successfully');
+      resolve();
     })
   })
 })
@@ -49,13 +50,15 @@ export const getUserOrganizations = asyncHandler(async (req, res) => {
     SELECT organizations.name, organizations.id AS organization_id, user_organizations.role, user_organizations.id
     FROM user_organizations
     JOIN organizations ON user_organizations.organization_id = organizations.id
-    WHERE status = "active" AND user_organizations.user_id = ?
+    WHERE user_organizations.user_id = ?
   ` 
 
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
+      console.log("data ", data)
       if (err) reject(new DatabaseError('Failed to fetch user organizations', err));
-      resolve(sendSuccess(res, data, 'User organizations retrieved successfully'));
+      sendSuccess(res, data, 'User organizations retrieved successfully');
+      resolve();
     })
   })
 })
@@ -72,12 +75,13 @@ export const getPendingUserOrganizations = asyncHandler(async (req, res) => {
     FROM user_organizations
     JOIN organizations ON user_organizations.organization_id = organizations.id
     WHERE status = "pending" AND user_organizations.user_id = ?
-  `
+  ` 
 
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch pending user organizations', err));
-      resolve(sendSuccess(res, data, 'Pending user organizations retrieved successfully'));
+      sendSuccess(res, data, 'Pending user organizations retrieved successfully');
+      resolve();
     })
   })
 })
@@ -93,13 +97,14 @@ export const updateUserOrganizationRelation = asyncHandler(async (req, res) => {
     UPDATE user_organizations 
     SET STATUS = "active" 
     WHERE id = ?
-  `
+  ` 
 
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to update user organization relation', err));
       if (data.affectedRows === 0) reject(new NotFoundError('User organization relation'));
-      resolve(sendUpdated(res, data, 'User organization relation updated successfully'));
+      sendUpdated(res, data, 'User organization relation updated successfully');
+      resolve();
     })
   })
 })

@@ -1,13 +1,13 @@
 import ImageInputEdit from "@/app/components/imageInputEdit"
-import { CampaignContext } from "@/app/context/campaignContext"
 import { useContext } from "react"
+import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
 
 const BackgroundSection = () => {
-   const {handleThankPageInputsChange} = useContext(CampaignContext)
+   const {handleThankInputsChange} = useContext(ThankYouPageContext)
 
    return (
       <div>
-         <ImageInputEdit title={"Image Upload"} name={"bg_image"} changeFunc={handleThankPageInputsChange}/>
+         <ImageInputEdit title={"Image Upload"} name={"bg_image"}  changeFunc={handleThankInputsChange}/>
       </div>
    )
 }

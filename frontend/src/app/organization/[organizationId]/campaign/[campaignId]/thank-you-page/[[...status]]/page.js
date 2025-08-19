@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 import { getCampaignDetails, getThankYouPage } from "@/app/services/fetchService"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
+import { FaShare, FaHeart, FaCheckCircle } from "react-icons/fa"
 
 const ThankYouPage = ({params}) => {
    const [display, setDisplay] = useState(null)
@@ -29,58 +30,213 @@ const ThankYouPage = ({params}) => {
 
    return (
       <div 
-         className="min-h-screen bg-cover bg-center" 
-         // style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80)' }}
+         className="min-h-screen bg-cover bg-center flex flex-col" 
+         style={{ 
+            backgroundColor: display?.bg_color || '#f3f4f6',
+            backgroundImage: display?.bg_image ? `url(${display.bg_image})` : 'none'
+         }}
       >
          {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
 
-         {display && <div className="w-3/5 mx-auto py-8">
-            <div className="bg-white shadow-md rounded-sm">
-               <div className="pt-10 px-10 pb-2">
-                  <h1 className="text-2xl text-gray-800">{display.headline || "Thank you"}</h1>
-                  <p className="mt-4 text-sm text-gray-600">{display.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"}</p>
-                  <div className="flex flex-row text-sm mt-6 text-gray-600 space-x-4">
-                     <p className="text-xs">Share</p>
+         {display && (
+            <div className="flex-1 flex items-center justify-center py-8 px-4">
+               <div 
+                  className="w-full max-w-2xl shadow-lg rounded-lg overflow-hidden"
+                  style={{ 
+                     backgroundColor: display.bg_color || '#ffffff',
+                     borderRadius: display.cardRadius ? `${display.cardRadius}px` : '8px'
+                  }}
+               >
+                  {/* Header Section */}
+                  <div className="pt-10 px-10 pb-6 text-center">
+                     <div className="mb-6">
+                        <FaCheckCircle 
+                           className="mx-auto text-6xl mb-4"
+                           style={{ color: display.b1_color || '#10b981' }}
+                        />
+                     </div>
+                     <h1 
+                        className="text-3xl font-bold mb-4"
+                        style={{ 
+                           color: display.p_color || '#1f2937',
+                           fontSize: display.heroTitleSize ? `${display.heroTitleSize}px` : '36px'
+                        }}
+                     >
+                        {display.headline || "Thank You!"}
+                     </h1>
+                     <p 
+                        className="text-lg leading-relaxed"
+                        style={{ 
+                           color: display.s_color || '#6b7280',
+                           fontSize: display.bodyTextSize ? `${display.bodyTextSize}px` : '16px'
+                        }}
+                     >
+                        {display.description || "Your generous donation has been received and will make a real difference in our mission. We're grateful for your support and commitment to creating positive change in our community."}
+                     </p>
+                     
+                     {/* Share Section */}
+                     <div className="flex justify-center items-center mt-6 space-x-4">
+                        <p 
+                           className="text-sm"
+                           style={{ color: display.s_color || '#6b7280' }}
+                        >
+                           Share this campaign:
+                        </p>
+                        <button 
+                           className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                           style={{ color: display.b1_color || '#3b82f6' }}
+                        >
+                           <FaShare className="w-4 h-4" />
+                        </button>
+                     </div>
+                  </div>
+
+                  {/* Donation Information Section */}
+                  <div 
+                     className="px-10 py-8"
+                     style={{ backgroundColor: display.bg_color ? `${display.bg_color}20` : '#f9fafb' }}
+                  >
+                     <h2 
+                        className="text-xl font-semibold mb-4 pb-2 border-b border-gray-200"
+                        style={{ 
+                           color: display.p_color || '#1f2937',
+                           fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '20px'
+                        }}
+                     >
+                        Donation Information
+                     </h2>
+                     <div className="space-y-3">
+                        <div className="flex justify-between items-center py-2">
+                           <span 
+                              className="text-sm"
+                              style={{ color: display.s_color || '#6b7280' }}
+                           >
+                              Amount Donated
+                           </span>
+                           <span 
+                              className="font-semibold"
+                              style={{ color: display.p_color || '#1f2937' }}
+                           >
+                              $0.00
+                           </span>
+                        </div>
+                        <div className="flex justify-between items-center py-2">
+                           <span 
+                              className="text-sm"
+                              style={{ color: display.s_color || '#6b7280' }}
+                           >
+                              Campaign
+                           </span>
+                           <span 
+                              className="font-semibold"
+                              style={{ color: display.p_color || '#1f2937' }}
+                           >
+                              {campaignDetails?.external_name || 'Campaign Name'}
+                           </span>
+                        </div>
+                        <div className="flex justify-between items-center py-2">
+                           <span 
+                              className="text-sm"
+                              style={{ color: display.s_color || '#6b7280' }}
+                           >
+                              Designation
+                           </span>
+                           <span 
+                              className="font-semibold"
+                              style={{ color: display.p_color || '#1f2937' }}
+                           >
+                              General Fund
+                           </span>
+                        </div>
+                        <div className="flex justify-between items-center py-2">
+                           <span 
+                              className="text-sm"
+                              style={{ color: display.s_color || '#6b7280' }}
+                           >
+                              Transaction Date
+                           </span>
+                           <span 
+                              className="font-semibold"
+                              style={{ color: display.p_color || '#1f2937' }}
+                           >
+                              {new Date().toLocaleDateString()}
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Contact Section */}
+                  <div className="px-10 py-8">
+                     <h2 
+                        className="text-xl font-semibold mb-4"
+                        style={{ 
+                           color: display.p_color || '#1f2937',
+                           fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '20px'
+                        }}
+                     >
+                        Questions or Comments?
+                     </h2>
+                     <p 
+                        className="text-sm mb-2"
+                        style={{ color: display.s_color || '#6b7280' }}
+                     >
+                        We'd love to hear from you! Contact us at:
+                     </p>
+                     <p 
+                        className="text-sm font-medium"
+                        style={{ color: display.b1_color || '#3b82f6' }}
+                     >
+                        support@organization.com
+                     </p>
+                  </div>
+
+                  {/* CTA Section */}
+                  <div className="px-10 pb-10 text-center">
+                     <button 
+                        className="px-8 py-3 text-white font-medium rounded-md hover:opacity-90 transition-colors duration-200"
+                        style={{ 
+                           backgroundColor: display.b1_color || '#3b82f6',
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
+                        }}
+                        onClick={() => window.history.back()}
+                     >
+                        Return to Campaign
+                     </button>
                   </div>
                </div>
+            </div>
+         )}
 
-               <div className="bg-gray-100 p-10">
-                  <h1 className="text-xl text-gray-800 border-b border-gray-400 py-2">Donation Information</h1>
-                  <div className="mt-2 w-1/2">
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
-                        <p>0</p>
-                     </div>
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
-                        <p>0</p>
-                     </div>
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
-                        <p>0</p>
-                     </div>
-                     <div className="flex flex-row justify-between text-sm text-gray-700 py-2">
-                        <p>Amount</p>
-                        <p>0</p>
-                     </div>
-                  </div>
-               </div>
-
-               <div className="px-10 py-10">
-                  <h1 className="text-xl ">Questions/Comments?</h1>
-                  <p className="text-sm text-gray-700 mt-4">Email us at ... </p>
+         {/* Footer */}
+         <div 
+            className="py-6 border-t border-gray-200"
+            style={{ backgroundColor: display?.bg_color || '#f9fafb' }}
+         >
+            <div className="text-center">
+               <p 
+                  className="text-xs"
+                  style={{ color: display?.s_color || '#6b7280' }}
+               >
+                  &copy; {new Date().getFullYear()} {campaignDetails?.external_name || 'Organization'}. All rights reserved.
+               </p>
+               <div className="mt-1 space-x-4">
+                  <a 
+                     href="#" 
+                     className="text-xs hover:underline"
+                     style={{ color: display?.s_color || '#6b7280' }}
+                  >
+                     Privacy Policy
+                  </a>
+                  <a 
+                     href="#" 
+                     className="text-xs hover:underline"
+                     style={{ color: display?.s_color || '#6b7280' }}
+                  >
+                     Terms of Service
+                  </a>
                </div>
             </div>
-         </div>}
-         <div className="bg-gray-100 border-t border-gray-300 py-4 mt-12">
-               <div className="text-center text-gray-600 text-xs">
-                  <p>&copy; {new Date().getFullYear()} Your Organization. All rights reserved.</p>
-                  <p className="mt-1">
-                     <a href="#" className="hover:underline">Privacy Policy</a> | 
-                     <a href="#" className="hover:underline ml-2">Terms of Service</a>
-                  </p>
-               </div>
-            </div>
+         </div>
       </div>      
    )
 }

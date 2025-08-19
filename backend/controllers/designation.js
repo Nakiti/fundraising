@@ -46,7 +46,8 @@ export const createDesignation = asyncHandler(async (req, res) => {
    
       db.query(query, [values], (err, data) => {
         if (err) reject(new DatabaseError('Failed to create designation', err));
-        resolve(sendCreated(res, { designationId: data.insertId }, 'Designation created successfully'));
+        sendCreated(res, { designationId: data.insertId }, 'Designation created successfully');
+      resolve();
       })
     })
   })
@@ -97,7 +98,8 @@ const updateDesignationDetails = async (req, res) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to update designation', err));
       if (data.affectedRows === 0) reject(new NotFoundError('Designation'));
-      resolve(sendUpdated(res, data, 'Designation updated successfully'));
+      sendUpdated(res, data, 'Designation updated successfully');
+      resolve();
     });
   });
 };
@@ -114,7 +116,8 @@ export const getDesignations = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch designations', err));
-      resolve(sendSuccess(res, data, 'Designations retrieved successfully'));
+      sendSuccess(res, data, 'Designations retrieved successfully');
+      resolve();
     })
   })
 })
@@ -131,7 +134,8 @@ export const getActiveDesignations = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch active designations', err));
-      resolve(sendSuccess(res, data, 'Active designations retrieved successfully'));
+      sendSuccess(res, data, 'Active designations retrieved successfully');
+      resolve();
     })
   })
 })
@@ -149,7 +153,8 @@ export const getDesignation = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch designation', err));
       if (!data || data.length === 0) reject(new NotFoundError('Designation'));
-      resolve(sendSuccess(res, data[0], 'Designation retrieved successfully'));
+      sendSuccess(res, data[0], 'Designation retrieved successfully');
+      resolve();
     })
   })
 })
@@ -173,7 +178,8 @@ export const deleteDesignation = asyncHandler(async (req, res) => {
       db.query(deleteQuery, [id], (err, data) => {
         if (err) reject(new DatabaseError('Failed to delete designation', err));
         if (data.affectedRows === 0) reject(new NotFoundError('Designation'));
-        resolve(sendSuccess(res, null, 'Designation deleted successfully'));
+        sendSuccess(res, null, 'Designation deleted successfully');
+      resolve();
       });
     });
   });

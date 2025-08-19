@@ -1,84 +1,145 @@
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
+import { FaCheckCircle, FaHeart, FaShare, FaEnvelope, FaPhone } from "react-icons/fa";
 
 const Display = () => {
-   const {thankPageInputs} = useContext(ThankYouPageContext)
-
-   useEffect(() => {
-
-      console.log("image", thankPageInputs.bg_image)
-   }, [thankPageInputs])
+   const { thankPageInputs } = useContext(ThankYouPageContext)
 
    return (
       <div 
-         className="min-h-screen bg-cover bg-center border" 
-         style={{ backgroundImage: `url('${thankPageInputs.bg_image}')`}}
+         className="bg-white w-full"
+         style={{ 
+            backgroundColor: thankPageInputs.bg_color || '#ffffff',
+            backgroundImage: thankPageInputs.bg_image ? `url('${thankPageInputs.bg_image}')` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+         }}
       >
-         <div className="bg-white py-4 px-8 w-full opacity-90">
-            <h1>Header</h1>
-         </div>
-
-
-         <div className="w-5/6 mx-auto py-8">
-            <div className="bg-white shadow-md rounded-sm">
-               <div className="pt-10 px-10 pb-6">
-                  <h1 className="text-2xl font-semibold text-gray-800">{thankPageInputs.headline || "Thank You"} </h1>
-
-                  <pre className="mt-4 text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                     {thankPageInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"}
-                  </pre>
-
-                  <div className="flex flex-row text-xs mt-6 text-gray-600 space-x-4">
-                     <p>Share</p>
-                  </div>
+         {/* Header */}
+         <div className="bg-gray-900 w-full px-4 py-3">
+            <div className="flex items-center justify-between">
+               <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <p className="text-white text-sm font-medium">Thank You Page Preview</p>
                </div>
-
-               <div className="bg-gray-100 px-10 py-6">
-                  <h1 className="text-lg text-gray-800 border-b border-gray-400 py-2">Donation Information</h1>
-
-                  <div className="mt-2 w-1/2 text-md">
-                     <div className="flex flex-row justify-between text-gray-700 py-2">
-                        <p>Fund Name</p>
-                        <p>0</p>
-                     </div>
-                     <div className="flex flex-row justify-between text-gray-700 py-2">
-                        <p>Fund Name</p>
-                        <p>0</p>
-                     </div>
-                     <div className="flex flex-row justify-between text-gray-700 py-2">
-                        <p>Fund Name</p>
-                        <p>0</p>
-                     </div>
-                     <div className="flex flex-row justify-between text-gray-700 py-2">
-                        <p>Fund Name</p>
-                        <p>0</p>
-                     </div>
-
+               <div className="flex items-center space-x-2 text-gray-400">
+                  <span className="text-xs">Live Preview</span>
+                  <div className="flex space-x-1">
+                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
                   </div>
-
-                  <div className="w-2/3 border-t border-gray-300 mt-4">
-                     <div className="flex flex-row text-xl justify-between text-gray-700 py-2">
-                        <p className="text-xl">Total</p>
-                        <p>$ 0</p>
-                     </div>
-                  </div>
-
-               </div>
-
-               <div className="px-10 py-10">
-                  <h1 className="text-lg ">Questions/Comments?</h1>
-                  <p className="text-sm text-gray-700 mt-4">Email us at ... </p>
                </div>
             </div>
-
          </div>
-         <div className="bg-gray-100 border-t border-gray-300 py-4 mt-12">
-            <div className="text-center text-gray-600 text-xs">
-               <p>&copy; {new Date().getFullYear()} Your Organization. All rights reserved.</p>
-               <p className="mt-1">
-                  <a href="#" className="hover:underline">Privacy Policy</a> | 
-                  <a href="#" className="hover:underline ml-2">Terms of Service</a>
-               </p>
+
+         {/* Content Container */}
+         <div className="relative">
+            <div className="max-w-lg mx-auto px-4 py-8">
+               {/* Success Card */}
+               <div className="bg-white border border-gray-100 p-6 text-center shadow-sm" style={{borderRadius: thankPageInputs.cardRadius || '4px'}}>
+                  {/* Success Icon */}
+                  <div className="mx-auto w-12 h-12 bg-green-50 border border-green-100 flex items-center justify-center mb-4" style={{borderRadius: thankPageInputs.cardRadius || '4px'}}>
+                     <FaCheckCircle className="text-green-600 text-xl" />
+                  </div>
+
+                  {/* Thank You Message */}
+                  <h1 
+                     className="font-bold mb-3 leading-tight"
+                     style={{ 
+                        color: thankPageInputs.p_color || '#1f2937',
+                        fontSize: Math.min(parseInt(thankPageInputs.heroTitleSize) || 24, 28) + 'px'
+                     }}
+                  >
+                     {thankPageInputs.headline || "Thank You!"}
+                  </h1>
+                  
+                  <p 
+                     className="leading-relaxed text-sm mb-6"
+                     style={{ 
+                        color: thankPageInputs.s_color || '#6b7280',
+                        fontSize: Math.min(parseInt(thankPageInputs.bodyTextSize) || 14, 16) + 'px'
+                     }}
+                  >
+                     {thankPageInputs.description || "Your generous donation has been received and will make a real difference in our mission. We're incredibly grateful for your support!"}
+                  </p>
+
+                  {/* Transaction Summary */}
+                  <div className="bg-gray-50 p-4 mb-6 text-left" style={{borderRadius: thankPageInputs.cardRadius || '4px'}}>
+                     <h3 className="font-semibold mb-3 text-sm" style={{ color: thankPageInputs.p_color || '#1f2937' }}>Donation Summary</h3>
+                     <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                           <span style={{ color: thankPageInputs.s_color || '#6b7280' }}>Amount:</span>
+                           <span className="font-semibold" style={{ color: thankPageInputs.p_color || '#1f2937' }}>$50.00</span>
+                        </div>
+                        <div className="flex justify-between">
+                           <span style={{ color: thankPageInputs.s_color || '#6b7280' }}>Fund:</span>
+                           <span className="font-semibold" style={{ color: thankPageInputs.p_color || '#1f2937' }}>General Fund</span>
+                        </div>
+                        <div className="flex justify-between">
+                           <span style={{ color: thankPageInputs.s_color || '#6b7280' }}>Transaction ID:</span>
+                           <span className="font-mono text-xs" style={{ color: thankPageInputs.s_color || '#6b7280' }}>TX-2024-001</span>
+                        </div>
+                        <div className="border-t border-gray-200 pt-2 mt-3">
+                           <div className="flex justify-between">
+                              <span className="font-semibold" style={{ color: thankPageInputs.p_color || '#1f2937' }}>Total:</span>
+                              <span className="font-bold" style={{ color: thankPageInputs.p_color || '#1f2937' }}>$50.00</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="space-y-3 mb-6">
+                     <button 
+                        className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2"
+                        style={{ 
+                           backgroundColor: thankPageInputs.p_color || '#3b82f6',
+                           borderRadius: thankPageInputs.buttonRadius || '4px',
+                           fontSize: Math.min(parseInt(thankPageInputs.buttonTextSize) || 14, 16) + 'px'
+                        }}
+                     >
+                        <FaHeart className="w-3 h-3" />
+                        <span>Donate Again</span>
+                     </button>
+                     <button 
+                        className="w-full py-3 px-4 font-semibold border border-gray-200 hover:border-gray-300 transition-all duration-300 flex items-center justify-center space-x-2"
+                        style={{ 
+                           color: thankPageInputs.p_color || '#1f2937',
+                           borderRadius: thankPageInputs.buttonRadius || '4px',
+                           fontSize: Math.min(parseInt(thankPageInputs.buttonTextSize) || 14, 16) + 'px'
+                        }}
+                     >
+                        <FaShare className="w-3 h-3" />
+                        <span>Share This Campaign</span>
+                     </button>
+                  </div>
+
+                  {/* Additional Information */}
+                  <div className="text-left space-y-4">
+                     <div>
+                        <h4 className="font-semibold mb-2 text-sm" style={{ color: thankPageInputs.p_color || '#1f2937' }}>What happens next?</h4>
+                        <p className="text-xs leading-relaxed" style={{ color: thankPageInputs.s_color || '#6b7280' }}>
+                           You'll receive a confirmation email shortly. Your donation will be processed and you'll get updates on how your contribution is making a difference.
+                        </p>
+                     </div>
+                     
+                     <div>
+                        <h4 className="font-semibold mb-2 text-sm" style={{ color: thankPageInputs.p_color || '#1f2937' }}>Need help?</h4>
+                        <div className="flex items-center space-x-4 text-xs" style={{ color: thankPageInputs.s_color || '#6b7280' }}>
+                           <div className="flex items-center space-x-1">
+                              <FaEnvelope className="w-3 h-3" />
+                              <span>support@example.org</span>
+                           </div>
+                           <div className="flex items-center space-x-1">
+                              <FaPhone className="w-3 h-3" />
+                              <span>(555) 123-4567</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </div>
          </div>
       </div>

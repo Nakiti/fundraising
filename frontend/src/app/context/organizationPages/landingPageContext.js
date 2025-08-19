@@ -30,31 +30,64 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
          const response = await PageService.getLandingPage(organizationId)
          const landingPageId = response.id
          setInputs({
+            // Content fields
             title: response.title || "",
             description: response.description || "",
-            bgImage: response.bgImage || "",
+            bgImage: response.bgImage || "", // Now contains SAS URL
             mainHeadline: response.mainHeadline || "",
             mainText: response.mainText || "",
             aboutText: response.aboutText || "",
-            aboutImage: response.aboutImage || "",
+            aboutImage: response.aboutImage || "", // Now contains SAS URL
             impactText: response.impactText || "",
-            impactImage: response.impactImage || "",
+            textImage: response.textImage || "", // Now contains SAS URL
             headlineOne: response.headlineOne || "",
             descriptionOne: response.descriptionOne || "",
-            imageOne: response.imageOne || "",
+            imageOne: response.imageOne || "", // Now contains SAS URL
             headlineTwo: response.headlineTwo || "",
             descriptionTwo: response.descriptionTwo || "",
-            imageTwo: response.imageTwo || "",
+            imageTwo: response.imageTwo || "", // Now contains SAS URL
             headlineThree: response.headlineThree || "",
             descriptionThree: response.descriptionThree || "",
-            imageThree: response.imageThree || "",
+            imageThree: response.imageThree || "", // Now contains SAS URL
+            
+            // Color customization
             bg_color: response.bg_color || "#FFFFFF",
             p_color: response.p_color || "#000000",
-            s_color: response.s_color || "gray",
+            s_color: response.s_color || "#666666",
             c_color: response.c_color || "#FFFFFF",
             ct_color: response.ct_color || "#000000",
-            b_color: response.b_color || "blue",
-            bt_color: response.bt_color || "white",
+            b_color: response.b_color || "#1F2937",
+            bt_color: response.bt_color || "#FFFFFF",
+            
+            // Font sizes
+            heroTitleSize: response.hero_title_size || "36px",
+            heroSubtitleSize: response.hero_subtitle_size || "16px",
+            sectionTitleSize: response.section_title_size || "28px",
+            bodyTextSize: response.body_text_size || "14px",
+            buttonTextSize: response.button_text_size || "14px",
+            cardTitleSize: response.card_title_size || "18px",
+            
+            // Layout & spacing
+            heroHeight: response.hero_height || "500px",
+            sectionPadding: response.section_padding || "80px",
+            cardRadius: response.card_radius || "4px",
+            buttonRadius: response.button_radius || "4px",
+            
+            // Visual effects
+            overlayOpacity: response.overlay_opacity || "0.3",
+            accentColor: response.accent_color || "#1F2937",
+            
+            // Element visibility toggles
+            showVideoButton: response.show_video_button !== false,
+            showHeroIcons: response.show_hero_icons !== false,
+            showFeatureIcons: response.show_feature_icons !== false,
+            showCampaignBadges: response.show_campaign_badges !== false,
+            showTrustBadge: response.show_trust_badge !== false,
+            showProgressIndicators: response.show_progress_indicators !== false,
+            showStatistics: response.show_statistics !== false,
+            showHoverEffects: response.show_hover_effects !== false,
+            
+            // Status
             active: response.active || false
          })
 

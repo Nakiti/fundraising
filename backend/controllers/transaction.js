@@ -35,7 +35,8 @@ export const createTransaction = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create transaction', err));
-      resolve(sendCreated(res, { transactionId: data.insertId }, 'Transaction created successfully'));
+      sendCreated(res, { transactionId: data.insertId }, 'Transaction created successfully');
+      resolve();
     })
   })
 })
@@ -53,7 +54,8 @@ export const getTransaction = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch transaction', err));
       if (!data || data.length === 0) reject(new NotFoundError('Transaction'));
-      resolve(sendSuccess(res, data[0], 'Transaction retrieved successfully'));
+      sendSuccess(res, data[0], 'Transaction retrieved successfully');
+      resolve();
     })
   })
 })
@@ -75,7 +77,8 @@ export const getTransactionsbyCampaign = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch campaign transactions', err));
-      resolve(sendSuccess(res, data, 'Campaign transactions retrieved successfully'));
+      sendSuccess(res, data, 'Campaign transactions retrieved successfully');
+      resolve();
     })
   })
 })
@@ -99,7 +102,8 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch organization transactions', err));
-      resolve(sendSuccess(res, data, 'Organization transactions retrieved successfully'));
+      sendSuccess(res, data, 'Organization transactions retrieved successfully');
+      resolve();
     })
   })
 })
@@ -140,7 +144,8 @@ export const updateTransaction = asyncHandler(async (req, res) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to update transaction', err));
       if (data.affectedRows === 0) reject(new NotFoundError('Transaction'));
-      resolve(sendUpdated(res, data, 'Transaction updated successfully'));
+      sendUpdated(res, data, 'Transaction updated successfully');
+      resolve();
     })
   })
 })
@@ -170,7 +175,8 @@ export const getTransactionsOverTime = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch transactions over time', err));
-      resolve(sendSuccess(res, data[0], 'Transactions over time retrieved successfully'));
+      sendSuccess(res, data[0], 'Transactions over time retrieved successfully');
+      resolve();
     })
   })
 })
@@ -198,7 +204,8 @@ export const searchTransactions = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to search transactions', err));
-      resolve(sendSuccess(res, data, 'Transaction search completed'));
+      sendSuccess(res, data, 'Transaction search completed');
+      resolve();
     })
   })
 })
@@ -228,7 +235,8 @@ export const getFiltered = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, params, (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch filtered transactions', err));
-      resolve(sendSuccess(res, data, 'Filtered transactions retrieved successfully'));
+      sendSuccess(res, data, 'Filtered transactions retrieved successfully');
+      resolve();
     })
   })
 })

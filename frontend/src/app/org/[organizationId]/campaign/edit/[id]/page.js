@@ -6,14 +6,15 @@ import { CampaignContext } from "@/app/context/campaignContext"
 
 const EditCampaign = ({params}) => {
    const campaignId = params.id
+   const organizationId = params.organizationId
    const router = useRouter()
    const { fetchCampaignData, loading } = useContext(CampaignContext)
 
    useEffect(() => {
-      if (campaignId) {
-         fetchCampaignData(campaignId)
+      if (campaignId && organizationId) {
+         fetchCampaignData(campaignId, organizationId)
       }
-   }, [campaignId, fetchCampaignData])
+   }, [campaignId, organizationId, fetchCampaignData])
 
    useEffect(() => {
       // Redirect to details page after data is loaded

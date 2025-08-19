@@ -15,7 +15,7 @@ export const AuthContextProvider = ({children}) => {
    // API hooks for authentication
    const { execute: loginUser, loading: loginLoading } = useApi(Services.Auth.loginUser);
    const { execute: logoutUser, loading: logoutLoading } = useApi(Services.Auth.logoutUser);
-   const { execute: getCurrentUser, loading: authCheckLoading } = useApi(Services.Auth.getCurrentUser);
+   const { execute: getCurrentUser, loading: authCheckLoading } = useApi(Services.Auth.getCurrentUser, { maxRetries: 0 }); // Disable retries for auth checks
  
    const login = async (inputs) => {
       try {
@@ -85,6 +85,13 @@ export const AuthContextProvider = ({children}) => {
             clearInvalidToken();
          }
       } catch (err) {
+         // Handle rate limit errors specifically
+         if (err.status === 429) {
+            console.warn('Rate limited during auth check, will retry later');
+            // Don't clear auth state on rate limit, just log it
+            return;
+         }
+         
          setCurrentUser(null);
          setIsLoggedIn(false);
          // Clear invalid token on error

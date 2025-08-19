@@ -33,7 +33,8 @@ export const createSection = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create section', err));
-      resolve(sendCreated(res, { sectionId: data.insertId }, 'Section created successfully'));
+      sendCreated(res, { sectionId: data.insertId }, 'Section created successfully');
+      resolve();
     })
   })
 })
@@ -57,7 +58,8 @@ export const updateSection = asyncHandler(async (req, res) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to update section', err));
       if (data.affectedRows === 0) reject(new NotFoundError('Section'));
-      resolve(sendUpdated(res, data, 'Section updated successfully'));
+      sendUpdated(res, data, 'Section updated successfully');
+      resolve();
     })
   })
 })
@@ -75,7 +77,8 @@ export const getSection = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch section', err));
       if (!data || data.length === 0) reject(new NotFoundError('Section'));
-      resolve(sendSuccess(res, data[0], 'Section retrieved successfully'));
+      sendSuccess(res, data[0], 'Section retrieved successfully');
+      resolve();
     })
   })
 })
@@ -92,7 +95,8 @@ export const getSectionByPage = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch sections by page', err));
-      resolve(sendSuccess(res, data, 'Sections retrieved successfully'));
+      sendSuccess(res, data, 'Sections retrieved successfully');
+      resolve();
     })
   })
 })

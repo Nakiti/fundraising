@@ -11,11 +11,11 @@ import { updateCampaignDetails } from "@/app/services/updateServices"
 import { createCampaignDesignation } from "@/app/services/createServices"
 
 const Designations = () => {
-   const {designations, campaignDetails, handleCampaignDetailsChange, campaignId, campaignStatus, selectedDesignations, setSelectedDesignations, loading} = useContext(CampaignContext)
+   const {designations, campaignDetails, handleCampaignDetailsChange, campaignId, campaignStatus, selectedDesignations, setSelectedDesignationsWithTracking, loading, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
 
    const handleChange = (designation, isChecked) => {
-      setSelectedDesignations(prev => {
+      setSelectedDesignationsWithTracking(prev => {
          const exists = prev.some(item => item.id === designation.id)
 
          if (isChecked) {
@@ -30,7 +30,11 @@ const Designations = () => {
    }
 
    const handleRemove = (id) => {
-      setSelectedDesignations(selectedDesignations.filter(item => item.id !== id))
+      setSelectedDesignationsWithTracking(selectedDesignations.filter(item => item.id !== id))
+   }
+
+   const handleCampaignDetailsChangeWrapper = (e) => {
+      handleCampaignDetailsChange(e)
    }  
 
    const handleSave = async() => {
@@ -47,7 +51,9 @@ const Designations = () => {
             await deleteCampaignDesignationBatch(relationsToRemove)
          }
 
-         await updateCampaignDetails(campaignId, campaignDetails, campaignStatus, currentUser)
+                   await updateCampaignDetails(campaignId, campaignDetails, campaignStatus, currentUser)
+          markChangesAsSaved()
+          markPageChangesAsSaved('designations')
       } catch (err) {
          console.log(err)
       }
@@ -88,7 +94,7 @@ const Designations = () => {
                   className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={campaignDetails && (campaignDetails.defaultDesignation == 0 ? "" : campaignDetails.defaultDesignation)}
                   name="defaultDesignation"
-                  onChange={handleCampaignDetailsChange}
+                  onChange={handleCampaignDetailsChangeWrapper}
                >
                   <option value="" disabled>Select an Option</option>
                   {designations && designations.map(item => (
@@ -147,12 +153,13 @@ const Designations = () => {
             </div>
          </div>
          <div className="w-full flex flex-row mt-6">
-            <button 
-               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
-               onClick={handleSave}
-            >
-               Save
-            </button>
+                         <button 
+                className={`ml-auto ${!pageChanges.designations ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-700"} px-6 py-3 w-40 rounded-md shadow-sm text-md text-white`}
+                onClick={handleSave}
+                disabled={!pageChanges.designations}
+             >
+                Save
+             </button>
          </div>
       </div>
    )

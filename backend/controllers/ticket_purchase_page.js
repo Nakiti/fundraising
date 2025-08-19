@@ -34,7 +34,8 @@ export const createTicketPurchasePage = asyncHandler(async (req, res) => {
         reject(new DatabaseError('Failed to create ticket purchase page', err));
         return;
       }
-      resolve(sendCreated(res, { pageId: data.insertId }, 'Ticket purchase page created successfully'));
+      sendCreated(res, { pageId: data.insertId }, 'Ticket purchase page created successfully');
+      resolve();
     })
   })
 })
@@ -68,7 +69,8 @@ export const updateTicketPurchasePage = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Ticket purchase page'));
         return;
       }
-      resolve(sendUpdated(res, data, 'Ticket purchase page updated successfully'));
+      sendUpdated(res, data, 'Ticket purchase page updated successfully');
+      resolve();
     })
   })
 })
@@ -92,7 +94,8 @@ export const getTicketPurchasePage = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Ticket purchase page'));
         return;
       }
-      resolve(sendSuccess(res, data[0], 'Ticket purchase page retrieved successfully'));
+      sendSuccess(res, data[0], 'Ticket purchase page retrieved successfully');
+      resolve();
     })
   })
 })

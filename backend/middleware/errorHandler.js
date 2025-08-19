@@ -60,8 +60,27 @@ export const globalErrorHandler = (err, req, res, next) => {
     error = err;
   }
 
+  // Ensure we have a valid status code
+  const statusCode = error.statusCode || 500;
+  
+  // Ensure we have a valid message
+  const message = error.message || 'Something went wrong';
+
+  // Check if headers have already been sent
+  if (res.headersSent) {
+    return;
+  }
+
   // Send error response
-  return sendError(res, error);
+  return res.status(statusCode).json({
+    success: false,
+    message: message,
+    statusCode: statusCode,
+    ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
+    ...(error.errors && { errors: error.errors }),
+    ...(error.type && { errorType: error.type }),
+    timestamp: new Date().toISOString()
+  });
 };
 
 /**
@@ -83,7 +102,9 @@ export const asyncHandler = (fn) => {
  */
 export const validationErrorHandler = (err, req, res, next) => {
   if (err instanceof ValidationError) {
-    return sendError(res, err);
+    if (!res.headersSent) {
+      return sendError(res, err);
+    }
   }
   next(err);
 };
@@ -93,7 +114,9 @@ export const validationErrorHandler = (err, req, res, next) => {
  */
 export const authenticationErrorHandler = (err, req, res, next) => {
   if (err instanceof AuthenticationError) {
-    return sendError(res, err);
+    if (!res.headersSent) {
+      return sendError(res, err);
+    }
   }
   next(err);
 };
@@ -103,7 +126,9 @@ export const authenticationErrorHandler = (err, req, res, next) => {
  */
 export const authorizationErrorHandler = (err, req, res, next) => {
   if (err instanceof AuthorizationError) {
-    return sendError(res, err);
+    if (!res.headersSent) {
+      return sendError(res, err);
+    }
   }
   next(err);
 };
@@ -113,7 +138,9 @@ export const authorizationErrorHandler = (err, req, res, next) => {
  */
 export const databaseErrorHandler = (err, req, res, next) => {
   if (err instanceof DatabaseError) {
-    return sendError(res, err);
+    if (!res.headersSent) {
+      return sendError(res, err);
+    }
   }
   next(err);
 };
@@ -123,7 +150,9 @@ export const databaseErrorHandler = (err, req, res, next) => {
  */
 export const conflictErrorHandler = (err, req, res, next) => {
   if (err instanceof ConflictError) {
-    return sendError(res, err);
+    if (!res.headersSent) {
+      return sendError(res, err);
+    }
   }
   next(err);
 };
@@ -133,7 +162,9 @@ export const conflictErrorHandler = (err, req, res, next) => {
  */
 export const rateLimitErrorHandler = (err, req, res, next) => {
   if (err instanceof RateLimitError) {
-    return sendError(res, err);
+    if (!res.headersSent) {
+      return sendError(res, err);
+    }
   }
   next(err);
 };
@@ -244,8 +275,9 @@ export const handleUnhandledRejection = (err) => {
   console.error(err.name, err.message);
   logError(err);
   
-  // Don't exit the process immediately, just log the error
-  // process.exit(1);
+  // Don't exit the process for unhandled rejections
+  // This prevents crashes from frontend errors or network issues
+  console.error('Continuing to run despite unhandled rejection...');
 };
 
 /**
@@ -256,9 +288,15 @@ export const handleUncaughtException = (err) => {
   console.error(err.name, err.message);
   logError(err);
   
-  // Only exit for critical errors, not all exceptions
-  if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
-    console.error('Critical error detected, shutting down...');
+  // Only exit for critical system errors, not application errors
+  if (err.code === 'ECONNREFUSED' || 
+      err.code === 'ENOTFOUND' || 
+      err.code === 'EACCES' ||
+      err.code === 'EADDRINUSE') {
+    console.error('Critical system error detected, shutting down...');
     process.exit(1);
   }
+  
+  // For other exceptions, log but continue running
+  console.error('Continuing to run despite uncaught exception...');
 };

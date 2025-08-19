@@ -38,7 +38,8 @@ export const createFaqs = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create FAQs', err));
-      resolve(sendCreated(res, { insertedCount: data.affectedRows }, 'FAQs created successfully'));
+      sendCreated(res, { insertedCount: data.affectedRows }, 'FAQs created successfully');
+      resolve();
     })
   })
 })
@@ -55,7 +56,8 @@ export const getFaqs = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch FAQs', err));
-      resolve(sendSuccess(res, data, 'FAQs retrieved successfully'));
+      sendSuccess(res, data, 'FAQs retrieved successfully');
+      resolve();
     })
   })
 })
@@ -73,7 +75,8 @@ export const deleteFaq = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to delete FAQ', err));
       if (data.affectedRows === 0) reject(new NotFoundError('FAQ'));
-      resolve(sendDeleted(res, 'FAQ deleted successfully'));
+      sendDeleted(res, 'FAQ deleted successfully');
+      resolve();
     })
   })
 })
@@ -92,7 +95,8 @@ export const deleteFaqsBatch = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to delete FAQs batch', err));
-      resolve(sendDeleted(res, `Deleted ${data.affectedRows} FAQs successfully`));
+      sendDeleted(res, `Deleted ${data.affectedRows} FAQs successfully`);
+      resolve();
     })
   })
 })

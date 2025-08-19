@@ -2,13 +2,16 @@
 import { FaTrash } from "react-icons/fa"
 import { useContext, useState, useEffect } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
+import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
 import { getCustomQuestions } from "@/app/services/fetchService"
 import { deleteCampaignQuestionsBatch } from "@/app/services/deleteService"
 import { createCustomQuestion } from "@/app/services/createServices"
+import { updateCampaignDetails } from "@/app/services/updateServices"
 
 const Questions = () => {
-   const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestions, campaignId, loading} = useContext(CampaignContext)
+   const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestionsWithTracking, campaignId, loading, campaignDetails, campaignStatus, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
+   const { currentUser } = useContext(AuthContext)
 
    const [newQuestion, handleNewQuestionChange, setNewQuestion] = useFormInput({
       id: new Date(),
@@ -18,7 +21,7 @@ const Questions = () => {
 
    const handleAdd = () => {
       if (newQuestion.question != "" && newQuestion.type != "") {
-         setCustomQuestions((prev) => [...prev, newQuestion])
+         setCustomQuestionsWithTracking((prev) => [...prev, newQuestion])
    
          setNewQuestion({id: new Date(), question: "", type: ""})
          console.log(customQuestions)
@@ -26,11 +29,16 @@ const Questions = () => {
    }
 
    const handleDelete = (id) => {
-      setCustomQuestions(customQuestions.filter(item => item.id !== id))
+      setCustomQuestionsWithTracking(customQuestions.filter(item => item.id !== id))
+   }
+
+   const handleQuestionInputsChangeWrapper = (e) => {
+      handleQuestionInputsChange(e)
    }
 
    const handleSave = async () => {
       try {
+         // Save custom questions
          const existingQuestions = await getCustomQuestions(campaignId)
          const questionsToAdd = customQuestions.filter(item => !existingQuestions.includes(item))
          const questionsToRemove = existingQuestions.filter(item => !customQuestions.includes(item))
@@ -44,6 +52,14 @@ const Questions = () => {
          if (questionsToRemove.length > 0) {
             await deleteCampaignQuestionsBatch(questionsToRemove)
          }
+
+         // Save checkbox question values to campaign details
+         if (campaignDetails && currentUser) {
+            await updateCampaignDetails(campaignId, campaignDetails, campaignStatus, currentUser, questionInputs)
+         }
+         
+         markChangesAsSaved()
+         markPageChangesAsSaved('questions')
       } catch (err) {
          console.log(err)
       }
@@ -85,7 +101,7 @@ const Questions = () => {
                         className="w-4 h-4"
                         name={field.toLowerCase()}
                         checked={questionInputs?.[field.toLowerCase()] || false}
-                        onChange={handleQuestionInputsChange}
+                        onChange={handleQuestionInputsChangeWrapper}
                      />
                   </div>
                ))}
@@ -106,7 +122,7 @@ const Questions = () => {
                         className="w-4 h-4"
                         name={field.toLowerCase().replace(/\//g, '')}
                         checked={questionInputs?.[field.toLowerCase().replace(/\//g, '')] || false}
-                        onChange={handleQuestionInputsChange}
+                        onChange={handleQuestionInputsChangeWrapper}
                      />
                   </div>
                ))}
@@ -185,12 +201,13 @@ const Questions = () => {
             </div>
          </div>
          <div className="w-full flex flex-row mt-6">
-            <button 
-               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
-               onClick={handleSave}
-            >
-               Save
-            </button>
+                         <button 
+                className={`ml-auto ${!pageChanges.questions ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-700"} px-6 py-3 w-40 rounded-md shadow-sm text-md text-white`}
+                onClick={handleSave}
+                disabled={!pageChanges.questions}
+             >
+                Save
+             </button>
          </div>
       </div>
    )

@@ -46,7 +46,8 @@ export const register = asyncHandler(async (req, res) => {
   
       db.query(query, [values], (err, data) => {
         if (err) reject(new DatabaseError('Failed to create organization', err));
-        resolve(sendCreated(res, { organizationId: data.insertId }, 'Organization created successfully'));
+        sendCreated(res, { organizationId: data.insertId }, 'Organization created successfully');
+      resolve();
       })
     })
   })
@@ -65,7 +66,8 @@ export const get = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch organization', err));
       if (!data || data.length === 0) reject(new NotFoundError('Organization'));
-      resolve(sendSuccess(res, data[0], 'Organization retrieved successfully'));
+      sendSuccess(res, data[0], 'Organization retrieved successfully');
+      resolve();
     })
   })
 })
@@ -100,7 +102,8 @@ export const update = asyncHandler(async (req, res) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to update organization', err));
       if (data.affectedRows === 0) reject(new NotFoundError('Organization'));
-      resolve(sendUpdated(res, data, 'Organization updated successfully'));
+      sendUpdated(res, data, 'Organization updated successfully');
+      resolve();
     })
   })
 })

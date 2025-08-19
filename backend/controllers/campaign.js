@@ -38,7 +38,8 @@ export const createCampaign = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create campaign', err));
-      resolve(sendCreated(res, { campaignId: data.insertId }, 'Campaign created successfully'));
+      sendCreated(res, { campaignId: data.insertId }, 'Campaign created successfully');
+      resolve();
     })
   })
 })
@@ -68,7 +69,8 @@ export const getCampaign = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch campaign', err));
       if (!data || data.length === 0) reject(new NotFoundError('Campaign'));
-      resolve(sendSuccess(res, data[0], 'Campaign retrieved successfully'));
+      sendSuccess(res, data[0], 'Campaign retrieved successfully');
+      resolve();
     })
   })
 })
@@ -96,7 +98,8 @@ export const searchCampaigns = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to search campaigns', err));
-      resolve(sendSuccess(res, data, 'Campaigns search completed'));
+      sendSuccess(res, data, 'Campaigns search completed');
+      resolve();
     })
   })
 })
@@ -121,7 +124,8 @@ export const getCampaignsByOrg = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch organization campaigns', err));
-      resolve(sendSuccess(res, data, 'Organization campaigns retrieved successfully'));
+      sendSuccess(res, data, 'Organization campaigns retrieved successfully');
+      resolve();
     })
   })
 })
@@ -132,7 +136,8 @@ export const getActive = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch active campaigns', err));
-      resolve(sendSuccess(res, data, 'Active campaigns retrieved successfully'));
+      sendSuccess(res, data, 'Active campaigns retrieved successfully');
+      resolve();
     })
   })
 })
@@ -169,7 +174,8 @@ export const getFiltered = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, params, (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch filtered campaigns', err));
-      resolve(sendSuccess(res, data, 'Filtered campaigns retrieved successfully'));
+      sendSuccess(res, data, 'Filtered campaigns retrieved successfully');
+      resolve();
     })
   })
 })
@@ -197,7 +203,8 @@ export const getDateRange = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch campaigns by date range', err));
-      resolve(sendSuccess(res, data, 'Date range campaigns retrieved successfully'));
+      sendSuccess(res, data, 'Date range campaigns retrieved successfully');
+      resolve();
     })
   })
 })
@@ -238,7 +245,8 @@ export const updateCampaign = asyncHandler(async (req, res) => {
       db.query(query, values, (err, data) => {
         if (err) reject(new DatabaseError('Failed to update campaign', err));
         if (data.affectedRows === 0) reject(new NotFoundError('Campaign'));
-        resolve(sendUpdated(res, data, 'Campaign updated successfully'));
+        sendUpdated(res, data, 'Campaign updated successfully');
+      resolve();
       })
     })
   })
@@ -268,7 +276,8 @@ export const deactivateCampaign = asyncHandler(async (req, res) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to deactivate campaign', err));
       if (data.affectedRows === 0) reject(new NotFoundError('Campaign'));
-      resolve(sendUpdated(res, data, 'Campaign deactivated successfully'));
+      sendUpdated(res, data, 'Campaign deactivated successfully');
+      resolve();
     })
   })
 })
@@ -285,7 +294,8 @@ export const sumDonations = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to calculate donations sum', err));
-      resolve(sendSuccess(res, data[0], 'Donations sum calculated successfully'));
+      sendSuccess(res, data[0], 'Donations sum calculated successfully');
+      resolve();
     })
   })
 })
@@ -302,7 +312,8 @@ export const sumRaised = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to calculate raised amount', err));
-      resolve(sendSuccess(res, data[0], 'Raised amount calculated successfully'));
+      sendSuccess(res, data[0], 'Raised amount calculated successfully');
+      resolve();
     })
   })
 })

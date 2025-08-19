@@ -43,7 +43,8 @@ export const createDonationForm = asyncHandler(async (req, res) => {
         reject(new DatabaseError('Failed to create donation form', err));
         return;
       }
-      resolve(sendCreated(res, { formId: data.insertId }, 'Donation form created successfully'));
+      sendCreated(res, { formId: data.insertId }, 'Donation form created successfully');
+      resolve();
     })
   })
 })
@@ -67,24 +68,21 @@ export const getDonationForm = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Donation form'));
         return;
       }
-      resolve(sendSuccess(res, data[0], 'Donation form retrieved successfully'));
+      sendSuccess(res, data[0], 'Donation form retrieved successfully');
+      resolve();
     })
   })
 })
 
 export const updateDonationForm = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { 
-    bg_image, headline, description, button1, button2, button3, 
-    button4, button5, button6, p_color, s_color, bg_color, t_color, user_id 
-  } = req.body;
   
-  if (!id || !user_id) {
-    throw new ValidationError('Missing required fields: campaign_id, user_id');
+  if (!id) {
+    throw new ValidationError('Form ID is required');
   }
 
   return new Promise((resolve, reject) => {
-    upload.single('image')(req, res, (err) => {
+    upload.single('bg_image')(req, res, (err) => {
       if (err) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           reject(new ValidationError('File is too large. Max size is 5MB'));
@@ -94,22 +92,44 @@ export const updateDonationForm = asyncHandler(async (req, res) => {
         return;
       } 
 
-      const query = "UPDATE donation_forms SET `bg_image` = ?, `headline` = ?, `description` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
+      // Destructure after multer has processed the form data
+      const { 
+        bg_image, headline, description, button1, button2, button3, 
+        button4, button5, button6, p_color, s_color, bg_color, t_color, b1_color,
+        heroTitleSize, sectionTitleSize, bodyTextSize, buttonTextSize,
+        cardRadius, buttonRadius, user_id 
+      } = req.body;
+      
+      if (!user_id) {
+        reject(new ValidationError('Missing required field: user_id'));
+        return;
+      }
+
+      const imagePath = req.file?.path || bg_image;
+
+      const query = "UPDATE donation_forms SET `bg_image` = ?, `headline` = ?, `description` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `p_color` = ?, `s_color` = ?, `bg_color` = ?, `t_color` = ?, `b1_color` = ?, `heroTitleSize` = ?, `sectionTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardRadius` = ?, `buttonRadius` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
 
       const values = [
-        bg_image,
+        imagePath,
         headline,
         description,
         button1,
         button2,
         button3,
-        button4, 
+        button4,
         button5,
         button6,
         p_color,
         s_color,
         bg_color,
         t_color,
+        b1_color,
+        heroTitleSize,
+        sectionTitleSize,
+        bodyTextSize,
+        buttonTextSize,
+        cardRadius,
+        buttonRadius,
         (new Date()).toISOString().slice(0, 19).replace('T', ' '),
         user_id,
         id
@@ -117,14 +137,18 @@ export const updateDonationForm = asyncHandler(async (req, res) => {
 
       db.query(query, values, (err, data) => {
         if (err) {
-          reject(new DatabaseError('Failed to update donation form', err));
+          console.error('SQL Error:', err);
+          console.error('Query:', query);
+          console.error('Values:', values);
+          reject(new DatabaseError(`SQL Error: ${err.message}`, err));
           return;
         }
         if (data.affectedRows === 0) {
           reject(new NotFoundError('Donation form'));
           return;
         }
-        resolve(sendUpdated(res, data, 'Donation form updated successfully'));
+        sendUpdated(res, data, 'Donation form updated successfully');
+        resolve();
       })
     })
   })

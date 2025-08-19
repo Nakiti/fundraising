@@ -9,7 +9,7 @@ import useFormInput from "@/app/hooks/useFormInput"
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const Tickets = () => {
-   const {tickets, setTickets, campaignId, loading} = useContext(CampaignContext)
+   const {tickets, setTicketsWithTracking, campaignId, loading, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
    const [newTicket, handleNewTicketChange, setNewTicket] = useFormInput({id: new Date(), title: "", quantity: 0, price: 0, unlimited: false, free: false, description: "", attendees: 0, max_purchase: 0, start_date: null, end_date: null})
    const [showDropdown, setShowDropdown] = useState(false)
 
@@ -20,8 +20,8 @@ const Tickets = () => {
          return
       }
 
-      setTickets(prev => [...prev, newTicket])
-      setNewTicket({id: new Date(), title: "", quantity: 0, price: 0, unlimited: false, free: false, description: "", attendees: 0, max_purchase: 0, start_date: null, end_date: null})
+             setTicketsWithTracking(prev => [...prev, newTicket])
+       setNewTicket({id: new Date(), title: "", quantity: 0, price: 0, unlimited: false, free: false, description: "", attendees: 0, max_purchase: 0, start_date: null, end_date: null})
    }
 
    const handleSave = async () => { //not sure this works right
@@ -33,9 +33,11 @@ const Tickets = () => {
          if (ticketsToAdd.length > 0) {
             await createCampaignTicket(campaignId, ticketsToAdd)
          }
-         if (ticketsToRemove.length > 0) {
-            await deleteCampaignTicketsBatch(ticketsToRemove)
-         }
+                   if (ticketsToRemove.length > 0) {
+             await deleteCampaignTicketsBatch(ticketsToRemove)
+          }
+          markChangesAsSaved()
+          markPageChangesAsSaved('tickets')
       } catch (err) {
          console.log(err)
       }
@@ -266,17 +268,20 @@ const Tickets = () => {
             <div className="mb-4">
                <p>Tickets ({tickets && tickets.length})</p>
             </div>
-            {tickets && tickets.map((item, index) => (
-               <TicketComponent key={index} ticket={item} tickets={tickets} setTickets={setTickets}/>
-            ))}
+                         {tickets && tickets.map((item, index) => (
+                <TicketComponent key={index} ticket={item} tickets={tickets} setTickets={(newTickets) => {
+                   setTicketsWithTracking(newTickets)
+                }}/>
+             ))}
          </div>
          <div className="w-full flex flex-row mt-6">
-            <button 
-               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
-               onClick={handleSave}
-            >
-               Save
-            </button>
+                         <button 
+                className={`ml-auto ${!pageChanges.tickets ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-700"} px-6 py-3 w-40 rounded-md shadow-sm text-md text-white`}
+                onClick={handleSave}
+                disabled={!pageChanges.tickets}
+             >
+                Save
+             </button>
          </div>
       </div>
    )

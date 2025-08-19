@@ -1,76 +1,190 @@
 "use client";
 import { useContext, useState } from "react";
 import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingPageContext";
+import { FaShare, FaHeart, FaUsers, FaHandHoldingHeart, FaArrowRight } from "react-icons/fa";
 
 const Display = () => {
-   const {peerLandingPageInputs, handlePeerLandingPageInputsChange} = useContext(PeerLandingPageContext)
+   const { peerLandingPageInputs, handlePeerLandingPageInputsChange } = useContext(PeerLandingPageContext);
    
    return (
       <div 
-         className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-sm shadow-md mt-6 overflow-hidden"
-         style={{ backgroundColor: peerLandingPageInputs.bg_color }}
+         className="min-h-screen bg-gradient-to-br from-gray-50 to-white"
+         style={{ 
+            backgroundColor: peerLandingPageInputs.bg_color || '#f8fafc',
+            color: peerLandingPageInputs.p_color || '#1f2937'
+         }}
       >
-         {/* Header Section */}
-         <div className="px-6 py-4 border-b border-gray-300 bg-white">
-            <h1 className="text-2xl font-bold text-gray-800">
-               Header
-            </h1>
-         </div>
+         {/* Hero Section */}
+         <div className="relative">
+            {/* Background Image */}
+            <div className="w-full h-screen bg-gradient-to-r from-purple-600 to-pink-600 relative overflow-hidden">
+               {peerLandingPageInputs.banner_image ? (
+                  <img
+                     src={peerLandingPageInputs.banner_image}
+                     alt="Peer Fundraising Banner"
+                     className="w-full h-full object-cover opacity-90"
+                  />
+               ) : (
+                  <div className="w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+                     <FaUsers className="text-white text-8xl opacity-50" />
+                  </div>
+               )}
+               
+               {/* Overlay */}
+               <div className="absolute inset-0 bg-black/30"></div>
+               
+               {/* Header */}
+               <div className="absolute top-0 left-0 right-0 p-6">
+                  <div className="flex justify-between items-center">
+                     <h1 className="text-white text-xl font-semibold">Peer Fundraising</h1>
+                     <button className="text-white hover:text-purple-200 transition-colors duration-200">
+                        <FaShare className="text-lg" />
+                     </button>
+                  </div>
+               </div>
 
-         {/* Banner Section with Overlay */}
-         <div className="relative w-full mb-8">
-            {/* Banner Image */}
-            <img
-               src={peerLandingPageInputs.banner_image || "image1.jpg"}
-               alt="Banner"
-               className="w-full h-80 object-cover bg-gray-100"
-            />
-
-            {/* Overlay Content */}
-            <div 
-               className="absolute inset-0 flex flex-col items-center justify-center text-center  p-4"
-            >
-               <h2 className="text-5xl font-semibold text-black mb-8" style={{color: peerLandingPageInputs.p_color}}>
-                  {peerLandingPageInputs.headline || "Headline"}
-               </h2>
-               <div className="flex gap-4">
-                  <button 
-                     className="bg-blue-800 text-white px-6 py-3 text-sm rounded-sm hover:bg-blue-700 transition"
+               {/* Hero Content */}
+               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                  <h1 
+                     className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight"
+                     style={{ color: peerLandingPageInputs.p_color || '#ffffff' }}
                   >
-                     Fundraise
-                  </button>
-                  <button 
-                     className="bg-green-800 text-white px-6 py-3 text-sm rounded-sm hover:bg-green-700 transition"
+                     {peerLandingPageInputs.headline || "Start Your Fundraising Journey"}
+                  </h1>
+                  
+                  <p 
+                     className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed"
+                     style={{ color: peerLandingPageInputs.s_color || '#e5e7eb' }}
                   >
-                     Donate
-                  </button>
+                     {peerLandingPageInputs.tagline || "Join thousands of fundraisers making a difference in their communities"}
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-6">
+                     <button 
+                        className="inline-flex items-center px-8 py-4 text-lg font-semibold text-purple-600 bg-white rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                     >
+                        <FaHandHoldingHeart className="mr-3" />
+                        Start Fundraising
+                        <FaArrowRight className="ml-3" />
+                     </button>
+                     <button 
+                        className="inline-flex items-center px-8 py-4 text-lg font-semibold text-white border-2 border-white rounded-xl hover:bg-white hover:text-purple-600 transition-all duration-200"
+                     >
+                        <FaHeart className="mr-3" />
+                        Support Others
+                     </button>
+                  </div>
                </div>
             </div>
          </div>
 
-         {/* Description Section */}
-         <div className="p-6 text-gray-700 w-11/12 mx-auto ">
-            <h3 className="text-2xl font-semibold mb-6 text-center">
-               {peerLandingPageInputs.tagline || "About the Cause"}
-            </h3>
-            <pre className="text-center text-sm leading-relaxed whitespace-pre-line">
-               {peerLandingPageInputs.description || 
-               "Your generous donations help us make a difference. Join us in supporting this important cause."}
-            </pre>
+         {/* Content Section */}
+         <div className="max-w-6xl mx-auto px-6 py-16">
+            {/* Description Section */}
+            <div className="text-center mb-16">
+               <h2 
+                  className="text-4xl font-bold mb-8"
+                  style={{ color: peerLandingPageInputs.p_color || '#1f2937' }}
+               >
+                  About This Campaign
+               </h2>
+               <p 
+                  className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto"
+                  style={{ color: peerLandingPageInputs.s_color || '#6b7280' }}
+               >
+                  {peerLandingPageInputs.description || "Join our community of passionate fundraisers who are making a real difference. Whether you want to start your own fundraising campaign or support others, you're in the right place. Every contribution helps create positive change in our community."}
+               </p>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid md:grid-cols-3 gap-8 mb-16">
+               <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                     <FaHandHoldingHeart className="text-purple-600 text-2xl" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Start Fundraising</h3>
+                  <p className="text-gray-600">Create your own fundraising campaign and inspire others to support your cause.</p>
+               </div>
+               
+               <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
+                  <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                     <FaUsers className="text-pink-600 text-2xl" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Join the Community</h3>
+                  <p className="text-gray-600">Connect with other fundraisers and supporters who share your passion.</p>
+               </div>
+               
+               <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                     <FaHeart className="text-blue-600 text-2xl" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Make an Impact</h3>
+                  <p className="text-gray-600">See the real difference your fundraising efforts make in the community.</p>
+               </div>
+            </div>
+
+            {/* Stats Section */}
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-12 text-white text-center mb-16">
+               <h2 className="text-3xl font-bold mb-8">Our Impact</h2>
+               <div className="grid md:grid-cols-4 gap-8">
+                  <div>
+                     <div className="text-4xl font-bold mb-2">$2.5M+</div>
+                     <div className="text-purple-200">Total Raised</div>
+                  </div>
+                  <div>
+                     <div className="text-4xl font-bold mb-2">15K+</div>
+                     <div className="text-purple-200">Fundraisers</div>
+                  </div>
+                  <div>
+                     <div className="text-4xl font-bold mb-2">50K+</div>
+                     <div className="text-purple-200">Donors</div>
+                  </div>
+                  <div>
+                     <div className="text-4xl font-bold mb-2">500+</div>
+                     <div className="text-purple-200">Causes</div>
+                  </div>
+               </div>
+            </div>
+
+            {/* CTA Section */}
+            <div className="text-center">
+               <h2 
+                  className="text-3xl font-bold mb-6"
+                  style={{ color: peerLandingPageInputs.p_color || '#1f2937' }}
+               >
+                  Ready to Make a Difference?
+               </h2>
+               <p 
+                  className="text-xl text-gray-600 mb-8"
+                  style={{ color: peerLandingPageInputs.s_color || '#6b7280' }}
+               >
+                  Join thousands of fundraisers who are already making an impact
+               </p>
+               <button 
+                  className="inline-flex items-center px-8 py-4 text-lg font-semibold text-white rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                  style={{ backgroundColor: peerLandingPageInputs.b1_color || '#8b5cf6' }}
+               >
+                  <FaHandHoldingHeart className="mr-3" />
+                  Get Started Today
+                  <FaArrowRight className="ml-3" />
+               </button>
+            </div>
          </div>
 
-         <div className="bg-gray-100 border-t border-gray-300 py-4 mt-12">
-            <div className="text-center text-gray-600 text-xs">
-               <p>&copy; {new Date().getFullYear()} Your Organization. All rights reserved.</p>
-               <p className="mt-1">
-                  <a href="#" className="hover:underline">Privacy Policy</a> | 
-                  <a href="#" className="hover:underline ml-2">Terms of Service</a>
+         {/* Footer */}
+         <div className="bg-gray-900 text-white py-12">
+            <div className="max-w-6xl mx-auto px-6 text-center">
+               <p className="text-gray-400 text-sm">
+                  &copy; {new Date().getFullYear()} Your Organization. All rights reserved.
                </p>
+               <div className="mt-2 space-x-4 text-sm">
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</a>
+                  <span className="text-gray-600">|</span>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</a>
+               </div>
             </div>
          </div>
       </div>
-
-
    );
 }
 

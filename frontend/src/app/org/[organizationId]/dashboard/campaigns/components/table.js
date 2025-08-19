@@ -120,20 +120,20 @@ const Table = ({setData, data, organizationId}) => {
                               {row.internal_name}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {new Date(row.created_at).toLocaleDateString("en-US", {
+                              {new Date(row.created_at)?.toLocaleDateString("en-US", {
                                  year: 'numeric',
                                  month: 'short',
                                  day: 'numeric'
                               })}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {row.status === "inactive" ? "-" : `$${(row.amount_raised || 0).toLocaleString()}`}
+                              {row.status === "inactive" ? "-" : `$${(row.amount_raised || 0)?.toLocaleString()}`}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {row.status === "inactive" ? "-" : row.donations.toLocaleString()}
+                              {row.status === "inactive" ? "-" : row.donations?.toLocaleString()}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {row.status === "inactive" ? "-" : row.visits.toLocaleString()}
+                              {row.status === "inactive" ? "-" : row.visits?.toLocaleString()}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               <span className="capitalize">

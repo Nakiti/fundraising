@@ -29,14 +29,185 @@ export class OrganizationCreateService {
          validators.minLength(data.title, 2, 'Title');
          validators.id(organizationId, 'Organization ID');
 
-         const response = await api.post('/landing_pageRoutes/create', {
-            organization_id: organizationId,
-            ...data
+         const formData = new FormData();
+         
+         // Basic content
+         formData.append("organization_id", organizationId);
+         formData.append("title", data.title);
+         formData.append("description", data.description || "");
+         formData.append("about", data.about || "");
+         
+         // Content fields
+         formData.append("mainHeadline", data.mainHeadline || "");
+         formData.append("mainText", data.mainText || "");
+         formData.append("impactText", data.impactText || "");
+         formData.append("headlineOne", data.headlineOne || "");
+         formData.append("descriptionOne", data.descriptionOne || "");
+         formData.append("headlineTwo", data.headlineTwo || "");
+         formData.append("descriptionTwo", data.descriptionTwo || "");
+         formData.append("headlineThree", data.headlineThree || "");
+         formData.append("descriptionThree", data.descriptionThree || "");
+         
+         // Images
+         if (data.bgImage instanceof File) {
+            formData.append("bgImage", data.bgImage);
+         }
+         if (data.aboutImage instanceof File) {
+            formData.append("aboutImage", data.aboutImage);
+         }
+         if (data.textImage instanceof File) {
+            formData.append("textImage", data.textImage);
+         }
+         if (data.imageOne instanceof File) {
+            formData.append("imageOne", data.imageOne);
+         }
+         if (data.imageTwo instanceof File) {
+            formData.append("imageTwo", data.imageTwo);
+         }
+         if (data.imageThree instanceof File) {
+            formData.append("imageThree", data.imageThree);
+         }
+         
+         // Color customization
+         formData.append("bg_color", data.bg_color || "#FFFFFF");
+         formData.append("p_color", data.p_color || "#000000");
+         formData.append("s_color", data.s_color || "#666666");
+         formData.append("c_color", data.c_color || "#FFFFFF");
+         formData.append("ct_color", data.ct_color || "#000000");
+         formData.append("b_color", data.b_color || "#1F2937");
+         formData.append("bt_color", data.bt_color || "#FFFFFF");
+         
+         // Font sizes
+         formData.append("hero_title_size", data.heroTitleSize || "36px");
+         formData.append("hero_subtitle_size", data.heroSubtitleSize || "16px");
+         formData.append("section_title_size", data.sectionTitleSize || "28px");
+         formData.append("body_text_size", data.bodyTextSize || "14px");
+         formData.append("button_text_size", data.buttonTextSize || "14px");
+         formData.append("card_title_size", data.cardTitleSize || "18px");
+         
+         // Layout & spacing
+         formData.append("hero_height", data.heroHeight || "500px");
+         formData.append("section_padding", data.sectionPadding || "80px");
+         formData.append("card_radius", data.cardRadius || "4px");
+         formData.append("button_radius", data.buttonRadius || "4px");
+         
+         // Visual effects
+         formData.append("overlay_opacity", data.overlayOpacity || "0.3");
+         formData.append("accent_color", data.accentColor || "#1F2937");
+         
+         // Element visibility toggles
+         formData.append("show_video_button", data.showVideoButton !== false);
+         formData.append("show_hero_icons", data.showHeroIcons !== false);
+         formData.append("show_feature_icons", data.showFeatureIcons !== false);
+         formData.append("show_campaign_badges", data.showCampaignBadges !== false);
+         formData.append("show_trust_badge", data.showTrustBadge !== false);
+         formData.append("show_progress_indicators", data.showProgressIndicators !== false);
+         formData.append("show_statistics", data.showStatistics !== false);
+         formData.append("show_hover_effects", data.showHoverEffects !== false);
+
+         const response = await api.post('/landing_page/create', formData, {
+            headers: {
+               'Content-Type': 'multipart/form-data',
+            },
          });
          
          return response.success ? response.data : null;
       } catch (error) {
          console.error('Error creating landing page:', error);
+         throw error;
+      }
+   }
+
+   // Create about page
+   static async createAboutPage(data, organizationId) {
+      try {
+         validators.required(data.title, 'Title');
+         validators.minLength(data.title, 2, 'Title');
+         validators.id(organizationId, 'Organization ID');
+
+         const formData = new FormData();
+         
+         // Basic content
+         formData.append("organization_id", organizationId);
+         formData.append("title", data.title);
+         formData.append("description", data.description || "");
+         formData.append("headline", data.headline || "");
+         
+         // Content fields
+         formData.append("aboutText", data.aboutText || "");
+         formData.append("whatText", data.whatText || "");
+         formData.append("whyText", data.whyText || "");
+         formData.append("teamText", data.teamText || "");
+         formData.append("missionText", data.missionText || "");
+         formData.append("visionText", data.visionText || "");
+         formData.append("valuesText", data.valuesText || "");
+         
+         // Images
+         if (data.bgImage instanceof File) {
+            formData.append("bgImage", data.bgImage);
+         }
+         if (data.aboutImage instanceof File) {
+            formData.append("aboutImage", data.aboutImage);
+         }
+         if (data.teamImage instanceof File) {
+            formData.append("teamImage", data.teamImage);
+         }
+         if (data.missionImage instanceof File) {
+            formData.append("missionImage", data.missionImage);
+         }
+         if (data.visionImage instanceof File) {
+            formData.append("visionImage", data.visionImage);
+         }
+         if (data.valuesImage instanceof File) {
+            formData.append("valuesImage", data.valuesImage);
+         }
+         
+         // Color customization
+         formData.append("bg_color", data.bg_color || "#FFFFFF");
+         formData.append("p_color", data.p_color || "#000000");
+         formData.append("s_color", data.s_color || "#666666");
+         formData.append("c_color", data.c_color || "#FFFFFF");
+         formData.append("ct_color", data.ct_color || "#000000");
+         formData.append("b_color", data.b_color || "#1F2937");
+         formData.append("bt_color", data.bt_color || "#FFFFFF");
+         
+         // Font sizes
+         formData.append("hero_title_size", data.heroTitleSize || "36px");
+         formData.append("hero_subtitle_size", data.heroSubtitleSize || "16px");
+         formData.append("section_title_size", data.sectionTitleSize || "28px");
+         formData.append("body_text_size", data.bodyTextSize || "14px");
+         formData.append("button_text_size", data.buttonTextSize || "14px");
+         formData.append("card_title_size", data.cardTitleSize || "18px");
+         
+         // Layout & spacing
+         formData.append("hero_height", data.heroHeight || "500px");
+         formData.append("section_padding", data.sectionPadding || "80px");
+         formData.append("card_radius", data.cardRadius || "4px");
+         formData.append("button_radius", data.buttonRadius || "4px");
+         
+         // Visual effects
+         formData.append("overlay_opacity", data.overlayOpacity || "0.3");
+         formData.append("accent_color", data.accentColor || "#1F2937");
+         
+         // Element visibility toggles
+         formData.append("show_video_button", data.showVideoButton !== false);
+         formData.append("show_hero_icons", data.showHeroIcons !== false);
+         formData.append("show_feature_icons", data.showFeatureIcons !== false);
+         formData.append("show_team_photos", data.showTeamPhotos !== false);
+         formData.append("show_mission_section", data.showMissionSection !== false);
+         formData.append("show_vision_section", data.showVisionSection !== false);
+         formData.append("show_values_section", data.showValuesSection !== false);
+         formData.append("show_hover_effects", data.showHoverEffects !== false);
+
+         const response = await api.post('/about_page/create', formData, {
+            headers: {
+               'Content-Type': 'multipart/form-data',
+            },
+         });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating about page:', error);
          throw error;
       }
    }
@@ -55,7 +226,7 @@ export class CampaignCreateService {
             created_by: currentUser.id,
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.campaignId : null;
       } catch (error) {
          console.error('Error creating campaign:', error);
          return { id: null, error: error.message };
@@ -151,14 +322,14 @@ export class PageCreateService {
    static async createDonationPage(campaignId, currentUser) {
       try {
          validators.id(campaignId, 'Campaign ID');
-         validators.id(currentUser?.user_id, 'User ID');
+         validators.id(currentUser?.id, 'User ID');
 
          const response = await api.post('/donationPage/create', {
             campaign_id: campaignId,
-            user_id: currentUser.user_id
+            user_id: currentUser.id
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.pageId : null;
       } catch (error) {
          console.error('Error creating donation page:', error);
          throw error;
@@ -176,7 +347,7 @@ export class PageCreateService {
             user_id: currentUser.id
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.pageId : null;
       } catch (error) {
          console.error('Error creating thank you page:', error);
          throw error;
@@ -194,7 +365,7 @@ export class PageCreateService {
             user_id: currentUser.id
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.pageId : null;
       } catch (error) {
          console.error('Error creating ticket purchase page:', error);
          throw error;
@@ -212,7 +383,7 @@ export class PageCreateService {
             user_id: currentUser.id
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.pageId : null;
       } catch (error) {
          console.error('Error creating peer landing page:', error);
          throw error;
@@ -230,7 +401,7 @@ export class PageCreateService {
             user_id: currentUser.id
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.formId : null;
       } catch (error) {
          console.error('Error creating donation form:', error);
          throw error;
@@ -248,7 +419,7 @@ export class PageCreateService {
             user_id: currentUser.id
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.pageId : null;
       } catch (error) {
          console.error('Error creating peer fundraising page:', error);
          throw error;
@@ -264,7 +435,7 @@ export class PageCreateService {
             campaignId: campaignId
          });
          
-         return response.success ? response.data : null;
+         return response.success ? response.data.pageId : null;
       } catch (error) {
          console.error('Error creating ticket page:', error);
          throw error;
@@ -361,6 +532,7 @@ export class DesignationCreateService {
 // Legacy function exports for backward compatibility
 export const createOrganization = OrganizationCreateService.createOrganization;
 export const createLandingPage = OrganizationCreateService.createLandingPage;
+export const createAboutPage = OrganizationCreateService.createAboutPage;
 
 export const createCampaign = CampaignCreateService.createCampaign;
 export const createCampaignDetails = CampaignCreateService.createCampaignDetails;

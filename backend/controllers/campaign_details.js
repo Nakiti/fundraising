@@ -39,7 +39,8 @@ export const createCampaignDetails = asyncHandler(async (req, res) => {
          if (err) {
             reject(new DatabaseError('Failed to create campaign details', err));
          } else {
-            resolve(sendCreated(res, data, 'Campaign details created successfully'));
+            sendCreated(res, data, 'Campaign details created successfully');
+      resolve();
          }
       });
    });
@@ -47,7 +48,20 @@ export const createCampaignDetails = asyncHandler(async (req, res) => {
 
 export const updateCampaignDetails = asyncHandler(async (req, res) => {
    // Validate required fields
-   const { internalName, externalName, goal, defaultDesignation, status, url, userId } = req.body;
+   const { 
+      internalName, 
+      externalName, 
+      goal, 
+      defaultDesignation, 
+      status, 
+      url, 
+      userId,
+      showPhone,
+      showTitle,
+      showSuffix,
+      showCompanyName,
+      showWebsiteUrl
+   } = req.body;
    const { id } = req.params;
    
    if (!id) {
@@ -58,7 +72,7 @@ export const updateCampaignDetails = asyncHandler(async (req, res) => {
       throw new ValidationError('Missing required fields: internalName, userId');
    }
 
-   const query = "UPDATE campaign_details SET `internal_name` = ?, `external_name` = ?, `goal` = ?, `default_designation` = ?, `status` = ?, `url` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
+   const query = "UPDATE campaign_details SET `internal_name` = ?, `external_name` = ?, `goal` = ?, `default_designation` = ?, `status` = ?, `url` = ?, `show_phone` = ?, `show_title` = ?, `show_suffix` = ?, `show_company_name` = ?, `show_website_url` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
 
    const values = [
       internalName,
@@ -67,6 +81,11 @@ export const updateCampaignDetails = asyncHandler(async (req, res) => {
       defaultDesignation,
       status,
       url,
+      showPhone || false,
+      showTitle || false,
+      showSuffix || false,
+      showCompanyName || false,
+      showWebsiteUrl || false,
       (new Date()).toISOString().slice(0, 19).replace('T', ' '),
       userId,
       id
@@ -80,7 +99,8 @@ export const updateCampaignDetails = asyncHandler(async (req, res) => {
             if (data.affectedRows === 0) {
                reject(new NotFoundError('Campaign details'));
             } else {
-               resolve(sendUpdated(res, data, 'Campaign details updated successfully'));
+               sendUpdated(res, data, 'Campaign details updated successfully');
+      resolve();
             }
          }
       });
@@ -106,7 +126,8 @@ export const getCampaignDetails = asyncHandler(async (req, res) => {
             if (!data || data.length === 0) {
                reject(new NotFoundError('Campaign details'));
             } else {
-               resolve(sendSuccess(res, data[0], 'Campaign details retrieved successfully'));
+               sendSuccess(res, data[0], 'Campaign details retrieved successfully');
+      resolve();
             }
          }
       });

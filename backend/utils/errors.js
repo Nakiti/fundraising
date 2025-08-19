@@ -63,6 +63,11 @@ export class RateLimitError extends AppError {
 
 // Error utility functions
 export const handleDatabaseError = (err) => {
+  // If it's already a DatabaseError with a custom message, preserve it
+  if (err instanceof DatabaseError && err.message !== 'Database operation failed') {
+    return err;
+  }
+  
   if (err.code === 'ER_DUP_ENTRY') {
     const field = err.message.match(/for key '(.+)'/)?.[1] || 'field';
     return new ConflictError(`${field} already exists`);
@@ -84,7 +89,9 @@ export const handleDatabaseError = (err) => {
     return new DatabaseError('Database query syntax error', err);
   }
   
-  return new DatabaseError('Database operation failed', err);
+  // For other database errors, preserve the original message if available
+  const message = err.message || 'Database operation failed';
+  return new DatabaseError(message, err);
 };
 
 export const handleValidationError = (err) => {
@@ -148,6 +155,11 @@ export const logError = (error, req = null) => {
 // Async error wrapper
 export const catchAsync = (fn) => {
   return (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
+    Promise.resolve(fn(req, res, next)).catch((err) => {
+      // Check if headers have already been sent
+      if (!res.headersSent) {
+        next(err);
+      }
+    });
   };
 };

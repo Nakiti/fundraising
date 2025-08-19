@@ -7,4 +7,4 @@ router.get("/get/:id", getPeerLandingPage)
 router.post("/create", createPeerLandingPage)
 router.put("/update/:id", updatePeerLandingPage)
 
-export default router
+export default router 

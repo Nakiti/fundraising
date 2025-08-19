@@ -13,7 +13,7 @@ import { FaPeopleArrows } from "react-icons/fa";
 import { IoDocumentTextOutline } from "react-icons/io5";
 
 
-const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDeactivate, detailsLink, pageLinks, mode, status}) => {
+const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDeactivate, detailsLink, pageLinks, mode, status, hasUnsavedChanges}) => {
    const {campaignDetails, campaignType} = useContext(CampaignContext)
    const pathName = usePathname()
    const [showDropdown, setShowDropdown] = useState(false)
@@ -83,14 +83,25 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                <div className="flex flex-col text-gray-100">
                   <p className="text-xs font-semibold">{"Edit Campaign"}</p>
                   <h1 className="text-2xl font-semibold">{campaignDetails.internalName || "Internal Campaign Name"}</h1>
-                  <p className="text-md font-semibold text-gray-400 mt-1">{campaignType}</p>
+                  <div className="flex items-center mt-1">
+                     <p className="text-md font-semibold text-gray-400">{campaignType}</p>
+                     <span className={`ml-3 px-2 py-1 text-xs font-medium rounded-full ${
+                        status === "active" ? "bg-green-100 text-green-800" :
+                        status === "inactive" ? "bg-gray-100 text-gray-800" :
+                        status === "draft" ? "bg-yellow-100 text-yellow-800" :
+                        "bg-red-100 text-red-800"
+                     }`}>
+                        {status?.charAt(0).toUpperCase() + status?.slice(1) || "Unknown"}
+                     </span>
+                  </div>
                </div>
             </div>
             <div className="flex space-x-6 text-md">
                {status === "inactive" ? 
                   <button 
-                     className="bg-blue-700 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
+                     className={`py-3 px-8 rounded-md text-white transition-all duration-200 ${hasUnsavedChanges ? "bg-blue-700 hover:bg-blue-500" : "bg-gray-300 cursor-not-allowed"}`}
                      onClick={handleSave}
+                     disabled={!hasUnsavedChanges}
                   >
                      Save & Exit
                   </button> :
@@ -102,8 +113,9 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                   </button>
                }
                <button 
-                  className="bg-blue-700 hover:bg-blue-500 py-3 px-8 rounded-md text-white transition-all duration-200"
+                  className={`py-3 px-8 rounded-md text-white transition-all duration-200 ${hasUnsavedChanges ? "bg-blue-700 hover:bg-blue-500" : "bg-gray-300 cursor-not-allowed"}`}
                   onClick={handlePublish}
+                  disabled={!hasUnsavedChanges}
                >
                   Publish
                </button>

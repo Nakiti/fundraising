@@ -69,7 +69,8 @@ export const login = asyncHandler(async (req, res) => {
 
       res.setHeader("Set-Cookie", cookie);
       const {password: userPassword, ...userData} = data[0];
-      resolve(sendSuccess(res, { user: userData }, 'Login successful'));
+      sendSuccess(res, { user: userData }, 'Login successful');
+      resolve();
     })
   })
 })
@@ -100,7 +101,8 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
                reject(new NotFoundError('User'));
             }
             
-            resolve(sendSuccess(res, { user: data[0] }, 'User data retrieved successfully'));
+            sendSuccess(res, { user: data[0] }, 'User data retrieved successfully');
+      resolve();
          });
       })
    })
@@ -128,7 +130,8 @@ export const updatePassword = asyncHandler(async (req, res) => {
         reject(new NotFoundError('User'));
       }
       
-      resolve(sendUpdated(res, null, 'Password updated successfully'));
+      sendUpdated(res, null, 'Password updated successfully');
+      resolve();
     })
   })
 })
@@ -182,7 +185,8 @@ export const createUser = asyncHandler(async (req, res) => {
           reject(new DatabaseError('Failed to create user', err));
         }
         
-        resolve(sendCreated(res, { userId: data.insertId }, 'User created successfully'));
+        sendCreated(res, { userId: data.insertId }, 'User created successfully');
+      resolve();
       })
     })
   })
@@ -207,7 +211,8 @@ export const getUser = asyncHandler(async (req, res) => {
         reject(new NotFoundError('User'));
       }
       
-      resolve(sendSuccess(res, { user: data[0] }, 'User retrieved successfully'));
+      sendSuccess(res, { user: data[0] }, 'User retrieved successfully');
+      resolve();
     })
   })
 })
@@ -234,7 +239,8 @@ export const getUsersbyOrg = asyncHandler(async (req, res) => {
         reject(new DatabaseError('Failed to fetch organization users', err));
       }
       
-      resolve(sendSuccess(res, { users: data }, 'Organization users retrieved successfully'));
+      sendSuccess(res, { users: data }, 'Organization users retrieved successfully');
+      resolve();
     })
   })
 })
@@ -263,7 +269,8 @@ export const updateUser = asyncHandler(async (req, res) => {
         reject(new NotFoundError('User'));
       }
       
-      resolve(sendUpdated(res, null, 'User updated successfully'));
+      sendUpdated(res, null, 'User updated successfully');
+      resolve();
     })
   })
 })
@@ -287,7 +294,8 @@ export const deleteUser = asyncHandler(async (req, res) => {
         reject(new NotFoundError('User'));
       }
       
-      resolve(sendDeleted(res, 'User deleted successfully'));
+      sendDeleted(res, 'User deleted successfully');
+      resolve();
     })
   })
 })

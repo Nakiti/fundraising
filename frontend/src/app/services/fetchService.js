@@ -308,6 +308,7 @@ export class UserService {
       try {
          validators.id(userId, 'User ID');
          const response = await api.get(`/user_organization/get/${userId}`);
+         console.log(response.data)
          return response.success ? response.data : [];
       } catch (error) {
          console.error('Error fetching user organizations:', error);

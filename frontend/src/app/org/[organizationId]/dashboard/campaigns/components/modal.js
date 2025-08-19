@@ -21,12 +21,13 @@ const Modal = ({setShow, organizationId }) => {
    const [internalName, setInternalName] = useState("");
    const [error, setError] = useState(false);
    const [errorMessage, setErrorMessage] = useState("");
+   const [isLoading, setIsLoading] = useState(false);
 
    const tabContent = [
-      { title: 'Donation Form', content: 'donation' },
+      // { title: 'Donation Form', content: 'donation' },
       { title: 'Crowdfunding', content: 'crowdfunding' },
-      { title: 'Peer to Peer', content: 'peer-to-peer' },
-      { title: 'Ticketed Event', content: 'ticketed-event' },
+      // { title: 'Peer to Peer', content: 'peer-to-peer' },
+      // { title: 'Ticketed Event', content: 'ticketed-event' },
    ];
 
    /*
@@ -38,73 +39,119 @@ const Modal = ({setShow, organizationId }) => {
       Currently page sections are created but not used. They are created to potentially give the user to
       enable and disable components of the display
    */
-   const handleClick = async () => {
+      const handleClick = async () => {
       if (internalName === "") {
          setError(true)
          return
       }
       setError(false)
+      setIsLoading(true)
 
       try {
-         const id = await CampaignCreateService.createCampaign(currentUser, organizationId);
-         await CampaignCreateService.createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
+           // Step 1: Create campaign and campaign details (must be sequential)
+           const id = await CampaignCreateService.createCampaign(currentUser, organizationId);
+           await CampaignCreateService.createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
 
-         if (tabContent[activeTab].content === "crowdfunding") {
-            const donationPageId = await PageCreateService.createDonationPage(id, currentUser);
-
-            await PageCreateService.createPageSection(donationPageId, "banner", true, currentUser);
-            await PageCreateService.createPageSection(donationPageId, "title", true, currentUser);
-            await PageCreateService.createPageSection(donationPageId, "desc", true, currentUser);
-            await PageCreateService.createPageSection(donationPageId, "donate", true, currentUser);
-
-         } else if (tabContent[activeTab].content == "ticketed-event") {
-            const ticketPageId = await PageCreateService.createTicketPage(id, currentUser)
-            const ticketPurchasePageId = await PageCreateService.createTicketPurchasePage(id, currentUser)
-
-            await PageCreateService.createPageSection(ticketPageId, "banner", true, currentUser)
-            await PageCreateService.createPageSection(ticketPageId, "about", true, currentUser)
-            await PageCreateService.createPageSection(ticketPageId, "event", true, currentUser)
-
-            console.log(ticketPurchasePageId)
-            await PageCreateService.createPageSection(ticketPurchasePageId, "title", true, currentUser)
-         } else if (tabContent[activeTab].content == "peer-to-peer") {
-            const peerLandingPageId = await PageCreateService.createPeerLandingPage(id, currentUser)
-            const peerFundraisingPageId = await PageCreateService.createPeerFundraisingPage(id, currentUser)
-
-            console.log("pageid", peerFundraisingPageId)
-
-            await PageCreateService.createPageSection(peerLandingPageId, "banner", true, currentUser);
-            await PageCreateService.createPageSection(peerLandingPageId, "description", true, currentUser);
-
-            await PageCreateService.createPageSection(peerFundraisingPageId, "banner", true, currentUser);
-            await PageCreateService.createPageSection(peerFundraisingPageId, "description", true, currentUser);
-            await PageCreateService.createPageSection(peerFundraisingPageId, "title", true, currentUser);
-            // await createPageSection(peerFundraisingPageId, "description", true, currentUser);
-
-         }
-         const donationFormId = await PageCreateService.createDonationForm(id, currentUser)
-         await PageCreateService.createPageSection(donationFormId, "header", currentUser)
-         await PageCreateService.createPageSection(donationFormId, "background", currentUser)
-         await PageCreateService.createPageSection(donationFormId, "buttons", currentUser)
-
-         const thankyouPageId = await PageCreateService.createThankYouPage(id, currentUser);
-         await PageCreateService.createPageSection(thankyouPageId, "message", true, currentUser);
-         await PageCreateService.createPageSection(thankyouPageId, "background", true, currentUser);
+           // Step 2: Create all pages in parallel (they don't depend on each other)
+           const pagePromises = [];
+           
+           if (tabContent[activeTab].content === "crowdfunding") {
+              pagePromises.push(PageCreateService.createDonationPage(id, currentUser));
+           } else if (tabContent[activeTab].content == "ticketed-event") {
+              pagePromises.push(PageCreateService.createTicketPage(id));
+              pagePromises.push(PageCreateService.createTicketPurchasePage(id, currentUser));
+           } else if (tabContent[activeTab].content == "peer-to-peer") {
+              pagePromises.push(PageCreateService.createPeerLandingPage(id, currentUser));
+              pagePromises.push(PageCreateService.createPeerFundraisingPage(id, currentUser));
+           }
+           
+           // Always create donation form and thank you page
+           pagePromises.push(PageCreateService.createDonationForm(id, currentUser));
+           pagePromises.push(PageCreateService.createThankYouPage(id, currentUser));
+           
+           // Wait for all pages to be created
+           const pageResults = await Promise.all(pagePromises);
+           
+           // Step 3: Create all page sections in parallel
+           const sectionPromises = [];
+           
+           if (tabContent[activeTab].content === "crowdfunding") {
+              const donationPageId = pageResults[0];
+              sectionPromises.push(
+                 PageCreateService.createPageSection(donationPageId, "banner", true, currentUser),
+                 PageCreateService.createPageSection(donationPageId, "title", true, currentUser),
+                 PageCreateService.createPageSection(donationPageId, "desc", true, currentUser),
+                 PageCreateService.createPageSection(donationPageId, "donate", true, currentUser)
+              );
+           } else if (tabContent[activeTab].content == "ticketed-event") {
+              const ticketPageId = pageResults[0];
+              const ticketPurchasePageId = pageResults[1];
+              sectionPromises.push(
+                 PageCreateService.createPageSection(ticketPageId, "banner", true, currentUser),
+                 PageCreateService.createPageSection(ticketPageId, "about", true, currentUser),
+                 PageCreateService.createPageSection(ticketPageId, "event", true, currentUser),
+                 PageCreateService.createPageSection(ticketPurchasePageId, "title", true, currentUser)
+              );
+           } else if (tabContent[activeTab].content == "peer-to-peer") {
+              const peerLandingPageId = pageResults[0];
+              const peerFundraisingPageId = pageResults[1];
+              sectionPromises.push(
+                 PageCreateService.createPageSection(peerLandingPageId, "banner", true, currentUser),
+                 PageCreateService.createPageSection(peerLandingPageId, "description", true, currentUser),
+                 PageCreateService.createPageSection(peerFundraisingPageId, "banner", true, currentUser),
+                 PageCreateService.createPageSection(peerFundraisingPageId, "description", true, currentUser),
+                 PageCreateService.createPageSection(peerFundraisingPageId, "title", true, currentUser)
+              );
+           }
+           
+           // Add donation form sections
+           const donationFormId = pageResults[pageResults.length - 2]; // Second to last
+           sectionPromises.push(
+              PageCreateService.createPageSection(donationFormId, "header", true, currentUser),
+              PageCreateService.createPageSection(donationFormId, "background", true, currentUser),
+              PageCreateService.createPageSection(donationFormId, "buttons", true, currentUser)
+           );
+           
+           // Add thank you page sections
+           const thankyouPageId = pageResults[pageResults.length - 1]; // Last
+           sectionPromises.push(
+              PageCreateService.createPageSection(thankyouPageId, "message", true, currentUser),
+              PageCreateService.createPageSection(thankyouPageId, "background", true, currentUser)
+           );
+           
+           // Wait for all sections to be created
+           await Promise.all(sectionPromises);
 
          router.push(`/org/${organizationId}/campaign/edit/${id}/details/about`);
       } catch (err) {
          const handledError = errorHandler.handle(err)
          setErrorMessage(handledError.message)
          setError(true)
+      } finally {
+         setIsLoading(false)
       }
    };
 
    return (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex flex-col items-center justify-center z-50">
          {error && <ErrorModal message={errorMessage} setError={setError} />}
+         
+         {/* Loading Overlay */}
+         {isLoading && (
+            <div className="absolute inset-0 bg-white bg-opacity-90 flex flex-col items-center justify-center z-10 rounded-lg">
+               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-700 mb-4"></div>
+               <p className="text-lg font-semibold text-gray-700">Creating Campaign...</p>
+               <p className="text-sm text-gray-500 mt-2">Please wait while we set up your campaign</p>
+            </div>
+         )}
+         
          <div className="bg-blue-800 p-6 w-2/3 rounded-t-lg flex flex-row justify-between">
             <h2 className="text-white text-2xl">Create New Campaign</h2>
-            <button className="text-white" onClick={() => setShow(false)}>
+            <button 
+               className={`${isLoading ? 'text-gray-400 cursor-not-allowed' : 'text-white hover:text-gray-200'}`} 
+               onClick={() => setShow(false)}
+               disabled={isLoading}
+            >
                <IoIosClose className="h-8 w-8" />
             </button>
          </div>
@@ -127,7 +174,7 @@ const Modal = ({setShow, organizationId }) => {
             <div className="w-3/4 px-6 py-6 bg-gray-100 flex flex-col">
                <h2 className="text-2xl font-semibold mb-4">{tabContent[activeTab].title}</h2>
                <div className='mt-4 mb-8 text-gray-700'>
-                  {tabContent[activeTab].content == "donation" ? 
+                  {tabContent[activeTab].content == "crowdfunding" ? 
                      <p>Create a standard donation form that allows users to donate funds while collecting user information</p> :
                   tabContent[activeTab].content == "crowdfunding" ?
                      <p>Create a compelling story to drive donations to your cause</p> :
@@ -152,13 +199,19 @@ const Modal = ({setShow, organizationId }) => {
                   />
                   {error && <p className="text-red-500 text-sm mt-1">This field is required.</p>}
                </div>
-               <div className="mt-auto flex justify-center">
-                  <button onClick={() => handleClick(tabContent[activeTab].content)}>
-                     <p className="bg-blue-700 py-3 px-8 rounded-md text-md text-white text-center w-48">
-                        Create
-                     </p>
-                  </button>
-               </div>
+                               <div className="mt-auto flex justify-center">
+                   <button 
+                      onClick={() => handleClick(tabContent[activeTab].content)}
+                      disabled={isLoading}
+                      className={`py-3 px-8 rounded-md text-md text-white text-center w-48 transition-colors duration-200 ${
+                         isLoading 
+                            ? 'bg-gray-400 cursor-not-allowed' 
+                            : 'bg-blue-700 hover:bg-blue-800'
+                      }`}
+                   >
+                      {isLoading ? 'Creating...' : 'Create'}
+                   </button>
+                </div>
             </div>
          </div>
       </div>

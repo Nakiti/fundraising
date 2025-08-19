@@ -8,7 +8,7 @@ import { createFaq } from "@/app/services/createServices"
 import { deleteFaq, deleteFaqsBatch } from "@/app/services/deleteService"
 
 const Faqs = () =>{
-   const {faqs, setFaqs, campaignId, loading} = useContext(CampaignContext)
+   const {faqs, setFaqsWithTracking, campaignId, loading, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
 
    const [newFaq, handleNewFaqChange, setNewFaq] = useFormInput({
       id: new Date(),
@@ -18,14 +18,14 @@ const Faqs = () =>{
 
    const handleAdd = () => {
       if (newFaq.question != "" && newFaq.answer != "") {
-         setFaqs((prev) => [...prev, newFaq])
+         setFaqsWithTracking((prev) => [...prev, newFaq])
          setNewFaq({id: new Date(), question: "", answer: ""})
          console.log(faqs)
       }
    }
 
    const handleDelete = (id) => {
-      setFaqs(faqs.filter(item => item.id !== id))
+      setFaqsWithTracking(faqs.filter(item => item.id !== id))
    }
 
    const handleSave = async () => {
@@ -37,9 +37,11 @@ const Faqs = () =>{
          if (relationsToAdd.length > 0) {
             await createFaq(campaignId, relationsToAdd)
          }
-         if (relationsToRemove.length > 0) {
-            await deleteFaqsBatch(relationsToRemove)
-         }
+                   if (relationsToRemove.length > 0) {
+             await deleteFaqsBatch(relationsToRemove)
+          }
+          markChangesAsSaved()
+          markPageChangesAsSaved('faqs')
       } catch (err) {
          console.log(err)
       }
@@ -135,12 +137,13 @@ const Faqs = () =>{
             </div> : <p className="text-gray-700 text-center p-6">No FAQs</p>}
          </div>
          <div className="w-full flex flex-row mt-6">
-            <button 
-               className="ml-auto bg-blue-600 px-6 py-3 w-40 rounded-md shadow-sm text-md text-white"
-               onClick={handleSave}
-            >
-               Save
-            </button>
+                         <button 
+                className={`ml-auto ${!pageChanges.faqs ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-700"} px-6 py-3 w-40 rounded-md shadow-sm text-md text-white`}
+                onClick={handleSave}
+                disabled={!pageChanges.faqs}
+             >
+                Save
+             </button>
          </div>
       </div>
    )

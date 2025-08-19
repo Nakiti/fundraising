@@ -21,17 +21,24 @@ const EditLayout = ({params, children}) => {
    const campaignId = params.id
    const organizationId = params.organizationId
    const router = useRouter()
-   const {campaignDetails, selectedDesignations, customQuestions, campaignType, tickets, loading, fetchCampaignData, campaignStatus} = useContext(CampaignContext)
+   const {campaignDetails, selectedDesignations, customQuestions, campaignType, tickets, faqs, loading, fetchCampaignData, campaignStatus, hasUnsavedChanges, markChangesAsSaved, checkForChanges} = useContext(CampaignContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
 
    // Fetch campaign data when component mounts
    useEffect(() => {
-      if (campaignId && fetchCampaignData) {
-         fetchCampaignData(campaignId);
+      if (campaignId && organizationId && fetchCampaignData) {
+         fetchCampaignData(campaignId, organizationId);
       }
-   }, [campaignId, fetchCampaignData]);
+   }, [campaignId, organizationId]);
+
+   // Check for changes when data changes
+   useEffect(() => {
+      if (campaignDetails && checkForChanges) {
+         checkForChanges();
+      }
+   }, [campaignDetails, selectedDesignations, customQuestions, tickets, faqs]);
 
    const {donationPageInputs, donationPageSections} = campaignType === "crowdfunding" ? useContext(DonationPageContext) : {}
    const {ticketPageInputs, ticketPageSections} = campaignType === "ticketed-event" ? useContext(TicketPageContext) : {}
@@ -65,10 +72,11 @@ const EditLayout = ({params, children}) => {
             if (response) {
                setError(true)
                setErrorMessage(response)
-            } else {
-               handleCampaignUpdates()
-               router.push(`/org/${organizationId}/dashboard/campaigns`)
-            }
+                     } else {
+            handleCampaignUpdates()
+            markChangesAsSaved()
+            router.push(`/org/${organizationId}/dashboard/campaigns`)
+         }
          } catch (err) {
             const handledError = errorHandler.handle(err)
             setError(true)
@@ -91,6 +99,7 @@ const EditLayout = ({params, children}) => {
             setErrorMessage(response)
          } else {
             handleCampaignUpdates()
+            markChangesAsSaved()
             router.push(`/org/${organizationId}/dashboard/campaigns`)
          }
       } catch (err) {
@@ -102,43 +111,69 @@ const EditLayout = ({params, children}) => {
 
    const handleCampaignUpdates = async() => {
       try {
-         if (campaignType === "crowdfunding") {
-            await CampaignUpdateService.updateDonationPage(campaignId, donationPageInputs);
+         const updatePromises = []
 
-            for (const section of donationPageSections || []) {
-               await CampaignUpdateService.updatePageSection(section.id, section.active)
+         // Campaign type specific updates
+         if (campaignType === "crowdfunding") {
+            updatePromises.push(CampaignUpdateService.updateDonationPage(campaignId, donationPageInputs))
+            
+            if (donationPageSections) {
+               updatePromises.push(...donationPageSections.map(section => 
+                  CampaignUpdateService.updatePageSection(section.id, section.active)
+               ))
             }
          } else if (campaignType === "ticketed-event") {
-            await CampaignUpdateService.updateTicketPage(campaignId, ticketPageInputs)
-            await CampaignUpdateService.updateTicketPurchasePage(campaignId, ticketPurchaseInputs, currentUser.id)
-            await updateCampaignTickets()
-
-            for (const section of ticketPageSections || []) {
-               await CampaignUpdateService.updatePageSection(section.id, section.active)
+            updatePromises.push(
+               CampaignUpdateService.updateTicketPage(campaignId, ticketPageInputs),
+               CampaignUpdateService.updateTicketPurchasePage(campaignId, ticketPurchaseInputs, currentUser.id),
+               updateCampaignTickets()
+            )
+            
+            if (ticketPageSections) {
+               updatePromises.push(...ticketPageSections.map(section => 
+                  CampaignUpdateService.updatePageSection(section.id, section.active)
+               ))
             }
          } else if (campaignType === "peer-to-peer") {
-            await CampaignUpdateService.updatePeerLandingPage(campaignId, peerLandingPageInputs)
-            await CampaignUpdateService.updatePeerFundraisingPage(campaignId, peerFundraisingPageInputs, currentUser.id)
-
-            for (const section of peerLandingPageSections || []) {
-               await CampaignUpdateService.updatePageSection(section.id, section.active)
+            updatePromises.push(
+               CampaignUpdateService.updatePeerLandingPage(campaignId, peerLandingPageInputs),
+               CampaignUpdateService.updatePeerFundraisingPage(campaignId, peerFundraisingPageInputs, currentUser.id)
+            )
+            
+            if (peerLandingPageSections) {
+               updatePromises.push(...peerLandingPageSections.map(section => 
+                  CampaignUpdateService.updatePageSection(section.id, section.active)
+               ))
             }
-            for (const section of peerFundraisingPageSections || []) {
-               await CampaignUpdateService.updatePageSection(section.id, section.active)
+            if (peerFundraisingPageSections) {
+               updatePromises.push(...peerFundraisingPageSections.map(section => 
+                  CampaignUpdateService.updatePageSection(section.id, section.active)
+               ))
             }
          }
-         await updateCustomQuestions()
-         await updateCampaignDesignations()
 
-         await CampaignUpdateService.updateThankYouPage(campaignId, thankPageInputs)
-         for (const section of thankyouPageSections || []) {
-            await CampaignUpdateService.updatePageSection(section.id, section.active)
+         // Common updates that can run in parallel
+         updatePromises.push(
+            updateCustomQuestions(),
+            updateCampaignDesignations(),
+            CampaignUpdateService.updateThankYouPage(campaignId, thankPageInputs),
+            CampaignUpdateService.updateDonationForm(campaignId, donationFormInputs, currentUser.id)
+         )
+
+         // Add section updates for thank you page and donation form
+         if (thankyouPageSections) {
+            updatePromises.push(...thankyouPageSections.map(section => 
+               CampaignUpdateService.updatePageSection(section.id, section.active)
+            ))
+         }
+         if (donationFormSections) {
+            updatePromises.push(...donationFormSections.map(section => 
+               CampaignUpdateService.updatePageSection(section.id, section.active)
+            ))
          }
 
-         await CampaignUpdateService.updateDonationForm(campaignId, donationFormInputs, currentUser.id)
-         for (const section of donationFormSections || []) {
-            await CampaignUpdateService.updatePageSection(section.id, section.active)
-         }
+         // Execute all updates in parallel
+         await Promise.all(updatePromises)
       } catch (err) {
          const handledError = errorHandler.handle(err)
          setError(true)
@@ -250,9 +285,10 @@ const EditLayout = ({params, children}) => {
             handleSave={handleSave} 
             handleDeactivate={handleDeactivate}
             status={campaignStatus}
+            hasUnsavedChanges={hasUnsavedChanges}
          />
          {error && <ErrorModal message={errorMessage} setError={setError} />}
-         <div className="py-8">
+         <div className="py-0">
             {children}
          </div>
       </div>

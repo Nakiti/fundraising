@@ -1,89 +1,174 @@
 "use client";
-import { CgProfile } from "react-icons/cg";
-import { useContext, useState } from "react";
-import { CampaignContext } from "@/app/context/campaignContext";
-import { IoIosClose } from "react-icons/io";
+import { useContext } from "react";
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
+import { FaShare, FaHeart, FaUsers } from "react-icons/fa";
 
 const Display = () => {
-   const {donationPageInputs, handleDonationPageInputsChange} = useContext(DonationPageContext)
-   
-   console.log("inputs", donationPageInputs)
+   const { donationPageInputs } = useContext(DonationPageContext)
 
    return (
       <div 
-         className="w-full mb-4 max-w-6xl mx-auto bg-white rounded-sm shadow-md mt-6 overflow-y-auto" 
-         style={{ backgroundColor: donationPageInputs.bg_color }}
+         className="bg-white w-full"
+         style={{ backgroundColor: donationPageInputs.bg_color || '#ffffff' }}
       >
-         <div className="relative w-full">
-            {/* Header overlay */}
-            <div 
-               className="top-0 left-0 w-full text-lg font-bold text-start text-gray-600 px-4 py-2 bg-white/70 backdrop-blur-sm z-10 border-b border-gray-200"
-            >
-               <h1 
-               className="px-2 py-1"
-               name="heading"
+         {/* Header */}
+         <div className="bg-gray-900 w-full px-4 py-3">
+            <div className="flex items-center justify-between">
+               <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <p className="text-white text-sm font-medium">Donation Page Preview</p>
+               </div>
+               <div className="flex items-center space-x-2 text-gray-400">
+                  <span className="text-xs">Live Preview</span>
+                  <div className="flex space-x-1">
+                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         {/* Content Container */}
+         <div>
+            {/* Hero Section */}
+            <div className="relative w-full" style={{height: Math.min(parseInt(donationPageInputs.heroHeight) || 300, 400)}}>
+               <img
+                  className="w-full h-full object-cover"
+                  src={donationPageInputs.banner_image || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
+                  alt="Campaign Banner"
+               />
+               <div 
+                  className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 px-4"
+                  style={{
+                     backgroundColor: `rgba(0, 0, 0, ${donationPageInputs.overlayOpacity || "0.3"})`
+                  }}
                >
-               Header
-               </h1>
+                  <div className="max-w-2xl mx-auto space-y-4">
+                     <h1 
+                        className="font-bold text-white leading-tight"
+                        style={{
+                           color: donationPageInputs.p_color || '#ffffff',
+                           fontSize: Math.min(parseInt(donationPageInputs.heroTitleSize) || 24, 32) + 'px'
+                        }}
+                     >
+                        {donationPageInputs.headline || "Support Our Cause"}
+                     </h1>
+                     <p 
+                        className="text-gray-100 max-w-2xl mx-auto leading-relaxed text-sm"
+                        style={{
+                           color: donationPageInputs.s_color || '#e5e7eb',
+                           fontSize: Math.min(parseInt(donationPageInputs.heroSubtitleSize) || 14, 16) + 'px'
+                        }}
+                     >
+                        {donationPageInputs.description || "Your support makes a real difference in our community. Every donation, no matter the size, helps us achieve our mission and create positive change for those who need it most."}
+                     </p>
+                     <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+                        <button 
+                           className="font-semibold transition-all duration-300 flex items-center space-x-2"
+                           style={{
+                              backgroundColor: donationPageInputs.b1_color || '#3b82f6',
+                              color: donationPageInputs.bt_color || '#FFFFFF',
+                              borderRadius: donationPageInputs.buttonRadius || '4px',
+                              fontSize: Math.min(parseInt(donationPageInputs.buttonTextSize) || 14, 16) + 'px',
+                              padding: '12px 24px'
+                           }}
+                        >
+                           <FaHeart className="w-3 h-3" />
+                           <span>Donate Now</span>
+                        </button>
+                     </div>
+                  </div>
+               </div>
             </div>
 
-            {/* First Image */}
-            <div className="w-full h-80 bg-gray-50 flex items-center justify-center border-b border-gray-300">
-               {donationPageInputs.banner_image ? (
-                  <img
-                     src={donationPageInputs.banner_image || "image1.jpg"}
-                     alt="image"
-                     className="w-full h-80 object-cover"
-                  />
-               ) : (
-                  <span className="text-gray-400 text-lg font-medium">Upload Image</span>
-               )}
-            </div>
-         </div>
-
-         <div className="w-5/6 mx-auto relative flex flex-row mb-8 pt-6" style={{ color: donationPageInputs.bg_color }}>
-            <div className="w-full mt-4">
-               <div className="flex flex-row justify-between mb-4">
-                  <div>
-                     <p className="text-gray-500 text-xs" style={{ color: donationPageInputs.p_color }}>Fundraiser</p>
-                     <h1 className="text-2xl font-semibold text-gray-800" style={{ color: donationPageInputs.p_color }}>{donationPageInputs.headline || "Headline"}</h1>
-                  </div>
-                  <button className="text-xs text-blue-600 hover:underline">Share</button>
-               </div>
-
-               <div className="mb-6">
-                  <p className="text-sm font-medium mb-1 text-gray-700" style={{ color: donationPageInputs.p_color }}>X of 1000 raised</p>
-                  <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
-                     <div className="bg-blue-600 h-3 rounded-full w-1/12" style={{backgroundColor: donationPageInputs.s_color}}></div>
-                  </div>
-               </div>
-
-               <div className="space-y-4 pb-4 pt-8 border-t border-gray-200">
-                  <h2 className="text-xl text-gray-800 font-semibold text-center">About</h2>
-                  <pre className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                     {donationPageInputs.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"}
-                  </pre>
-               </div>
-
-               <div className="flex justify-center items-center mt-6 border-t border-gray-200 pt-6">
-                  <button 
-                     disabled
-                     className="w-1/4 cursor-pointer py-2 text-white rounded-sm bg-blue-700 shadow-md hover:bg-blue-800 transition-colors duration-200"
-                     style={{ backgroundColor: donationPageInputs.b1_color }}
+            {/* Main Content Section */}
+            <div className="flex flex-col lg:flex-row w-full px-4 space-y-8 lg:space-y-0 lg:space-x-8" style={{paddingTop: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60), paddingBottom: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60)}}>
+               <div className="lg:w-2/3">
+                  <h2 
+                     className="font-bold mb-4 leading-tight"
+                     style={{
+                        color: donationPageInputs.p_color || '#1f2937',
+                        fontSize: Math.min(parseInt(donationPageInputs.sectionTitleSize) || 20, 24) + 'px'
+                     }}
                   >
-                     Donate
-                  </button>
+                     {donationPageInputs.mainHeadline || "Making a Difference Together"}
+                  </h2>
+                  <p 
+                     className="leading-relaxed mb-6 text-sm"
+                     style={{
+                        color: donationPageInputs.s_color || '#6b7280',
+                        fontSize: Math.min(parseInt(donationPageInputs.bodyTextSize) || 14, 16) + 'px'
+                     }}
+                  >
+                     {donationPageInputs.mainText || "Our organization works tirelessly to create positive change in the community. Through innovative programs and dedicated volunteers, we're building a better future for everyone."}
+                  </p>
+                  
+                  {/* Progress Section */}
+                  <div className="mb-6">
+                     <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-medium" style={{ color: donationPageInputs.s_color || '#6b7280' }}>$2,450 raised</span>
+                        <span className="text-xs font-medium" style={{ color: donationPageInputs.s_color || '#6b7280' }}>of $10,000 goal</span>
+                     </div>
+                     <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                        <div 
+                           className="h-2 rounded-full transition-all duration-500 ease-out"
+                           style={{ 
+                              backgroundColor: donationPageInputs.s_color || '#3b82f6',
+                              width: '24.5%'
+                           }}
+                        ></div>
+                     </div>
+                     <div className="flex justify-start items-center space-x-4 text-xs" style={{ color: donationPageInputs.s_color || '#6b7280' }}>
+                        <div className="flex items-center space-x-1">
+                           <FaUsers className="text-blue-600 w-3 h-3" />
+                           <span>127 donors</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                           <FaHeart className="text-red-500 w-3 h-3" />
+                           <span>23 days left</span>
+                        </div>
+                     </div>
+                  </div>
                </div>
-            </div>
-         </div>
-         <div className="bg-gray-100 border-t border-gray-300 py-4 mt-12">
-            <div className="text-center text-gray-600 text-xs">
-               <p>&copy; {new Date().getFullYear()} Your Organization. All rights reserved.</p>
-               <p className="mt-1">
-                  <a href="#" className="hover:underline">Privacy Policy</a> | 
-                  <a href="#" className="hover:underline ml-2">Terms of Service</a>
-               </p>
+
+               {/* Sidebar */}
+               <div className="lg:w-1/3">
+                  <div className="bg-white border border-gray-100 p-4" style={{borderRadius: donationPageInputs.cardRadius || '4px'}}>
+                     <h3 
+                        className="font-semibold mb-4"
+                        style={{
+                           color: donationPageInputs.p_color || '#1f2937',
+                           fontSize: Math.min(parseInt(donationPageInputs.sectionTitleSize) || 16, 18) + 'px'
+                        }}
+                     >
+                        Choose Your Amount
+                     </h3>
+                     <div className="space-y-2 mb-4">
+                        {[donationPageInputs.button1, donationPageInputs.button2, donationPageInputs.button3, donationPageInputs.button4, donationPageInputs.button5, donationPageInputs.button6].map((amount, index) => (
+                           <button
+                              key={index}
+                              className="w-full p-3 border border-gray-200 hover:border-gray-300 transition-colors duration-200 text-center"
+                              style={{borderRadius: donationPageInputs.buttonRadius || '4px'}}
+                           >
+                              <div className="font-semibold text-sm" style={{ color: donationPageInputs.p_color || '#1f2937' }}>${amount || '25'}</div>
+                              <div className="text-xs" style={{ color: donationPageInputs.s_color || '#6b7280' }}>Donation</div>
+                           </button>
+                        ))}
+                     </div>
+                     <button 
+                        className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2"
+                        style={{
+                           backgroundColor: donationPageInputs.b1_color || '#3b82f6',
+                           borderRadius: donationPageInputs.buttonRadius || '4px',
+                           fontSize: Math.min(parseInt(donationPageInputs.buttonTextSize) || 14, 16) + 'px'
+                        }}
+                     >
+                        <FaHeart className="w-3 h-3" />
+                        <span>Donate Now</span>
+                     </button>
+                  </div>
+               </div>
             </div>
          </div>
       </div>
@@ -91,11 +176,3 @@ const Display = () => {
 }
 
 export default Display
-
-//TODO
-/*
-   design generic donation form that will be available for all campaigns
-   create necessary pages on intialization of peer 2 peer
-   add update/fetch/create services
-
-*/

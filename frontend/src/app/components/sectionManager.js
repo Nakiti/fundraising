@@ -1,5 +1,6 @@
 //imports
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 
 /*
    Component: Section Manager
@@ -33,33 +34,46 @@ const SectionManager = ({setSections, sections, section}) => {
    };
 
    return (
-      <div key={section.name} className="">
-         <div className="flex flex-row justify-between py-4 items-center border-b border-gray-500" >
-            <h2 className="text-md font-bold text-gray-600">{section.displayText}</h2>
-            <div className="flex flex-row space-x-4">
-               {!section.required && <button
-               onClick={() => toggleSwitch(section.name)}
-               className={`w-12 h-6 flex items-center rounded-full cursor-pointer p-1 transition-colors ${
-                  section.active ? 'bg-blue-800' : 'bg-gray-300'
-               }`}
-               >
-               <div
-                  className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform ${
-                     section.active ? 'translate-x-6' : 'translate-x-0'
-                  }`}
-               ></div>
-               </button>}
+      <div key={section.name} className="bg-white border border-gray-100 mb-3" style={{borderRadius: "4px"}}>
+         <div className="flex flex-row justify-between py-3 px-4 items-center hover:bg-gray-50 transition-colors duration-200" style={{borderRadius: "4px"}}>
+            <div className="flex items-center space-x-3">
+               <h2 className="text-sm font-medium text-gray-900">{section.displayText}</h2>
+               {section.required && (
+                  <span className="text-xs text-red-500 font-medium">Required</span>
+               )}
+            </div>
+            <div className="flex flex-row items-center space-x-3">
+               {!section.required && (
+                  <button
+                     onClick={() => toggleSwitch(section.name)}
+                     className="p-1 hover:bg-gray-100 transition-colors duration-200"
+                     style={{borderRadius: "4px"}}
+                  >
+                     {section.active ? (
+                        <FaToggleOn className="w-4 h-4 text-green-500" />
+                     ) : (
+                        <FaToggleOff className="w-4 h-4 text-gray-400" />
+                     )}
+                  </button>
+               )}
                <button
                   onClick={() => handleDropdown(section.name)}
-                  className={`ml-4 underline ${!section.active ? 'cursor-not-allowed opacity-50' : ''}`}
+                  className={`p-1 hover:bg-gray-100 transition-colors duration-200 ${!section.active ? 'cursor-not-allowed opacity-50' : ''}`}
+                  style={{borderRadius: "4px"}}
                   disabled={!section.active}
                >
-               {section.dropdown ? <IoIosArrowUp /> : <IoIosArrowDown /> }
+                  {section.dropdown ? (
+                     <IoIosArrowUp className="w-3 h-3 text-gray-600" />
+                  ) : (
+                     <IoIosArrowDown className="w-3 h-3 text-gray-600" />
+                  )}
                </button>
             </div>
          </div>
          {section.dropdown && (
-            section.content
+            <div className="px-4 pb-4 border-t border-gray-100">
+               {section.content}
+            </div>
          )}
       </div>
    )

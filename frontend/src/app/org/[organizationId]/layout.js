@@ -6,6 +6,8 @@ import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
 import { useRouter } from "next/navigation"
 import { SidebarProvider } from "@/app/context/sidebarContext"
+import { LandingPageContextProvider } from "@/app/context/organizationPages/landingPageContext"
+import { AboutPageContextProvider } from "@/app/context/organizationPages/aboutPageContext"
 
 const OrgLayout = ({params, children}) => {
    const {currentUser, isLoggedIn, loading} = useContext(AuthContext)
@@ -44,13 +46,17 @@ const OrgLayout = ({params, children}) => {
 
    return (
       <SidebarProvider>
-         <div>
-            <Header organizationId={organizationId} showSidebarToggle={true}/>
-            {error && <ErrorModal message={errorMessage} setError={setError} />}
-            <div style={{height: "90vh"}}> 
-               {children} 
+         <LandingPageContextProvider organizationId={organizationId}>
+         <AboutPageContextProvider organizationId={organizationId}>
+            <div>
+               <Header organizationId={organizationId} showSidebarToggle={true}/>
+               {error && <ErrorModal message={errorMessage} setError={setError} />}
+               <div style={{height: "90vh"}}> 
+                  {children} 
+               </div>
             </div>
-         </div>
+         </AboutPageContextProvider>
+         </LandingPageContextProvider>
       </SidebarProvider>
    )
 }

@@ -270,9 +270,16 @@ export const validators = {
    
    // ID validation
    id: (value, fieldName) => {
-      if (!value || (typeof value === 'string' && value.trim() === '') || value <= 0) {
+      if (!value || (typeof value === 'string' && value.trim() === '')) {
          throw new ValidationError(`${fieldName} must be a valid ID`, fieldName, value);
       }
+      
+      // Convert to number for validation
+      const numValue = Number(value);
+      if (isNaN(numValue) || numValue <= 0) {
+         throw new ValidationError(`${fieldName} must be a valid ID`, fieldName, value);
+      }
+      
       return true;
    },
 };
@@ -309,7 +316,8 @@ export const errorHandler = {
    // Check if error is retryable
    isRetryable: (error) => {
       if (error instanceof APIError) {
-         return [408, 429, 500, 502, 503, 504].includes(error.status);
+         // Don't retry rate limit errors (429) as they will just fail again
+         return [408, 500, 502, 503, 504].includes(error.status);
       }
       return false;
    },

@@ -40,14 +40,18 @@ export const createThankYouPage = asyncHandler(async (req, res) => {
         reject(new DatabaseError('Failed to create thank you page', err));
         return;
       }
-      resolve(sendCreated(res, { pageId: data.insertId }, 'Thank you page created successfully'));
+      sendCreated(res, { pageId: data.insertId }, 'Thank you page created successfully');
+      resolve();
     })
   })
 })
 
 export const updateThankYouPage = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { headline, description, bg_image, bg_color, p_color, s_color } = req.body;
+  const { 
+    headline, description, bg_image, bg_color, p_color, s_color,
+    heroTitleSize, bodyTextSize, buttonTextSize, cardRadius, buttonRadius
+  } = req.body;
   
   if (!id) {
     throw new ValidationError('Campaign ID is required');
@@ -64,15 +68,22 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
         return;
       } 
 
-      const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ? WHERE `campaign_id` = ?"
+      const imagePath = req.file?.path || bg_image;
+
+      const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `heroTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardRadius` = ?, `buttonRadius` = ? WHERE `campaign_id` = ?"
 
       const values = [
         headline,
         description,
-        bg_image,
+        imagePath,
         bg_color,
         p_color,
         s_color,
+        heroTitleSize,
+        bodyTextSize,
+        buttonTextSize,
+        cardRadius,
+        buttonRadius,
         id
       ]
 
@@ -85,7 +96,8 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
           reject(new NotFoundError('Thank you page'));
           return;
         }
-        resolve(sendUpdated(res, data, 'Thank you page updated successfully'));
+        sendUpdated(res, data, 'Thank you page updated successfully');
+      resolve();
       })
     })
   })
@@ -110,7 +122,8 @@ export const getThankYouPage = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Thank you page'));
         return;
       }
-      resolve(sendSuccess(res, data[0], 'Thank you page retrieved successfully'));
+      sendSuccess(res, data[0], 'Thank you page retrieved successfully');
+      resolve();
     })
   })
 })

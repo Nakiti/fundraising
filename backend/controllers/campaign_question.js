@@ -38,7 +38,8 @@ export const createCustomQuestion = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create custom questions', err));
-      resolve(sendCreated(res, { insertedCount: data.affectedRows }, 'Custom questions created successfully'));
+      sendCreated(res, { insertedCount: data.affectedRows }, 'Custom questions created successfully');
+      resolve();
     })
   })
 })
@@ -56,7 +57,8 @@ export const deleteCustomQuestion = asyncHandler(async (req, res) => {
     db.query(query, [campaign_id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to delete custom question', err));
       if (data.affectedRows === 0) reject(new NotFoundError('Custom question'));
-      resolve(sendDeleted(res, 'Custom question deleted successfully'));
+      sendDeleted(res, 'Custom question deleted successfully');
+      resolve();
     })
   })
 })
@@ -75,7 +77,8 @@ export const deleteCustomQuestionsBatch = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to delete custom questions batch', err));
-      resolve(sendDeleted(res, `Deleted ${data.affectedRows} custom questions successfully`));
+      sendDeleted(res, `Deleted ${data.affectedRows} custom questions successfully`);
+      resolve();
     })
   })
 })
@@ -92,7 +95,8 @@ export const getCustomQuestions = asyncHandler(async (req, res) => {
   return new Promise((resolve, reject) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch custom questions', err));
-      resolve(sendSuccess(res, data, 'Custom questions retrieved successfully'));
+      sendSuccess(res, data, 'Custom questions retrieved successfully');
+      resolve();
     })
   })
 })

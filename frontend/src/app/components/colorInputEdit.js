@@ -10,18 +10,18 @@
 const ColorInputEdit = ({title, name, value, changeFunc}) => {
    return (
       <div className="mb-6">
-         <p className="text-xs font-bold text-gray-600 mb-2">{title}</p>
+         <label className="block text-sm font-medium text-gray-700 mb-3">{title}</label>
          <div className="relative">
             <input 
                type="color" 
-               className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
+               className="opacity-0 absolute inset-0 w-8 h-8 cursor-pointer rounded-lg"
                name={name}
                value={value}
                onChange={changeFunc}
                style={{ backgroundColor: value}}  
             />
             <div 
-               className="w-8 h-8 rounded-full border border-gray-800 cursor-pointer" 
+               className="w-8 h-8 rounded-lg border-2 border-gray-300 cursor-pointer shadow-sm hover:border-gray-400 transition-colors duration-200" 
                style={{ backgroundColor: value}}  
             />
          </div>

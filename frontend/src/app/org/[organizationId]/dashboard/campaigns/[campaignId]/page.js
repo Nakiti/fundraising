@@ -59,15 +59,17 @@ const CampaignPage = ({params}) => {
                         </div>
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-500">Status</label>
-                           <span 
-                              className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                                 campaign.status === "inactive" 
-                                    ? "bg-red-100 text-red-800" 
-                                    : "bg-green-100 text-green-800"
-                              }`}
-                           >
-                              {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1).toLowerCase()}
-                           </span>
+                           <div>
+                              <span 
+                                 className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                                    campaign.status === "inactive" 
+                                       ? "bg-red-100 text-red-800" 
+                                       : "bg-green-100 text-green-800"
+                                 }`}
+                              >
+                                 {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1).toLowerCase()}
+                              </span>
+                           </div>
                         </div>
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-500">Last Updated</label>

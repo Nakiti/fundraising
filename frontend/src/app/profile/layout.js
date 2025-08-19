@@ -49,8 +49,11 @@ const ProfileLayout = ({children}) => {
    // Show loading spinner while auth is being checked
    if (authLoading) {
       return (
-         <div className="flex items-center justify-center min-h-screen">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-700"></div>
+         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+            <div className="text-center">
+               <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+               <p className="text-slate-600 font-medium">Loading your profile...</p>
+            </div>
          </div>
       );
    }
@@ -61,31 +64,83 @@ const ProfileLayout = ({children}) => {
    }
 
    return (
-      <div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
          {currentUser && <Header />}
-         <div className="min-h-screen bg-gray-50">
-            <h1 className="text-5xl mt-12 text-center mb-12">
-               Welcome, {userData ? `${userData.first_name} ${userData.last_name}` : 'User'}
-            </h1>
-            <Link href="/createOrganization" className="flex flex-col items-center mb-4 w-1/4 mx-auto cursor-pointer">
-               <p className="text-xl">Create an Organization</p>
-               <IoIosAdd className="w-16 h-16"/>
+         
+         {/* Hero Section */}
+         <div className="relative overflow-hidden bg-white shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-700 opacity-5"></div>
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+               <div className="text-center">
+                  <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+                     Welcome back, <span className="text-blue-600">{userData ? `${userData.first_name} ${userData.last_name}` : 'User'}</span>
+                  </h1>
+                  <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                     Manage your organizations and stay connected with your fundraising community
+                  </p>
+               </div>
+            </div>
+         </div>
+
+         {/* Create Organization CTA */}
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Link 
+               href="/createOrganization" 
+               className="group block max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg transition-all duration-300 hover:scale-105"
+            >
+               <div className="flex items-center justify-center space-x-4">
+                  <div className="flex-shrink-0">
+                     <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <IoIosAdd className="w-6 h-6 text-white" />
+                     </div>
+                  </div>
+                  <div className="text-center">
+                     <p className="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
+                        Create an Organization
+                     </p>
+                     <p className="text-sm text-slate-500">Start your fundraising journey</p>
+                  </div>
+               </div>
             </Link>
-            <div className="flex w-3/4 justify-center mx-auto border-b mb-12 space-x-8">
-               <Link 
-                  href="/profile"
-                  className={`px-4 py-2 text-lg ${pathName === '/profile' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500'}`}>
-                  Organizations
-               </Link>
-               <Link 
-                  href="/profile/invites"
-                  className={`px-4 py-2 text-lg ${pathName === '/profile/invites' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500'}`}>
-                  Organization Invites
-               </Link>
+         </div>
+
+         {/* Navigation Tabs */}
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="border-b border-slate-200">
+               <nav className="flex space-x-8" aria-label="Profile navigation">
+                  <Link 
+                     href="/profile"
+                     className={`relative py-4 px-1 text-sm font-medium transition-colors duration-200 ${
+                        pathName === '/profile' 
+                           ? 'text-blue-600 border-b-2 border-blue-600' 
+                           : 'text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                     }`}
+                  >
+                     Organizations
+                     {pathName === '/profile' && (
+                        <div className="absolute inset-x-0 -bottom-px h-0.5 bg-blue-600"></div>
+                     )}
+                  </Link>
+                  <Link 
+                     href="/profile/invites"
+                     className={`relative py-4 px-1 text-sm font-medium transition-colors duration-200 ${
+                        pathName === '/profile/invites' 
+                           ? 'text-blue-600 border-b-2 border-blue-600' 
+                           : 'text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                     }`}
+                  >
+                     Organization Invites
+                     {pathName === '/profile/invites' && (
+                        <div className="absolute inset-x-0 -bottom-px h-0.5 bg-blue-600"></div>
+                     )}
+                  </Link>
+               </nav>
             </div>
-            <div className="w-1/2 mx-auto">
-               {children}
-            </div>
+         </div>
+
+         {/* Main Content */}
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {children}
          </div>
       </div>
    )

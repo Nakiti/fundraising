@@ -13,12 +13,12 @@
 const TextAreaInputEdit = ({title, rows, placeholder, name, value, changeFunc}) => {
 
    return (
-      <div className="my-4">
-         <p className="text-sm font-bold text-gray-600 mb-2">
-            {title} <span className="text-red-500">*</span>
-         </p>
+      <div className="mb-6">
+         <label className="block text-sm font-semibold text-gray-700 mb-3">
+            {title} <span className="text-red-500 ml-1">*</span>
+         </label>
          <textarea 
-            className="text-black text-xl w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
+            className="w-full px-4 py-3 text-gray-900 text-base leading-relaxed border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none placeholder-gray-400 hover:border-gray-400"
             rows={rows}
             placeholder={placeholder}
             name={name}

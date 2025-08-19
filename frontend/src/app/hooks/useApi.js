@@ -28,6 +28,12 @@ export const useApi = (apiFunction, options = {}) => {
          
          // Retry logic for retryable errors
          if (errorHandler.isRetryable(err) && retryCountRef.current < maxRetries) {
+            // Don't retry rate limit errors
+            if (err.status === 429) {
+               console.warn('Rate limited, not retrying');
+               throw err;
+            }
+            
             retryCountRef.current++;
             console.log(`Retrying... Attempt ${retryCountRef.current}/${maxRetries}`);
             

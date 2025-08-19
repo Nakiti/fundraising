@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
+import { FaUpload, FaChartLine } from "react-icons/fa";
 
 const ImpactSection = () => {
    const {inputs, handleInputsChange} = useContext(LandingPageContext)
@@ -17,39 +18,58 @@ const ImpactSection = () => {
    }
 
    return (
-      <div>
-         <div className="my-4">
-            <p className="text-sm font-bold text-gray-600 mb-2">
-               Enter Impact Text <span className="text-red-500">*</span>
-            </p>
+      <div className="space-y-4">
+
+         {/* Impact Text Input */}
+         <div className="space-y-2">
+            <label className="block text-xs font-medium text-gray-700">
+               Impact Text <span className="text-red-500">*</span>
+            </label>
             <textarea 
-               className="text-black text-sm w-full h-full border border border-gray-400 p-2 rounded-sm resize-none"
-               rows={5}
-               placeholder="Enter about text"
+               className="w-full px-3 py-2 border border-gray-200 focus:ring-1 focus:ring-gray-300 focus:border-gray-300 resize-none transition-colors duration-200"
+               style={{borderRadius: "4px"}}
+               rows={4}
+               placeholder="Describe your organization's impact and achievements..."
                name="impactText"
                value={inputs.impactText}
                onChange={handleInputsChange} 
             />
+            <p className="text-xs text-gray-400">This content will appear in the impact section of your landing page</p>
          </div>
-         <div className="mb-4">
-            <p className="text-sm font-bold text-gray-600 mb-2">
-               Impact Image Upload <span className="text-red-500">*</span>
-            </p>
-            <label className="w-full h-20 flex items-center justify-center border border-dashed border-gray-400 rounded-sm bg-white cursor-pointer">
-               <span className="text-gray-500 p-4">Click to upload an image</span>
-               <input 
-                  type="file"
-                  className="hidden" 
-                  name="impactImage"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-               />
-            </label>                  
-            {/* <img
-               src=''
-               alt="image"
-               className="w-full h-36 object-cover border border-dashed border-gray-400 rounded-md bg-gray-50"
-            /> */}
+
+         {/* Impact Image Upload */}
+         <div className="space-y-2">
+            <label className="block text-xs font-medium text-gray-700">
+               Impact Image <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+               <label className="flex flex-col items-center justify-center w-full h-24 border border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors duration-200" style={{borderRadius: "4px"}}>
+                  <div className="flex flex-col items-center justify-center">
+                     <FaUpload className="w-4 h-4 text-gray-400 mb-1" />
+                     <p className="text-xs text-gray-500">
+                        <span className="font-medium">Click to upload</span> or drag and drop
+                     </p>
+                     <p className="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                  </div>
+                  <input 
+                     type="file"
+                     className="hidden" 
+                     name="textImage"
+                     accept="image/*"
+                     onChange={handleImageUpload}
+                  />
+               </label>
+               {inputs.textImage && (
+                  <div className="mt-2">
+                     <img 
+                        src={inputs.textImage} 
+                        alt="Impact Preview" 
+                        className="w-full h-16 object-cover border border-gray-200"
+                        style={{borderRadius: "4px"}}
+                     />
+                  </div>
+               )}
+            </div>
          </div>
       </div>
    )

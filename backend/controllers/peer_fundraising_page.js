@@ -40,7 +40,8 @@ export const createPeerFundraisingPage = asyncHandler(async (req, res) => {
         reject(new DatabaseError('Failed to create peer fundraising page', err));
         return;
       }
-      resolve(sendCreated(res, { pageId: data.insertId }, 'Peer fundraising page created successfully'));
+      sendCreated(res, { pageId: data.insertId }, 'Peer fundraising page created successfully');
+      resolve();
     })
   })
 })
@@ -92,7 +93,8 @@ export const updatePeerFundraisingPage = asyncHandler(async (req, res) => {
           reject(new NotFoundError('Peer fundraising page'));
           return;
         }
-        resolve(sendUpdated(res, data, 'Peer fundraising page updated successfully'));
+        sendUpdated(res, data, 'Peer fundraising page updated successfully');
+      resolve();
       })
     })
   })
@@ -117,7 +119,8 @@ export const getPeerFundraisingPage = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Peer fundraising page'));
         return;
       }
-      resolve(sendSuccess(res, data[0], 'Peer fundraising page retrieved successfully'));
+      sendSuccess(res, data[0], 'Peer fundraising page retrieved successfully');
+      resolve();
     })
   })
 })
