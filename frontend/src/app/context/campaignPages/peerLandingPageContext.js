@@ -2,7 +2,7 @@ import { initialPeerLandingPageSections } from "@/app/constants/pageSectionsConf
 import useFormInput from "@/app/hooks/useFormInput";
 import { PageService } from "@/app/services/fetchService";
 import { createContext, useState, useEffect, useContext } from "react";
-import { CampaignContext } from "@/app/context/campaignPages/campaignContext";
+import { CampaignContext } from "../campaignContext";
 
 export const PeerLandingPageContext = createContext()
 

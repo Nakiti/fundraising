@@ -8,7 +8,7 @@ import {
   sendPaginatedResponse 
 } from "../utils/response.js";
 import { 
-  ValidationError, 
+  ValidationError,   
   NotFoundError, 
   ConflictError, 
   AuthorizationError 

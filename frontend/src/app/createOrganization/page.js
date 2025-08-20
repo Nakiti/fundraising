@@ -18,65 +18,79 @@ const CreateOrganization = () => {
       }
    }, [loading, isLoggedIn, router]);
 
-   // Form validation
-   const {
-      values: orgData,
-      errors,
-      touched,
-      isValid,
-      handleChange,
-      handleBlur,
-      handleSubmit,
-      reset
-   } = useFormValidation(
-      {
-         name: "",
-         email: "",
-         address: "",
-         city: "",
-         state: "",
-         country: "", 
-         zip: "",
-         url: ""
-      },
-      {
-         name: validationRules.organizationName,
-         email: validationRules.email,
-         address: validationRules.required,
-         city: validationRules.required,
-         state: validationRules.required,
-         country: validationRules.required,
-         zip: [
-            { type: 'required', fieldName: 'Zipcode' },
-            { type: 'custom', validator: (value) => {
-               if (value && !/^\d{5}(-\d{4})?$/.test(value)) {
-                  throw new Error('Please enter a valid zipcode');
-               }
-            }}
-         ],
-         url: validationRules.url
-      },
-      { validateOnChange: true, validateOnBlur: true }
-   )
+   // Form state (no validation for now)
+   const [orgData, setOrgData] = useState({
+      name: "",
+      email: "",
+      address: "",
+      city: "",
+      state: "",
+      country: "", 
+      zip: "",
+      url: ""
+   });
 
-   // API hooks for creating organization
-   const { submit: createOrg, loading: createOrgLoading } = useFormSubmit(
-      async (data) => {
-         const organizationId = await Services.Create.Organization.createOrganization(data, currentUser.id);
-         await Services.Create.User.createUserOrganizationRelation(currentUser.id, organizationId, "active", "admin");
-         return organizationId;
-      }
-   );
+   const handleChange = (fieldName, value) => {
+      setOrgData(prev => ({ ...prev, [fieldName]: value }));
+   };
 
-   const handleRegister = async (formData) => {
+   // Loading state
+   const [createOrgLoading, setCreateOrgLoading] = useState(false);
+
+   const handleRegister = async () => {
+      console.log("click")
+      setCreateOrgLoading(true);
+      
       try {
-         await createOrg(formData);
+         console.log("Form submitted with data:", orgData);
+         
+         // Remove URL field since backend doesn't use it
+         const { url, ...organizationData } = orgData;
+         console.log("Organization data:", organizationData);
+         
+         // Create organization
+         const organizationId = await Services.Create.Organization.createOrganization(organizationData, currentUser.id);
+         console.log("Organization created with ID:", organizationId);
+         console.log("Organization ID type:", typeof organizationId);
+         console.log("Organization ID structure:", JSON.stringify(organizationId, null, 2));
+         
+         // Create user-organization relation
+         await Services.Create.User.createUserOrganizationRelation(currentUser.id, organizationId.organizationId, "active", "admin");
+         console.log("User-organization relation created");
+         
+         // Create landing page with default data
+         const landingPageData = {
+            title: orgData.name,
+            description: `Welcome to ${orgData.name}`,
+            organization_id: organizationId.organizationId
+         };
+         console.log("Landing page data:", landingPageData);
+         console.log("Organization ID:", organizationId.organizationId);
+         const landingPage = await Services.Create.Organization.createLandingPage(landingPageData, organizationId.organizationId);
+         console.log("Landing page created:", landingPage);
+         
+         // Create about page with default data
+         const aboutPageData = {
+            title: `About ${orgData.name}`,
+            description: `Learn more about ${orgData.name}`,
+            headline: `About ${orgData.name}`,
+            organization_id: organizationId.organizationId
+         };
+         const aboutPage = await Services.Create.Organization.createAboutPage(aboutPageData, organizationId.organizationId);
+         console.log("About page created:", aboutPage);
+         
+         // Initialize sections for both pages
+         await Services.Create.Organization.initializeLandingPageSections(organizationId.organizationId, landingPage.pageId, currentUser.id);
+         await Services.Create.Organization.initializeAboutPageSections(organizationId.organizationId, aboutPage.pageId, currentUser.id);
+         console.log("Sections initialized");
+         
          showSuccess('Organization Created', 'Your organization has been created successfully!');
          router.push("/profile");
       } catch (err) {
          console.error('Error creating organization:', err);
          showError('Creation Failed', err.message || 'Failed to create organization. Please try again.');
-         throw err; // Re-throw to let the form handle it
+      } finally {
+         setCreateOrgLoading(false);
       }
    };
 
@@ -101,26 +115,18 @@ const CreateOrganization = () => {
             <div className="max-w-4xl bg-white rounded-lg shadow-lg p-10 mx-auto">
                <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Register an Organization</h1>
             
-               <form onSubmit={handleSubmit(handleRegister)} className="grid grid-cols-1 gap-y-6 gap-x-4 md:grid-cols-2">
+               <div className="grid grid-cols-1 gap-y-6 gap-x-4 md:grid-cols-2">
                   <div className="col-span-2">
                      <label className="block text-gray-700 text-sm font-medium mb-2">Organization Name</label>
                      <input
                         name="name"
                         type="text"
                         placeholder="Enter an Organization Name"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.name && errors.name
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.name}
                         onChange={(e) => handleChange('name', e.target.value)}
-                        onBlur={() => handleBlur('name')}
                         disabled={createOrgLoading}
                      />
-                     {touched.name && errors.name && (
-                        <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                     )}
                   </div>
             
                   <div className="col-span-2">
@@ -129,19 +135,11 @@ const CreateOrganization = () => {
                         name="url"
                         type="url"
                         placeholder="Enter an Organization URL"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.url && errors.url
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.url}
                         onChange={(e) => handleChange('url', e.target.value)}
-                        onBlur={() => handleBlur('url')}
                         disabled={createOrgLoading}
                      />
-                     {touched.url && errors.url && (
-                        <p className="mt-1 text-sm text-red-600">{errors.url}</p>
-                     )}
                   </div>
             
                   <div className="col-span-2">
@@ -150,19 +148,11 @@ const CreateOrganization = () => {
                         name="email"
                         type="email"
                         placeholder="Enter an Organization Email"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.email && errors.email
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.email}
                         onChange={(e) => handleChange('email', e.target.value)}
-                        onBlur={() => handleBlur('email')}
                         disabled={createOrgLoading}
                      />
-                     {touched.email && errors.email && (
-                        <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                     )}
                   </div>
             
                   <div className="col-span-2 md:col-span-1">
@@ -171,19 +161,11 @@ const CreateOrganization = () => {
                         name="address"
                         type="text"
                         placeholder="Enter Street Address"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.address && errors.address
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.address}
                         onChange={(e) => handleChange('address', e.target.value)}
-                        onBlur={() => handleBlur('address')}
                         disabled={createOrgLoading}
                      />
-                     {touched.address && errors.address && (
-                        <p className="mt-1 text-sm text-red-600">{errors.address}</p>
-                     )}
                   </div>
                   <div className="col-span-1">
                      <label className="block text-gray-700 text-sm font-medium mb-2">City</label>
@@ -191,19 +173,11 @@ const CreateOrganization = () => {
                         name="city"
                         type="text"
                         placeholder="Enter City"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.city && errors.city
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.city}
                         onChange={(e) => handleChange('city', e.target.value)}
-                        onBlur={() => handleBlur('city')}
                         disabled={createOrgLoading}
                      />
-                     {touched.city && errors.city && (
-                        <p className="mt-1 text-sm text-red-600">{errors.city}</p>
-                     )}
                   </div>
                   <div className="col-span-1">
                      <label className="block text-gray-700 text-sm font-medium mb-2">State</label>
@@ -211,19 +185,11 @@ const CreateOrganization = () => {
                         name="state"
                         type="text"
                         placeholder="Enter State"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.state && errors.state
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.state}
                         onChange={(e) => handleChange('state', e.target.value)}
-                        onBlur={() => handleBlur('state')}
                         disabled={createOrgLoading}
                      />
-                     {touched.state && errors.state && (
-                        <p className="mt-1 text-sm text-red-600">{errors.state}</p>
-                     )}
                   </div>
             
                   <div className="col-span-1">
@@ -232,19 +198,11 @@ const CreateOrganization = () => {
                         name="country"
                         type="text"
                         placeholder="Enter Country"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.country && errors.country
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.country}
                         onChange={(e) => handleChange('country', e.target.value)}
-                        onBlur={() => handleBlur('country')}
                         disabled={createOrgLoading}
                      />
-                     {touched.country && errors.country && (
-                        <p className="mt-1 text-sm text-red-600">{errors.country}</p>
-                     )}
                   </div>
                   <div className="col-span-1">
                      <label className="block text-gray-700 text-sm font-medium mb-2">Zipcode</label>
@@ -252,28 +210,20 @@ const CreateOrganization = () => {
                         name="zip"
                         type="text"
                         placeholder="Enter Zipcode"
-                        className={`p-3 border rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 w-full ${
-                           touched.zip && errors.zip
-                              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
+                        className="p-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:border-blue-500 w-full"
                         value={orgData.zip}
                         onChange={(e) => handleChange('zip', e.target.value)}
-                        onBlur={() => handleBlur('zip')}
                         disabled={createOrgLoading}
                      />
-                     {touched.zip && errors.zip && (
-                        <p className="mt-1 text-sm text-red-600">{errors.zip}</p>
-                     )}
                   </div>
-               </form>
+               </div>
             
                <div className="flex items-center justify-center mt-8">
                   <button 
-                     type="submit"
-                     disabled={createOrgLoading || !isValid}
+                     type="button"
+                     onClick={handleRegister}
+                     disabled={createOrgLoading}
                      className="py-3 px-6 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition w-full md:w-1/4 disabled:opacity-50 disabled:cursor-not-allowed"
-                     onClick={() => handleSubmit(handleRegister)()}
                   >
                      {createOrgLoading ? (
                         <div className="flex items-center justify-center">

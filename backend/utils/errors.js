@@ -51,6 +51,17 @@ export class DatabaseError extends AppError {
     super(message, 500);
     this.type = 'DatabaseError';
     this.originalError = originalError;
+    
+    // Preserve SQL error details from the original error
+    if (originalError) {
+      this.code = originalError.code;
+      this.errno = originalError.errno;
+      this.sqlState = originalError.sqlState;
+      this.sqlMessage = originalError.sqlMessage;
+      
+      // Log the SQL error details
+      logSQLError(originalError, `DatabaseError: ${message}`);
+    }
   }
 }
 
@@ -63,6 +74,9 @@ export class RateLimitError extends AppError {
 
 // Error utility functions
 export const handleDatabaseError = (err) => {
+  // Always log the original SQL error for debugging
+  logSQLError(err, 'handleDatabaseError');
+  
   // If it's already a DatabaseError with a custom message, preserve it
   if (err instanceof DatabaseError && err.message !== 'Database operation failed') {
     return err;
@@ -124,6 +138,20 @@ export const handleValidationErrorDB = (err) => {
   return new ValidationError(message, errors);
 };
 
+// SQL Error logging utility
+export const logSQLError = (sqlError, context = '') => {
+  console.error('=== SQL ERROR LOG ===');
+  console.error('Context:', context);
+  console.error('SQL Error Code:', sqlError.code);
+  console.error('SQL Error Number:', sqlError.errno);
+  console.error('SQL Error Message:', sqlError.message);
+  console.error('SQL Error SQL State:', sqlError.sqlState);
+  console.error('SQL Error SQL Message:', sqlError.sqlMessage);
+  console.error('SQL Error SQL:', sqlError.sql);
+  console.error('Full SQL Error Object:', JSON.stringify(sqlError, null, 2));
+  console.error('=== END SQL ERROR LOG ===');
+};
+
 // Error logging utility
 export const logError = (error, req = null) => {
   const errorLog = {
@@ -133,7 +161,22 @@ export const logError = (error, req = null) => {
       message: error.message,
       stack: error.stack,
       statusCode: error.statusCode,
-      type: error.type
+      type: error.type,
+      // Add SQL-specific error details if available
+      ...(error.code && { sqlCode: error.code }),
+      ...(error.errno && { sqlErrno: error.errno }),
+      ...(error.sqlState && { sqlState: error.sqlState }),
+      ...(error.sqlMessage && { sqlMessage: error.sqlMessage }),
+      // Include original error if it's a DatabaseError
+      ...(error.originalError && { 
+        originalError: {
+          code: error.originalError.code,
+          errno: error.originalError.errno,
+          sqlState: error.originalError.sqlState,
+          sqlMessage: error.originalError.sqlMessage,
+          message: error.originalError.message
+        }
+      })
     },
     request: req ? {
       method: req.method,

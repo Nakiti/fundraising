@@ -8,7 +8,7 @@ export const config = {
       password: process.env.DB_PASSWORD,
       database: process.env.DB,
       port: process.env.DB_PORT,
-   },
+   }, 
    jwt: {
       secret: process.env.JWT_SECRET,
       expiresIn: process.env.JWT_EXPIRES_IN,
@@ -19,7 +19,7 @@ export const config = {
    },
    cookie: {
       secret: process.env.COOKIE_SECRET,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", 
       sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds

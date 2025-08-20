@@ -30,6 +30,8 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
          const response = await PageService.getLandingPage(organizationId)
          const landingPageId = response.id
          setInputs({
+            // Page ID
+            id: response.id,
             // Content fields
             title: response.title || "",
             description: response.description || "",

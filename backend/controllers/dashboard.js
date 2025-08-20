@@ -8,7 +8,8 @@ import {
 import {
   ValidationError,
   NotFoundError,
-  DatabaseError
+  DatabaseError,
+  logSQLError
 } from "../utils/errors.js"
 
 // Get dashboard summary statistics
@@ -90,26 +91,16 @@ export const getDashboardSummary = (req, res) => {
 
   db.query(summaryQuery, [id, startFormatted, endFormatted], (err, currentData) => {
     if (err) {
-      console.error('Dashboard summary query error:', err);
-      return res.status(500).json({
-        success: false,
-        error: {
-          message: 'Failed to fetch dashboard summary',
-          code: 'DATABASE_ERROR'
-        }
-      });
+      // Log the SQL error and throw a DatabaseError
+      logSQLError(err, 'Dashboard summary query');
+      throw new DatabaseError('Failed to fetch dashboard summary', err);
     }
     
     db.query(previousSummaryQuery, [id, previousStartFormatted, previousEndFormatted], (err2, previousData) => {
       if (err2) {
-        console.error('Previous period query error:', err2);
-        return res.status(500).json({
-          success: false,
-          error: {
-            message: 'Failed to fetch previous period data',
-            code: 'DATABASE_ERROR'
-          }
-        });
+        // Log the SQL error and throw a DatabaseError
+        logSQLError(err2, 'Previous period query');
+        throw new DatabaseError('Failed to fetch previous period data', err2);
       }
       
       const current = currentData && currentData[0] ? currentData[0] : { totalDonations: 0, newSupporters: 0, totalRaised: 0, activeCampaigns: 0 };
@@ -189,14 +180,8 @@ export const getRecentDonations = (req, res) => {
 
   db.query(query, [id, parseInt(limit)], (err, data) => {
     if (err) {
-      console.error('Recent donations query error:', err);
-      return res.status(500).json({
-        success: false,
-        error: {
-          message: 'Failed to fetch recent donations',
-          code: 'DATABASE_ERROR'
-        }
-      });
+      logSQLError(err, 'Recent donations query');
+      throw new DatabaseError('Failed to fetch recent donations', err);
     }
     
     // Ensure data is an array and handle null/undefined cases
@@ -254,14 +239,8 @@ export const getTopCampaigns = (req, res) => {
 
   db.query(query, [id, parseInt(limit)], (err, data) => {
     if (err) {
-      console.error('Top campaigns query error:', err);
-      return res.status(500).json({
-        success: false,
-        error: {
-          message: 'Failed to fetch top campaigns',
-          code: 'DATABASE_ERROR'
-        }
-      });
+      logSQLError(err, 'Top campaigns query');
+      throw new DatabaseError('Failed to fetch top campaigns', err);
     }
     
     // Ensure data is an array and handle null/undefined cases
@@ -332,14 +311,8 @@ export const getOrganizationStatus = (req, res) => {
 
   db.query(orgQuery, [id], (err, orgData) => {
     if (err) {
-      console.error('Organization status query error:', err);
-      return res.status(500).json({
-        success: false,
-        error: {
-          message: 'Failed to fetch organization status',
-          code: 'DATABASE_ERROR'
-        }
-      });
+      logSQLError(err, 'Organization status query');
+      throw new DatabaseError('Failed to fetch organization status', err);
     }
     
     if (!orgData || orgData.length === 0) {
@@ -356,14 +329,8 @@ export const getOrganizationStatus = (req, res) => {
     
     db.query(pagesQuery, [id], (err2, pagesData) => {
       if (err2) {
-        console.error('Pages status query error:', err2);
-        return res.status(500).json({
-          success: false,
-          error: {
-            message: 'Failed to fetch pages status',
-            code: 'DATABASE_ERROR'
-          }
-        });
+        logSQLError(err2, 'Pages status query');
+        throw new DatabaseError('Failed to fetch pages status', err2);
       }
       
       // Ensure pagesData is an array and handle null/undefined cases
@@ -467,14 +434,8 @@ export const getDashboardNotifications = (req, res) => {
 
   db.query(query, [id, id, parseInt(limit)], (err, data) => {
     if (err) {
-      console.error('Notifications query error:', err);
-      return res.status(500).json({
-        success: false,
-        error: {
-          message: 'Failed to fetch notifications',
-          code: 'DATABASE_ERROR'
-        }
-      });
+      logSQLError(err, 'Notifications query');
+      throw new DatabaseError('Failed to fetch notifications', err);
     }
     
     // Ensure data is an array and handle null/undefined cases

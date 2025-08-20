@@ -2,7 +2,7 @@ import Link from "next/link"
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
 
-const Navbar = ({organizationId, links, title, handleSave, isSaving, status}) => {
+const Navbar = ({organizationId, links, title, handleSave, handlePublish, isSaving, status}) => {
    const pathName = usePathname()
    
    return (
@@ -40,13 +40,29 @@ const Navbar = ({organizationId, links, title, handleSave, isSaving, status}) =>
                       className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                          isSaving 
                             ? "bg-gray-500 cursor-not-allowed" 
-                            : "bg-blue-600 hover:bg-blue-700"
+                            : "bg-gray-600 hover:bg-gray-700"
                       } text-white`}
                       style={{borderRadius: "4px"}}
                       onClick={handleSave}
                       disabled={isSaving}
                    >
-                      {isSaving ? "Saving..." : "Save Changes"}
+                      {isSaving ? "Saving..." : "Save Draft"}
+                   </button>
+                )}
+                
+                {/* Publish Button */}
+                {handlePublish && (
+                   <button 
+                      className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                         isSaving 
+                            ? "bg-gray-500 cursor-not-allowed" 
+                            : "bg-blue-600 hover:bg-blue-700"
+                      } text-white`}
+                      style={{borderRadius: "4px"}}
+                      onClick={handlePublish}
+                      disabled={isSaving}
+                   >
+                      {isSaving ? "Publishing..." : "Publish"}
                    </button>
                 )}
              </div>

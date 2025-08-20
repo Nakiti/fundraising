@@ -26,26 +26,8 @@ const EditLandingLayout = ({params, children}) => {
       setIsSaving(true)
 
       try {
-         // Validate required fields
-         const requiredFields = {
-            title: inputs.title,
-            description: inputs.description,
-            bgImage: inputs.bgImage
-         }
-
-         const missingFields = Object.entries(requiredFields)
-            .filter(([key, value]) => !value || value.trim() === "")
-            .map(([key]) => key)
-
-         if (missingFields.length > 0) {
-            setError(true)
-            setErrorMessage(`Please fill in the following required fields: ${missingFields.join(", ")}`)
-            setIsSaving(false)
-            return
-         }
-
-         // Update landing page content and styling
-         await updateLandingPage(organizationId, inputs)
+         // Update landing page content and styling (no validation for save)
+         await updateLandingPage(inputs.id, inputs)
          
          // Update section visibility states
          for (const section of sections) {
@@ -69,9 +51,60 @@ const EditLandingLayout = ({params, children}) => {
       }
    }
 
+   const handlePublish = async() => {
+      // Reset error state
+      setError(false)
+      setErrorMessage("")
+      setIsSaving(true)
+
+      try {
+         // Validate required fields for publishing
+         const requiredFields = {
+            title: inputs.title,
+            description: inputs.description,
+            bgImage: inputs.bgImage
+         }
+
+         const missingFields = Object.entries(requiredFields)
+            .filter(([key, value]) => !value || value.trim() === "")
+            .map(([key]) => key)
+
+         if (missingFields.length > 0) {
+            setError(true)
+            setErrorMessage(`Please fill in the following required fields to publish: ${missingFields.join(", ")}`)
+            setIsSaving(false)
+            return
+         }
+
+         // Update landing page content and styling with active status
+         const publishData = { ...inputs, active: true }
+         await updateLandingPage(inputs.id, publishData)
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await updatePageSection(section.id, section.active)
+            }
+         }
+
+         // Success feedback
+         console.log("Landing page published successfully!")
+         setIsSaving(false)
+         
+         // Optional: Show success message or toast notification
+         // You can add a toast notification here if you have a notification system
+
+      } catch (err) {
+         console.error("Error publishing landing page:", err)
+         setError(true)
+         setErrorMessage(err.message || "Failed to publish landing page. Please try again.")
+         setIsSaving(false)
+      }
+   }
+
    return (
       <div className="w-full h-full bg-gray-50">
-         <Navbar organizationId={organizationId} links={links} title={"Landing Page"} handleSave={handleSave} isSaving={isSaving} status={inputs.active ? 'active' : 'draft'}/>
+         <Navbar organizationId={organizationId} links={links} title={"Landing Page"} handleSave={handleSave} handlePublish={handlePublish} isSaving={isSaving} status={inputs.active ? 'active' : 'draft'}/>
          
          {/* Error Display */}
          {error && (

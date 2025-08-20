@@ -24,55 +24,7 @@ const upload = multer({
 });
 
 export const createAboutPage = asyncHandler(async (req, res) => {
-  const { 
-    organization_id, 
-    title, 
-    description, 
-    headline,
-    aboutText,
-    whatText,
-    whyText,
-    teamText,
-    missionText,
-    visionText,
-    valuesText,
-    // Color customization
-    bg_color, 
-    p_color, 
-    s_color, 
-    c_color, 
-    ct_color, 
-    b_color, 
-    bt_color,
-    // Font sizes
-    hero_title_size,
-    hero_subtitle_size,
-    section_title_size,
-    body_text_size,
-    button_text_size,
-    card_title_size,
-    // Layout & spacing
-    hero_height,
-    section_padding,
-    card_radius,
-    button_radius,
-    // Visual effects
-    overlay_opacity,
-    accent_color,
-    // Element visibility toggles
-    show_video_button,
-    show_hero_icons,
-    show_feature_icons,
-    show_team_photos,
-    show_mission_section,
-    show_vision_section,
-    show_values_section,
-    show_hover_effects
-  } = req.body;
-  
-  if (!organization_id || !title) {
-    throw new ValidationError('Missing required fields: organization_id, title');
-  }
+  // Validation will be done after multer processes the FormData
 
   return new Promise((resolve, reject) => {
     upload.fields([
@@ -93,6 +45,58 @@ export const createAboutPage = asyncHandler(async (req, res) => {
       }
 
       try {
+        // Now that multer has processed the FormData, we can access req.body
+        const { 
+          organization_id, 
+          title, 
+          description, 
+          headline,
+          aboutText,
+          whatText,
+          whyText,
+          teamText,
+          missionText,
+          visionText,
+          valuesText,
+          // Color customization
+          bg_color, 
+          p_color, 
+          s_color, 
+          c_color, 
+          ct_color, 
+          b_color, 
+          bt_color,
+          // Font sizes
+          hero_title_size,
+          hero_subtitle_size,
+          section_title_size,
+          body_text_size,
+          button_text_size,
+          card_title_size,
+          // Layout & spacing
+          hero_height,
+          section_padding,
+          card_radius,
+          button_radius,
+          // Visual effects
+          overlay_opacity,
+          accent_color,
+          // Element visibility toggles
+          show_video_button,
+          show_hero_icons,
+          show_feature_icons,
+          show_team_photos,
+          show_mission_section,
+          show_vision_section,
+          show_values_section,
+          show_hover_effects
+        } = req.body;
+        
+        if (!organization_id || !title) {
+          reject(new ValidationError('Missing required fields: organization_id, title'));
+          return;
+        }
+
         // Handle image uploads
         let bgImagePath = null;
         let aboutImagePath = null;
@@ -271,15 +275,23 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
     show_mission_section,
     show_vision_section,
     show_values_section,
-    show_hover_effects
+    show_hover_effects,
+    // Status
+    active
   } = req.body;
   
   if (!id) {
     throw new ValidationError('About page ID is required');
   }
   
-  if (!title) {
-    throw new ValidationError('Title is required');
+  // Only validate required fields when publishing (active = true)
+  if (active === true || active === 'true') {
+    if (!title) {
+      throw new ValidationError('Title is required to publish the page');
+    }
+    if (!headline) {
+      throw new ValidationError('Headline is required to publish the page');
+    }
   }
 
   return new Promise((resolve, reject) => {
@@ -365,7 +377,8 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
             hero_title_size = ?, hero_subtitle_size = ?, section_title_size = ?, body_text_size = ?, button_text_size = ?, card_title_size = ?,
             hero_height = ?, section_padding = ?, card_radius = ?, button_radius = ?,
             overlay_opacity = ?, accent_color = ?,
-            show_video_button = ?, show_hero_icons = ?, show_feature_icons = ?, show_team_photos = ?, show_mission_section = ?, show_vision_section = ?, show_values_section = ?, show_hover_effects = ?
+            show_video_button = ?, show_hero_icons = ?, show_feature_icons = ?, show_team_photos = ?, show_mission_section = ?, show_vision_section = ?, show_values_section = ?, show_hover_effects = ?,
+            active = ?
             WHERE id = ?`
 
           const values = [
@@ -412,6 +425,7 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
             show_vision_section !== false,
             show_values_section !== false,
             show_hover_effects !== false,
+            active === true || active === 'true',
             id
           ]
 

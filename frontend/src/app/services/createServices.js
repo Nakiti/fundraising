@@ -211,6 +211,76 @@ export class OrganizationCreateService {
          throw error;
       }
    }
+
+   // Create page section
+   static async createPageSection(organizationId, pageType, pageReferenceId, sectionName, active = true, userId = null) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.required(pageType, 'Page Type');
+         validators.id(pageReferenceId, 'Page Reference ID');
+         validators.required(sectionName, 'Section Name');
+
+         const response = await api.post(`/sections/create`, {
+            organization_id: organizationId,
+            page_type: pageType,
+            page_reference_id: pageReferenceId,
+            name: sectionName,
+            active: active,
+            user_id: userId
+         });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating page section:', error);
+         throw error;
+      }
+   }
+
+   // Initialize landing page sections
+   static async initializeLandingPageSections(organizationId, landingPageId, userId) {
+      try {
+         const sections = [
+            { name: "banner", active: true },
+            { name: "main", active: false },
+            { name: "about", active: false },
+            { name: "impact", active: false },
+            { name: "featured", active: false },
+            { name: "triple", active: false }
+         ];
+
+         const createPromises = sections.map(section => 
+            this.createPageSection(organizationId, 'landing', landingPageId, section.name, section.active, userId)
+         );
+
+         await Promise.all(createPromises);
+         console.log('Landing page sections initialized successfully');
+      } catch (error) {
+         console.error('Error initializing landing page sections:', error);
+         throw error;
+      }
+   }
+
+   // Initialize about page sections
+   static async initializeAboutPageSections(organizationId, aboutPageId, userId) {
+      try {
+         const sections = [
+            { name: "banner", active: true },
+            { name: "what", active: false },
+            { name: "why", active: false },
+            { name: "team", active: false }
+         ];
+
+         const createPromises = sections.map(section => 
+            this.createPageSection(organizationId, 'about', aboutPageId, section.name, section.active, userId)
+         );
+
+         await Promise.all(createPromises);
+         console.log('About page sections initialized successfully');
+      } catch (error) {
+         console.error('Error initializing about page sections:', error);
+         throw error;
+      }
+   }
 }
 
 // Campaign Services
@@ -558,6 +628,9 @@ export class DesignationCreateService {
 export const createOrganization = OrganizationCreateService.createOrganization;
 export const createLandingPage = OrganizationCreateService.createLandingPage;
 export const createAboutPage = OrganizationCreateService.createAboutPage;
+export const createPageSection = OrganizationCreateService.createPageSection;
+export const initializeLandingPageSections = OrganizationCreateService.initializeLandingPageSections;
+export const initializeAboutPageSections = OrganizationCreateService.initializeAboutPageSections;
 
 export const createCampaign = CampaignCreateService.createCampaign;
 export const createCampaignDetails = CampaignCreateService.createCampaignDetails;
@@ -573,7 +646,6 @@ export const createPeerLandingPage = PageCreateService.createPeerLandingPage;
 export const createDonationForm = PageCreateService.createDonationForm;
 export const createPeerFundraisingPage = PageCreateService.createPeerFundraisingPage;
 export const createTicketPage = PageCreateService.createTicketPage;
-export const createPageSection = PageCreateService.createPageSection;
 export const createPageSectionByPage = PageCreateService.createPageSectionByPage;
 
 export const createUser = UserCreateService.createUser;

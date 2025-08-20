@@ -24,28 +24,10 @@ const EditAboutLayout = ({params, children}) => {
       setIsSaving(true)
 
       try {
-         // Validate required fields
-         const requiredFields = {
-            headline: inputs.headline,
-            aboutText: inputs.aboutText,
-            bgImage: inputs.bgImage
-         }
-
-         const missingFields = Object.entries(requiredFields)
-            .filter(([key, value]) => !value || value.trim() === "")
-            .map(([key]) => key)
-
-         if (missingFields.length > 0) {
-            setError(true)
-            setErrorMessage(`Please fill in the following required fields: ${missingFields.join(", ")}`)
-            setIsSaving(false)
-            return
-         }
-
          // Get the about page ID from the context
          const aboutPageId = inputs.id
 
-         // Update about page content and styling
+         // Update about page content and styling (no validation for save)
          await updateAboutPage(aboutPageId, inputs)
          
          // Update section visibility states
@@ -70,9 +52,63 @@ const EditAboutLayout = ({params, children}) => {
       }
    }
 
+   const handlePublish = async() => {
+      // Reset error state
+      setError(false)
+      setErrorMessage("")
+      setIsSaving(true)
+
+      try {
+         // Validate required fields for publishing
+         const requiredFields = {
+            headline: inputs.headline,
+            aboutText: inputs.aboutText,
+            bgImage: inputs.bgImage
+         }
+
+         const missingFields = Object.entries(requiredFields)
+            .filter(([key, value]) => !value || value.trim() === "")
+            .map(([key]) => key)
+
+         if (missingFields.length > 0) {
+            setError(true)
+            setErrorMessage(`Please fill in the following required fields to publish: ${missingFields.join(", ")}`)
+            setIsSaving(false)
+            return
+         }
+
+         // Get the about page ID from the context
+         const aboutPageId = inputs.id
+
+         // Update about page content and styling with active status
+         const publishData = { ...inputs, active: true }
+         await updateAboutPage(aboutPageId, publishData)
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await updatePageSection(section.id, section.active)
+            }
+         }
+
+         // Success feedback
+         console.log("About page published successfully!")
+         setIsSaving(false)
+         
+         // Optional: Show success message or toast notification
+         // You can add a toast notification here if you have a notification system
+
+      } catch (err) {
+         console.error("Error publishing about page:", err)
+         setError(true)
+         setErrorMessage(err.message || "Failed to publish about page. Please try again.")
+         setIsSaving(false)
+      }
+   }
+
    return (
       <div className="w-full h-full bg-gray-50">
-         <Navbar organizationId={organizationId} links={links} title={"About Page"} handleSave={handleSave} isSaving={isSaving} status={inputs.active ? 'active' : 'draft'}/>
+         <Navbar organizationId={organizationId} links={links} title={"About Page"} handleSave={handleSave} handlePublish={handlePublish} isSaving={isSaving} status={inputs.active ? 'active' : 'draft'}/>
          
          {/* Error Display */}
          {error && (

@@ -173,7 +173,7 @@ export class PageUpdateService {
          // Basic content
          formData.append("title", data.title);
          formData.append("description", data.description || "");
-         formData.append("about", data.about || "");
+         formData.append("about", data.aboutText || "");
          
          // Content fields
          formData.append("mainHeadline", data.mainHeadline || "");
@@ -242,6 +242,9 @@ export class PageUpdateService {
          formData.append("show_progress_indicators", data.showProgressIndicators !== false);
          formData.append("show_statistics", data.showStatistics !== false);
          formData.append("show_hover_effects", data.showHoverEffects !== false);
+         
+         // Status
+         formData.append("active", data.active || false);
 
          const response = await api.put(`/landing_page/update/${id}`, formData, {
             headers: {
@@ -537,6 +540,9 @@ export class PageUpdateService {
          formData.append("show_vision_section", data.showVisionSection !== false);
          formData.append("show_values_section", data.showValuesSection !== false);
          formData.append("show_hover_effects", data.showHoverEffects !== false);
+         
+         // Status
+         formData.append("active", data.active || false);
 
          const response = await api.put(`/about_page/update/${id}`, formData, {
             headers: {

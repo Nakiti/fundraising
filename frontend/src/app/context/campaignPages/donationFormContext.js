@@ -2,7 +2,7 @@ import { initialDonationFormSections } from "@/app/constants/pageSectionsConfig"
 import { ContentService, PageService, DesignationService } from "@/app/services/fetchService";
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "@/app/hooks/useFormInput";
-import { CampaignContext } from "@/app/context/campaignPages/campaignContext";
+import { CampaignContext } from "../campaignContext";
 
 export const DonationFormContext = createContext()
 

@@ -25,6 +25,7 @@ import peerLandingPageRoutes from "./routes/peer_landing_pageRoutes.js"
 import donationFormRoutes from "./routes/donation_formRoutes.js"
 import ticketPurchasePageRoutes from "./routes/ticket_purchase_pageRoutes.js"
 import dashboardRoutes from "./routes/dashboardRoutes.js"
+import aboutPageRoutes from "./routes/about_pageRoutes.js"
 import { 
   globalErrorHandler, 
   notFoundHandler, 
@@ -151,6 +152,7 @@ app.use("/api/peer_landing_page", peerLandingPageRoutes)
 app.use("/api/donation_form", donationFormRoutes)
 app.use("/api/ticket_purchase_page", ticketPurchasePageRoutes)
 app.use("/api/dashboard", dashboardRoutes)
+app.use("/api/about_page", aboutPageRoutes)
 
 // Global error handling middleware (must be last)
 app.use(notFoundHandler);

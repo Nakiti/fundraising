@@ -150,6 +150,8 @@ import {
    createPeerFundraisingPage,
    createTicketPage,
    createPageSection,
+   initializeLandingPageSections,
+   initializeAboutPageSections,
    createUser,
    createUserOrganizationRelation,
    createDesignation
@@ -178,6 +180,8 @@ export {
    createPeerFundraisingPage,
    createTicketPage,
    createPageSection,
+   initializeLandingPageSections,
+   initializeAboutPageSections,
    createUser,
    createUserOrganizationRelation,
    createDesignation
@@ -327,7 +331,11 @@ export const Services = {
    Create: {
       Organization: {
          createOrganization: OrganizationCreateService.createOrganization,
-         createLandingPage: OrganizationCreateService.createLandingPage
+         createLandingPage: OrganizationCreateService.createLandingPage,
+         createAboutPage: OrganizationCreateService.createAboutPage,
+         createPageSection: OrganizationCreateService.createPageSection,
+         initializeLandingPageSections: OrganizationCreateService.initializeLandingPageSections,
+         initializeAboutPageSections: OrganizationCreateService.initializeAboutPageSections
       },
       Campaign: {
          createCampaign: CampaignCreateService.createCampaign,

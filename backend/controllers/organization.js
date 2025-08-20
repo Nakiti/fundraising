@@ -22,11 +22,13 @@ export const register = asyncHandler(async (req, res) => {
     throw new ValidationError('Missing required fields: name, email, userId');
   }
 
+  console.log('Checking for existing organization with email:', email);
   const q = "SELECT * FROM organizations WHERE email = ?"
 
   return new Promise((resolve, reject) => {
     db.query(q, [email], (err, data) => {
       if (err) reject(new DatabaseError('Failed to check existing organization', err));
+      console.log('Found existing organizations:', data);
       if (data.length > 0) reject(new ConflictError('Organization already exists'));
       
       const query = "INSERT INTO organizations(`name`, `email`, `address`, `city`, `state`, `country`, `zip`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES (?)";
