@@ -2,8 +2,21 @@ import Link from "next/link"
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
 
-const Navbar = ({organizationId, links, title, handleSave, handlePublish, isSaving, status}) => {
+const Navbar = ({organizationId, links, title, handleSave, handlePublish, handleDeactivate, isSaving, isPublishing, isDeactivating, status, pageType = 'landing'}) => {
    const pathName = usePathname()
+   
+   const handlePreview = () => {
+      // Open the donor-facing page in a new tab based on page type
+      let previewUrl
+      if (pageType === 'about') {
+         previewUrl = `/organization/${organizationId}/page/about`
+      } else if (pageType === 'header') {
+         previewUrl = `/organization/${organizationId}`
+      } else {
+         previewUrl = `/organization/${organizationId}`
+      }
+      window.open(previewUrl, '_blank')
+   }
    
    return (
       <div className="bg-gray-900 border-b border-gray-700 shadow-sm">
@@ -34,8 +47,8 @@ const Navbar = ({organizationId, links, title, handleSave, handlePublish, isSavi
                    </span>
                 </div>
                 
-                {/* Save Button */}
-                {handleSave && (
+                {/* Save Draft Button - Only show when page is not active */}
+                {handleSave && status !== 'active' && (
                    <button 
                       className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                          isSaving 
@@ -50,21 +63,62 @@ const Navbar = ({organizationId, links, title, handleSave, handlePublish, isSavi
                    </button>
                 )}
                 
-                {/* Publish Button */}
-                {handlePublish && (
+                {/* Publish Button - Only show when page is not active */}
+                {handlePublish && status !== 'active' && (
                    <button 
                       className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                         isSaving 
+                         isPublishing 
                             ? "bg-gray-500 cursor-not-allowed" 
                             : "bg-blue-600 hover:bg-blue-700"
                       } text-white`}
                       style={{borderRadius: "4px"}}
                       onClick={handlePublish}
-                      disabled={isSaving}
+                      disabled={isPublishing}
                    >
-                      {isSaving ? "Publishing..." : "Publish"}
+                      {isPublishing ? "Publishing..." : "Publish"}
                    </button>
                 )}
+
+                {/* Publish Button - Show when page is active (for republishing) */}
+                {handlePublish && status === 'active' && (
+                   <button 
+                      className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                         isPublishing 
+                            ? "bg-gray-500 cursor-not-allowed" 
+                            : "bg-blue-600 hover:bg-blue-700"
+                      } text-white`}
+                      style={{borderRadius: "4px"}}
+                      onClick={handlePublish}
+                      disabled={isPublishing}
+                   >
+                      {isPublishing ? "Publishing..." : "Publish"}
+                   </button>
+                )}
+
+                {/* Deactivate Button - Only show when page is active */}
+                {handleDeactivate && status === 'active' && (
+                   <button 
+                      className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                         isDeactivating 
+                            ? "bg-gray-500 cursor-not-allowed" 
+                            : "bg-red-600 hover:bg-red-700"
+                      } text-white`}
+                      style={{borderRadius: "4px"}}
+                      onClick={handleDeactivate}
+                      disabled={isDeactivating}
+                   >
+                      {isDeactivating ? "Deactivating..." : "Deactivate"}
+                   </button>
+                )}
+
+                {/* Preview Button - Always show */}
+                <button 
+                   className="px-4 py-2 text-sm font-medium transition-colors duration-200 bg-green-600 hover:bg-green-700 text-white"
+                   style={{borderRadius: "4px"}}
+                   onClick={handlePreview}
+                >
+                   Preview
+                </button>
              </div>
          </div>
 

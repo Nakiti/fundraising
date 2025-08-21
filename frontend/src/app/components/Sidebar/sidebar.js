@@ -36,12 +36,9 @@ const Sidebar = ({organizationId}) => {
             <SidebarItem icon={<FaDonate className='h-5 w-5'/>} text="Transactions" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/transactions`}/>
             <SidebarItem icon={<RiPagesLine className='h-5 w-5'/>} text="Pages" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/pages`}/>
             <SidebarItem icon={<GrTemplate className='h-5 w-5'/>} text="Templates" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/templates`}/>
-         </div>
-
-         {/* Settings Section */}
-         <div className="border-t border-gray-200 bg-gray-50">
             <SidebarItem icon={<IoIosSettings className='h-5 w-5'/>} text="Settings" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/settings`}/>
          </div>
+
       </div>
    );
 };

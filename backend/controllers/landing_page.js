@@ -295,19 +295,19 @@ export const updateLandingPage = asyncHandler(async (req, res) => {
   }
   
   // Only validate required fields when publishing (active = true)
-  if (active === true || active === 'true') {
-    if (!title) {
-      throw new ValidationError('Title is required to publish the page');
-    }
-    if (!description) {
-      throw new ValidationError('Description is required to publish the page');
-    }
-  }
+  // if (active === true || active === 'true') {
+  //   if (!title) {
+  //     throw new ValidationError('Title is required to publish the page');
+  //   }
+  //   if (!description) {
+  //     throw new ValidationError('Description is required to publish the page');
+  //   }
+  // }
 
   return new Promise((resolve, reject) => {
-    upload.fields([
+    upload.fields([ 
       { name: "bgImage", maxCount: 1 },
-      { name: "aboutImage", maxCount: 1 },
+      { name: "aboutImage", maxCount: 1 }, 
       { name: "textImage", maxCount: 1 },
       { name: "imageOne", maxCount: 1 },
       { name: "imageTwo", maxCount: 1 },

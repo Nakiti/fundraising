@@ -69,7 +69,7 @@ export const updateTicketPurchasePage = asyncHandler(async (req, res) => {
         reject(new NotFoundError('Ticket purchase page'));
         return;
       }
-      sendUpdated(res, data, 'Ticket purchase page updated successfully');
+                     sendUpdated(res, { success: true }, 'Ticket purchase page updated successfully');
       resolve();
     })
   })

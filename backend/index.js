@@ -26,6 +26,9 @@ import donationFormRoutes from "./routes/donation_formRoutes.js"
 import ticketPurchasePageRoutes from "./routes/ticket_purchase_pageRoutes.js"
 import dashboardRoutes from "./routes/dashboardRoutes.js"
 import aboutPageRoutes from "./routes/about_pageRoutes.js"
+import headerPageRoutes from "./routes/header_pageRoutes.js"
+import footerPageRoutes from "./routes/footer_pageRoutes.js"
+import donorRoutes from "./routes/donorRoutes.js"
 import { 
   globalErrorHandler, 
   notFoundHandler, 
@@ -153,6 +156,9 @@ app.use("/api/donation_form", donationFormRoutes)
 app.use("/api/ticket_purchase_page", ticketPurchasePageRoutes)
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/about_page", aboutPageRoutes)
+app.use("/api/header_page", headerPageRoutes)
+app.use("/api/footer_page", footerPageRoutes)
+app.use("/api/donor", donorRoutes)
 
 // Global error handling middleware (must be last)
 app.use(notFoundHandler);

@@ -9,13 +9,13 @@ import { CampaignUpdateService, PageUpdateService } from "@/app/services/updateS
 import { CampaignService } from "@/app/services/fetchService"
 import { CampaignCreateService } from "@/app/services/createServices"
 import { errorHandler } from "@/app/services/apiClient"
-import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext"
-import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext"
-import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingPageContext"
-import { PeerFundraisingPageContext } from "@/app/context/campaignPages/peerFundraisingPageContext"
-import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext"
-import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
-import { TicketPurchasePageContext } from "@/app/context/campaignPages/ticketPurchasePageContext"
+import { DonationPageContext, DonationPageContextProvider } from "@/app/context/campaignPages/donationPageContext"
+import { TicketPageContext, TicketPageContextProvider } from "@/app/context/campaignPages/ticketPageContext"
+import { PeerLandingPageContext, PeerLandingPageContextProvider } from "@/app/context/campaignPages/peerLandingPageContext"
+import { PeerFundraisingPageContext, PeerFundraisingPageContextProvider } from "@/app/context/campaignPages/peerFundraisingPageContext"
+import { DonationFormContext, DonationFormContextProvider } from "@/app/context/campaignPages/donationFormContext"
+import { ThankYouPageContext, ThankYouPageContextProvider } from "@/app/context/campaignPages/thankYouPageContext"
+import { TicketPurchasePageContext, TicketPurchasePageContextProvider } from "@/app/context/campaignPages/ticketPurchasePageContext"
 
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
@@ -289,7 +289,21 @@ const EditLayout = ({params, children}) => {
          />
          {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="py-0">
-            {children}
+            <DonationPageContextProvider campaignId={campaignId}>
+               <TicketPageContextProvider campaignId={campaignId}>
+                  <PeerLandingPageContextProvider campaignId={campaignId}>
+                     <PeerFundraisingPageContextProvider campaignId={campaignId}>
+                        <DonationFormContextProvider campaignId={campaignId}>
+                           <ThankYouPageContextProvider campaignId={campaignId}>
+                              <TicketPurchasePageContextProvider campaignId={campaignId}>
+                                 {children}
+                              </TicketPurchasePageContextProvider>
+                           </ThankYouPageContextProvider>
+                        </DonationFormContextProvider>
+                     </PeerFundraisingPageContextProvider>
+                  </PeerLandingPageContextProvider>
+               </TicketPageContextProvider>
+            </DonationPageContextProvider>
          </div>
       </div>
    )

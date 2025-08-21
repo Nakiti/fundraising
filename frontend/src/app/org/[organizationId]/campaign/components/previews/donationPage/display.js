@@ -9,21 +9,21 @@ const Display = () => {
    return (
       <div 
          className="bg-white w-full"
-         style={{ backgroundColor: donationPageInputs.bg_color || '#ffffff' }}
+         style={{ backgroundColor: donationPageInputs.bg_color || '#fafafa' }}
       >
          {/* Header */}
-         <div className="bg-gray-900 w-full px-4 py-3">
+         <div className="bg-slate-800 w-full px-4 py-3">
             <div className="flex items-center justify-between">
                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <p className="text-white text-sm font-medium">Donation Page Preview</p>
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                  <p className="text-slate-100 text-sm font-medium">Donation Page Preview</p>
                </div>
-               <div className="flex items-center space-x-2 text-gray-400">
-                  <span className="text-xs">Live Preview</span>
+               <div className="flex items-center space-x-2 text-slate-400">
+                  <span className="text-xs font-medium">Live Preview</span>
                   <div className="flex space-x-1">
-                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
-                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
-                     <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                     <div className="w-1.5 h-1.5 bg-slate-500 rounded-full"></div>
+                     <div className="w-1.5 h-1.5 bg-slate-500 rounded-full"></div>
+                     <div className="w-1.5 h-1.5 bg-slate-500 rounded-full"></div>
                   </div>
                </div>
             </div>
@@ -41,7 +41,7 @@ const Display = () => {
                <div 
                   className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 px-4"
                   style={{
-                     backgroundColor: `rgba(0, 0, 0, ${donationPageInputs.overlayOpacity || "0.3"})`
+                     backgroundColor: `rgba(0, 0, 0, ${donationPageInputs.overlayOpacity || "0.4"})`
                   }}
                >
                   <div className="max-w-2xl mx-auto space-y-4">
@@ -49,29 +49,29 @@ const Display = () => {
                         className="font-bold text-white leading-tight"
                         style={{
                            color: donationPageInputs.p_color || '#ffffff',
-                           fontSize: Math.min(parseInt(donationPageInputs.heroTitleSize) || 24, 32) + 'px'
+                           fontSize: Math.min(parseInt(donationPageInputs.heroTitleSize) || 28, 32) + 'px'
                         }}
                      >
                         {donationPageInputs.headline || "Support Our Cause"}
                      </h1>
                      <p 
-                        className="text-gray-100 max-w-2xl mx-auto leading-relaxed text-sm"
+                        className="text-slate-100 max-w-xl mx-auto leading-relaxed"
                         style={{
-                           color: donationPageInputs.s_color || '#e5e7eb',
+                           color: donationPageInputs.s_color || '#e2e8f0',
                            fontSize: Math.min(parseInt(donationPageInputs.heroSubtitleSize) || 14, 16) + 'px'
                         }}
                      >
                         {donationPageInputs.description || "Your support makes a real difference in our community. Every donation, no matter the size, helps us achieve our mission and create positive change for those who need it most."}
                      </p>
-                     <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+                     <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-3">
                         <button 
-                           className="font-semibold transition-all duration-300 flex items-center space-x-2"
+                           className="font-semibold transition-all duration-300 flex items-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
                            style={{
-                              backgroundColor: donationPageInputs.b1_color || '#3b82f6',
+                              backgroundColor: donationPageInputs.b1_color || '#475569',
                               color: donationPageInputs.bt_color || '#FFFFFF',
-                              borderRadius: donationPageInputs.buttonRadius || '4px',
+                              borderRadius: donationPageInputs.buttonRadius || '6px',
                               fontSize: Math.min(parseInt(donationPageInputs.buttonTextSize) || 14, 16) + 'px',
-                              padding: '12px 24px'
+                              padding: '10px 20px'
                            }}
                         >
                            <FaHeart className="w-3 h-3" />
@@ -83,21 +83,21 @@ const Display = () => {
             </div>
 
             {/* Main Content Section */}
-            <div className="flex flex-col lg:flex-row w-full px-4 space-y-8 lg:space-y-0 lg:space-x-8" style={{paddingTop: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60), paddingBottom: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60)}}>
+            <div className="flex flex-col lg:flex-row w-full px-6 space-y-8 lg:space-y-0 lg:space-x-8" style={{paddingTop: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60), paddingBottom: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60)}}>
                <div className="lg:w-2/3">
                   <h2 
                      className="font-bold mb-4 leading-tight"
                      style={{
-                        color: donationPageInputs.p_color || '#1f2937',
-                        fontSize: Math.min(parseInt(donationPageInputs.sectionTitleSize) || 20, 24) + 'px'
+                        color: donationPageInputs.p_color || '#1e293b',
+                        fontSize: Math.min(parseInt(donationPageInputs.sectionTitleSize) || 24, 28) + 'px'
                      }}
                   >
                      {donationPageInputs.mainHeadline || "Making a Difference Together"}
                   </h2>
                   <p 
-                     className="leading-relaxed mb-6 text-sm"
+                     className="leading-relaxed mb-6"
                      style={{
-                        color: donationPageInputs.s_color || '#6b7280',
+                        color: donationPageInputs.s_color || '#64748b',
                         fontSize: Math.min(parseInt(donationPageInputs.bodyTextSize) || 14, 16) + 'px'
                      }}
                   >
@@ -107,25 +107,25 @@ const Display = () => {
                   {/* Progress Section */}
                   <div className="mb-6">
                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-medium" style={{ color: donationPageInputs.s_color || '#6b7280' }}>$2,450 raised</span>
-                        <span className="text-xs font-medium" style={{ color: donationPageInputs.s_color || '#6b7280' }}>of $10,000 goal</span>
+                        <span className="text-sm font-medium" style={{ color: donationPageInputs.s_color || '#64748b' }}>$2,450 raised</span>
+                        <span className="text-sm font-medium" style={{ color: donationPageInputs.s_color || '#64748b' }}>of $10,000 goal</span>
                      </div>
-                     <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                     <div className="w-full bg-slate-200 rounded-full h-2 mb-3">
                         <div 
                            className="h-2 rounded-full transition-all duration-500 ease-out"
                            style={{ 
-                              backgroundColor: donationPageInputs.s_color || '#3b82f6',
+                              backgroundColor: donationPageInputs.s_color || '#475569',
                               width: '24.5%'
                            }}
                         ></div>
                      </div>
-                     <div className="flex justify-start items-center space-x-4 text-xs" style={{ color: donationPageInputs.s_color || '#6b7280' }}>
-                        <div className="flex items-center space-x-1">
-                           <FaUsers className="text-blue-600 w-3 h-3" />
+                     <div className="flex justify-start items-center space-x-4 text-sm" style={{ color: donationPageInputs.s_color || '#64748b' }}>
+                        <div className="flex items-center space-x-1.5">
+                           <FaUsers className="text-slate-600 w-3 h-3" />
                            <span>127 donors</span>
                         </div>
-                        <div className="flex items-center space-x-1">
-                           <FaHeart className="text-red-500 w-3 h-3" />
+                        <div className="flex items-center space-x-1.5">
+                           <FaHeart className="text-rose-500 w-3 h-3" />
                            <span>23 days left</span>
                         </div>
                      </div>
@@ -134,12 +134,12 @@ const Display = () => {
 
                {/* Sidebar */}
                <div className="lg:w-1/3">
-                  <div className="bg-white border border-gray-100 p-4" style={{borderRadius: donationPageInputs.cardRadius || '4px'}}>
+                  <div className="bg-white border border-slate-200 p-4 shadow-sm" style={{borderRadius: donationPageInputs.cardRadius || '8px'}}>
                      <h3 
                         className="font-semibold mb-4"
                         style={{
-                           color: donationPageInputs.p_color || '#1f2937',
-                           fontSize: Math.min(parseInt(donationPageInputs.sectionTitleSize) || 16, 18) + 'px'
+                           color: donationPageInputs.p_color || '#1e293b',
+                           fontSize: Math.min(parseInt(donationPageInputs.sectionTitleSize) || 18, 20) + 'px'
                         }}
                      >
                         Choose Your Amount
@@ -148,19 +148,19 @@ const Display = () => {
                         {[donationPageInputs.button1, donationPageInputs.button2, donationPageInputs.button3, donationPageInputs.button4, donationPageInputs.button5, donationPageInputs.button6].map((amount, index) => (
                            <button
                               key={index}
-                              className="w-full p-3 border border-gray-200 hover:border-gray-300 transition-colors duration-200 text-center"
-                              style={{borderRadius: donationPageInputs.buttonRadius || '4px'}}
+                              className="w-full p-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-center"
+                              style={{borderRadius: donationPageInputs.buttonRadius || '6px'}}
                            >
-                              <div className="font-semibold text-sm" style={{ color: donationPageInputs.p_color || '#1f2937' }}>${amount || '25'}</div>
-                              <div className="text-xs" style={{ color: donationPageInputs.s_color || '#6b7280' }}>Donation</div>
+                              <div className="font-semibold text-sm" style={{ color: donationPageInputs.p_color || '#1e293b' }}>${amount || '25'}</div>
+                              <div className="text-xs mt-0.5" style={{ color: donationPageInputs.s_color || '#64748b' }}>Donation</div>
                            </button>
                         ))}
                      </div>
                      <button 
-                        className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2"
+                        className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
                         style={{
-                           backgroundColor: donationPageInputs.b1_color || '#3b82f6',
-                           borderRadius: donationPageInputs.buttonRadius || '4px',
+                           backgroundColor: donationPageInputs.b1_color || '#475569',
+                           borderRadius: donationPageInputs.buttonRadius || '6px',
                            fontSize: Math.min(parseInt(donationPageInputs.buttonTextSize) || 14, 16) + 'px'
                         }}
                      >

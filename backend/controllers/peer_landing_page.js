@@ -93,7 +93,7 @@ export const updatePeerLandingPage = asyncHandler(async (req, res) => {
           reject(new NotFoundError('Peer landing page'));
           return;
         }
-        sendUpdated(res, data, 'Peer landing page updated successfully');
+                       sendUpdated(res, { success: true }, 'Peer landing page updated successfully');
       resolve();
       })
     })

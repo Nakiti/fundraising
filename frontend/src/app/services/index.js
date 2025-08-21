@@ -192,6 +192,8 @@ import {
    OrganizationUpdateService,
    CampaignUpdateService,
    PageUpdateService,
+   HeaderPageUpdateService,
+   FooterPageUpdateService,
    UserUpdateService,
    DesignationUpdateService,
    // Legacy exports
@@ -216,6 +218,8 @@ export {
    OrganizationUpdateService,
    CampaignUpdateService,
    PageUpdateService,
+   HeaderPageUpdateService,
+   FooterPageUpdateService,
    UserUpdateService,
    DesignationUpdateService,
    // Legacy exports
@@ -296,7 +300,9 @@ export const Services = {
       getPageSections: PageService.getPageSections,
       getPageSectionsByPage: PageService.getPageSectionsByPage,
       getLandingPage: PageService.getLandingPage,
-      getAboutPage: PageService.getAboutPage
+      getAboutPage: PageService.getAboutPage,
+      getHeaderPage: PageService.getHeaderPage,
+      getFooterPage: PageService.getFooterPage
    },
    Organization: {
       getOrganization: OrganizationService.getOrganization
@@ -333,9 +339,13 @@ export const Services = {
          createOrganization: OrganizationCreateService.createOrganization,
          createLandingPage: OrganizationCreateService.createLandingPage,
          createAboutPage: OrganizationCreateService.createAboutPage,
+         createHeaderPage: OrganizationCreateService.createHeaderPage,
+         createFooterPage: OrganizationCreateService.createFooterPage,
          createPageSection: OrganizationCreateService.createPageSection,
          initializeLandingPageSections: OrganizationCreateService.initializeLandingPageSections,
-         initializeAboutPageSections: OrganizationCreateService.initializeAboutPageSections
+         initializeAboutPageSections: OrganizationCreateService.initializeAboutPageSections,
+         initializeHeaderPageSections: OrganizationCreateService.initializeHeaderPageSections,
+         initializeFooterPageSections: OrganizationCreateService.initializeFooterPageSections
       },
       Campaign: {
          createCampaign: CampaignCreateService.createCampaign,
@@ -384,6 +394,16 @@ export const Services = {
          updateThankYouPage: PageUpdateService.updateThankYouPage,
          updateTicketPage: PageUpdateService.updateTicketPage,
          updatePageSection: PageUpdateService.updatePageSection
+      },
+      HeaderPage: {
+         saveHeaderPage: HeaderPageUpdateService.saveHeaderPage,
+         publishHeaderPage: HeaderPageUpdateService.publishHeaderPage,
+         deactivateHeaderPage: HeaderPageUpdateService.deactivateHeaderPage
+      },
+      FooterPage: {
+         saveFooterPage: FooterPageUpdateService.saveFooterPage,
+         publishFooterPage: FooterPageUpdateService.publishFooterPage,
+         deactivateFooterPage: FooterPageUpdateService.deactivateFooterPage
       },
       User: {
          updateUser: UserUpdateService.updateUser,

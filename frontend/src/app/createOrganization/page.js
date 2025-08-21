@@ -79,9 +79,19 @@ const CreateOrganization = () => {
          const aboutPage = await Services.Create.Organization.createAboutPage(aboutPageData, organizationId.organizationId);
          console.log("About page created:", aboutPage);
          
-         // Initialize sections for both pages
+         // Create header page
+         const headerPage = await Services.Create.Organization.createHeaderPage(organizationId.organizationId, currentUser.id);
+         console.log("Header page created:", headerPage);
+         
+         // Create footer page
+         const footerPage = await Services.Create.Organization.createFooterPage(organizationId.organizationId, currentUser.id);
+         console.log("Footer page created:", footerPage);
+         
+         // Initialize sections for all pages
          await Services.Create.Organization.initializeLandingPageSections(organizationId.organizationId, landingPage.pageId, currentUser.id);
          await Services.Create.Organization.initializeAboutPageSections(organizationId.organizationId, aboutPage.pageId, currentUser.id);
+         await Services.Create.Organization.initializeHeaderPageSections(organizationId.organizationId, headerPage.pageId, currentUser.id);
+         await Services.Create.Organization.initializeFooterPageSections(organizationId.organizationId, footerPage.pageId, currentUser.id);
          console.log("Sections initialized");
          
          showSuccess('Organization Created', 'Your organization has been created successfully!');

@@ -32,132 +32,132 @@ const ThankYouPage = ({params}) => {
       <div 
          className="min-h-screen bg-cover bg-center flex flex-col" 
          style={{ 
-            backgroundColor: display?.bg_color || '#f3f4f6',
+            backgroundColor: display?.bg_color || '#f8fafc',
             backgroundImage: display?.bg_image ? `url(${display.bg_image})` : 'none'
          }}
       >
          {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
 
          {display && (
-            <div className="flex-1 flex items-center justify-center py-8 px-4">
+            <div className="flex-1 flex items-center justify-center py-12 px-4">
                <div 
-                  className="w-full max-w-2xl shadow-lg rounded-lg overflow-hidden"
+                  className="w-full max-w-lg shadow-sm rounded-lg overflow-hidden"
                   style={{ 
                      backgroundColor: display.bg_color || '#ffffff',
-                     borderRadius: display.cardRadius ? `${display.cardRadius}px` : '8px'
+                     borderRadius: display.cardRadius ? `${display.cardRadius}px` : '12px'
                   }}
                >
                   {/* Header Section */}
-                  <div className="pt-10 px-10 pb-6 text-center">
-                     <div className="mb-6">
+                  <div className="pt-8 px-6 pb-6 text-center">
+                     <div className="mb-4">
                         <FaCheckCircle 
-                           className="mx-auto text-6xl mb-4"
+                           className="mx-auto text-4xl mb-4"
                            style={{ color: display.b1_color || '#10b981' }}
                         />
                      </div>
                      <h1 
-                        className="text-3xl font-bold mb-4"
+                        className="text-2xl font-bold mb-3"
                         style={{ 
-                           color: display.p_color || '#1f2937',
-                           fontSize: display.heroTitleSize ? `${display.heroTitleSize}px` : '36px'
+                           color: display.p_color || '#1e293b',
+                           fontSize: display.heroTitleSize ? `${display.heroTitleSize}px` : '28px'
                         }}
                      >
                         {display.headline || "Thank You!"}
                      </h1>
                      <p 
-                        className="text-lg leading-relaxed"
+                        className="text-sm leading-relaxed max-w-md mx-auto"
                         style={{ 
-                           color: display.s_color || '#6b7280',
-                           fontSize: display.bodyTextSize ? `${display.bodyTextSize}px` : '16px'
+                           color: display.s_color || '#64748b',
+                           fontSize: display.bodyTextSize ? `${display.bodyTextSize}px` : '14px'
                         }}
                      >
                         {display.description || "Your generous donation has been received and will make a real difference in our mission. We're grateful for your support and commitment to creating positive change in our community."}
                      </p>
                      
                      {/* Share Section */}
-                     <div className="flex justify-center items-center mt-6 space-x-4">
+                     <div className="flex justify-center items-center mt-4 space-x-3">
                         <p 
-                           className="text-sm"
-                           style={{ color: display.s_color || '#6b7280' }}
+                           className="text-xs"
+                           style={{ color: display.s_color || '#64748b' }}
                         >
                            Share this campaign:
                         </p>
                         <button 
-                           className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-                           style={{ color: display.b1_color || '#3b82f6' }}
+                           className="p-1.5 rounded-full hover:bg-slate-100 transition-all duration-200"
+                           style={{ color: display.b1_color || '#475569' }}
                         >
-                           <FaShare className="w-4 h-4" />
+                           <FaShare className="w-3 h-3" />
                         </button>
                      </div>
                   </div>
 
                   {/* Donation Information Section */}
                   <div 
-                     className="px-10 py-8"
-                     style={{ backgroundColor: display.bg_color ? `${display.bg_color}20` : '#f9fafb' }}
+                     className="px-6 py-6"
+                     style={{ backgroundColor: display.bg_color ? `${display.bg_color}20` : '#f8fafc' }}
                   >
                      <h2 
-                        className="text-xl font-semibold mb-4 pb-2 border-b border-gray-200"
+                        className="text-lg font-semibold mb-3 pb-2 border-b border-slate-200"
                         style={{ 
-                           color: display.p_color || '#1f2937',
-                           fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '20px'
+                           color: display.p_color || '#1e293b',
+                           fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '18px'
                         }}
                      >
                         Donation Information
                      </h2>
-                     <div className="space-y-3">
-                        <div className="flex justify-between items-center py-2">
+                     <div className="space-y-2">
+                        <div className="flex justify-between items-center py-1.5">
                            <span 
-                              className="text-sm"
-                              style={{ color: display.s_color || '#6b7280' }}
+                              className="text-xs"
+                              style={{ color: display.s_color || '#64748b' }}
                            >
                               Amount Donated
                            </span>
                            <span 
-                              className="font-semibold"
-                              style={{ color: display.p_color || '#1f2937' }}
+                              className="font-semibold text-sm"
+                              style={{ color: display.p_color || '#1e293b' }}
                            >
                               $0.00
                            </span>
                         </div>
-                        <div className="flex justify-between items-center py-2">
+                        <div className="flex justify-between items-center py-1.5">
                            <span 
-                              className="text-sm"
-                              style={{ color: display.s_color || '#6b7280' }}
+                              className="text-xs"
+                              style={{ color: display.s_color || '#64748b' }}
                            >
                               Campaign
                            </span>
                            <span 
-                              className="font-semibold"
-                              style={{ color: display.p_color || '#1f2937' }}
+                              className="font-semibold text-sm"
+                              style={{ color: display.p_color || '#1e293b' }}
                            >
                               {campaignDetails?.external_name || 'Campaign Name'}
                            </span>
                         </div>
-                        <div className="flex justify-between items-center py-2">
+                        <div className="flex justify-between items-center py-1.5">
                            <span 
-                              className="text-sm"
-                              style={{ color: display.s_color || '#6b7280' }}
+                              className="text-xs"
+                              style={{ color: display.s_color || '#64748b' }}
                            >
                               Designation
                            </span>
                            <span 
-                              className="font-semibold"
-                              style={{ color: display.p_color || '#1f2937' }}
+                              className="font-semibold text-sm"
+                              style={{ color: display.p_color || '#1e293b' }}
                            >
                               General Fund
                            </span>
                         </div>
-                        <div className="flex justify-between items-center py-2">
+                        <div className="flex justify-between items-center py-1.5">
                            <span 
-                              className="text-sm"
-                              style={{ color: display.s_color || '#6b7280' }}
+                              className="text-xs"
+                              style={{ color: display.s_color || '#64748b' }}
                            >
                               Transaction Date
                            </span>
                            <span 
-                              className="font-semibold"
-                              style={{ color: display.p_color || '#1f2937' }}
+                              className="font-semibold text-sm"
+                              style={{ color: display.p_color || '#1e293b' }}
                            >
                               {new Date().toLocaleDateString()}
                            </span>
@@ -166,37 +166,37 @@ const ThankYouPage = ({params}) => {
                   </div>
 
                   {/* Contact Section */}
-                  <div className="px-10 py-8">
+                  <div className="px-6 py-6">
                      <h2 
-                        className="text-xl font-semibold mb-4"
+                        className="text-lg font-semibold mb-3"
                         style={{ 
-                           color: display.p_color || '#1f2937',
-                           fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '20px'
+                           color: display.p_color || '#1e293b',
+                           fontSize: display.sectionTitleSize ? `${display.sectionTitleSize}px` : '18px'
                         }}
                      >
                         Questions or Comments?
                      </h2>
                      <p 
-                        className="text-sm mb-2"
-                        style={{ color: display.s_color || '#6b7280' }}
+                        className="text-xs mb-1"
+                        style={{ color: display.s_color || '#64748b' }}
                      >
                         We'd love to hear from you! Contact us at:
                      </p>
                      <p 
-                        className="text-sm font-medium"
-                        style={{ color: display.b1_color || '#3b82f6' }}
+                        className="text-xs font-medium"
+                        style={{ color: display.b1_color || '#475569' }}
                      >
                         support@organization.com
                      </p>
                   </div>
 
                   {/* CTA Section */}
-                  <div className="px-10 pb-10 text-center">
+                  <div className="px-6 pb-8 text-center">
                      <button 
-                        className="px-8 py-3 text-white font-medium rounded-md hover:opacity-90 transition-colors duration-200"
+                        className="px-6 py-2.5 text-white font-medium rounded-md hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
                         style={{ 
-                           backgroundColor: display.b1_color || '#3b82f6',
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '4px'
+                           backgroundColor: display.b1_color || '#475569',
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px'
                         }}
                         onClick={() => window.history.back()}
                      >
@@ -209,28 +209,28 @@ const ThankYouPage = ({params}) => {
 
          {/* Footer */}
          <div 
-            className="py-6 border-t border-gray-200"
-            style={{ backgroundColor: display?.bg_color || '#f9fafb' }}
+            className="py-4 border-t border-slate-200"
+            style={{ backgroundColor: display?.bg_color || '#f8fafc' }}
          >
             <div className="text-center">
                <p 
                   className="text-xs"
-                  style={{ color: display?.s_color || '#6b7280' }}
+                  style={{ color: display?.s_color || '#64748b' }}
                >
                   &copy; {new Date().getFullYear()} {campaignDetails?.external_name || 'Organization'}. All rights reserved.
                </p>
-               <div className="mt-1 space-x-4">
+               <div className="mt-1 space-x-3">
                   <a 
                      href="#" 
                      className="text-xs hover:underline"
-                     style={{ color: display?.s_color || '#6b7280' }}
+                     style={{ color: display?.s_color || '#64748b' }}
                   >
                      Privacy Policy
                   </a>
                   <a 
                      href="#" 
                      className="text-xs hover:underline"
-                     style={{ color: display?.s_color || '#6b7280' }}
+                     style={{ color: display?.s_color || '#64748b' }}
                   >
                      Terms of Service
                   </a>

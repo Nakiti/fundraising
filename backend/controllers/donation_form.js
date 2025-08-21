@@ -188,7 +188,7 @@ export const updateDonationForm = asyncHandler(async (req, res) => {
               reject(new NotFoundError('Donation form'));
               return;
             }
-            sendUpdated(res, data, 'Donation form updated successfully');
+                           sendUpdated(res, { success: true }, 'Donation form updated successfully');
             resolve();
           })
         })

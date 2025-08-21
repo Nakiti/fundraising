@@ -108,7 +108,7 @@ const Theme = ({params}) => { //need to integrate with db
                         <input 
                            type="color" 
                            className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
-                           name="p_color"
+                           name="s_color"
                            value={inputs.s_color}
                            onChange={handleInputsChange}
                            style={{ backgroundColor: inputs.s_color }}  

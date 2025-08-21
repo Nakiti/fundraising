@@ -90,7 +90,7 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
             showHoverEffects: response.show_hover_effects !== false,
             
             // Status
-            active: response.active || false
+            active: response.active == 1 ? true : false
          })
 
          const sectionsResponse = await PageService.getPageSectionsByPage(organizationId, 'landing', landingPageId)

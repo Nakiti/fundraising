@@ -80,7 +80,7 @@ const About = () => {
                   placeholder="Enter Internal Name"
                   className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                   value={campaignDetails?.internalName || ""}
-                  onChange={handleCampaignDetailsChange}
+                  onChange={(e) => handleChange(e)}
                />
             </div>
             
@@ -96,7 +96,7 @@ const About = () => {
                   placeholder="Enter a Fundraising Goal"
                   className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                   value={campaignDetails?.goal || ""}
-                  onChange={handleCampaignDetailsChange}
+                  onChange={(e) => handleChange(e)}
                />
             </div>
             
@@ -106,12 +106,12 @@ const About = () => {
                   Short URL <span className="text-red-500">*</span>
                </label>               
                <input
-                  name="shortUrl"
+                  name="url"
                   type="text"
                   placeholder="Enter Short URL"
                   className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  value={campaignDetails?.shortUrl || ""}
-                  onChange={handleCampaignDetailsChange}
+                  value={campaignDetails?.url || ""}
+                  onChange={(e) => handleChange(e)}
                />
             </div>
          </div>

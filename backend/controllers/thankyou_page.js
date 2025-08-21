@@ -124,7 +124,7 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
               reject(new NotFoundError('Thank you page'));
               return;
             }
-            sendUpdated(res, data, 'Thank you page updated successfully');
+                           sendUpdated(res, { success: true }, 'Thank you page updated successfully');
             resolve();
           })
         })

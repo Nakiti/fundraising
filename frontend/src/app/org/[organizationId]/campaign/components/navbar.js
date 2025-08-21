@@ -113,9 +113,9 @@ const Navbar = ({campaignId, organizationId, handlePublish, handleSave, handleDe
                   </button>
                }
                <button 
-                  className={`py-3 px-8 rounded-md text-white transition-all duration-200 ${hasUnsavedChanges ? "bg-blue-700 hover:bg-blue-500" : "bg-gray-300 cursor-not-allowed"}`}
+                  className={`py-3 px-8 rounded-md text-white transition-all duration-200 bg-blue-700 hover:bg-blue-500`}
                   onClick={handlePublish}
-                  disabled={!hasUnsavedChanges}
+                  // disabled={!hasUnsavedChanges}
                >
                   Publish
                </button>

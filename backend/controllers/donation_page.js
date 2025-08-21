@@ -215,7 +215,7 @@ export const updateDonationPage = asyncHandler(async (req, res) => {
               reject(new NotFoundError('Donation page'));
               return;
             }
-            sendUpdated(res, data, 'Donation page updated successfully');
+                           sendUpdated(res, { success: true }, 'Donation page updated successfully');
             resolve();
           })
         })

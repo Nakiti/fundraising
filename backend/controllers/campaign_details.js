@@ -39,7 +39,7 @@ export const createCampaignDetails = asyncHandler(async (req, res) => {
          if (err) {
             reject(new DatabaseError('Failed to create campaign details', err));
          } else {
-            sendCreated(res, data, 'Campaign details created successfully');
+            sendCreated(res, { campaignId: data.insertId }, 'Campaign details created successfully');
       resolve();
          }
       });
@@ -56,7 +56,7 @@ export const updateCampaignDetails = asyncHandler(async (req, res) => {
       status, 
       url, 
       userId,
-      showPhone,
+      showPhone, 
       showTitle,
       showSuffix,
       showCompanyName,
@@ -99,7 +99,7 @@ export const updateCampaignDetails = asyncHandler(async (req, res) => {
             if (data.affectedRows === 0) {
                reject(new NotFoundError('Campaign details'));
             } else {
-               sendUpdated(res, data, 'Campaign details updated successfully');
+               sendUpdated(res, { success: true }, 'Campaign details updated successfully');
       resolve();
             }
          }

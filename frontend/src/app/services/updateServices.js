@@ -10,7 +10,7 @@ export class OrganizationUpdateService {
 
          const response = await api.put(`/organization/update/${organizationId}`, data);
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating organization:', error);
          throw error;
@@ -48,7 +48,7 @@ export class CampaignUpdateService {
 
          const response = await api.put(`/campaign_details/update/${campaignId}`, requestBody);
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating campaign details:', error);
          throw error;
@@ -65,7 +65,7 @@ export class CampaignUpdateService {
             updatedBy: userId
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error deactivating campaign:', error);
          throw error;
@@ -155,7 +155,7 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating donation page:', error);
          throw error;
@@ -252,9 +252,311 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating landing page:', error);
+         throw error;
+      }
+   }
+
+   // Update header page
+   static async updateHeaderPage(id, data) {
+      try {
+         validators.id(id, 'Page ID');
+         validators.required(data, 'Page Data');
+
+         const formData = new FormData();
+         
+         // Content fields
+         if (data.logo instanceof File) {
+            formData.append("logo", data.logo);
+         } else if (data.logo) {
+            formData.append("logo", data.logo);
+         }
+         formData.append("organizationName", data.organizationName || "");
+         formData.append("tagline", data.tagline || "");
+         formData.append("showTagline", data.showTagline !== false);
+         
+         // Navigation
+         formData.append("showNavigation", data.showNavigation !== false);
+         formData.append("navigationItems", data.navigationItems ? JSON.stringify(data.navigationItems) : "[]");
+         formData.append("showSearch", data.showSearch !== false);
+         formData.append("showLoginButton", data.showLoginButton !== false);
+         formData.append("showDonateButton", data.showDonateButton !== false);
+         
+         // Styling
+         formData.append("bgColor", data.bgColor || "#FFFFFF");
+         formData.append("textColor", data.textColor || "#000000");
+         formData.append("accentColor", data.accentColor || "#3B82F6");
+         formData.append("headerHeight", data.headerHeight || "80px");
+         formData.append("logoSize", data.logoSize || "40px");
+         formData.append("fontSize", data.fontSize || "16px");
+         formData.append("fontWeight", data.fontWeight || "500");
+         formData.append("borderBottom", data.borderBottom !== false);
+         formData.append("borderColor", data.borderColor || "#E5E7EB");
+         formData.append("shadow", data.shadow !== false);
+         
+         // Layout
+         formData.append("logoPosition", data.logoPosition || "left");
+         formData.append("navigationPosition", data.navigationPosition || "center");
+         formData.append("buttonPosition", data.buttonPosition || "right");
+         
+         // Status
+         formData.append("active", data.active || false);
+
+         const response = await api.put(`/header_page/update/${id}`, formData, {
+            headers: {
+               'Content-Type': 'multipart/form-data',
+            },
+         });
+         
+         return response.success ? (response.data?.success ? null : response.data) : null;
+      } catch (error) {
+         console.error('Error updating header page:', error);
+         throw error;
+      }
+   }
+
+   // Update footer page
+   static async updateFooterPage(id, data) {
+      try {
+         validators.id(id, 'Page ID');
+         validators.required(data, 'Page Data');
+
+         const formData = new FormData();
+         
+         // Content fields
+         if (data.logo instanceof File) {
+            formData.append("logo", data.logo);
+         } else if (data.logo) {
+            formData.append("logo", data.logo);
+         }
+         formData.append("organizationName", data.organizationName || "");
+         formData.append("tagline", data.tagline || "");
+         formData.append("showTagline", data.showTagline !== false);
+         formData.append("description", data.description || "");
+         formData.append("showDescription", data.showDescription !== false);
+         formData.append("contactInfo", data.contactInfo || "");
+         formData.append("showContactInfo", data.showContactInfo !== false);
+         formData.append("links", data.links || "");
+         formData.append("showLinks", data.showLinks !== false);
+         formData.append("socialLinks", data.socialLinks || "");
+         formData.append("showSocialLinks", data.showSocialLinks !== false);
+         
+         // Styling
+         formData.append("bgColor", data.bgColor || "#1F2937");
+         formData.append("textColor", data.textColor || "#FFFFFF");
+         formData.append("linkColor", data.linkColor || "#60A5FA");
+         formData.append("footerHeight", data.footerHeight || "auto");
+         formData.append("fontSize", data.fontSize || "14px");
+         formData.append("borderTop", data.borderTop !== false);
+         formData.append("borderColor", data.borderColor || "#374151");
+         formData.append("shadow", data.shadow !== false);
+         
+         // Layout
+         formData.append("footerLayout", data.footerLayout || "three-column");
+         formData.append("contentAlignment", data.contentAlignment || "left");
+         formData.append("socialPosition", data.socialPosition || "bottom");
+         
+         // Social Media
+         formData.append("socialIconSize", data.socialIconSize || "medium");
+         formData.append("socialIconColor", data.socialIconColor || "#FFFFFF");
+         formData.append("socialLayout", data.socialLayout || "horizontal");
+         formData.append("socialSpacing", data.socialSpacing || "normal");
+         
+         // Status
+         formData.append("active", data.active || false);
+
+         const response = await api.put(`/footer_page/update/${id}`, formData, {
+            headers: {
+               'Content-Type': 'multipart/form-data',
+            },
+         });
+         
+         return response.success ? (response.data?.success ? null : response.data) : null;
+      } catch (error) {
+         console.error('Error updating footer page:', error);
+         throw error;
+      }
+   }
+}
+
+// Header Page Services
+export class HeaderPageUpdateService {
+   // Save header page (draft)
+   static async saveHeaderPage(pageId, inputs, sections) {
+      try {
+         validators.id(pageId, 'Page ID');
+         validators.required(inputs, 'Page Inputs');
+         validators.required(sections, 'Page Sections');
+
+         // Update header page content and styling (no validation for save)
+         await PageUpdateService.updateHeaderPage(pageId, inputs);
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await PageUpdateService.updatePageSection(section.id, section.active);
+            }
+         }
+
+         return { success: true, message: "Header page saved successfully!" };
+      } catch (error) {
+         console.error('Error saving header page:', error);
+         throw error;
+      }
+   }
+
+   // Publish header page
+   static async publishHeaderPage(pageId, inputs, sections) {
+      try {
+         validators.id(pageId, 'Page ID');
+         validators.required(inputs, 'Page Inputs');
+         validators.required(sections, 'Page Sections');
+
+         // Validate required fields for publishing
+         const requiredFields = {
+            logo: inputs.logo,
+            organizationName: inputs.organizationName
+         };
+
+         const missingFields = Object.entries(requiredFields)
+            .filter(([key, value]) => !value || value.trim() === "")
+            .map(([key]) => key);
+
+         if (missingFields.length > 0) {
+            throw new Error(`Please fill in the following required fields to publish: ${missingFields.join(", ")}`);
+         }
+
+         // Update header page content and styling with active status
+         const publishData = { ...inputs, active: true };
+         await PageUpdateService.updateHeaderPage(pageId, publishData);
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await PageUpdateService.updatePageSection(section.id, section.active);
+            }
+         }
+
+         return { success: true, message: "Header page published successfully!" };
+      } catch (error) {
+         console.error('Error publishing header page:', error);
+         throw error;
+      }
+   }
+
+   // Deactivate header page
+   static async deactivateHeaderPage(pageId, inputs, sections) {
+      try {
+         validators.id(pageId, 'Page ID');
+         validators.required(inputs, 'Page Inputs');
+         validators.required(sections, 'Page Sections');
+
+         // Update header page content and styling with inactive status
+         const deactivateData = { ...inputs, active: false };
+         await PageUpdateService.updateHeaderPage(pageId, deactivateData);
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await PageUpdateService.updatePageSection(section.id, section.active);
+            }
+         }
+
+         return { success: true, message: "Header page deactivated successfully!" };
+      } catch (error) {
+         console.error('Error deactivating header page:', error);
+         throw error;
+      }
+   }
+}
+
+// Footer Page Services
+export class FooterPageUpdateService {
+   // Save footer page (draft)
+   static async saveFooterPage(pageId, inputs, sections) {
+      try {
+         validators.id(pageId, 'Page ID');
+         validators.required(inputs, 'Page Inputs');
+         validators.required(sections, 'Page Sections');
+
+         // Update footer page content and styling (no validation for save)
+         await PageUpdateService.updateFooterPage(pageId, inputs);
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await PageUpdateService.updatePageSection(section.id, section.active);
+            }
+         }
+
+         return { success: true, message: "Footer page saved successfully!" };
+      } catch (error) {
+         console.error('Error saving footer page:', error);
+         throw error;
+      }
+   }
+
+   // Publish footer page
+   static async publishFooterPage(pageId, inputs, sections) {
+      try {
+         validators.id(pageId, 'Page ID');
+         validators.required(inputs, 'Page Inputs');
+         validators.required(sections, 'Page Sections');
+
+         // Validate required fields for publishing
+         const requiredFields = {
+            organizationName: inputs.organizationName
+         };
+
+         const missingFields = Object.entries(requiredFields)
+            .filter(([key, value]) => !value || value.trim() === "")
+            .map(([key]) => key);
+
+         if (missingFields.length > 0) {
+            throw new Error(`Please fill in the following required fields to publish: ${missingFields.join(", ")}`);
+         }
+
+         // Update footer page content and styling with active status
+         const publishData = { ...inputs, active: true };
+         await PageUpdateService.updateFooterPage(pageId, publishData);
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await PageUpdateService.updatePageSection(section.id, section.active);
+            }
+         }
+
+         return { success: true, message: "Footer page published successfully!" };
+      } catch (error) {
+         console.error('Error publishing footer page:', error);
+         throw error;
+      }
+   }
+
+   // Deactivate footer page
+   static async deactivateFooterPage(pageId, inputs, sections) {
+      try {
+         validators.id(pageId, 'Page ID');
+         validators.required(inputs, 'Page Inputs');
+         validators.required(sections, 'Page Sections');
+
+         // Update footer page content and styling with inactive status
+         const deactivateData = { ...inputs, active: false };
+         await PageUpdateService.updateFooterPage(pageId, deactivateData);
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await PageUpdateService.updatePageSection(section.id, section.active);
+            }
+         }
+
+         return { success: true, message: "Footer page deactivated successfully!" };
+      } catch (error) {
+         console.error('Error deactivating footer page:', error);
          throw error;
       }
    }
@@ -283,7 +585,7 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating peer landing page:', error);
          throw error;
@@ -326,7 +628,7 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating donation form:', error);
          throw error;
@@ -345,7 +647,7 @@ export class PageUpdateService {
             userId: userId
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating ticket purchase page:', error);
          throw error;
@@ -376,7 +678,7 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating peer fundraising page:', error);
          throw error;
@@ -408,7 +710,7 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating thank you page:', error);
          throw error;
@@ -441,7 +743,7 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating ticket page:', error);
          throw error;
@@ -455,7 +757,7 @@ export class PageUpdateService {
 
          const response = await api.put(`/sections/update/${id}`, { active: active });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating page section:', error);
          throw error;
@@ -550,7 +852,7 @@ export class PageUpdateService {
             },
          });
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating about page:', error);
          throw error;
@@ -568,7 +870,7 @@ export class UserUpdateService {
 
          const response = await api.put(`/user/update/${id}`, data);
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating user:', error);
          throw error;
@@ -582,7 +884,7 @@ export class UserUpdateService {
 
          const response = await api.put(`/user_organization/update/${id}`);
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating user organization relation:', error);
          throw error;
@@ -600,7 +902,7 @@ export class DesignationUpdateService {
 
          const response = await api.put(`/designation/update/${id}`, data);
          
-         return response.success ? response.data : null;
+         return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating designation:', error);
          throw error;

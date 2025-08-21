@@ -9,6 +9,8 @@ const EditAboutLayout = ({params, children}) => {
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isSaving, setIsSaving] = useState(false)
+   const [isPublishing, setIsPublishing] = useState(false)
+   const [isDeactivating, setIsDeactivating] = useState(false)
    
    const organizationId = params.organizationId
    const links = [
@@ -56,7 +58,7 @@ const EditAboutLayout = ({params, children}) => {
       // Reset error state
       setError(false)
       setErrorMessage("")
-      setIsSaving(true)
+      setIsPublishing(true)
 
       try {
          // Validate required fields for publishing
@@ -73,7 +75,7 @@ const EditAboutLayout = ({params, children}) => {
          if (missingFields.length > 0) {
             setError(true)
             setErrorMessage(`Please fill in the following required fields to publish: ${missingFields.join(", ")}`)
-            setIsSaving(false)
+            setIsPublishing(false)
             return
          }
 
@@ -91,9 +93,12 @@ const EditAboutLayout = ({params, children}) => {
             }
          }
 
+         // Update the context to reflect the new active status
+         setInputs(prev => ({ ...prev, active: true }))
+
          // Success feedback
          console.log("About page published successfully!")
-         setIsSaving(false)
+         setIsPublishing(false)
          
          // Optional: Show success message or toast notification
          // You can add a toast notification here if you have a notification system
@@ -102,13 +107,64 @@ const EditAboutLayout = ({params, children}) => {
          console.error("Error publishing about page:", err)
          setError(true)
          setErrorMessage(err.message || "Failed to publish about page. Please try again.")
-         setIsSaving(false)
+         setIsPublishing(false)
+      }
+   }
+
+   const handleDeactivate = async() => {
+      // Reset error state
+      setError(false)
+      setErrorMessage("")
+      setIsDeactivating(true)
+
+      try {
+         // Get the about page ID from the context
+         const aboutPageId = inputs.id
+
+         // Update about page content and styling with inactive status
+         const deactivateData = { ...inputs, active: false }
+         await updateAboutPage(aboutPageId, deactivateData)
+         
+         // Update section visibility states
+         for (const section of sections) {
+            if (section.id) {
+               await updatePageSection(section.id, section.active)
+            }
+         }
+
+         // Update the context to reflect the new inactive status
+         setInputs(prev => ({ ...prev, active: false }))
+
+         // Success feedback
+         console.log("About page deactivated successfully!")
+         setIsDeactivating(false)
+         
+         // Optional: Show success message or toast notification
+         // You can add a toast notification here if you have a notification system
+
+      } catch (err) {
+         console.error("Error deactivating about page:", err)
+         setError(true)
+         setErrorMessage(err.message || "Failed to deactivate about page. Please try again.")
+         setIsDeactivating(false)
       }
    }
 
    return (
       <div className="w-full h-full bg-gray-50">
-         <Navbar organizationId={organizationId} links={links} title={"About Page"} handleSave={handleSave} handlePublish={handlePublish} isSaving={isSaving} status={inputs.active ? 'active' : 'draft'}/>
+         <Navbar 
+            organizationId={organizationId} 
+            links={links} 
+            title={"About Page"} 
+            handleSave={handleSave} 
+            handlePublish={handlePublish} 
+            handleDeactivate={handleDeactivate}
+            isSaving={isSaving} 
+            isPublishing={isPublishing}
+            isDeactivating={isDeactivating}
+            status={inputs.active ? 'active' : 'draft'}
+            pageType="about"
+         />
          
          {/* Error Display */}
          {error && (

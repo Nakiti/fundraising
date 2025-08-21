@@ -61,7 +61,7 @@ export const updateSection = asyncHandler(async (req, res) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to update section', err));
       if (data.affectedRows === 0) reject(new NotFoundError('Section'));
-      sendUpdated(res, data, 'Section updated successfully');
+                     sendUpdated(res, { success: true }, 'Section updated successfully');
       resolve();
     })
   })

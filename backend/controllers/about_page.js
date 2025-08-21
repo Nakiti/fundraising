@@ -285,14 +285,14 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
   }
   
   // Only validate required fields when publishing (active = true)
-  if (active === true || active === 'true') {
-    if (!title) {
-      throw new ValidationError('Title is required to publish the page');
-    }
-    if (!headline) {
-      throw new ValidationError('Headline is required to publish the page');
-    }
-  }
+  // if (active === true || active === 'true') {
+  //   if (!title) {
+  //     throw new ValidationError('Title is required to publish the page');
+  //   }
+  //   if (!headline) {
+  //     throw new ValidationError('Headline is required to publish the page');
+  //   }
+  // }
 
   return new Promise((resolve, reject) => {
     upload.fields([

@@ -229,6 +229,122 @@ export class PageService {
          throw error;
       }
    }
+
+   // Get header page
+   static async getHeaderPage(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/header_page/get/${organizationId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching header page:', error);
+         throw error;
+      }
+   }
+
+   // Get footer page
+   static async getFooterPage(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/footer_page/get/${organizationId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching footer page:', error);
+         throw error;
+      }
+   }
+
+   // Update landing page
+   static async updateLandingPage(organizationId, data) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.put(`/landing_page/update/${organizationId}`, data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error updating landing page:', error);
+         throw error;
+      }
+   }
+
+   // Update about page
+   static async updateAboutPage(aboutPageId, data) {
+      try {
+         validators.id(aboutPageId, 'About Page ID');
+         const response = await api.put(`/about_page/update/${aboutPageId}`, data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error updating about page:', error);
+         throw error;
+      }
+   }
+
+   // Update header page
+   static async updateHeaderPage(headerPageId, data) {
+      try {
+         validators.id(headerPageId, 'Header Page ID');
+         const response = await api.put(`/header_page/update/${headerPageId}`, data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error updating header page:', error);
+         throw error;
+      }
+   }
+
+   // Update footer page
+   static async updateFooterPage(footerPageId, data) {
+      try {
+         validators.id(footerPageId, 'Footer Page ID');
+         const response = await api.put(`/footer_page/update/${footerPageId}`, data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error updating footer page:', error);
+         throw error;
+      }
+   }
+
+   // Create landing page
+   static async createLandingPage(data) {
+      try {
+         const response = await api.post('/landing_page/create', data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating landing page:', error);
+         throw error;
+      }
+   }
+
+   // Create about page
+   static async createAboutPage(data) {
+      try {
+         const response = await api.post('/about_page/create', data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating about page:', error);
+         throw error;
+      }
+   }
+
+   // Create header page
+   static async createHeaderPage(data) {
+      try {
+         const response = await api.post('/header_page/create', data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating header page:', error);
+         throw error;
+      }
+   }
+
+   // Create footer page
+   static async createFooterPage(data) {
+      try {
+         const response = await api.post('/footer_page/create', data);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating footer page:', error);
+         throw error;
+      }
+   }
 }
 
 // Organization Services

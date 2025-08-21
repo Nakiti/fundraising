@@ -93,7 +93,7 @@ export const updatePeerFundraisingPage = asyncHandler(async (req, res) => {
           reject(new NotFoundError('Peer fundraising page'));
           return;
         }
-        sendUpdated(res, data, 'Peer fundraising page updated successfully');
+                       sendUpdated(res, { success: true }, 'Peer fundraising page updated successfully');
       resolve();
       })
     })

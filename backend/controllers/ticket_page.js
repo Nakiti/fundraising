@@ -121,7 +121,7 @@ export const updateTicketPage = asyncHandler(async (req, res) => {
           return;
         }
         
-        sendUpdated(res, data, 'Ticket page updated successfully');
+                       sendUpdated(res, { success: true }, 'Ticket page updated successfully');
       resolve();
       })
     })

@@ -212,6 +212,52 @@ export class OrganizationCreateService {
       }
    }
 
+   // Create header page
+   static async createHeaderPage(organizationId, userId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.id(userId, 'User ID');
+
+         const formData = new FormData();
+         formData.append("organization_id", organizationId);
+         formData.append("user_id", userId);
+
+         const response = await api.post('/header_page/create', formData, {
+            headers: {
+               'Content-Type': 'multipart/form-data',
+            },
+         });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating header page:', error);
+         throw error;
+      }
+   }
+
+   // Create footer page
+   static async createFooterPage(organizationId, userId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.id(userId, 'User ID');
+
+         const formData = new FormData();
+         formData.append("organization_id", organizationId);
+         formData.append("user_id", userId);
+
+         const response = await api.post('/footer_page/create', formData, {
+            headers: {
+               'Content-Type': 'multipart/form-data',
+            },
+         });
+         
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error creating footer page:', error);
+         throw error;
+      }
+   }
+
    // Create page section
    static async createPageSection(organizationId, pageType, pageReferenceId, sectionName, active = true, userId = null) {
       try {
@@ -278,6 +324,47 @@ export class OrganizationCreateService {
          console.log('About page sections initialized successfully');
       } catch (error) {
          console.error('Error initializing about page sections:', error);
+         throw error;
+      }
+   }
+
+   // Initialize header page sections
+   static async initializeHeaderPageSections(organizationId, headerPageId, userId) {
+      try {
+         const sections = [
+            { name: "logo", active: true },
+            { name: "navigation", active: true },
+            { name: "styling", active: false }
+         ];
+
+         const createPromises = sections.map(section => 
+            this.createPageSection(organizationId, 'header', headerPageId, section.name, section.active, userId)
+         );
+
+         await Promise.all(createPromises);
+         console.log('Header page sections initialized successfully');
+      } catch (error) {
+         console.error('Error initializing header page sections:', error);
+         throw error;
+      }
+   }
+
+   // Initialize footer page sections
+   static async initializeFooterPageSections(organizationId, footerPageId, userId) {
+      try {
+         const sections = [
+            { name: "content", active: true },
+            { name: "social", active: true }
+         ];
+
+         const createPromises = sections.map(section => 
+            this.createPageSection(organizationId, 'footer', footerPageId, section.name, section.active, userId)
+         );
+
+         await Promise.all(createPromises);
+         console.log('Footer page sections initialized successfully');
+      } catch (error) {
+         console.error('Error initializing footer page sections:', error);
          throw error;
       }
    }

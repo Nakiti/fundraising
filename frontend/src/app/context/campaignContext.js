@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useCallback } from "react";
 import { Services, useApi, useToast } from "../services";
 
 export const CampaignContext = createContext();
@@ -76,6 +76,7 @@ export const CampaignContextProvider = ({ children }) => {
          [name]: checked
       }));
       setHasUnsavedChanges(true);
+      setPageHasChanges('questions', true);
    };
 
    const handleCampaignDetailsChange = (e) => {
@@ -85,6 +86,17 @@ export const CampaignContextProvider = ({ children }) => {
          [name]: value
       }));
       setHasUnsavedChanges(true);
+      
+      // Update page-specific changes based on the field being changed
+      if (['campaignName', 'internalName', 'goal', 'url'].includes(name)) {
+         setPageHasChanges('about', true);
+      }
+      if (['contactEmail', 'contactPhone'].includes(name)) {
+         setPageHasChanges('contact', true);
+      }
+      if (['socialTitle', 'socialDescription', 'campaignUrl'].includes(name)) {
+         setPageHasChanges('sharing', true);
+      }
    };
 
    // Function to mark changes as saved
@@ -98,6 +110,16 @@ export const CampaignContextProvider = ({ children }) => {
          tickets,
          faqs,
          customQuestions
+      });
+      // Reset all page changes
+      setPageChanges({
+         about: false,
+         contact: false,
+         sharing: false,
+         questions: false,
+         designations: false,
+         tickets: false,
+         faqs: false
       });
    };
 
@@ -138,25 +160,29 @@ export const CampaignContextProvider = ({ children }) => {
    const setSelectedDesignationsWithTracking = (designations) => {
       setSelectedDesignations(designations);
       setHasUnsavedChanges(true);
+      setPageHasChanges('designations', true);
    };
 
    const setTicketsWithTracking = (tickets) => {
       setTickets(tickets);
       setHasUnsavedChanges(true);
+      setPageHasChanges('tickets', true);
    };
 
    const setFaqsWithTracking = (faqs) => {
       setFaqs(faqs);
       setHasUnsavedChanges(true);
+      setPageHasChanges('faqs', true);
    };
 
    const setCustomQuestionsWithTracking = (questions) => {
       setCustomQuestions(questions);
       setHasUnsavedChanges(true);
+      setPageHasChanges('questions', true);
    };
 
    // Main function to fetch all campaign data
-   const fetchCampaignData = async (campaignId, organizationId) => {
+   const fetchCampaignData = useCallback(async (campaignId, organizationId) => {
       // Validate required parameters
       if (!campaignId) {
          console.warn('No campaign ID provided for fetchCampaignData');
@@ -378,7 +404,7 @@ export const CampaignContextProvider = ({ children }) => {
          setLoading(false);
          console.log('Campaign data loading finished');
       }
-   };
+   }, [fetchCampaignDetails, fetchPageSections, fetchThankYouPage, fetchTicketPage, fetchDonationPage, fetchPeerLandingPage, fetchPeerFundraisingPage, fetchTicketPurchasePage, fetchActiveDesignations, fetchCustomQuestions, fetchCampaignDesignations, fetchFaqs, showError]);
 
    const clearError = () => {
       setError(null);

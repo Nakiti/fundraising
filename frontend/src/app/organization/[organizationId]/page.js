@@ -19,7 +19,7 @@ const Organization = ({ params }) => {
 
   // API hooks for data fetching
   const { execute: fetchOrganization, loading: orgLoading } = useApi(Services.Organization.getOrganization);
-  const { execute: fetchCampaigns, loading: campaignsLoading } = useApi(Services.Campaign.getCampaignsFiltered);
+  const { execute: fetchCampaigns, loading: campaignsLoading } = useApi(Services.Campaign.getFilteredCampaigns);
 
    const showMoreCampaigns = () => {
       setVisibleCampaigns((prev) => prev + 3);
