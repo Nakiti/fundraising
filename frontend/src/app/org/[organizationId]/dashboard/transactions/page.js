@@ -32,27 +32,41 @@ const Transactions = ({params}) => {
    }, [])
 
    return (
-      <div className="w-full h-full">
-         {error && <ErrorModal message={errorMessage} setError={setError} />}
-         <div className="bg-gray-100 w-full overflow-y-auto rounded-sm p-6">
-            <div className="bg-white p-4 rounded-md h-full">
-               <div className="flex flex-row p-6 w-full justify-between items-center">
-                  <h1 className="text-4xl">Transactions</h1>
-                  <button className="bg-blue-700 font-semibold py-3 px-8 rounded-md text-md text-white">
-                     Add Offline Transaction 
-                  </button>
+      <div className="w-full bg-gray-50">
+         <div className="p-6 space-y-6">
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+               <div>
+                  <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+                  <p className="text-gray-600 mt-1">View and manage all transaction records</p>
                </div>
+               <button className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Add Offline Transaction</span>
+               </button>
+            </div>
 
-               <Summary />
-               <div className="px-8">
+            {/* Summary Cards */}
+            {data && <Summary data={data}/>}
+
+            {/* Search and Filters */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+               <div className="flex flex-col lg:flex-row lg:items-end gap-4">
                   <Searchbar setData={setData} organizationId={organizationId}/>
                   <Filters setData={setData} organizationId={organizationId}/>
                </div>
-               <div className="">
-                  <Table setData={setData} data={data}/>
-               </div>
+            </div>
+
+            {/* Table Section */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+               <Table setData={setData} data={data}/>
             </div>
          </div>
+
+         {/* Error Modal */}
+         {error && <ErrorModal message={errorMessage} setError={setError} />}
       </div>
    )
 }

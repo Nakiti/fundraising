@@ -40,7 +40,7 @@ const Campaigns = ({params}) => {
    }, [organizationId])
 
    return (
-      <div className="w-full h-full bg-gray-50">
+      <div className="w-full bg-gray-50">
          <div className="p-6 space-y-6">
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

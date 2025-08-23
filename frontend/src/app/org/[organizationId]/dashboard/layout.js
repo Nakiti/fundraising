@@ -18,7 +18,7 @@ const DashboardLayout = ({params, children }) => {
       {isClient && <Sidebar organizationId={organizationId}/>}
 
       {/* Main Content */}
-      <div className="flex-1 bg-gray-50 overflow-y-auto">
+      <div className="flex-1 bg-gray-50 overflow-y-auto min-h-0">
         {isClient && children}
       </div>
     </div>

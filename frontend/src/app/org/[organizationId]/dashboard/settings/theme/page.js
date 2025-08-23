@@ -19,9 +19,9 @@ const Theme = ({params}) => { //need to integrate with db
    const {handleImageUpload, imagePreview} = useImageUpload()
 
    return (
-      <div className="h-full w-full bg-gray-50 overflow-y-auto">
+      <div className="w-full bg-gray-50">
          <div className="p-6 bg-gray-50">
-            <div className="w-full h-full p-8 bg-white rounded-lg overflow-y-auto">
+            <div className="w-full p-8 bg-white rounded-lg">
                <Link 
                   href={`/org/${organizationId}/dashboard/settings`}
                   className="text-gray-700 flex flex-row items-center space-x-2"

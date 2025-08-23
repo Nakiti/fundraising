@@ -55,7 +55,7 @@ export const getDashboardSummary = (req, res) => {
   const summaryQuery = `
     SELECT 
       COUNT(DISTINCT t.id) as totalDonations,
-      COUNT(DISTINCT t.donor_id) as newSupporters,
+      COUNT(DISTINCT CASE WHEN t.donor_id IS NOT NULL THEN t.donor_id END) as newSupporters,
       COALESCE(SUM(t.amount), 0) as totalRaised,
       COUNT(DISTINCT c.id) as activeCampaigns
     FROM transactions t
@@ -79,7 +79,7 @@ export const getDashboardSummary = (req, res) => {
   const previousSummaryQuery = `
     SELECT 
       COUNT(DISTINCT t.id) as totalDonations,
-      COUNT(DISTINCT t.donor_id) as newSupporters,
+      COUNT(DISTINCT CASE WHEN t.donor_id IS NOT NULL THEN t.donor_id END) as newSupporters,
       COALESCE(SUM(t.amount), 0) as totalRaised,
       COUNT(DISTINCT c.id) as activeCampaigns
     FROM transactions t
@@ -165,12 +165,15 @@ export const getRecentDonations = (req, res) => {
       t.amount,
       t.date,
       t.status,
-      d.first_name,
-      d.last_name,
+      CASE 
+        WHEN d.is_guest = TRUE THEN CONCAT(d.first_name, ' (Guest)')
+        ELSE COALESCE(d.first_name, 'Anonymous')
+      END as first_name,
+      COALESCE(d.last_name, 'Donor') as last_name,
       d.email,
       COALESCE(cd.external_name, 'Unknown Campaign') as campaign_name
     FROM transactions t
-    INNER JOIN donors d ON t.donor_id = d.id
+    LEFT JOIN donors d ON t.donor_id = d.id
     LEFT JOIN campaign_details cd ON t.campaign_id = cd.campaign_id
     WHERE t.organization_id = ?
     AND t.status = 'completed'
@@ -225,7 +228,7 @@ export const getTopCampaigns = (req, res) => {
       COALESCE(cd.external_name, 'Unnamed Campaign') as name,
       COALESCE(cd.goal, 0) as goal,
       COALESCE(SUM(t.amount), 0) as raised,
-      COUNT(DISTINCT t.donor_id) as donors,
+      COUNT(DISTINCT CASE WHEN t.donor_id IS NOT NULL THEN t.donor_id END) as donors,
       c.status
     FROM campaigns c
     LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
@@ -402,11 +405,20 @@ export const getDashboardNotifications = (req, res) => {
   const query = `
     SELECT 
       'donation' as type,
-      CONCAT(d.first_name, ' ', d.last_name, ' donated $', t.amount) as message,
+      CONCAT(
+        CASE 
+          WHEN d.is_guest = TRUE THEN CONCAT(d.first_name, ' (Guest)')
+          ELSE COALESCE(d.first_name, 'Anonymous')
+        END, 
+        ' ', 
+        COALESCE(d.last_name, 'Donor'), 
+        ' donated $', 
+        t.amount
+      ) as message,
       t.date as time,
       t.id as reference_id
     FROM transactions t
-    INNER JOIN donors d ON t.donor_id = d.id
+    LEFT JOIN donors d ON t.donor_id = d.id
     WHERE t.organization_id = ?
     AND t.status = 'completed'
     AND t.date >= DATE_SUB(NOW(), INTERVAL 7 DAY)

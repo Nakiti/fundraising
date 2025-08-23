@@ -14,13 +14,47 @@ import {
 } from "../utils/errors.js"
 
 export const createTransaction = asyncHandler(async (req, res) => {
-  const { campaign_id, organization_id, donor_id, amount, status, method } = req.body;
+  const { 
+    campaign_id, 
+    organization_id, 
+    donor_id, 
+    amount, 
+    status, 
+    method,
+    // Stripe-specific fields
+    stripe_payment_intent_id,
+    stripe_charge_id,
+    stripe_customer_id,
+    processing_fee,
+    net_amount,
+    application_fee,
+    payment_method_type,
+    designation_id
+  } = req.body;
   
-  if (!campaign_id || !organization_id || !donor_id || !amount || !status || !method) {
-    throw new ValidationError('Missing required fields: campaign_id, organization_id, donor_id, amount, status, method');
+  if (!campaign_id || !organization_id || !amount || !status || !method) {
+    throw new ValidationError('Missing required fields: campaign_id, organization_id, amount, status, method');
   }
 
-  const query = "INSERT INTO transactions (`campaign_id`, `organization_id`, `donor_id`, `amount`, `status`, `method`, `date`) VALUES (?)"
+  const query = `
+    INSERT INTO transactions (
+      \`campaign_id\`, 
+      \`organization_id\`, 
+      \`donor_id\`, 
+      \`amount\`, 
+      \`status\`, 
+      \`method\`, 
+      \`date\`,
+      \`stripe_payment_intent_id\`,
+      \`stripe_charge_id\`,
+      \`stripe_customer_id\`,
+      \`processing_fee\`,
+      \`net_amount\`,
+      \`application_fee\`,
+      \`payment_method_type\`,
+      \`designation_id\`
+    ) VALUES (?)
+  `;
 
   const values = [
     campaign_id,
@@ -29,13 +63,24 @@ export const createTransaction = asyncHandler(async (req, res) => {
     amount,
     status,
     method, 
-    new Date()
+    new Date(),
+    stripe_payment_intent_id || null,
+    stripe_charge_id || null,
+    stripe_customer_id || null,
+    processing_fee || 0,
+    net_amount || amount, // Default to full amount if no processing fee
+    application_fee || 0,
+    payment_method_type || 'card',
+    designation_id || null
   ]
 
   return new Promise((resolve, reject) => {
     db.query(query, [values], (err, data) => {
       if (err) reject(new DatabaseError('Failed to create transaction', err));
-      sendCreated(res, { transactionId: data.insertId }, 'Transaction created successfully');
+      sendCreated(res, { 
+        transactionId: data.insertId,
+        stripePaymentIntentId: stripe_payment_intent_id 
+      }, 'Transaction created successfully');
       resolve();
     })
   })
@@ -91,11 +136,16 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
   }
 
   const query = `
-    SELECT transactions.*, campaign_details.external_name , donors.first_name, donors.last_name, donors.email
+    SELECT transactions.*, campaign_details.external_name, 
+           CASE 
+             WHEN donors.is_guest = TRUE THEN CONCAT(donors.first_name, ' (Guest)')
+             ELSE donors.first_name
+           END as first_name, 
+           donors.last_name, donors.email, donors.is_guest
     FROM transactions 
     INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
     INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
-    INNER JOIN donors ON transactions.donor_id = donors.id 
+    LEFT JOIN donors ON transactions.donor_id = donors.id 
     WHERE transactions.organization_id = ?
   `;
 

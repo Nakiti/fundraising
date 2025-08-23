@@ -2,10 +2,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
-   database: {
+   database: { 
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
+      password: process.env.DB_PASSWORD, 
       database: process.env.DB,
       port: process.env.DB_PORT,
    }, 
@@ -29,5 +29,9 @@ export const config = {
    rateLimit: {
       windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
       maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || (process.env.NODE_ENV === "production" ? 100 : 1000), // 100 in prod, 1000 in dev
+   },
+   stripe: {
+      secretKey: process.env.STRIPE_SECRET_KEY,
+      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
    }
 };

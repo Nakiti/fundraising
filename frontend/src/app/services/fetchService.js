@@ -596,6 +596,77 @@ export class ContentService {
    }
 }
 
+// Dashboard Services
+export class DashboardService {
+   // Get dashboard summary statistics
+   static async getDashboardSummary(organizationId, period = 'week') {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/dashboard/summary/${organizationId}`, {
+            params: { period }
+         });
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching dashboard summary:', error);
+         throw error;
+      }
+   }
+
+   // Get recent donations
+   static async getRecentDonations(organizationId, limit = 10) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/dashboard/recent-donations/${organizationId}`, {
+            params: { limit }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching recent donations:', error);
+         throw error;
+      }
+   }
+
+   // Get top campaigns
+   static async getTopCampaigns(organizationId, limit = 5) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/dashboard/top-campaigns/${organizationId}`, {
+            params: { limit }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching top campaigns:', error);
+         throw error;
+      }
+   }
+
+   // Get organization status
+   static async getOrganizationStatus(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/dashboard/organization-status/${organizationId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching organization status:', error);
+         throw error;
+      }
+   }
+
+   // Get dashboard notifications
+   static async getDashboardNotifications(organizationId, limit = 10) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/dashboard/notifications/${organizationId}`, {
+            params: { limit }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching dashboard notifications:', error);
+         throw error;
+      }
+   }
+}
+
 // Legacy function exports for backward compatibility
 export const getCampaign = CampaignService.getCampaign;
 export const getCampaignDetails = CampaignService.getCampaignDetails;
@@ -637,3 +708,10 @@ export const getTransactionSearch = TransactionService.searchTransactions;
 export const getCustomQuestions = ContentService.getCustomQuestions;
 export const getCampaignTickets = ContentService.getCampaignTickets;
 export const getFaqs = ContentService.getFaqs;
+
+// Dashboard function exports
+export const getDashboardSummary = DashboardService.getDashboardSummary;
+export const getRecentDonations = DashboardService.getRecentDonations;
+export const getTopCampaigns = DashboardService.getTopCampaigns;
+export const getOrganizationStatus = DashboardService.getOrganizationStatus;
+export const getDashboardNotifications = DashboardService.getDashboardNotifications;

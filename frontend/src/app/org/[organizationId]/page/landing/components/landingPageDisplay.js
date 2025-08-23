@@ -320,7 +320,7 @@ const LandingPageDisplay = () => {
                       </div>
                    )}
                   
-                  <button 
+                  {/* <button 
                      className={`font-semibold transition-all duration-300 flex items-center space-x-2 ${showHoverEffects ? 'hover:scale-105' : ''}`}
                      style={{
                         backgroundColor: inputs.b_color || customStyles.accentColor,
@@ -332,7 +332,7 @@ const LandingPageDisplay = () => {
                   >
                      <span>Learn More</span>
                      {showHeroIcons && <FaArrowRight className="w-4 h-4" />}
-                  </button>
+                  </button> */}
                </div>
             </div>
          )}
@@ -421,12 +421,12 @@ const LandingPageDisplay = () => {
                             >
                                {item.description}
                             </p>
-                            <button 
+                            {/* <button 
                                className="text-gray-700 font-medium hover:text-gray-900 transition-colors duration-200 flex items-center space-x-2"
                             >
                                <span>Learn More</span>
                                {showHeroIcons && <FaArrowRight className="w-3 h-3" />}
-                            </button>
+                            </button> */}
                          </div>
                       </div>
                    ))}
@@ -511,7 +511,7 @@ const LandingPageDisplay = () => {
                                   <span className="text-xs font-medium text-gray-700">75% Funded</span>
                                </div>
                             )}
-                            <button 
+                            {/* <button 
                                className={`w-full font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${showHoverEffects ? 'hover:bg-gray-50' : ''}`}
                                style={{
                                   backgroundColor: inputs.b_color || customStyles.accentColor,
@@ -523,7 +523,7 @@ const LandingPageDisplay = () => {
                             >
                                <span>Learn More</span>
                                {showHeroIcons && <FaArrowRight className="w-3 h-3" />}
-                            </button>
+                            </button> */}
                          </div>
                       </div>
                    ))}

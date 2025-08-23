@@ -436,58 +436,6 @@ const LandingPageDesign = () => {
                ))}
             </div>
          </div>
-
-         {/* Color Preview Section */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Color Preview</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-               {Object.entries(inputs).filter(([key]) => key.includes('color')).map(([key, value]) => (
-                  <div key={key} className="text-center">
-                     <div 
-                        className="w-full h-12 mb-1.5 border border-gray-200"
-                        style={{ 
-                           backgroundColor: value,
-                           borderRadius: "4px"
-                        }}
-                     />
-                     <p className="text-xs font-medium text-gray-700 capitalize">
-                        {key.replace('_', ' ')}
-                     </p>
-                     <p className="text-xs text-gray-400 font-mono">{value}</p>
-                  </div>
-               ))}
-            </div>
-         </div>
-
-         {/* Layout Preview */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Layout Preview</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-               {layoutOptions.map((option, index) => (
-                  <div key={index} className="text-center p-3 bg-gray-50 border border-gray-100" style={{borderRadius: "4px"}}>
-                     <div className="text-sm font-semibold text-blue-600 mb-1">
-                        {inputs[option.name] || option.defaultValue}{option.type === 'range' ? 'px' : ''}
-                     </div>
-                     <div className="text-xs text-gray-500">{option.label}</div>
-                  </div>
-               ))}
-            </div>
-         </div>
-
-         {/* Typography Preview */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Typography Preview</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-               {fontSizeOptions.map((option, index) => (
-                  <div key={index} className="text-center p-3 bg-gray-50 border border-gray-100" style={{borderRadius: "4px"}}>
-                     <div className="text-sm font-semibold text-green-600 mb-1">
-                        {inputs[option.name] || option.defaultValue}px
-                     </div>
-                     <div className="text-xs text-gray-500">{option.label}</div>
-                  </div>
-               ))}
-            </div>
-         </div>
       </div>
    )
 }

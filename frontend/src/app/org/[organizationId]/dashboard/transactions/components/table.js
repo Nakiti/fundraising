@@ -30,59 +30,88 @@ const Table = ({data, setData}) => {
    };
 
    return (
-      <div className="px-8 mt-4">
-         <div className="overflow-x-auto bg-white">
-            <table className="border-gray-300 w-full">
-               <thead className=" border-b border-gray-300">
+      <div className="overflow-hidden">
+         <div className="overflow-x-auto">
+            <table className="w-full">
+               <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                      {columns.map((column, index) => (
-                        <th 
-                           key={index} 
-                           className="px-4 whitespace-nowrap py-3 text-left text-gray-700 text-sm font-semibold cursor-pointer"
-                           onClick={() => sortData(column.id)}
+                        <th
+                           key={index}
+                           className={`px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                              column.sortable ? 'cursor-pointer hover:text-gray-700 transition-colors' : ''
+                           }`}
+                           onClick={() => column.sortable && sortData(column.id)}
                         >
-                           <div className="flex items-center justify-center space-x-2">
-                              {column.label}
-                              {column.sortable && 
-                                 <div className="h-full flex items-center justify-center cursor-pointer">
-                                    {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? 
-                                       <FaSortUp className="ml-2 text-blue-700" /> : 
-                                       <FaSortDown className="ml-2 text-blue-700" />
-                                    }
-                                 </div>
-                              }
+                           <div className="flex items-center space-x-1">
+                              <span>{column.label}</span>
+                              {column.sortable && (
+                                 <span className="text-gray-400">
+                                    {sortConfig.key === column.id && sortConfig.direction === 'ascending' ? (
+                                       <FaSortUp className="w-3 h-3 text-blue-600" />
+                                    ) : (
+                                       <FaSortDown className="w-3 h-3 text-blue-600" />
+                                    )}
+                                 </span>
+                              )}
                            </div>
                         </th>
                      ))}
                   </tr>
                </thead>
                
-               {/* Table Body */}
-               <tbody>
-                  {data && data.map((row, index) => (
-                     <tr key={index} className="border-b border-gray-300 hover:bg-gray-50 transition-colors duration-200">
-                        <td className="px-4 py-3 whitespace-nowrap text-md text-center">{row.first_name} {row.last_name}</td>
-                        <td className="px-4 py-3 text-md text-center">{row.email}</td>
-                        <td className="px-4 py-3 text-md text-center">{new Date(row.date).toLocaleDateString("en-us")}</td>
-                        <td className="px-4 py-3 text-md text-center">{row.amount}</td>
-                        <td className="px-4 py-3 text-md text-center">{row.external_name}</td>
-                        <td className="px-4 py-3 text-md text-center">{row.method}</td>
-                        <td className="px-4 py-2 text-center">
-                           <span
-                           className={`px-4 py-1 w-24 rounded-full text-white text-xs font-medium ${
-                              row.status === "failed" ? "bg-red-700" : row.status === "completed" ? "bg-green-700" : "bg-yellow-500"
-                           }`}
-                           >
-                           {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
-                           </span>
-                        </td>                      
-                     </tr>
-                  ))}
-               </tbody>
+               {data && data.length > 0 && (
+                  <tbody className="bg-white divide-y divide-gray-200">
+                     {data.map((row, index) => (
+                        <tr key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {row.first_name} {row.last_name}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {row.email}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {new Date(row.date).toLocaleDateString("en-US", {
+                                 year: 'numeric',
+                                 month: 'short',
+                                 day: 'numeric'
+                              })}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              ${Number(row.amount).toLocaleString()}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {row.external_name}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {row.method}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                 className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                                    row.status === "failed" 
+                                       ? "bg-red-100 text-red-800" 
+                                       : row.status === "completed" 
+                                       ? "bg-green-100 text-green-800"
+                                       : "bg-yellow-100 text-yellow-800"
+                                 }`}
+                              >
+                                 {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
+                              </span>
+                           </td>                      
+                        </tr>
+                     ))}
+                  </tbody>
+               )}
             </table>
          </div>
+         
+         {(!data || data.length === 0) && (
+            <div className="text-center py-12">
+               <p className="text-gray-500 text-sm">No transactions found</p>
+            </div>
+         )}
       </div>
-
    )
 }
 

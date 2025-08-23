@@ -18,12 +18,12 @@ import DonationFormBackgroundSection from "../org/[organizationId]/campaign/comp
 import DonationFormHeaderSection from "../org/[organizationId]/campaign/components/previews/donationForm/sections/headerSection";
 import DonationFormButtonsSection from "../org/[organizationId]/campaign/components/previews/donationForm/sections/buttonsSection";
 import TicketPurchaseTitleSection from "../org/[organizationId]/campaign/components/previews/ticketPurchase/sections/titleSection";
+import MainSection from "../org/[organizationId]/campaign/components/previews/donationPage/sections/mainSection";
 
 export const initialDonationPageSections = [
    {id: 0, name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
-   {id: 1, name: "title", displayText: "Title Section", active: true, required: true, dropdown: false, content: <TitleSection />},
-   {id: 2, name: "desc", displayText: "Description Section", active: true, required: true, dropdown: false, content: <DescSection />},
-   {id: 3, name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
+   {id: 1, name: "main", displayText: "Main Section", active: true, required: true, dropdown: false, content: <MainSection />},
+   {id: 2, name: "donate", displayText: "Donate Section", active: true, required: true, dropdown: false, content: <DonateSection />},
 ]
 
 export const initialThankyouPageSections = [

@@ -89,38 +89,20 @@ export const updateHeaderPage = asyncHandler(async (req, res) => {
       logo, 
       organizationName, 
       tagline, 
-      showTagline,
-      showNavigation,
-      navigationItems,
-      showSearch,
-      showLoginButton,
-      showDonateButton,
+      description,
       bgColor,
       textColor,
-      accentColor,
-      headerHeight,
-      logoSize,
+      linkColor,
       fontSize,
-      fontWeight,
       borderBottom,
       borderColor,
       shadow,
-      logoPosition,
-      navigationPosition,
-      buttonPosition,
       active
     } = req.body
 
     if (!id) {
       throw new ValidationError('Header page ID is required')
     }
-
-    // Validate required fields for publishing
-    // if (active === 'true' || active === true) {
-    //   if (!logo || !organizationName) {
-    //     throw new ValidationError('Missing required fields: logo, organizationName')
-    //   }
-    // }
 
     let logoUrl = logo
     if (req.files && req.files.logo) {
@@ -134,53 +116,29 @@ export const updateHeaderPage = asyncHandler(async (req, res) => {
         logo = ?, 
         organization_name = ?, 
         tagline = ?, 
-        show_tagline = ?,
-        show_navigation = ?,
-        navigation_items = ?,
-        show_search = ?,
-        show_login_button = ?,
-        show_donate_button = ?,
+        description = ?,
         bg_color = ?,
         text_color = ?,
-        accent_color = ?,
-        header_height = ?,
-        logo_size = ?,
         font_size = ?,
-        font_weight = ?,
         border_bottom = ?,
         border_color = ?,
         shadow = ?,
-        logo_position = ?,
-        navigation_position = ?,
-        button_position = ?,
         active = ?,
         updated_at = NOW()
       WHERE id = ?
     `
-
+ 
     const values = [
       logoUrl,
       organizationName || "",
       tagline || "",
-      showTagline === 'true' || showTagline === true ? 1 : 0,
-      showNavigation === 'true' || showNavigation === true ? 1 : 0,
-      navigationItems ? JSON.stringify(navigationItems) : "[]",
-      showSearch === 'true' || showSearch === true ? 1 : 0,
-      showLoginButton === 'true' || showLoginButton === true ? 1 : 0,
-      showDonateButton === 'true' || showDonateButton === true ? 1 : 0,
+      description || "",
       bgColor || "#FFFFFF",
       textColor || "#000000",
-      accentColor || "#3B82F6",
-      headerHeight || "80px",
-      logoSize || "40px",
       fontSize || "16px",
-      fontWeight || "500",
       borderBottom === 'true' || borderBottom === true ? 1 : 0,
       borderColor || "#E5E7EB",
       shadow === 'true' || shadow === true ? 1 : 0,
-      logoPosition || "left",
-      navigationPosition || "center",
-      buttonPosition || "right",
       active === 'true' || active === true ? 1 : 0,
       id
     ]

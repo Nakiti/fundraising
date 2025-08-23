@@ -87,9 +87,9 @@ const Users = ({params}) => {
    };
 
    return (
-      <div className="h-full w-full bg-gray-50 overflow-y-auto ">
+      <div className="w-full bg-gray-50">
          <div className="p-6 bg-gray-50">
-            <div className="w-full h-full bg-white rounded-lg p-8">
+            <div className="w-full bg-white rounded-lg p-8">
                <Link 
                   href={`/org/${organizationId}/dashboard/settings`}
                   className="text-gray-700 flex flex-row items-center space-x-2"

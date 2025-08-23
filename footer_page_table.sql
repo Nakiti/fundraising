@@ -8,36 +8,25 @@ CREATE TABLE IF NOT EXISTS footer_pages (
     logo VARCHAR(500),
     organization_name VARCHAR(255),
     tagline VARCHAR(500),
-    show_tagline BOOLEAN DEFAULT TRUE,
     description TEXT,
-    show_description BOOLEAN DEFAULT TRUE,
-    contact_info TEXT,
-    show_contact_info BOOLEAN DEFAULT TRUE,
-    links TEXT,
-    show_links BOOLEAN DEFAULT TRUE,
-    social_links TEXT,
-    show_social_links BOOLEAN DEFAULT TRUE,
     
-    -- Styling fields
+    -- Contact section fields
+    address TEXT,
+    phone VARCHAR(50),
+    email VARCHAR(255),
+    business_hours TEXT,
+    contact_form_url VARCHAR(500),
+    
+    -- Social section fields
+    social_links JSON,
+    
+    -- Basic styling fields
     bg_color VARCHAR(20) DEFAULT '#1F2937',
     text_color VARCHAR(20) DEFAULT '#FFFFFF',
-    link_color VARCHAR(20) DEFAULT '#60A5FA',
-    footer_height VARCHAR(20) DEFAULT 'auto',
     font_size VARCHAR(20) DEFAULT '14px',
     border_top BOOLEAN DEFAULT TRUE,
     border_color VARCHAR(20) DEFAULT '#374151',
     shadow BOOLEAN DEFAULT FALSE,
-    
-    -- Layout options
-    footer_layout ENUM('simple', 'two-column', 'three-column', 'four-column') DEFAULT 'three-column',
-    content_alignment ENUM('left', 'center', 'right') DEFAULT 'left',
-    social_position ENUM('top', 'bottom', 'sidebar') DEFAULT 'bottom',
-    
-    -- Social media options
-    social_icon_size ENUM('small', 'medium', 'large') DEFAULT 'medium',
-    social_icon_color VARCHAR(20) DEFAULT '#FFFFFF',
-    social_layout ENUM('horizontal', 'vertical', 'grid') DEFAULT 'horizontal',
-    social_spacing ENUM('tight', 'normal', 'loose') DEFAULT 'normal',
     
     -- Status
     active BOOLEAN DEFAULT FALSE,

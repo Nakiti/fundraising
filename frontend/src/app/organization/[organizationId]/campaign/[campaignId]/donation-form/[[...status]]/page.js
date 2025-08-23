@@ -3,7 +3,8 @@ import { getCampaignDesignations, getCampaignDetails, getCustomQuestions, getDon
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
-import { FaCreditCard, FaPaypal, FaLock, FaHeart, FaArrowLeft } from "react-icons/fa"
+import { FaCreditCard, FaPaypal, FaLock, FaHeart, FaArrowLeft, FaSpinner } from "react-icons/fa"
+import StripeCheckout from "@/app/components/StripeCheckout"
 
 const DonationForm = ({params}) => {
    const [display, setDisplay] = useState(null)
@@ -11,9 +12,11 @@ const DonationForm = ({params}) => {
    const [campaignDetails, setCampaignDetails] = useState(null)
    const [defaultDesignation, setDefaultDesignation] = useState(null)
    const [selectedFund, setSelectedFund] = useState(null)
+   const [selectedAmount, setSelectedAmount] = useState(null)
    const [customAmount, setCustomAmount] = useState("")
    const [amount, setAmount] = useState(0)
    const [questions, setQuestions] = useState(null)
+   const [questionResponses, setQuestionResponses] = useState({})
    const [formData, setFormData] = useState({
       firstName: "",
       lastName: "",
@@ -23,21 +26,30 @@ const DonationForm = ({params}) => {
       city: "",
       phone: ""
    })
+   const [showStripePayment, setShowStripePayment] = useState(false)
+   const [paymentSuccess, setPaymentSuccess] = useState(false)
+   const [loading, setLoading] = useState(true)
+   const [error, setError] = useState("")
 
    const handleFundChange = (e) => {
-      setSelectedFund(e.target.value)
-      console.log(e.target.value)
-      console.log(designations)
+      const value = e.target.value
+      if (value === "select") {
+         setSelectedFund(null)
+      } else {
+         setSelectedFund(parseInt(value))
+      }
    }
 
    const handleAmountChange = (value) => {
-      setAmount(value)
+      setSelectedAmount(value)
+      setAmount(parseFloat(value) || 0)
       setCustomAmount("")
    }
 
    const handleCustomAmountChange = (e) => {
       const value = e.target.value
       setCustomAmount(value)
+      setSelectedAmount(null)
       setAmount(parseFloat(value) || 0)
    }
 
@@ -48,40 +60,146 @@ const DonationForm = ({params}) => {
       }))
    }
 
+   const handleQuestionResponse = (questionId, response) => {
+      setQuestionResponses(prev => ({
+         ...prev,
+         [questionId]: response
+      }))
+   }
+
+   const validateForm = () => {
+      if (amount <= 0) {
+         setError('Please select a donation amount')
+         return false
+      }
+      
+      if (!formData.firstName.trim()) {
+         setError('Please enter your first name')
+         return false
+      }
+      
+      if (!formData.lastName.trim()) {
+         setError('Please enter your last name')
+         return false
+      }
+      
+      if (!formData.email.trim()) {
+         setError('Please enter your email address')
+         return false
+      }
+      
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+         setError('Please enter a valid email address')
+         return false
+      }
+
+      // Check if fund selection is required and selected
+      if (designations && designations.length > 0 && selectedFund === null) {
+         setError('Please select a fund')
+         return false
+      }
+
+      setError("")
+      return true
+   }
+
+   const handlePaymentSuccess = (paymentData) => {
+      setPaymentSuccess(true)
+      console.log('Payment successful:', paymentData)
+      // Redirect to thank you page after successful payment
+      setTimeout(() => {
+         window.location.href = status ?
+            `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/preview` :
+            `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/`
+      }, 2000)
+   }
+
+   const handlePaymentError = (error) => {
+      console.error('Payment failed:', error)
+      setShowStripePayment(false)
+      setError('Payment failed. Please try again.')
+   }
+
+   const handleCreditCardClick = () => {
+      if (!validateForm()) {
+         return
+      }
+      setShowStripePayment(true)
+   }
+
    const status = params.status
    const campaignId = params.campaignId
    const organizationId = params.organizationId
 
    useEffect(() => {
       const fetchData = async() => {
-         const campaignResponse = await getCampaignDetails(campaignId)
-         
-         if (campaignResponse.status == "active" || status == "preview") {
-            setCampaignDetails(campaignResponse)
+         try {
+            setLoading(true)
+            setError("")
+            
+            const campaignResponse = await getCampaignDetails(campaignId)
+            
+            if (campaignResponse.status == "active" || status == "preview") {
+               setCampaignDetails(campaignResponse)
 
-            console.log(campaignResponse)
+               if (campaignResponse.default_designation != 0) {
+                  const defaultDesignationResponse = await getSingleDesignation(campaignResponse.default_designation)
+                  setDefaultDesignation(defaultDesignationResponse)
+               }
 
-            if (campaignResponse.default_designation != 0) {
-               const defaultDesignationResponse = await getSingleDesignation(campaignResponse.default_designation)
-               setDefaultDesignation(defaultDesignationResponse)
-               console.log(defaultDesignationResponse)
+               const displayResponse = await getDonationForm(campaignId)
+               setDisplay(displayResponse)
+
+               const designationResponse = await getCampaignDesignations(campaignId)
+               setDesignations(designationResponse)
+
+               const questionsResponse = await getCustomQuestions(campaignId)
+               setQuestions(questionsResponse)
+            } else {
+               setError("This campaign is not active")
             }
-
-            const displayResponse = await getDonationForm(campaignId)
-            setDisplay(displayResponse)
-
-            const designationResponse = await getCampaignDesignations(campaignId)
-            setDesignations(designationResponse)
-            console.log(designationResponse)
-
-            const questionsResponse = await getCustomQuestions(campaignId)
-            setQuestions(questionsResponse)
-            console.log(questionsResponse)
+         } catch (err) {
+            console.error('Error fetching donation form data:', err)
+            setError('Failed to load donation form. Please try again.')
+         } finally {
+            setLoading(false)
          }
       }
 
       fetchData()
-   }, [])
+   }, [campaignId, status])
+
+   if (loading) {
+      return (
+         <div className="w-full min-h-screen flex items-center justify-center">
+            <div className="text-center">
+               <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
+               <p className="text-gray-600">Loading donation form...</p>
+            </div>
+         </div>
+      )
+   }
+
+   if (error && !display) {
+      return (
+         <div className="w-full min-h-screen flex items-center justify-center">
+            <div className="text-center max-w-md mx-auto p-6">
+               <div className="text-red-600 text-6xl mb-4">⚠️</div>
+               <h2 className="text-xl font-semibold mb-2">Unable to Load Form</h2>
+               <p className="text-gray-600 mb-4">{error}</p>
+               <Link 
+                  href={`/organization/${organizationId}/campaigns`}
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+               >
+                  <FaArrowLeft className="mr-2" />
+                  Back to Campaigns
+               </Link>
+            </div>
+         </div>
+      )
+   }
 
    return (
       <div 
@@ -119,6 +237,13 @@ const DonationForm = ({params}) => {
                   </p>
                </div>
 
+               {/* Error Display */}
+               {error && (
+                  <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                     {error}
+                  </div>
+               )}
+
                {/* Main Form */}
                <div 
                   className="bg-white border border-slate-200 p-6 shadow-sm"
@@ -136,14 +261,14 @@ const DonationForm = ({params}) => {
                         Choose Your Amount
                      </h2>
                      <div className="grid grid-cols-3 gap-2 mb-3">
-                        {[display.button1, display.button2, display.button3, display.button4, display.button5].map((amount, index) => (
+                        {[display.button1, display.button2, display.button3, display.button4, display.button5].map((buttonAmount, index) => (
                            <button
                               key={index}
                               className={`p-3 border transition-all duration-200 text-center ${
-                                 amount === display.button1 ? 'border-slate-300' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                 selectedAmount === buttonAmount ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                               }`}
                               style={{ borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px' }}
-                              onClick={() => handleAmountChange(amount)}
+                              onClick={() => handleAmountChange(buttonAmount)}
                            >
                               <div 
                                  className="font-semibold text-sm"
@@ -152,14 +277,18 @@ const DonationForm = ({params}) => {
                                     fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
                                  }}
                               >
-                                 ${amount || '25'}
+                                 ${buttonAmount || '25'}
                               </div>
                            </button>
                         ))}
                         <input 
-                           className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-center text-sm"
+                           className={`p-3 border focus:outline-none transition-all duration-200 text-center text-sm ${
+                              customAmount ? 'border-blue-500 bg-blue-50' : 'border-slate-200 focus:border-slate-300'
+                           }`}
                            placeholder="Custom"
                            type="number"
+                           min="1"
+                           step="0.01"
                            value={customAmount}
                            onChange={handleCustomAmountChange}
                            style={{ 
@@ -184,7 +313,7 @@ const DonationForm = ({params}) => {
                      </h2>
                      <select 
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 bg-white text-sm"
-                        defaultValue="select"
+                        value={selectedFund !== null ? selectedFund : "select"}
                         onChange={handleFundChange}
                         style={{ 
                            borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
@@ -215,7 +344,7 @@ const DonationForm = ({params}) => {
                      <div className="grid grid-cols-2 gap-3 mb-3">
                         <input 
                            className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
-                           placeholder="First Name"
+                           placeholder="First Name *"
                            value={formData.firstName}
                            onChange={(e) => handleFormDataChange('firstName', e.target.value)}
                            style={{ 
@@ -225,7 +354,7 @@ const DonationForm = ({params}) => {
                         />
                         <input 
                            className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
-                           placeholder="Last Name"
+                           placeholder="Last Name *"
                            value={formData.lastName}
                            onChange={(e) => handleFormDataChange('lastName', e.target.value)}
                            style={{ 
@@ -236,7 +365,7 @@ const DonationForm = ({params}) => {
                      </div>
                      <input 
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-3 text-sm"
-                        placeholder="Email Address"
+                        placeholder="Email Address *"
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleFormDataChange('email', e.target.value)}
@@ -326,6 +455,8 @@ const DonationForm = ({params}) => {
                                     <input
                                        type="checkbox"
                                        className="w-4 h-4 rounded focus:ring-2 focus:ring-slate-500"
+                                       checked={questionResponses[item.id] || false}
+                                       onChange={(e) => handleQuestionResponse(item.id, e.target.checked)}
                                        style={{ 
                                           accentColor: display.b1_color || '#475569'
                                        }}
@@ -335,6 +466,8 @@ const DonationForm = ({params}) => {
                                        type="text"
                                        placeholder="Enter your response"
                                        className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                                       value={questionResponses[item.id] || ""}
+                                       onChange={(e) => handleQuestionResponse(item.id, e.target.value)}
                                        style={{ 
                                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
                                           fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
@@ -345,6 +478,8 @@ const DonationForm = ({params}) => {
                                        rows={3}
                                        placeholder="Enter your response"
                                        className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 resize-none text-sm"
+                                       value={questionResponses[item.id] || ""}
+                                       onChange={(e) => handleQuestionResponse(item.id, e.target.value)}
                                        style={{ 
                                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
                                           fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
@@ -403,8 +538,9 @@ const DonationForm = ({params}) => {
                                  fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
                               }}
                            >
-                              {designations && designations.length > 0  ? selectedFund && designations[selectedFund].title :
-                                 defaultDesignation && defaultDesignation.title
+                              {designations && designations.length > 0  ? 
+                                 (selectedFund !== null ? designations[selectedFund]?.title : 'Please select a fund') :
+                                 (defaultDesignation ? defaultDesignation.title : 'General Fund')
                               }
                            </span>
                         </div>
@@ -433,57 +569,92 @@ const DonationForm = ({params}) => {
                      </div>
                   </div>
 
-                  {/* Payment Methods */}
-                  <div className="mb-6">
-                     <h2 
-                        className="font-semibold mb-3"
-                        style={{ 
-                           color: display.p_color || '#1e293b',
-                           fontSize: Math.min(parseInt(display.sectionTitleSize) || 16, 18) + 'px'
-                        }}
-                     >
-                        Payment Method
-                     </h2>
-                     <div className="space-y-2">
-                        <button 
-                           className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2"
-                           style={{ borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px' }}
-                        >
-                           <FaPaypal className="text-blue-600 w-4 h-4" />
-                           <span 
-                              className="font-semibold text-sm"
-                              style={{ 
-                                 color: display.p_color || '#1e293b',
-                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                              }}
-                           >
-                              PayPal
-                           </span>
-                        </button>
-                        <Link 
-                           href={status ?
-                              `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/preview` :
-                              `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/`
-                           }
-                           className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2"
+                  {/* Payment Methods or Stripe Checkout */}
+                  {!showStripePayment ? (
+                     <div className="mb-6">
+                        <h2 
+                           className="font-semibold mb-3"
                            style={{ 
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                              borderColor: display.b1_color || '#475569'
+                              color: display.p_color || '#1e293b',
+                              fontSize: Math.min(parseInt(display.sectionTitleSize) || 16, 18) + 'px'
                            }}
                         >
-                           <FaCreditCard className="w-4 h-4" style={{ color: display.b1_color || '#475569' }} />
-                           <span 
-                              className="font-semibold text-sm"
+                           Payment Method
+                        </h2>
+                        <div className="space-y-2">
+                           <button 
+                              className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
+                              style={{ borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px' }}
+                              disabled
+                           >
+                              <FaPaypal className="text-blue-600 w-4 h-4" />
+                              <span 
+                                 className="font-semibold text-sm"
+                                 style={{ 
+                                    color: display.p_color || '#1e293b',
+                                    fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                                 }}
+                              >
+                                 PayPal (Coming Soon)
+                              </span>
+                           </button>
+                           <button 
+                              onClick={handleCreditCardClick}
+                              className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2"
                               style={{ 
-                                 color: display.p_color || '#1e293b',
-                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                                 borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
+                                 borderColor: display.b1_color || '#475569'
                               }}
                            >
-                              Credit Card
-                           </span>
-                        </Link>
+                              <FaCreditCard className="w-4 h-4" style={{ color: display.b1_color || '#475569' }} />
+                              <span 
+                                 className="font-semibold text-sm"
+                                 style={{ 
+                                    color: display.p_color || '#1e293b',
+                                    fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                                 }}
+                              >
+                                 Credit Card
+                              </span>
+                           </button>
+                        </div>
                      </div>
-                  </div>
+                  ) : (
+                     <div className="mb-6">
+                        <div className="flex items-center justify-between mb-4">
+                           <h2 
+                              className="font-semibold"
+                              style={{ 
+                                 color: display.p_color || '#1e293b',
+                                 fontSize: Math.min(parseInt(display.sectionTitleSize) || 16, 18) + 'px'
+                              }}
+                           >
+                              Payment Information
+                           </h2>
+                           <button
+                              onClick={() => setShowStripePayment(false)}
+                              className="text-sm text-gray-600 hover:text-gray-800"
+                           >
+                              ← Back to payment methods
+                           </button>
+                        </div>
+                        <StripeCheckout
+                           amount={amount}
+                           campaignId={campaignId}
+                           organizationId={organizationId}
+                           donorData={formData}
+                           designationId={selectedFund !== null ? designations[selectedFund]?.id : defaultDesignation?.id}
+                           onSuccess={handlePaymentSuccess}
+                           onError={handlePaymentError}
+                        />
+                     </div>
+                  )}
+
+                  {paymentSuccess && (
+                     <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                        ✅ Payment successful! Redirecting to thank you page...
+                     </div>
+                  )}
 
                   {/* Security Notice */}
                   <div className="flex items-center justify-center space-x-2 mb-4">
@@ -495,23 +666,6 @@ const DonationForm = ({params}) => {
                         Your payment information is secure and encrypted
                      </span>
                   </div>
-
-                  {/* Submit Button */}
-                  <Link 
-                     href={status ?
-                        `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/preview` :
-                        `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/`
-                     }
-                     className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
-                     style={{ 
-                        backgroundColor: display.b1_color || '#475569',
-                        borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                        fontSize: Math.min(parseInt(display.buttonTextSize) || 14, 16) + 'px'
-                     }}
-                  >
-                     <FaHeart className="w-3 h-3" />
-                     <span>Complete Donation</span>
-                  </Link>
                </div>
 
                {/* Footer */}

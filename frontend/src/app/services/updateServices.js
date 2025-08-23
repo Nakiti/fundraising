@@ -275,31 +275,16 @@ export class PageUpdateService {
          }
          formData.append("organizationName", data.organizationName || "");
          formData.append("tagline", data.tagline || "");
-         formData.append("showTagline", data.showTagline !== false);
+         formData.append("description", data.description || "");
          
-         // Navigation
-         formData.append("showNavigation", data.showNavigation !== false);
-         formData.append("navigationItems", data.navigationItems ? JSON.stringify(data.navigationItems) : "[]");
-         formData.append("showSearch", data.showSearch !== false);
-         formData.append("showLoginButton", data.showLoginButton !== false);
-         formData.append("showDonateButton", data.showDonateButton !== false);
-         
-         // Styling
+         // Basic styling
          formData.append("bgColor", data.bgColor || "#FFFFFF");
          formData.append("textColor", data.textColor || "#000000");
-         formData.append("accentColor", data.accentColor || "#3B82F6");
-         formData.append("headerHeight", data.headerHeight || "80px");
-         formData.append("logoSize", data.logoSize || "40px");
+         formData.append("linkColor", data.linkColor || "#3B82F6");
          formData.append("fontSize", data.fontSize || "16px");
-         formData.append("fontWeight", data.fontWeight || "500");
          formData.append("borderBottom", data.borderBottom !== false);
          formData.append("borderColor", data.borderColor || "#E5E7EB");
          formData.append("shadow", data.shadow !== false);
-         
-         // Layout
-         formData.append("logoPosition", data.logoPosition || "left");
-         formData.append("navigationPosition", data.navigationPosition || "center");
-         formData.append("buttonPosition", data.buttonPosition || "right");
          
          // Status
          formData.append("active", data.active || false);
@@ -333,36 +318,25 @@ export class PageUpdateService {
          }
          formData.append("organizationName", data.organizationName || "");
          formData.append("tagline", data.tagline || "");
-         formData.append("showTagline", data.showTagline !== false);
          formData.append("description", data.description || "");
-         formData.append("showDescription", data.showDescription !== false);
-         formData.append("contactInfo", data.contactInfo || "");
-         formData.append("showContactInfo", data.showContactInfo !== false);
-         formData.append("links", data.links || "");
-         formData.append("showLinks", data.showLinks !== false);
-         formData.append("socialLinks", data.socialLinks || "");
-         formData.append("showSocialLinks", data.showSocialLinks !== false);
          
-         // Styling
+         // Contact section fields
+         formData.append("address", data.address || "");
+         formData.append("phone", data.phone || "");
+         formData.append("email", data.email || "");
+         formData.append("businessHours", data.businessHours || "");
+         formData.append("contactFormUrl", data.contactFormUrl || "");
+         
+         // Social section fields
+         formData.append("socialLinks", data.socialLinks ? JSON.stringify(data.socialLinks) : "[]");
+         
+         // Basic styling
          formData.append("bgColor", data.bgColor || "#1F2937");
          formData.append("textColor", data.textColor || "#FFFFFF");
-         formData.append("linkColor", data.linkColor || "#60A5FA");
-         formData.append("footerHeight", data.footerHeight || "auto");
          formData.append("fontSize", data.fontSize || "14px");
          formData.append("borderTop", data.borderTop !== false);
          formData.append("borderColor", data.borderColor || "#374151");
          formData.append("shadow", data.shadow !== false);
-         
-         // Layout
-         formData.append("footerLayout", data.footerLayout || "three-column");
-         formData.append("contentAlignment", data.contentAlignment || "left");
-         formData.append("socialPosition", data.socialPosition || "bottom");
-         
-         // Social Media
-         formData.append("socialIconSize", data.socialIconSize || "medium");
-         formData.append("socialIconColor", data.socialIconColor || "#FFFFFF");
-         formData.append("socialLayout", data.socialLayout || "horizontal");
-         formData.append("socialSpacing", data.socialSpacing || "normal");
          
          // Status
          formData.append("active", data.active || false);
@@ -416,7 +390,6 @@ export class HeaderPageUpdateService {
 
          // Validate required fields for publishing
          const requiredFields = {
-            logo: inputs.logo,
             organizationName: inputs.organizationName
          };
 

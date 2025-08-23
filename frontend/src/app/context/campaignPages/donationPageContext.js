@@ -107,9 +107,9 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
       }
    }, [])
 
-   return (
-      <DonationPageContext.Provider value={{donationPageInputs, handleDonationPageInputsChange, 
-         donationPageSections, setDonationPageSections, campaignId, selectedDesignations, setSelectedDesignations}}
+      return (
+      <DonationPageContext.Provider value={{donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs,
+        donationPageSections, setDonationPageSections, campaignId, selectedDesignations, setSelectedDesignations}}
       >
          {children}
       </DonationPageContext.Provider>

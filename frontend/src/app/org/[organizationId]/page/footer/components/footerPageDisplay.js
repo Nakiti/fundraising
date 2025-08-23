@@ -11,37 +11,28 @@ const FooterPageDisplay = () => {
       color: inputs.textColor || "#FFFFFF",
       fontSize: inputs.fontSize || "14px",
       borderTop: inputs.borderTop ? `1px solid ${inputs.borderColor || "#374151"}` : "none",
-      boxShadow: inputs.shadow ? "0 -2px 4px rgba(0,0,0,0.1)" : "none",
-      minHeight: inputs.footerHeight || "auto"
+      boxShadow: inputs.shadow ? "0 -2px 4px rgba(0,0,0,0.1)" : "none"
    }
-
-   const linkStyles = {
-      color: inputs.linkColor || "#60A5FA"
-   }
-
-   const socialIconSize = {
-      small: "w-4 h-4",
-      medium: "w-5 h-5",
-      large: "w-6 h-6"
-   }
-
-   const socialSpacing = {
-      tight: "space-x-2",
-      normal: "space-x-3",
-      loose: "space-x-4"
-   }
-
-   // Parse footer links
-   const footerLinks = inputs.links ? inputs.links.split('\n').filter(line => line.trim()).map(line => {
-      const [text, url] = line.split('|')
-      return { text: text?.trim(), url: url?.trim() }
-   }) : []
 
    // Parse social links
-   const socialLinks = inputs.socialLinks ? inputs.socialLinks.split('\n').filter(line => line.trim()).map(line => {
-      const [platform, url, icon] = line.split('|')
-      return { platform: platform?.trim(), url: url?.trim(), icon: icon?.trim() }
-   }) : []
+   const socialLinks = (() => {
+      if (!inputs.socialLinks) return []
+      
+      // If it's already an array, use it directly
+      if (Array.isArray(inputs.socialLinks)) {
+         return inputs.socialLinks
+      }
+      
+      // If it's a string, parse it
+      if (typeof inputs.socialLinks === 'string') {
+         return inputs.socialLinks.split('\n').filter(line => line.trim()).map(line => {
+            const [platform, url, icon] = line.split('|')
+            return { platform: platform?.trim(), url: url?.trim(), icon: icon?.trim() }
+         })
+      }
+      
+      return []
+   })()
 
    const getSocialIcon = (iconName) => {
       switch (iconName?.toLowerCase()) {
@@ -56,10 +47,12 @@ const FooterPageDisplay = () => {
    }
 
    const renderSocialIcons = () => {
-      if (!inputs.showSocialLinks || socialLinks.length === 0) return null
+      // Check if social section is active
+      const socialSection = sections.find(section => section.name === 'social')
+      if (!socialSection || !socialSection.active || socialLinks.length === 0) return null
 
       return (
-         <div className={`flex ${inputs.socialLayout === 'vertical' ? 'flex-col space-y-2' : inputs.socialLayout === 'grid' ? 'grid grid-cols-3 gap-2' : `flex-row ${socialSpacing[inputs.socialSpacing] || socialSpacing.normal}`}`}>
+         <div className="flex space-x-4 justify-center mb-4">
             {socialLinks.map((link, index) => (
                <a
                   key={index}
@@ -67,9 +60,9 @@ const FooterPageDisplay = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:opacity-75 transition-opacity duration-200"
-                  style={{ color: inputs.socialIconColor || "#FFFFFF" }}
+                  style={{ color: inputs.textColor || "#FFFFFF" }}
                >
-                  <div className={socialIconSize[inputs.socialIconSize] || socialIconSize.medium}>
+                  <div className="w-5 h-5">
                      {getSocialIcon(link.icon)}
                   </div>
                </a>
@@ -79,162 +72,57 @@ const FooterPageDisplay = () => {
    }
 
    const renderFooterContent = () => {
-      const alignment = inputs.contentAlignment || "left"
-      const layout = inputs.footerLayout || "three-column"
-
-      if (layout === "simple") {
-         return (
-            <div className={`text-${alignment}`}>
-               {inputs.logo && (
-                  <img 
-                     src={typeof inputs.logo === 'string' ? inputs.logo : URL.createObjectURL(inputs.logo)} 
-                     alt="Footer Logo" 
-                     className="h-8 object-contain mb-4"
-                  />
-               )}
-               <h3 className="font-semibold mb-2">{inputs.organizationName || "Organization"}</h3>
-               {inputs.showTagline && inputs.tagline && (
-                  <p className="text-sm opacity-75 mb-4">{inputs.tagline}</p>
-               )}
-               {inputs.showDescription && inputs.description && (
-                  <p className="mb-4">{inputs.description}</p>
-               )}
-               {inputs.showContactInfo && inputs.contactInfo && (
-                  <div className="mb-4 whitespace-pre-line">{inputs.contactInfo}</div>
-               )}
-               {inputs.showLinks && footerLinks.length > 0 && (
-                  <div className="mb-4">
-                     {footerLinks.map((link, index) => (
-                        <a key={index} href={link.url} className="block mb-1 hover:underline" style={linkStyles}>
-                           {link.text}
-                        </a>
-                     ))}
-                  </div>
-               )}
-               {renderSocialIcons()}
-            </div>
-         )
-      }
-
-      if (layout === "two-column") {
-         return (
-            <div className="grid grid-cols-2 gap-8">
-               <div className={`text-${alignment}`}>
-                  {inputs.logo && (
-                     <img 
-                        src={typeof inputs.logo === 'string' ? inputs.logo : URL.createObjectURL(inputs.logo)} 
-                        alt="Footer Logo" 
-                        className="h-8 object-contain mb-4"
-                     />
-                  )}
-                  <h3 className="font-semibold mb-2">{inputs.organizationName || "Organization"}</h3>
-                  {inputs.showTagline && inputs.tagline && (
-                     <p className="text-sm opacity-75 mb-4">{inputs.tagline}</p>
-                  )}
-                  {inputs.showDescription && inputs.description && (
-                     <p className="mb-4">{inputs.description}</p>
-                  )}
-               </div>
-               <div className={`text-${alignment}`}>
-                  {inputs.showContactInfo && inputs.contactInfo && (
-                     <div className="mb-4 whitespace-pre-line">{inputs.contactInfo}</div>
-                  )}
-                  {inputs.showLinks && footerLinks.length > 0 && (
-                     <div className="mb-4">
-                        {footerLinks.map((link, index) => (
-                           <a key={index} href={link.url} className="block mb-1 hover:underline" style={linkStyles}>
-                              {link.text}
-                           </a>
-                        ))}
+      return (
+         <div className="text-center">
+            {inputs.logo && (
+               <img 
+                  src={typeof inputs.logo === 'string' ? inputs.logo : URL.createObjectURL(inputs.logo)} 
+                  alt="Footer Logo" 
+                  className="h-8 object-contain mb-4"
+               />
+            )}
+            <h3 className="font-semibold mb-2">{inputs.organizationName || "Organization"}</h3>
+            {inputs.tagline && (
+               <p className="text-sm opacity-75 mb-4">{inputs.tagline}</p>
+            )}
+            {inputs.description && (
+               <p className="mb-4">{inputs.description}</p>
+            )}
+            {/* Contact Information */}
+            {inputs.address || inputs.phone || inputs.email || inputs.businessHours || inputs.contactFormUrl ? (
+               <div className="mb-4">
+                  {inputs.address && (
+                     <div className="mb-2">
+                        <strong>Address:</strong><br />
+                        <span className="whitespace-pre-line">{inputs.address}</span>
                      </div>
                   )}
-                  {renderSocialIcons()}
-               </div>
-            </div>
-         )
-      }
-
-      if (layout === "three-column") {
-         return (
-            <div className="grid grid-cols-3 gap-8">
-               <div className={`text-${alignment}`}>
-                  {inputs.logo && (
-                     <img 
-                        src={typeof inputs.logo === 'string' ? inputs.logo : URL.createObjectURL(inputs.logo)} 
-                        alt="Footer Logo" 
-                        className="h-8 object-contain mb-4"
-                     />
+                  {inputs.phone && (
+                     <div className="mb-2">
+                        <strong>Phone:</strong> <a href={`tel:${inputs.phone}`} className="hover:underline">{inputs.phone}</a>
+                     </div>
                   )}
-                  <h3 className="font-semibold mb-2">{inputs.organizationName || "Organization"}</h3>
-                  {inputs.showTagline && inputs.tagline && (
-                     <p className="text-sm opacity-75 mb-4">{inputs.tagline}</p>
+                  {inputs.email && (
+                     <div className="mb-2">
+                        <strong>Email:</strong> <a href={`mailto:${inputs.email}`} className="hover:underline">{inputs.email}</a>
+                     </div>
                   )}
-                  {inputs.showDescription && inputs.description && (
-                     <p className="mb-4">{inputs.description}</p>
+                  {inputs.businessHours && (
+                     <div className="mb-2">
+                        <strong>Hours:</strong><br />
+                        <span className="whitespace-pre-line">{inputs.businessHours}</span>
+                     </div>
                   )}
-               </div>
-               <div className={`text-${alignment}`}>
-                  {inputs.showContactInfo && inputs.contactInfo && (
-                     <div className="mb-4 whitespace-pre-line">{inputs.contactInfo}</div>
-                  )}
-                  {inputs.showLinks && footerLinks.length > 0 && (
-                     <div className="mb-4">
-                        {footerLinks.map((link, index) => (
-                           <a key={index} href={link.url} className="block mb-1 hover:underline" style={linkStyles}>
-                              {link.text}
-                           </a>
-                        ))}
+                  {inputs.contactFormUrl && (
+                     <div className="mb-2">
+                        <a href={inputs.contactFormUrl} className="hover:underline">Contact Us</a>
                      </div>
                   )}
                </div>
-               <div className={`text-${alignment}`}>
-                  {renderSocialIcons()}
-               </div>
-            </div>
-         )
-      }
-
-      if (layout === "four-column") {
-         return (
-            <div className="grid grid-cols-4 gap-6">
-               <div className={`text-${alignment}`}>
-                  {inputs.logo && (
-                     <img 
-                        src={typeof inputs.logo === 'string' ? inputs.logo : URL.createObjectURL(inputs.logo)} 
-                        alt="Footer Logo" 
-                        className="h-8 object-contain mb-4"
-                     />
-                  )}
-                  <h3 className="font-semibold mb-2">{inputs.organizationName || "Organization"}</h3>
-                  {inputs.showTagline && inputs.tagline && (
-                     <p className="text-sm opacity-75 mb-4">{inputs.tagline}</p>
-                  )}
-               </div>
-               <div className={`text-${alignment}`}>
-                  {inputs.showDescription && inputs.description && (
-                     <p className="mb-4">{inputs.description}</p>
-                  )}
-               </div>
-               <div className={`text-${alignment}`}>
-                  {inputs.showContactInfo && inputs.contactInfo && (
-                     <div className="mb-4 whitespace-pre-line">{inputs.contactInfo}</div>
-                  )}
-                  {inputs.showLinks && footerLinks.length > 0 && (
-                     <div className="mb-4">
-                        {footerLinks.map((link, index) => (
-                           <a key={index} href={link.url} className="block mb-1 hover:underline" style={linkStyles}>
-                              {link.text}
-                           </a>
-                        ))}
-                     </div>
-                  )}
-               </div>
-               <div className={`text-${alignment}`}>
-                  {renderSocialIcons()}
-               </div>
-            </div>
-         )
-      }
+            ) : null}
+            {renderSocialIcons()}
+         </div>
+      )
    }
 
    return (

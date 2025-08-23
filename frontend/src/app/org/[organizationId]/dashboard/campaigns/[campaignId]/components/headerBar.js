@@ -17,12 +17,12 @@ const HeaderBar = ({organizationId, campaignType, campaign, campaignId}) => {
    ]
 
    return (
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-gray-800 border-b border-gray-700 shadow-sm">
          {/* Back Navigation */}
-         <div className="px-6 py-3 border-b border-gray-100">
+         <div className="px-6 py-3">
             <Link 
                href={`/org/${organizationId}/dashboard/campaigns`} 
-               className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
+               className="inline-flex items-center text-sm text-gray-300 hover:text-white transition-colors duration-200"
             >
                <FaArrowLeft className="w-4 h-4 mr-2" />
                <span className="font-medium">Back to Campaigns</span>
@@ -37,29 +37,29 @@ const HeaderBar = ({organizationId, campaignType, campaign, campaignId}) => {
                   <div className="flex-shrink-0">
                      {campaignType &&
                         campaignType == "crowdfunding" ? 
-                           <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center">
-                              <MdOutlineCampaign className="h-8 w-8 text-blue-600" />
+                           <div className="w-16 h-16 bg-blue-900 border border-blue-700 rounded-xl flex items-center justify-center">
+                              <MdOutlineCampaign className="h-8 w-8 text-blue-300" />
                            </div> :
                         campaignType == "ticketed-event" ? 
-                           <div className="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center">
-                              <IoTicketOutline className="h-8 w-8 text-purple-600" />
+                           <div className="w-16 h-16 bg-purple-900 border border-purple-700 rounded-xl flex items-center justify-center">
+                              <IoTicketOutline className="h-8 w-8 text-purple-300" />
                            </div> :
                         campaignType == "peer-to-peer" ? 
-                           <div className="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center">
-                              <FaPeopleArrows className="h-8 w-8 text-green-600" />
+                           <div className="w-16 h-16 bg-green-900 border border-green-700 rounded-xl flex items-center justify-center">
+                              <FaPeopleArrows className="h-8 w-8 text-green-300" />
                            </div> :
-                           <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
-                              <IoDocumentTextOutline className="h-8 w-8 text-gray-600" />
+                           <div className="w-16 h-16 bg-gray-700 border border-gray-600 rounded-xl flex items-center justify-center">
+                              <IoDocumentTextOutline className="h-8 w-8 text-gray-300" />
                            </div>
                      }
                   </div>
 
                   {/* Campaign Info */}
                   <div className="flex-1">
-                     <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                     <h1 className="text-2xl font-bold text-white mb-1">
                         {campaign && campaign.internal_name}
                      </h1>
-                     <p className="text-sm text-gray-500 capitalize">
+                     <p className="text-sm text-gray-400 capitalize">
                         {campaign && campaign.type.replace('-', ' ')} Campaign
                      </p>
                   </div>
@@ -73,7 +73,7 @@ const HeaderBar = ({organizationId, campaignType, campaign, campaignId}) => {
                   >
                      Edit Campaign
                   </Link>
-                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                  <button className="p-2 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded-lg transition-all duration-200">
                      <SlOptionsVertical className="h-5 w-5" />
                   </button>
                </div>
@@ -81,7 +81,7 @@ const HeaderBar = ({organizationId, campaignType, campaign, campaignId}) => {
          </div>
 
          {/* Navigation Tabs */}
-         <div className="px-6 border-t border-gray-100">
+         <div className="px-6">
             <nav className="flex space-x-8">
                {links.map((item, index) => (
                   <Link 
@@ -89,8 +89,8 @@ const HeaderBar = ({organizationId, campaignType, campaign, campaignId}) => {
                      href={item.pathName} 
                      className={`px-1 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
                         pathname === item.pathName 
-                           ? "border-blue-600 text-blue-600" 
-                           : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                           ? "border-blue-500 text-blue-400" 
+                           : "border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500"
                      }`}
                   >
                      {item.title}

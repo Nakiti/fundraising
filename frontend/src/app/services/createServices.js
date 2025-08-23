@@ -698,8 +698,8 @@ export class DesignationCreateService {
    // Create designation
    static async createDesignation(data) {
       try {
-         validators.required(data.name, 'Designation Name');
-         validators.minLength(data.name, 2, 'Designation Name');
+         validators.required(data.title, 'Designation Title');
+         validators.minLength(data.title, 2, 'Designation Title');
 
          const response = await api.post('/designation/create', data);
          

@@ -273,11 +273,11 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
     show_feature_icons,
     show_team_photos,
     show_mission_section,
-    show_vision_section,
-    show_values_section,
-    show_hover_effects,
-    // Status
-    active
+    show_vision_section, 
+    show_values_section, 
+    show_hover_effects, 
+    // Status 
+    active 
   } = req.body;
   
   if (!id) {

@@ -49,7 +49,7 @@ const Display = () => {
                      className="font-bold mb-3 leading-tight"
                      style={{ 
                         color: thankPageInputs.p_color || '#1e293b',
-                        fontSize: Math.min(parseInt(thankPageInputs.heroTitleSize) || 24, 28) + 'px'
+                        fontSize: (parseInt(thankPageInputs.heroTitleSize) || 24) + 'px'
                      }}
                   >
                      {thankPageInputs.headline || "Thank You!"}
@@ -59,7 +59,7 @@ const Display = () => {
                      className="leading-relaxed max-w-md mx-auto mb-6"
                      style={{ 
                         color: thankPageInputs.s_color || '#64748b',
-                        fontSize: Math.min(parseInt(thankPageInputs.bodyTextSize) || 14, 16) + 'px'
+                        fontSize: (parseInt(thankPageInputs.bodyTextSize) || 14) + 'px'
                      }}
                   >
                      {thankPageInputs.description || "Your generous donation has been received and will make a real difference in our mission. We're incredibly grateful for your support!"}
@@ -75,11 +75,11 @@ const Display = () => {
                         </div>
                         <div className="flex justify-between">
                            <span style={{ color: thankPageInputs.s_color || '#64748b' }}>Fund:</span>
-                           <span className="font-semibold text-sm" style={{ color: thankPageInputs.p_color || '#1e293b' }}>General Fund</span>
+                           <span className="font-semibold text-sm" style={{ color: thankPageInputs.p_color || '#1e293b' }}>Example Fund</span>
                         </div>
                         <div className="flex justify-between">
                            <span style={{ color: thankPageInputs.s_color || '#64748b' }}>Transaction ID:</span>
-                           <span className="font-mono text-xs" style={{ color: thankPageInputs.s_color || '#64748b' }}>TX-2024-001</span>
+                           <span className="font-mono text-xs" style={{ color: thankPageInputs.s_color || '#64748b' }}>Transaction-ID</span>
                         </div>
                         <div className="border-t border-slate-200 pt-2 mt-3">
                            <div className="flex justify-between">
@@ -93,22 +93,25 @@ const Display = () => {
                   {/* Action Buttons */}
                   <div className="space-y-3 mb-6">
                      <button 
-                        className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
+                        onClick={(e) => e.preventDefault()}
+                        className="w-full py-3 px-4 font-semibold transition-all duration-300 flex items-center justify-center space-x-2"
                         style={{ 
-                           backgroundColor: thankPageInputs.p_color || '#475569',
+                           backgroundColor: thankPageInputs.b1_color || '#475569',
+                           color: thankPageInputs.bt_color || '#ffffff',
                            borderRadius: thankPageInputs.buttonRadius || '6px',
-                           fontSize: Math.min(parseInt(thankPageInputs.buttonTextSize) || 14, 16) + 'px'
+                           fontSize: (parseInt(thankPageInputs.buttonTextSize) || 14) + 'px'
                         }}
                      >
                         <FaHeart className="w-3 h-3" />
                         <span>Donate Again</span>
                      </button>
                      <button 
+                        onClick={(e) => e.preventDefault()}
                         className="w-full py-3 px-4 font-semibold border border-slate-200 hover:border-slate-300 transition-all duration-300 flex items-center justify-center space-x-2"
                         style={{ 
                            color: thankPageInputs.p_color || '#1e293b',
                            borderRadius: thankPageInputs.buttonRadius || '6px',
-                           fontSize: Math.min(parseInt(thankPageInputs.buttonTextSize) || 14, 16) + 'px'
+                           fontSize: (parseInt(thankPageInputs.buttonTextSize) || 14) + 'px'
                         }}
                      >
                         <FaShare className="w-3 h-3" />

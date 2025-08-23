@@ -1,19 +1,16 @@
 "use client"
 import { useContext } from "react"
 import { FooterPageContext } from "@/app/context/organizationPages/footerPageContext"
-import ContentSection from "./components/sections/contentSection"
-import SocialSection from "./components/sections/socialSection"
+import SectionManager from "@/app/components/sectionManager"
 
 const FooterPage = () => {
-   const { inputs, handleInputsChange, sections } = useContext(FooterPageContext)
+   const { sections, setSections } = useContext(FooterPageContext)
 
    return (
-      <div className="space-y-6">
-         {/* Content Section */}
-         <ContentSection />
-
-         {/* Social Media Section */}
-         <SocialSection />
+      <div className="w-full">
+         {sections.map((section) => (
+            <SectionManager section={section} sections={sections} setSections={setSections}/>
+         ))}      
       </div>
    )
 }

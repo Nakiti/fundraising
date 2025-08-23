@@ -30,3 +30,5 @@ const TextAreaInputEdit = ({title, rows, placeholder, name, value, changeFunc}) 
 }
 
 export default TextAreaInputEdit
+
+// need to fix the line breaks in the textarea

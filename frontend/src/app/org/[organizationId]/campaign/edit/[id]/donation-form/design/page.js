@@ -2,17 +2,19 @@
 import { useContext, useState } from "react"
 import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext";
 import { PageUpdateService } from "@/app/services/updateServices";
+import { PageService } from "@/app/services/fetchService";
 import { AuthContext } from "@/app/context/authContext";
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
-import { FaPalette, FaFont, FaMousePointer, FaRuler, FaSave } from "react-icons/fa";
+import { FaPalette, FaFont, FaMousePointer, FaRuler, FaSave, FaUndo } from "react-icons/fa";
 
 const Design = () => {
-   const {campaignId, donationFormInputs, handleDonationFormInputsChange, donationFormSections, donationFormId} = useContext(DonationFormContext)
+   const {campaignId, donationFormInputs, handleDonationFormInputsChange, donationFormSections, donationFormId, setDonationFormInputs} = useContext(DonationFormContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isLoading, setIsLoading] = useState(false)
+   const [isDiscarding, setIsDiscarding] = useState(false)
    const [successMessage, setSuccessMessage] = useState("")
    
    const handleSave = async() => {
@@ -50,6 +52,60 @@ const Design = () => {
       }
    }
 
+   const handleDiscard = async() => {
+      setIsDiscarding(true)
+      setError(false)
+      setSuccessMessage("")
+      
+      try {
+         const donationResponse = await PageService.getDonationForm(campaignId)
+         
+         setDonationFormInputs({
+            // Basic Content
+            headline: donationResponse.headline || "",
+            description: donationResponse.description || "",
+            subtitle: donationResponse.subtitle || "Donation Form",
+            
+            // Colors
+            bg_color: donationResponse.bg_color || "#ffffff",
+            p_color: donationResponse.p_color || "#1f2937",
+            s_color: donationResponse.s_color || "#6b7280",
+            b1_color: donationResponse.b1_color || "#3b82f6",
+            b2_color: donationResponse.b2_color || "#6b7280",
+            b3_color: donationResponse.b3_color || "#10b981",
+            bt_color: donationResponse.bt_color || "#ffffff",
+            
+            // Donation Amounts
+            button1: donationResponse.button1 || 25,
+            button2: donationResponse.button2 || 50,
+            button3: donationResponse.button3 || 100,
+            button4: donationResponse.button4 || 250,
+            button5: donationResponse.button5 || 500,
+            button6: donationResponse.button6 || 1000,
+            
+            // Typography
+            heroTitleSize: donationResponse.heroTitleSize || "36",
+            heroSubtitleSize: donationResponse.heroSubtitleSize || "16",
+            sectionTitleSize: donationResponse.sectionTitleSize || "28",
+            bodyTextSize: donationResponse.bodyTextSize || "16",
+            buttonTextSize: donationResponse.buttonTextSize || "16",
+            
+            // Layout
+            cardRadius: donationResponse.cardRadius || "4",
+            buttonRadius: donationResponse.buttonRadius || "4",
+         })
+         
+         setSuccessMessage("Design reverted to last saved state!")
+         setTimeout(() => setSuccessMessage(""), 3000)
+      } catch (err) {
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
+      } finally {
+         setIsDiscarding(false)
+      }
+   }
+
    const colorGroups = [
       {
          title: "Text Colors",
@@ -70,7 +126,8 @@ const Design = () => {
          title: "Button Styles",
          icon: <FaMousePointer className="w-4 h-4" />,
          colors: [
-            { name: "b1_color", label: "Donate Button Color", description: "Background color for the main donate button" }
+            { name: "b1_color", label: "Donate Button Color", description: "Background color for the main donate button" },
+            { name: "bt_color", label: "Button Text Color", description: "Text color for button text" }
          ]
       }
    ]
@@ -264,27 +321,41 @@ const Design = () => {
             </div>
          </div>
 
-         {/* Save Button */}
+         {/* Save and Discard Actions */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center justify-between">
                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Save Changes</h3>
+                  <h3 className="text-sm font-medium text-gray-900">Actions</h3>
                   {successMessage && (
                      <p className="text-xs text-green-600 mt-1">{successMessage}</p>
                   )}
                </div>
-               <button 
-                  className={`px-6 py-3 rounded-lg shadow-sm text-sm font-medium flex items-center space-x-2 transition-colors duration-200 ${
-                     isLoading 
-                        ? 'bg-gray-400 text-white cursor-not-allowed' 
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-                  onClick={handleSave}
-                  disabled={isLoading}
-               >
-                  <FaSave className="w-4 h-4" />
-                  <span>{isLoading ? 'Saving...' : 'Save'}</span>
-               </button>
+               <div className="flex items-center space-x-3">
+                  <button 
+                     className={`px-4 py-2 rounded-lg shadow-sm text-sm font-medium flex items-center space-x-2 transition-colors duration-200 ${
+                        isDiscarding 
+                           ? 'bg-gray-400 text-white cursor-not-allowed' 
+                           : 'bg-gray-500 text-white hover:bg-gray-600'
+                     }`}
+                     onClick={handleDiscard}
+                     disabled={isDiscarding || isLoading}
+                  >
+                     <FaUndo className="w-3 h-3" />
+                     <span>{isDiscarding ? 'Discarding...' : 'Discard'}</span>
+                  </button>
+                  <button 
+                     className={`px-6 py-2 rounded-lg shadow-sm text-sm font-medium flex items-center space-x-2 transition-colors duration-200 ${
+                        isLoading 
+                           ? 'bg-gray-400 text-white cursor-not-allowed' 
+                           : 'bg-blue-600 text-white hover:bg-blue-700'
+                     }`}
+                     onClick={handleSave}
+                     disabled={isLoading || isDiscarding}
+                  >
+                     <FaSave className="w-4 h-4" />
+                     <span>{isLoading ? 'Saving...' : 'Save'}</span>
+                  </button>
+               </div>
             </div>
          </div>
 

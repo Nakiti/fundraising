@@ -15,9 +15,9 @@ const Templates = () => {
    const [showModal, setShowModal] = useState(false)
 
    return (
-      <div className="w-full h-full p-4">
+      <div className="w-full p-4">
          {showModal && <Modal show={showModal} setShow={setShowModal}/>}
-         <div className="w-full h-full bg-white overflow-y-auto rounded-md p-4">
+         <div className="w-full bg-white rounded-md p-4">
             <div className="flex flex-row p-6 w-full justify-between items-center mb-12">
                <h1 className="text-4xl">Templates</h1>
                {/* <Link href="/org/campaign/new/details/about" >

@@ -54,9 +54,9 @@ export const ThankYouPageContextProvider = ({campaignId, children}) => {
       fetchData()
    }, [])
 
-   return (
+      return (
       <ThankYouPageContext.Provider value={{campaignId, thankPageInputs, 
-         handleThankInputsChange, thankYouPageSections, setThankYouPageSections}}
+        handleThankInputsChange, setThankPageInputs, thankYouPageSections, setThankYouPageSections}}
       >
          {children}
       </ThankYouPageContext.Provider>

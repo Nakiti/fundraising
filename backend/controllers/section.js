@@ -23,7 +23,7 @@ export const createSection = asyncHandler(async (req, res) => {
   const query = "INSERT INTO page_sections (`organization_id`, `page_type`, `page_reference_id`, `name`, `active`, `display_order`, `created_at`, `updated_at`, `updated_by`) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)"
 
   const values = [
-    organization_id,
+    organization_id, 
     page_type,
     page_reference_id,
     name, 

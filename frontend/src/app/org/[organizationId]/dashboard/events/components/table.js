@@ -10,7 +10,6 @@ import { FaSortUp } from "react-icons/fa";
 import { FaSortDown } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
 
-
 const Table = () => {
    const columns = [
       { id: 'actions', label: 'Actions'},
@@ -40,47 +39,78 @@ const Table = () => {
    }, [])
 
    return (
-      <div className="px-8 mt-4 mb-4">
-         <table className="min-w-full bg-white  border-gray-300 rounded-md">
-            {/* Table Header */}
-            <thead className="border-b border-gray-300">
-               <tr>
-                  {columns.map((column, index) => (
-                     <th key={index} className="px-4 py-2 text-left text-gray-600 text-sm font-semibold" onClick={() => sortData(column.id)}>
-                        <div className="flex flex-row items-center justify-center">
-                           {column.label}
-                        </div>
-                     </th>
-                  ))}
-               </tr>
-            </thead>
-            
-            {/* Table Body */}
-            <tbody>
-               {data && data.map((row, index) => (
-                  <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
-                     <td className="px-4 py-2 text-center text-sm">
-                        <div className="flex items-center justify-center space-x-2">
-                           <Link href={`/org/campaign/edit/${row.id}`}>
-                              <FaEdit className="text-lg mr-2" />
-                           </Link>
-                           <div className="border-r border-gray-400 h-6" />
-                           <Link href={`/org/campaign/view/${row.id}`}>
-                              <IoMdOpen className="text-lg ml-2" />
-                           </Link>
-                        </div>
-                     </td>
-                     <td className="px-4 py-2 text-sm text-center">{row.title}</td>
-                     <td className="px-4 py-2 text-sm text-center">{new Date(row.created_at).toLocaleDateString("en-US")}</td>
-                     <td className="px-4 py-2 text-sm text-center">Campaign Name</td>
-                     <td className="px-4 py-2 text-sm text-center">{row.goal}</td>
-                     <td className="px-4 py-2 text-sm text-center">
-                        <label className={`px-2 py-1 rounded-sm text-white ${row.status == "inactive" ? " bg-red-600" : "bg-green-600"}`}>{row.status.toUpperCase()}</label>
-                     </td>
+      <div className="overflow-hidden">
+         <div className="overflow-x-auto">
+            <table className="w-full">
+               <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                     {columns.map((column, index) => (
+                        <th
+                           key={index}
+                           className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                           <div className="flex items-center space-x-1">
+                              <span>{column.label}</span>
+                           </div>
+                        </th>
+                     ))}
                   </tr>
-               ))}
-            </tbody>
-         </table>
+               </thead>
+               
+               {data && data.length > 0 && (
+                  <tbody className="bg-white divide-y divide-gray-200">
+                     {data.map((row, index) => (
+                        <tr key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                           <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              <div className="flex items-center space-x-2">
+                                 <Link href={`/org/campaign/edit/${row.id}`} className="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <FaEdit className="text-lg" />
+                                 </Link>
+                                 <div className="border-r border-gray-300 h-4" />
+                                 <Link href={`/org/campaign/view/${row.id}`} className="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <IoMdOpen className="text-lg" />
+                                 </Link>
+                              </div>
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {row.title}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {new Date(row.created_at).toLocaleDateString("en-US", {
+                                 year: 'numeric',
+                                 month: 'short',
+                                 day: 'numeric'
+                              })}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              Campaign Name
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {row.goal}
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                 className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                                    row.status === "inactive" 
+                                       ? "bg-red-100 text-red-800" 
+                                       : "bg-green-100 text-green-800"
+                                 }`}
+                              >
+                                 {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
+                              </span>
+                           </td>
+                        </tr>
+                     ))}
+                  </tbody>
+               )}
+            </table>
+         </div>
+         
+         {(!data || data.length === 0) && (
+            <div className="text-center py-12">
+               <p className="text-gray-500 text-sm">No events found</p>
+            </div>
+         )}
       </div>
    )
 }

@@ -32,7 +32,7 @@ const Display = () => {
          {/* Content Container */}
          <div>
             {/* Hero Section */}
-            <div className="relative w-full" style={{height: Math.min(parseInt(donationPageInputs.heroHeight) || 300, 400)}}>
+            <div className="relative w-full" style={{height: (parseInt(donationPageInputs.heroHeight) || 300) + 'px'}}>
                <img
                   className="w-full h-full object-cover"
                   src={donationPageInputs.banner_image || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
@@ -49,7 +49,7 @@ const Display = () => {
                         className="font-bold text-white leading-tight"
                         style={{
                            color: donationPageInputs.p_color || '#ffffff',
-                           fontSize: Math.min(parseInt(donationPageInputs.heroTitleSize) || 28, 32) + 'px'
+                           fontSize: (parseInt(donationPageInputs.heroTitleSize) || 28) + 'px'
                         }}
                      >
                         {donationPageInputs.headline || "Support Our Cause"}
@@ -58,7 +58,7 @@ const Display = () => {
                         className="text-slate-100 max-w-xl mx-auto leading-relaxed"
                         style={{
                            color: donationPageInputs.s_color || '#e2e8f0',
-                           fontSize: Math.min(parseInt(donationPageInputs.heroSubtitleSize) || 14, 16) + 'px'
+                           fontSize: (parseInt(donationPageInputs.heroSubtitleSize) || 14) + 'px'
                         }}
                      >
                         {donationPageInputs.description || "Your support makes a real difference in our community. Every donation, no matter the size, helps us achieve our mission and create positive change for those who need it most."}
@@ -70,7 +70,7 @@ const Display = () => {
                               backgroundColor: donationPageInputs.b1_color || '#475569',
                               color: donationPageInputs.bt_color || '#FFFFFF',
                               borderRadius: donationPageInputs.buttonRadius || '6px',
-                              fontSize: Math.min(parseInt(donationPageInputs.buttonTextSize) || 14, 16) + 'px',
+                              fontSize: (parseInt(donationPageInputs.buttonTextSize) || 14) + 'px',
                               padding: '10px 20px'
                            }}
                         >
@@ -83,13 +83,13 @@ const Display = () => {
             </div>
 
             {/* Main Content Section */}
-            <div className="flex flex-col lg:flex-row w-full px-6 space-y-8 lg:space-y-0 lg:space-x-8" style={{paddingTop: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60), paddingBottom: Math.min(parseInt(donationPageInputs.sectionPadding) || 40, 60)}}>
+            <div className="flex flex-col lg:flex-row w-full px-6 space-y-8 lg:space-y-0 lg:space-x-8" style={{paddingTop: (parseInt(donationPageInputs.sectionPadding) || 40), paddingBottom: (parseInt(donationPageInputs.sectionPadding) || 40)}}>
                <div className="lg:w-2/3">
                   <h2 
                      className="font-bold mb-4 leading-tight"
                      style={{
                         color: donationPageInputs.p_color || '#1e293b',
-                        fontSize: Math.min(parseInt(donationPageInputs.sectionTitleSize) || 24, 28) + 'px'
+                        fontSize: (parseInt(donationPageInputs.sectionTitleSize) || 24) + 'px'
                      }}
                   >
                      {donationPageInputs.mainHeadline || "Making a Difference Together"}
@@ -98,7 +98,7 @@ const Display = () => {
                      className="leading-relaxed mb-6"
                      style={{
                         color: donationPageInputs.s_color || '#64748b',
-                        fontSize: Math.min(parseInt(donationPageInputs.bodyTextSize) || 14, 16) + 'px'
+                        fontSize: (parseInt(donationPageInputs.bodyTextSize) || 14) + 'px'
                      }}
                   >
                      {donationPageInputs.mainText || "Our organization works tirelessly to create positive change in the community. Through innovative programs and dedicated volunteers, we're building a better future for everyone."}
@@ -161,7 +161,7 @@ const Display = () => {
                         style={{
                            backgroundColor: donationPageInputs.b1_color || '#475569',
                            borderRadius: donationPageInputs.buttonRadius || '6px',
-                           fontSize: Math.min(parseInt(donationPageInputs.buttonTextSize) || 14, 16) + 'px'
+                           fontSize: (parseInt(donationPageInputs.buttonTextSize) || 14) + 'px'
                         }}
                      >
                         <FaHeart className="w-3 h-3" />

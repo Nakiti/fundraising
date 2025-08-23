@@ -34,44 +34,49 @@ const Home = ({params}) => {
    const [organizationStatus, setOrganizationStatus] = useState(null)
    const [notifications, setNotifications] = useState([])
    const [loading, setLoading] = useState(true)
+   const [error, setError] = useState(null)
    const [showModal, setShowModal] = useState(false)
 
-   // Generate quick stats from summary data
+   // Generate quick stats from summary data with enhanced Stripe integration info
    const quickStats = summaryData ? [
       { 
          label: "Total Donations", 
-         value: summaryData.totalDonations?.value || 0, 
+         value: summaryData.totalDonations?.value?.toLocaleString() || 0, 
          change: `${summaryData.totalDonations?.change || 0}%`, 
          trend: summaryData.totalDonations?.trend || "up", 
-         icon: <FaHandHoldingHeart className="text-blue-500" /> 
+         icon: <FaHandHoldingHeart className="text-blue-500" />,
+         subtitle: "Completed transactions"
       },
       { 
          label: "New Supporters", 
-         value: summaryData.newSupporters?.value || 0, 
+         value: summaryData.newSupporters?.value?.toLocaleString() || 0, 
          change: `${summaryData.newSupporters?.change || 0}%`, 
          trend: summaryData.newSupporters?.trend || "up", 
-         icon: <FaUserPlus className="text-green-500" /> 
+         icon: <FaUserPlus className="text-green-500" />,
+         subtitle: "First-time donors"
       },
       { 
          label: "Total Raised", 
-         value: `$${summaryData.totalRaised?.value || 0}`, 
+         value: `$${(summaryData.totalRaised?.value || 0).toLocaleString()}`, 
          change: `${summaryData.totalRaised?.change || 0}%`, 
          trend: summaryData.totalRaised?.trend || "up", 
-         icon: <FaDollarSign className="text-purple-500" /> 
+         icon: <FaDollarSign className="text-purple-500" />,
+         subtitle: "Net revenue"
       },
       { 
          label: "Active Campaigns", 
-         value: summaryData.activeCampaigns?.value || 0, 
+         value: summaryData.activeCampaigns?.value?.toLocaleString() || 0, 
          change: `${summaryData.activeCampaigns?.change || 0}%`, 
          trend: summaryData.activeCampaigns?.trend || "up", 
-         icon: <IoIosStats className="text-orange-500" /> 
+         icon: <IoIosStats className="text-orange-500" />,
+         subtitle: "Live fundraisers"
       },
    ] : []
 
    const statistics = [
-      { label: "Donations", value: summaryData?.totalDonations?.value || 0, icon: <FaHandHoldingHeart size={36} className="text-blue-700 mb-3" /> },
-      { label: "New Supporters", value: summaryData?.newSupporters?.value || 0, icon: <FaUserPlus size={36} className="text-blue-700 mb-3" /> },
-      { label: "Raised", value: `$${summaryData?.totalRaised?.value || 0}`, icon: <FaDollarSign size={36} className="text-blue-700 mb-3" /> },
+      { label: "Donations", value: summaryData?.totalDonations?.value?.toLocaleString() || 0, icon: <FaHandHoldingHeart size={36} className="text-blue-700 mb-3" /> },
+      { label: "New Supporters", value: summaryData?.newSupporters?.value?.toLocaleString() || 0, icon: <FaUserPlus size={36} className="text-blue-700 mb-3" /> },
+      { label: "Raised", value: `$${(summaryData?.totalRaised?.value || 0).toLocaleString()}`, icon: <FaDollarSign size={36} className="text-blue-700 mb-3" /> },
    ]
 
    /*
@@ -86,6 +91,7 @@ const Home = ({params}) => {
    */
    const fetchDashboardData = async () => {
       setLoading(true);
+      setError(null);
       try {
          const [
             summaryResponse,
@@ -107,7 +113,8 @@ const Home = ({params}) => {
          setOrganizationStatus(statusResponse);
          setNotifications(notificationsResponse);
       } catch (err) {
-         console.log('Error fetching dashboard data:', err);
+         console.error('Error fetching dashboard data:', err);
+         setError('Failed to load dashboard data. Please try again.');
       } finally {
          setLoading(false);
       }
@@ -149,7 +156,7 @@ const Home = ({params}) => {
    };
 
    return (
-      <div className="w-full h-full bg-gray-50">
+      <div className="w-full bg-gray-50">
          <div className="p-6 space-y-6">
             {/* Header Section */}
             <div className="flex justify-between items-center">
@@ -158,6 +165,16 @@ const Home = ({params}) => {
                   <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your organization.</p>
                </div>
                <div className="flex items-center space-x-3">
+                  <button 
+                     onClick={fetchDashboardData}
+                     disabled={loading}
+                     className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors duration-200 disabled:opacity-50"
+                     title="Refresh dashboard"
+                  >
+                     <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                     </svg>
+                  </button>
                   <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors duration-200">
                      <FaBell className="w-5 h-5" />
                   </button>
@@ -167,6 +184,33 @@ const Home = ({params}) => {
                   </button>
                </div>
             </div>
+
+            {/* Error Display */}
+            {error && (
+               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-center">
+                     <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                     </div>
+                     <div className="ml-3">
+                        <p className="text-sm text-red-800">{error}</p>
+                     </div>
+                     <div className="ml-auto pl-3">
+                        <button
+                           onClick={() => setError(null)}
+                           className="inline-flex text-red-400 hover:text-red-600"
+                        >
+                           <span className="sr-only">Dismiss</span>
+                           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                           </svg>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            )}
 
             {/* Time Filter */}
             <div className="flex justify-end">
@@ -207,7 +251,7 @@ const Home = ({params}) => {
                   ))
                ) : (
                   quickStats.map((stat, index) => (
-                     <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                     <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
                         <div className="flex items-center justify-between">
                            <div className="p-2 bg-gray-50 rounded-lg">
                               {stat.icon}
@@ -221,7 +265,10 @@ const Home = ({params}) => {
                         </div>
                         <div className="mt-4">
                            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                           <p className="text-sm text-gray-600 mt-1">{stat.label}</p>
+                           <p className="text-sm font-medium text-gray-700 mt-1">{stat.label}</p>
+                           {stat.subtitle && (
+                              <p className="text-xs text-gray-500 mt-1">{stat.subtitle}</p>
+                           )}
                         </div>
                      </div>
                   ))
@@ -257,7 +304,7 @@ const Home = ({params}) => {
                            ))
                         ) : recentDonations.length > 0 ? (
                            recentDonations.map((donation) => (
-                              <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                              <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
                                  <div className="flex items-center space-x-3">
                                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                                         <span className="text-sm font-medium text-blue-600">{donation.avatar}</span>
@@ -265,11 +312,17 @@ const Home = ({params}) => {
                                     <div>
                                        <p className="font-medium text-gray-900">{donation.name}</p>
                                        <p className="text-sm text-gray-600">{donation.campaign}</p>
+                                       <p className="text-xs text-gray-500">Transaction ID: {donation.id}</p>
                                     </div>
                                  </div>
                                  <div className="text-right">
-                                    <p className="font-semibold text-green-600">${donation.amount}</p>
+                                    <p className="font-semibold text-green-600">${parseFloat(donation.amount).toLocaleString()}</p>
                                     <p className="text-xs text-gray-500">{formatTimeAgo(donation.time)}</p>
+                                    <div className="flex items-center justify-end mt-1">
+                                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                          Completed
+                                       </span>
+                                    </div>
                                  </div>
                               </div>
                            ))
@@ -315,7 +368,7 @@ const Home = ({params}) => {
                            ))
                         ) : topCampaigns.length > 0 ? (
                            topCampaigns.map((campaign, index) => (
-                              <div key={index} className="p-4 border border-gray-100 rounded-lg">
+                              <div key={index} className="p-4 border border-gray-100 rounded-lg hover:border-blue-200 transition-colors duration-200">
                                  <div className="flex items-center justify-between mb-2">
                                     <h3 className="font-medium text-gray-900">{campaign.name}</h3>
                                     <span className="text-sm font-medium text-green-600">{campaign.trend}</span>
@@ -332,9 +385,17 @@ const Home = ({params}) => {
                                        ></div>
                                     </div>
                                  </div>
-                                 <div className="flex justify-between text-xs text-gray-500">
+                                 <div className="flex justify-between text-xs text-gray-500 mb-2">
                                     <span>{campaign.donors} donors</span>
                                     <span>{campaign.percentageFunded}% funded</span>
+                                 </div>
+                                 <div className="flex items-center justify-between">
+                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                       Active
+                                    </span>
+                                    <Link href={`/org/${organizationId}/campaign/${campaign.id}`} className="text-xs text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                                       View Details →
+                                    </Link>
                                  </div>
                               </div>
                            ))
@@ -430,6 +491,13 @@ const Home = ({params}) => {
                               </div>
                               <BsArrowUpRight className="text-gray-600" />
                            </Link>
+                           <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors duration-200">
+                              <div className="flex items-center space-x-3">
+                                 <FaDollarSign className="text-purple-600" />
+                                 <span className="text-sm font-medium text-purple-900">Stripe Dashboard</span>
+                              </div>
+                              <MdOpenInNew className="text-purple-600" />
+                           </a>
                         </div>
                      </div>
                   </div>

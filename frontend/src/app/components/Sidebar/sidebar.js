@@ -26,7 +26,7 @@ const Sidebar = ({organizationId}) => {
 
    return (
       <div 
-         className={`${isCollapsed ? 'w-16' : 'w-64'} h-full bg-white border-r border-gray-200 shadow-lg transition-all duration-300 ease-in-out flex flex-col`}
+         className={`${isCollapsed ? 'w-16' : 'w-64'} h-full bg-white border-r border-gray-200 shadow-lg transition-all duration-300 ease-in-out flex flex-col min-h-0`}
       >
          {/* Navigation Items */}
          <div className="flex-1 py-4">
@@ -35,7 +35,7 @@ const Sidebar = ({organizationId}) => {
             <SidebarItem icon={<FaCalendarAlt className='h-5 w-5'/>} text="Events" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/events`} />
             <SidebarItem icon={<FaDonate className='h-5 w-5'/>} text="Transactions" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/transactions`}/>
             <SidebarItem icon={<RiPagesLine className='h-5 w-5'/>} text="Pages" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/pages`}/>
-            <SidebarItem icon={<GrTemplate className='h-5 w-5'/>} text="Templates" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/templates`}/>
+            {/* <SidebarItem icon={<GrTemplate className='h-5 w-5'/>} text="Templates" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/templates`}/> */}
             <SidebarItem icon={<IoIosSettings className='h-5 w-5'/>} text="Settings" isCollapsed={isCollapsed} link={`/org/${organizationId}/dashboard/settings`}/>
          </div>
 

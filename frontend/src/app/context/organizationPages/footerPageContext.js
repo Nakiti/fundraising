@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import ContentSection from "@/app/org/[organizationId]/page/footer/components/sections/contentSection";
 import SocialSection from "@/app/org/[organizationId]/page/footer/components/sections/socialSection";
 import { PageService } from "@/app/services/fetchService";
 import useFormInput from "@/app/hooks/useFormInput";
+import ContactSection from "@/app/org/[organizationId]/page/footer/components/sections/contactSection";
 
 export const FooterPageContext = createContext()
 
@@ -10,7 +10,7 @@ export const FooterPageContextProvider = ({organizationId, children}) => {
    const [inputs, handleInputsChange, setInputs] = useFormInput({})
 
    const [sections, setSections] = useState([
-      {name: "content", displayText: "Footer Content", active: true, required: true, dropdown: false, content: <ContentSection />},
+      {name: "contact", displayText: "Footer Contact", active: true, required: true, dropdown: false, content: <ContactSection />},
       {name: "social", displayText: "Social Media", active: true, required: false, dropdown: false, content: <SocialSection />}
    ])
 
@@ -21,29 +21,26 @@ export const FooterPageContextProvider = ({organizationId, children}) => {
             const footerPageId = response.id
             setInputs({
                id: response.id,
+               // Basic content
                logo: response.logo || "",
                organizationName: response.organizationName || "",
                tagline: response.tagline || "",
-               showTagline: response.showTagline !== false,
                description: response.description || "",
-               showDescription: response.showDescription !== false,
-               contactInfo: response.contactInfo || "",
-               showContactInfo: response.showContactInfo !== false,
-               links: response.links || [],
-               showLinks: response.showLinks !== false,
+               // Contact section fields
+               address: response.address || "",
+               phone: response.phone || "",
+               email: response.email || "",
+               businessHours: response.businessHours || "",
+               contactFormUrl: response.contactFormUrl || "",
+               // Social section fields
                socialLinks: response.socialLinks || [],
-               showSocialLinks: response.showSocialLinks !== false,
+               // Basic styling
                bgColor: response.bgColor || "#1F2937",
                textColor: response.textColor || "#FFFFFF",
-               linkColor: response.linkColor || "#60A5FA",
-               footerHeight: response.footerHeight || "auto",
                fontSize: response.fontSize || "14px",
                borderTop: response.borderTop !== false,
                borderColor: response.borderColor || "#374151",
                shadow: response.shadow !== false,
-               footerLayout: response.footerLayout || "three-column",
-               contentAlignment: response.contentAlignment || "left",
-               socialPosition: response.socialPosition || "bottom",
                active: response.active || false
             })
 

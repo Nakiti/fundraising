@@ -1,269 +1,127 @@
 "use client"
 import { useContext } from "react"
 import { HeaderPageContext } from "@/app/context/organizationPages/headerPageContext"
+import { FaPalette, FaFont, FaImage, FaMousePointer, FaRuler, FaLayerGroup, FaEye, FaToggleOn, FaToggleOff } from "react-icons/fa"
 
 const HeaderDesignPage = () => {
-   const { inputs, handleInputsChange, sections } = useContext(HeaderPageContext)
+   const { inputs, handleInputsChange } = useContext(HeaderPageContext)
+
+   const colorGroups = [
+      {
+         title: "Background Colors",
+         icon: <FaImage className="w-3 h-3" />,
+         colors: [
+            { name: "bgColor", label: "Background Color", description: "Main background color for the header" },
+            { name: "borderColor", label: "Border Color", description: "Color for header borders and dividers" }
+         ]
+      },
+      {
+         title: "Text Colors",
+         icon: <FaFont className="w-3 h-3" />,
+         colors: [
+            { name: "textColor", label: "Text Color", description: "Main text color for header content" },
+            { name: "linkColor", label: "Link Color", description: "Color for header navigation links" }
+         ]
+      }
+   ]
+
+   const toggleOptions = [
+      {
+         name: "borderBottom",
+         label: "Show Bottom Border",
+         description: "Add a border at the bottom of the header"
+      },
+      {
+         name: "shadow",
+         label: "Show Shadow",
+         description: "Add a subtle shadow to the header"
+      }
+   ]
+
+   const handleToggleChange = (name) => {
+      handleInputsChange({
+         target: {
+            name,
+            value: !inputs[name]
+         }
+      })
+   }
 
    return (
-      <div className="space-y-6">
-         <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Header Design Settings</h3>
-            <p className="text-gray-600">
-               Customize the appearance and layout of your organization's header. 
-               Changes will be reflected in the preview on the right.
-            </p>
-         </div>
-         
-         {/* Layout Options */}
-         <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Layout Options</h3>
-            <div className="space-y-4">
-               {/* Logo Position */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Logo Position
-                  </label>
-                  <select
-                     name="logoPosition"
-                     value={inputs.logoPosition || "left"}
-                     onChange={handleInputsChange}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                     <option value="left">Left</option>
-                     <option value="center">Center</option>
-                  </select>
+      <div className="w-full space-y-4">
+         {/* Color Customization */}
+         {colorGroups.map((group, groupIndex) => (
+            <div key={groupIndex} className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+               <div className="flex items-center space-x-2 mb-3">
+                  <div className="p-1.5 bg-gray-50" style={{borderRadius: "4px"}}>
+                     {group.icon}
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-900">{group.title}</h3>
                </div>
-
-               {/* Navigation Position */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Navigation Position
-                  </label>
-                  <select
-                     name="navigationPosition"
-                     value={inputs.navigationPosition || "center"}
-                     onChange={handleInputsChange}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                     <option value="left">Left</option>
-                     <option value="center">Center</option>
-                     <option value="right">Right</option>
-                  </select>
-               </div>
-
-               {/* Button Position */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Button Position
-                  </label>
-                  <select
-                     name="buttonPosition"
-                     value={inputs.buttonPosition || "right"}
-                     onChange={handleInputsChange}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                     <option value="left">Left</option>
-                     <option value="center">Center</option>
-                     <option value="right">Right</option>
-                  </select>
+               
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {group.colors.map((color, colorIndex) => (
+                     <div key={colorIndex} className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                           <label className="text-xs font-medium text-gray-700">
+                              {color.label}
+                           </label>
+                           <div className="relative">
+                              <input 
+                                 type="color" 
+                                 className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
+                                 style={{borderRadius: "4px"}}
+                                 name={color.name}
+                                 value={inputs[color.name] || (color.name === "linkColor" ? "#3B82F6" : "#FFFFFF")}
+                                 onChange={handleInputsChange}
+                              />
+                              <div 
+                                 className="w-6 h-6 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors duration-200" 
+                                 style={{ 
+                                    backgroundColor: inputs[color.name] || (color.name === "linkColor" ? "#3B82F6" : "#FFFFFF"),
+                                    borderRadius: "4px"
+                                 }}
+                              />
+                           </div>
+                        </div>
+                        <p className="text-xs text-gray-400">{color.description}</p>
+                     </div>
+                  ))}
                </div>
             </div>
-         </div>
+         ))}
 
-         {/* Styling Options */}
-         <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Styling Options</h3>
-            <div className="space-y-4">
-               {/* Background Color */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Background Color
-                  </label>
-                  <div className="flex items-center space-x-3">
-                     <input
-                        type="color"
-                        name="bgColor"
-                        value={inputs.bgColor || "#FFFFFF"}
-                        onChange={handleInputsChange}
-                        className="w-12 h-10 border border-gray-300 rounded-md cursor-pointer"
-                     />
-                     <input
-                        type="text"
-                        name="bgColor"
-                        value={inputs.bgColor || "#FFFFFF"}
-                        onChange={handleInputsChange}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="#FFFFFF"
-                     />
-                  </div>
+         {/* Element Toggles */}
+         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+            <div className="flex items-center space-x-2 mb-4">
+               <div className="p-1.5 bg-orange-50" style={{borderRadius: "4px"}}>
+                  <FaToggleOn className="w-3 h-3 text-orange-600" />
                </div>
-
-               {/* Text Color */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Text Color
-                  </label>
-                  <div className="flex items-center space-x-3">
-                     <input
-                        type="color"
-                        name="textColor"
-                        value={inputs.textColor || "#000000"}
-                        onChange={handleInputsChange}
-                        className="w-12 h-10 border border-gray-300 rounded-md cursor-pointer"
-                     />
-                     <input
-                        type="text"
-                        name="textColor"
-                        value={inputs.textColor || "#000000"}
-                        onChange={handleInputsChange}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="#000000"
-                     />
-                  </div>
-               </div>
-
-               {/* Accent Color */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Accent Color (for buttons)
-                  </label>
-                  <div className="flex items-center space-x-3">
-                     <input
-                        type="color"
-                        name="accentColor"
-                        value={inputs.accentColor || "#3B82F6"}
-                        onChange={handleInputsChange}
-                        className="w-12 h-10 border border-gray-300 rounded-md cursor-pointer"
-                     />
-                     <input
-                        type="text"
-                        name="accentColor"
-                        value={inputs.accentColor || "#3B82F6"}
-                        onChange={handleInputsChange}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="#3B82F6"
-                     />
-                  </div>
-               </div>
-
-               {/* Header Height */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Header Height
-                  </label>
-                  <input
-                     type="text"
-                     name="headerHeight"
-                     value={inputs.headerHeight || "80px"}
-                     onChange={handleInputsChange}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                     placeholder="e.g., 80px"
-                  />
-               </div>
-
-               {/* Logo Size */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Logo Size
-                  </label>
-                  <input
-                     type="text"
-                     name="logoSize"
-                     value={inputs.logoSize || "40px"}
-                     onChange={handleInputsChange}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                     placeholder="e.g., 40px"
-                  />
-               </div>
-
-               {/* Font Size */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Font Size
-                  </label>
-                  <input
-                     type="text"
-                     name="fontSize"
-                     value={inputs.fontSize || "16px"}
-                     onChange={handleInputsChange}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                     placeholder="e.g., 16px"
-                  />
-               </div>
-
-               {/* Font Weight */}
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Font Weight
-                  </label>
-                  <select
-                     name="fontWeight"
-                     value={inputs.fontWeight || "500"}
-                     onChange={handleInputsChange}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                     <option value="300">Light (300)</option>
-                     <option value="400">Normal (400)</option>
-                     <option value="500">Medium (500)</option>
-                     <option value="600">Semi Bold (600)</option>
-                     <option value="700">Bold (700)</option>
-                  </select>
-               </div>
-
-               {/* Border Bottom Toggle */}
-               <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">
-                     Show Border Bottom
-                  </label>
-                  <input
-                     type="checkbox"
-                     name="borderBottom"
-                     checked={inputs.borderBottom !== false}
-                     onChange={(e) => handleInputsChange({ target: { name: 'borderBottom', value: e.target.checked } })}
-                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-               </div>
-
-               {/* Border Color */}
-               {inputs.borderBottom !== false && (
-                  <div>
-                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Border Color
-                     </label>
-                     <div className="flex items-center space-x-3">
-                        <input
-                           type="color"
-                           name="borderColor"
-                           value={inputs.borderColor || "#E5E7EB"}
-                           onChange={handleInputsChange}
-                           className="w-12 h-10 border border-gray-300 rounded-md cursor-pointer"
-                        />
-                        <input
-                           type="text"
-                           name="borderColor"
-                           value={inputs.borderColor || "#E5E7EB"}
-                           onChange={handleInputsChange}
-                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="#E5E7EB"
-                        />
+               <h3 className="text-sm font-medium text-gray-900">Visual Effects</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+               {toggleOptions.map((option, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors duration-200" style={{borderRadius: "4px"}}>
+                     <div className="flex-1">
+                        <label className="text-xs font-medium text-gray-700 cursor-pointer">
+                           {option.label}
+                        </label>
+                        <p className="text-xs text-gray-400 mt-0.5">{option.description}</p>
                      </div>
+                     <button
+                        onClick={() => handleToggleChange(option.name)}
+                        className="ml-3 p-1 hover:bg-gray-200 transition-colors duration-200"
+                        style={{borderRadius: "4px"}}
+                     >
+                        {inputs[option.name] ? (
+                           <FaToggleOn className="w-4 h-4 text-green-500" />
+                        ) : (
+                           <FaToggleOff className="w-4 h-4 text-gray-400" />
+                        )}
+                     </button>
                   </div>
-               )}
-
-               {/* Shadow Toggle */}
-               <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">
-                     Show Shadow
-                  </label>
-                  <input
-                     type="checkbox"
-                     name="shadow"
-                     checked={inputs.shadow !== false}
-                     onChange={(e) => handleInputsChange({ target: { name: 'shadow', value: e.target.checked } })}
-                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-               </div>
+               ))}
             </div>
          </div>
       </div>

@@ -1,19 +1,16 @@
 "use client"
 import { useContext } from "react"
 import { HeaderPageContext } from "@/app/context/organizationPages/headerPageContext"
-import LogoSection from "./components/sections/logoSection"
-import NavigationSection from "./components/sections/navigationSection"
+import SectionManager from "@/app/components/sectionManager"
 
 const HeaderPage = () => {
-   const { inputs, handleInputsChange, sections } = useContext(HeaderPageContext)
+   const { sections, setSections } = useContext(HeaderPageContext)
 
    return (
-      <div className="space-y-6">
-         {/* Logo Section */}
-         <LogoSection />
-
-         {/* Navigation Section */}
-         <NavigationSection />
+      <div className="w-full">
+         {sections.map((section) => (
+            <SectionManager key={section.name} section={section} sections={sections} setSections={setSections}/>
+         ))}
       </div>
    )
 }

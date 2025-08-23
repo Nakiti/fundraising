@@ -7,6 +7,7 @@ import { FaHeart, FaUsers, FaChartLine, FaArrowRight, FaPlay, FaStar, FaCheckCir
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/autoplay';
+import { useRouter } from "next/navigation";
 
 const Organization = ({ params }) => {
   const organizationId = params.organizationId;
@@ -14,7 +15,7 @@ const Organization = ({ params }) => {
   const [campaigns, setCampaigns] = useState(null);
   const campaignsRef = useRef(null)
   const [visibleCampaigns, setVisibleCampaigns] = useState(3)
-  
+  const router = useRouter()
   const { showError } = useToast();
 
   // API hooks for data fetching
@@ -58,7 +59,7 @@ const Organization = ({ params }) => {
   // Show loading state
   if (orgLoading || campaignsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="h-96 bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading organization...</p>
@@ -83,6 +84,7 @@ const Organization = ({ params }) => {
 // Separate component to use context
 const LandingPageContent = ({ organization, campaigns, organizationId, campaignsRef, visibleCampaigns, showMoreCampaigns, scrollToCampaigns }) => {
   const { inputs, sections } = useContext(LandingPageContext);
+  const router = useRouter();
 
   // Enhanced customization options
   const customStyles = {
@@ -114,7 +116,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
 
   return (
     <div 
-      className="bg-white w-full min-h-screen"
+      className="bg-white w-full"
       style={{
         backgroundColor: inputs.bg_color || '#ffffff',
         fontFamily: customStyles.fontFamily
@@ -374,11 +376,11 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                     <div className="text-lg font-semibold text-gray-900 mb-1">{item.metric}</div>
                     <div className="text-xs text-gray-500">{item.label}</div>
                   </div>
-                ))}
-              </div>
+                ))}   
+              </div> 
             )}
             
-            <button 
+            {/* <button 
               className={`font-semibold transition-all duration-300 flex items-center space-x-2 ${showHoverEffects ? 'hover:scale-105' : ''}`}
               style={{
                 backgroundColor: inputs.b_color || customStyles.accentColor,
@@ -390,7 +392,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             >
               <span>Learn More</span>
               {showHeroIcons && <FaArrowRight className="w-4 h-4" />}
-            </button>
+            </button> */}
           </div>
         </div>
       )}
@@ -580,6 +582,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                         fontSize: customStyles.buttonTextSize,
                         padding: '12px 20px'
                       }}
+                      onClick={() => router.push(`/organization/${organizationId}/campaign/${campaign.id}/donation-page`)}
                     >
                       <span>Learn More</span>
                       {showHeroIcons && <FaArrowRight className="w-3 h-3" />}
@@ -613,15 +616,6 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
         </div>
       </div>
 
-      {/* Footer */}
-      <footer 
-        className="px-12 py-8"
-        style={{backgroundColor: inputs.b_color || '#1f2937'}}
-      >
-        <p style={{color: inputs.bt_color || '#ffffff'}}>
-          Contact: {organization?.contact_email || 'contact@organization.com'}
-        </p>
-      </footer>
     </div>
   );
 };

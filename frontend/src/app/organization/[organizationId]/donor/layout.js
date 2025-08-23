@@ -1,6 +1,8 @@
 "use client";
 import { DonorProvider } from "@/app/context/donorContext";
+import { DonorSidebarProvider } from "@/app/context/donorSidebarContext";
 import DonorSidebar from "@/app/components/DonorSidebar/donorSidebar";
+import DonorHeader from "@/app/components/DonorHeader/donorHeader";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -19,23 +21,31 @@ const DonorLayout = ({ children, params }) => {
 
     return (
         <DonorProvider organizationId={organizationId}>
-            {isAuthPage ? (
-                // For login/register pages, render without sidebar
-                <div className="bg-gray-50" style={{ minHeight: "calc(100vh - 80px)" }}>
-                    {isClient && children}
-                </div>
-            )} : (
-                // For authenticated pages, render with sidebar
-                <div className="flex bg-gray-50" style={{ minHeight: "calc(100vh - 80px)" }}>
-                    {/* Sidebar */}
-                    {isClient && <DonorSidebar organizationId={organizationId} />}
-
-                    {/* Main Content */}
-                    <div className="flex-1 overflow-y-auto">
+            <DonorSidebarProvider>
+                {isAuthPage ? (
+                    // For login/register pages, render without sidebar
+                    <div className="bg-gray-50 min-h-full">
                         {isClient && children}
                     </div>
-                </div>
-            )}
+                ) : (
+                    // For authenticated pages, render with sidebar and header
+                    <div className="h-full flex flex-col">
+                        {/* Header */}
+                        {isClient && <DonorHeader organizationId={organizationId} />}
+                        
+                        {/* Main Layout */}
+                        <div className="flex flex-1 bg-gray-50 overflow-hidden">
+                            {/* Sidebar */}
+                            {isClient && <DonorSidebar organizationId={organizationId} />}
+
+                            {/* Main Content */}
+                            <div className="flex-1 overflow-y-auto min-h-0">
+                                {isClient && children}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </DonorSidebarProvider>
         </DonorProvider>
     );
 };

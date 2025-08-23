@@ -44,7 +44,7 @@ const Display = () => {
                      className="font-bold mb-3 leading-tight"
                      style={{ 
                         color: donationFormInputs.p_color || '#1e293b',
-                        fontSize: Math.min(parseInt(donationFormInputs.heroTitleSize) || 24, 28) + 'px'
+                        fontSize: (parseInt(donationFormInputs.heroTitleSize) || 24) + 'px'
                      }}
                   >
                      {donationFormInputs.headline || "Make a Donation"}
@@ -53,7 +53,7 @@ const Display = () => {
                      className="leading-relaxed max-w-md mx-auto"
                      style={{ 
                         color: donationFormInputs.s_color || '#64748b',
-                        fontSize: Math.min(parseInt(donationFormInputs.bodyTextSize) || 14, 16) + 'px'
+                        fontSize: (parseInt(donationFormInputs.bodyTextSize) || 14) + 'px'
                      }}
                   >
                      {donationFormInputs.description || "Your generous contribution helps us continue our mission and make a positive impact in our community."}
@@ -68,7 +68,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: Math.min(parseInt(donationFormInputs.sectionTitleSize) || 16, 18) + 'px'
+                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
                         }}
                      >
                         Choose Your Amount
@@ -100,7 +100,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: Math.min(parseInt(donationFormInputs.sectionTitleSize) || 16, 18) + 'px'
+                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
                         }}
                      >
                         Select Fund
@@ -109,6 +109,7 @@ const Display = () => {
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 bg-white text-sm"
                         defaultValue=""
                         style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                        disabled
                      >
                         <option value="" disabled>Choose a fund</option>
                         <option value="general">General Fund</option>
@@ -123,7 +124,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: Math.min(parseInt(donationFormInputs.sectionTitleSize) || 16, 18) + 'px'
+                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
                         }}
                      >
                         Your Information
@@ -183,7 +184,7 @@ const Display = () => {
                            className="font-semibold mb-3"
                            style={{ 
                               color: donationFormInputs.p_color || '#1e293b',
-                              fontSize: Math.min(parseInt(donationFormInputs.sectionTitleSize) || 16, 18) + 'px'
+                              fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
                            }}
                         >
                            Additional Questions
@@ -232,7 +233,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: Math.min(parseInt(donationFormInputs.sectionTitleSize) || 16, 18) + 'px'
+                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
                         }}
                      >
                         Payment Method
@@ -266,11 +267,12 @@ const Display = () => {
 
                   {/* Submit Button */}
                   <button 
-                     className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
+                     className="w-full py-3 px-4 font-semibold transition-all duration-300 flex items-center justify-center space-x-2"
                      style={{ 
                         backgroundColor: donationFormInputs.b1_color || '#475569',
+                        color: donationFormInputs.bt_color || '#ffffff',
                         borderRadius: donationFormInputs.buttonRadius || '6px',
-                        fontSize: Math.min(parseInt(donationFormInputs.buttonTextSize) || 14, 16) + 'px'
+                        fontSize: (parseInt(donationFormInputs.buttonTextSize) || 14) + 'px'
                      }}
                   >
                      <FaHeart className="w-3 h-3" />

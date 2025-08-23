@@ -19,11 +19,7 @@ const SectionManager = ({setSections, sections, section}) => {
    */
    const toggleSwitch = (sectionName) => {
       setSections(sections.map(item =>
-        item.name === sectionName ? { 
-          ...item, 
-          active: !item.active,
-          dropdown: item.active ? false : item.dropdown // Collapse dropdown when turning off
-        } : item
+        item.name === sectionName ? { ...item, active: !item.active } : item
       ));
    };
   

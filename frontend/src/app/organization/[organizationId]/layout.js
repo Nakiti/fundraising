@@ -4,20 +4,25 @@ import Footer from "./components/footer"
 import { DonationContextProvider } from "@/app/context/organizationPages/donationContext"
 import { LandingPageContextProvider } from "@/app/context/organizationPages/landingPageContext"
 import { AboutPageContextProvider } from "@/app/context/organizationPages/aboutPageContext"
+import { usePathname } from "next/navigation"
 
 const OrganizationLayout = ({children, params}) => {
    const organizationId = params.organizationId
+   const pathname = usePathname()
+   
+   // Check if current page is a donor page
+   const isDonorPage = pathname?.includes('/donor/')
 
    return (
       <DonationContextProvider>
          <LandingPageContextProvider organizationId={organizationId}>
             <AboutPageContextProvider organizationId={organizationId}>
-               <div className="min-h-screen bg-gray-50">
-                  <Header organizationId={organizationId}/>
-                  <main className="pb-16" style={{ minHeight: "calc(100vh - 80px)" }}>
+               <div className={isDonorPage ? "h-screen bg-gray-50" : "min-h-screen bg-gray-50 flex flex-col"}>
+                  {!isDonorPage && <Header organizationId={organizationId}/>}
+                  <main className={isDonorPage ? "h-full" : "flex-1"}>
                      {children}
                   </main>
-                  <Footer organizationId={organizationId}/>
+                  {!isDonorPage && <Footer organizationId={organizationId}/>}
                </div>
             </AboutPageContextProvider>
          </LandingPageContextProvider>

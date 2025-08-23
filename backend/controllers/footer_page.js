@@ -89,43 +89,28 @@ export const updateFooterPage = asyncHandler(async (req, res) => {
       logo, 
       organizationName, 
       tagline, 
-      showTagline,
       description,
-      showDescription,
-      contactInfo,
-      showContactInfo,
-      links,
-      showLinks,
+      // Contact section fields
+      address,
+      phone,
+      email,
+      businessHours,
+      contactFormUrl,
+      // Social section fields
       socialLinks,
-      showSocialLinks,
+      // Basic styling
       bgColor,
       textColor,
-      linkColor,
-      footerHeight,
       fontSize,
       borderTop,
       borderColor,
       shadow,
-      footerLayout,
-      contentAlignment,
-      socialPosition,
-      socialIconSize,
-      socialIconColor,
-      socialLayout,
-      socialSpacing,
       active
     } = req.body
 
     if (!id) {
       throw new ValidationError('Footer page ID is required')
     }
-
-    // Validate required fields for publishing
-    // if (active === 'true' || active === true) {
-    //   if (!logo || !organizationName) {
-    //     throw new ValidationError('Missing required fields: logo, organizationName')
-    //   }
-    // }
 
     let logoUrl = logo
     if (req.files && req.files.logo) {
@@ -139,30 +124,19 @@ export const updateFooterPage = asyncHandler(async (req, res) => {
         logo = ?, 
         organization_name = ?, 
         tagline = ?, 
-        show_tagline = ?,
         description = ?,
-        show_description = ?,
-        contact_info = ?,
-        show_contact_info = ?,
-        links = ?,
-        show_links = ?,
+        address = ?,
+        phone = ?,
+        email = ?,
+        business_hours = ?,
+        contact_form_url = ?,
         social_links = ?,
-        show_social_links = ?,
         bg_color = ?,
         text_color = ?,
-        link_color = ?,
-        footer_height = ?,
         font_size = ?,
         border_top = ?,
         border_color = ?,
         shadow = ?,
-        footer_layout = ?,
-        content_alignment = ?,
-        social_position = ?,
-        social_icon_size = ?,
-        social_icon_color = ?,
-        social_layout = ?,
-        social_spacing = ?,
         active = ?,
         updated_at = NOW()
       WHERE id = ?
@@ -172,30 +146,19 @@ export const updateFooterPage = asyncHandler(async (req, res) => {
       logoUrl,
       organizationName || "",
       tagline || "",
-      showTagline === 'true' || showTagline === true ? 1 : 0,
       description || "",
-      showDescription === 'true' || showDescription === true ? 1 : 0,
-      contactInfo || "",
-      showContactInfo === 'true' || showContactInfo === true ? 1 : 0,
-      links ? JSON.stringify(links) : "[]",
-      showLinks === 'true' || showLinks === true ? 1 : 0,
+      address || "",
+      phone || "",
+      email || "",
+      businessHours || "",
+      contactFormUrl || "",
       socialLinks ? JSON.stringify(socialLinks) : "[]",
-      showSocialLinks === 'true' || showSocialLinks === true ? 1 : 0,
       bgColor || "#1F2937",
       textColor || "#FFFFFF",
-      linkColor || "#60A5FA",
-      footerHeight || "auto",
       fontSize || "14px",
       borderTop === 'true' || borderTop === true ? 1 : 0,
       borderColor || "#374151",
       shadow === 'true' || shadow === true ? 1 : 0,
-      footerLayout || "three-column",
-      contentAlignment || "left",
-      socialPosition || "bottom",
-      socialIconSize || "medium",
-      socialIconColor || "#FFFFFF",
-      socialLayout || "horizontal",
-      socialSpacing || "normal",
       active === 'true' || active === true ? 1 : 0,
       id
     ]

@@ -97,6 +97,9 @@ export const CampaignContextProvider = ({ children }) => {
       if (['socialTitle', 'socialDescription', 'campaignUrl'].includes(name)) {
          setPageHasChanges('sharing', true);
       }
+      if (['defaultDesignation'].includes(name)) {
+         setPageHasChanges('designations', true);
+      }
    };
 
    // Function to mark changes as saved

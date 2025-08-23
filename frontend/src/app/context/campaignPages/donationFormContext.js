@@ -74,10 +74,10 @@ export const DonationFormContextProvider = ({campaignId, children}) => {
       fetchData()
    }, [])
 
-   return (
-      <DonationFormContext.Provider value={{campaignId, donationFormId, donationFormInputs, handleDonationFormInputsChange,
-         donationFormSections, setDonationFormSections, customQuestions 
-         }}
+      return (
+      <DonationFormContext.Provider value={{campaignId, donationFormId, donationFormInputs, handleDonationFormInputsChange, setDonationFormInputs,
+        donationFormSections, setDonationFormSections, customQuestions 
+        }}
       >
          {children}
       </DonationFormContext.Provider>

@@ -72,7 +72,7 @@ const DonorDashboard = ({ params }) => {
     // Show loading while checking authentication
     if (loading) {
         return (
-            <div className="flex items-center justify-center bg-gray-50" style={{ minHeight: "calc(100vh - 80px)" }}>
+            <div className="flex items-center justify-center bg-gray-50 h-full">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600 font-medium">Checking authentication...</p>
@@ -87,29 +87,15 @@ const DonorDashboard = ({ params }) => {
     }
 
     return (
-        <>
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                    footer {
-                        display: none !important;
-                    }
-                `
-            }} />
-
-            <div className="bg-gray-50" style={{ minHeight: "calc(100vh - 80px)" }}>
-                {/* Header */}
-                <div className="bg-white border-b border-gray-200 px-6 py-4">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
-                            Welcome back, {donor.firstName}!
-                        </h1>
-                        <p className="text-gray-600 mt-1">Here's your donation overview and recent activity</p>
-                    </div>
-                </div>
-            </div>
-
+        <div className="bg-gray-50 h-full">
             <div className="p-6">
+                {/* Welcome Section */}
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">
+                        Welcome back, {donor.firstName}!
+                    </h1>
+                    <p className="text-gray-600 mt-1">Here's your donation overview and recent activity</p>
+                </div>
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
@@ -158,45 +144,6 @@ const DonorDashboard = ({ params }) => {
                     </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
-                    <div className="px-6 py-4 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-                    </div>
-                    <div className="p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 group">
-                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                                    <FaUser className="w-5 h-5 text-blue-600" />
-                                </div>
-                                <div className="ml-4 text-left">
-                                    <p className="text-sm font-medium text-gray-900">Update Profile</p>
-                                    <p className="text-sm text-gray-500">Manage your information</p>
-                                </div>
-                            </button>
-
-                            <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 group">
-                                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                                    <FaCog className="w-5 h-5 text-green-600" />
-                                </div>
-                                <div className="ml-4 text-left">
-                                    <p className="text-sm font-medium text-gray-900">Preferences</p>
-                                    <p className="text-sm text-gray-500">Communication settings</p>
-                                </div>
-                            </button>
-
-                            <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 group">
-                                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                                    <FaDownload className="w-5 h-5 text-purple-600" />
-                                </div>
-                                <div className="ml-4 text-left">
-                                    <p className="text-sm font-medium text-gray-900">Download Receipts</p>
-                                    <p className="text-sm text-gray-500">Tax documentation</p>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Recent Donations */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200">
@@ -273,7 +220,6 @@ const DonorDashboard = ({ params }) => {
                 </div>
             </div>
         </div>
-        </>
     );
 };
 

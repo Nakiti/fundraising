@@ -296,35 +296,6 @@ const DonationLandingPage = ({params}) => {
                </div>
             </div>
          </div>
-
-         {/* Footer */}
-         <div 
-            className="border-t border-slate-200 py-6 px-6 text-center"
-            style={{paddingTop: Math.min(parseInt(display.sectionPadding) || 40, 60) / 2}}
-         >
-            <p 
-               className="text-sm"
-               style={{ color: display.s_color || '#64748b' }}
-            >
-               {display.footer_text || "Your Organization"}
-            </p>
-            <div className="flex justify-center space-x-4 mt-2">
-               <a 
-                  href={display.privacy_policy_url || "#"}
-                  className="text-xs hover:underline"
-                  style={{ color: display.s_color || '#64748b' }}
-               >
-                  Privacy Policy
-               </a>
-               <a 
-                  href={display.terms_of_service_url || "#"}
-                  className="text-xs hover:underline"
-                  style={{ color: display.s_color || '#64748b' }}
-               >
-                  Terms of Service
-               </a>
-            </div>
-         </div>
       </div>}
    </div>
    )

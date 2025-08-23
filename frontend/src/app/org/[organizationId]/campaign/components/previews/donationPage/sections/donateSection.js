@@ -22,12 +22,13 @@ const DonateSection = () => {
                   <div key={index} className="flex flex-col space-y-2">
                      <label className="text-sm font-medium text-gray-700">{item.label}</label>
                      <input
-                        placeholder={`Enter a Value for ${item.label}`}
+                        placeholder={`Enter a number`}
                         type="number"
                         className="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                         value={donationPageInputs[item.name]}
                         name={item.name}
                         onChange={handleDonationPageInputsChange}
+                        min={1}
                      />
                   </div>
                ))}

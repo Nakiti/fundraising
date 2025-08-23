@@ -1,10 +1,124 @@
 "use client"
 import { useState, useContext } from "react"
 import { AboutPageContext } from "@/app/context/organizationPages/aboutPageContext"
-import { FaPalette, FaFont, FaRuler, FaEye, FaToggleOn, FaToggleOff } from "react-icons/fa"
+import { PageUpdateService } from "@/app/services/updateServices"
+import { PageService } from "@/app/services/fetchService"
+import { errorHandler } from "@/app/services/apiClient"
+import ErrorModal from "@/app/components/errorModal"
+import { FaPalette, FaFont, FaRuler, FaEye, FaToggleOn, FaToggleOff, FaSave, FaUndo } from "react-icons/fa"
 
 const AboutDesign = () => {
-   const {inputs, handleInputsChange} = useContext(AboutPageContext)
+   const {inputs, handleInputsChange, setInputs} = useContext(AboutPageContext)
+   const [error, setError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState("")
+   const [isLoading, setIsLoading] = useState(false)
+   const [isDiscarding, setIsDiscarding] = useState(false)
+   const [successMessage, setSuccessMessage] = useState("")
+
+   const handleSave = async() => {
+      setIsLoading(true)
+      setError(false)
+      setSuccessMessage("")
+      
+      try {
+         await PageUpdateService.updateAboutPage(inputs.id, inputs)
+         setSuccessMessage("About page updated successfully!")
+         setTimeout(() => setSuccessMessage(""), 3000)
+      } catch (err) {
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
+      } finally {
+         setIsLoading(false)
+      }
+   }
+
+   const handleDiscard = async() => {
+      setIsDiscarding(true)
+      setError(false)
+      setSuccessMessage("")
+      
+      try {
+         // Get the organization ID from the inputs or context
+         const organizationId = inputs.organizationId || 1 // You may need to get this from a different source
+         const response = await PageService.getAboutPage(organizationId)
+         const aboutPageId = response.id
+         
+         setInputs({
+            // Page ID for updates
+            id: aboutPageId,
+            
+            // Content fields
+            title: response.title || "",
+            description: response.description || "",
+            headline: response.headline || "",
+            aboutText: response.aboutText || "",
+            whatText: response.whatText || "",
+            whyText: response.whyText || "",
+            teamText: response.teamText || "",
+            missionText: response.missionText || "",
+            visionText: response.visionText || "",
+            valuesText: response.valuesText || "",
+            
+            // Images
+            bgImage: response.bgImage || "",
+            aboutImage: response.aboutImage || "",
+            teamImage: response.teamImage || "",
+            missionImage: response.missionImage || "",
+            visionImage: response.visionImage || "",
+            valuesImage: response.valuesImage || "",
+            
+            // Color customization
+            bg_color: response.bg_color || "#FFFFFF",
+            p_color: response.p_color || "#000000",
+            s_color: response.s_color || "#666666",
+            c_color: response.c_color || "#FFFFFF",
+            ct_color: response.ct_color || "#000000",
+            b_color: response.b_color || "#1F2937",
+            bt_color: response.bt_color || "#FFFFFF",
+            
+            // Font sizes
+            heroTitleSize: response.hero_title_size || "36px",
+            heroSubtitleSize: response.hero_subtitle_size || "16px",
+            sectionTitleSize: response.section_title_size || "28px",
+            bodyTextSize: response.body_text_size || "14px",
+            buttonTextSize: response.button_text_size || "14px",
+            cardTitleSize: response.card_title_size || "18px",
+            
+            // Layout & spacing
+            heroHeight: response.hero_height || "500px",
+            sectionPadding: response.section_padding || "80px",
+            cardRadius: response.card_radius || "4px",
+            buttonRadius: response.button_radius || "4px",
+            
+            // Visual effects
+            overlayOpacity: response.overlay_opacity || "0.3",
+            accentColor: response.accent_color || "#1F2937",
+            
+            // Element visibility toggles
+            showVideoButton: response.show_video_button !== false,
+            showHeroIcons: response.show_hero_icons !== false,
+            showFeatureIcons: response.show_feature_icons !== false,
+            showTeamPhotos: response.show_team_photos !== false,
+            showMissionSection: response.show_mission_section !== false,
+            showVisionSection: response.show_vision_section !== false,
+            showValuesSection: response.show_values_section !== false,
+            showHoverEffects: response.show_hover_effects !== false,
+            
+            // Status
+            active: response.active || false
+         })
+         
+         setSuccessMessage("Design reverted to last saved state!")
+         setTimeout(() => setSuccessMessage(""), 3000)
+      } catch (err) {
+         const handledError = errorHandler.handle(err)
+         setErrorMessage(handledError.message)
+         setError(true)
+      } finally {
+         setIsDiscarding(false)
+      }
+   }
 
    // Color groups for organization
    const colorGroups = [
@@ -327,6 +441,54 @@ const AboutDesign = () => {
                </div>
             </div>
          </div>
+
+         {/* Save and Discard Actions */}
+         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+            <div className="flex items-center justify-between">
+               <div>
+                  <h3 className="text-sm font-medium text-gray-900">Actions</h3>
+                  {successMessage && (
+                     <p className="text-xs text-green-600 mt-1">{successMessage}</p>
+                  )}
+               </div>
+               <div className="flex items-center space-x-3">
+                  <button 
+                     className={`px-4 py-2 rounded-lg shadow-sm text-sm font-medium flex items-center space-x-2 transition-colors duration-200 ${
+                        isDiscarding 
+                           ? 'bg-gray-400 text-white cursor-not-allowed' 
+                           : 'bg-gray-500 text-white hover:bg-gray-600'
+                     }`}
+                     onClick={handleDiscard}
+                     disabled={isDiscarding || isLoading}
+                  >
+                     <FaUndo className="w-3 h-3" />
+                     <span>{isDiscarding ? 'Discarding...' : 'Discard'}</span>
+                  </button>
+                  <button 
+                     className={`px-6 py-2 rounded-lg shadow-sm text-sm font-medium flex items-center space-x-2 transition-colors duration-200 ${
+                        isLoading 
+                           ? 'bg-gray-400 text-white cursor-not-allowed' 
+                           : 'bg-blue-600 text-white hover:bg-blue-700'
+                     }`}
+                     onClick={handleSave}
+                     disabled={isLoading || isDiscarding}
+                  >
+                     <FaSave className="w-4 h-4" />
+                     <span>{isLoading ? 'Saving...' : 'Save'}</span>
+                  </button>
+               </div>
+            </div>
+         </div>
+
+         {/* Error Modal */}
+         {error && (
+            <ErrorModal
+               isOpen={error}
+               onClose={() => setError(false)}
+               title="Error"
+               message={errorMessage}
+            />
+         )}
       </div>
    )
 }

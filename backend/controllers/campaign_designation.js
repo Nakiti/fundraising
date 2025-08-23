@@ -3,7 +3,7 @@ import { asyncHandler } from "../middleware/errorHandler.js"
 import {
   sendSuccess,
   sendCreated,
-  sendUpdated,
+  sendUpdated, 
   sendDeleted,
   sendNotFound,
   sendDatabaseError

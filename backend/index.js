@@ -29,6 +29,8 @@ import aboutPageRoutes from "./routes/about_pageRoutes.js"
 import headerPageRoutes from "./routes/header_pageRoutes.js"
 import footerPageRoutes from "./routes/footer_pageRoutes.js"
 import donorRoutes from "./routes/donorRoutes.js"
+import guestDonorRoutes from "./routes/guestDonorRoutes.js"
+import stripeRoutes from "./routes/stripeRoutes.js"
 import { 
   globalErrorHandler, 
   notFoundHandler, 
@@ -159,6 +161,8 @@ app.use("/api/about_page", aboutPageRoutes)
 app.use("/api/header_page", headerPageRoutes)
 app.use("/api/footer_page", footerPageRoutes)
 app.use("/api/donor", donorRoutes)
+app.use("/api/guest-donor", guestDonorRoutes)
+app.use("/api/stripe", stripeRoutes)
 
 // Global error handling middleware (must be last)
 app.use(notFoundHandler);
