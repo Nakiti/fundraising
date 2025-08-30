@@ -5,6 +5,7 @@ import { LandingPageContext } from "@/app/context/organizationPages/landingPageC
 import { updateLandingPage, updatePageSection } from "@/app/services/updateServices"
 import { AuthContext } from "@/app/context/authContext"
 import Navbar from "../components/navbar"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const EditLandingLayout = ({params, children}) => {
    const [error, setError] = useState(false)
@@ -28,7 +29,17 @@ const EditLandingLayout = ({params, children}) => {
       setIsSaving(true)
 
       try {
-         // Update landing page content and styling (no validation for save)
+         // Validate all active sections before saving
+         const validation = validateActiveSections('landing', sections, inputs)
+         
+         if (!validation.isValid) {
+            setError(true)
+            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+            setIsSaving(false)
+            return
+         }
+         
+         // Update landing page content and styling
          await updateLandingPage(inputs.id, inputs)
          
          // Update section visibility states
@@ -60,20 +71,12 @@ const EditLandingLayout = ({params, children}) => {
       setIsPublishing(true)
 
       try {
-         // Validate required fields for publishing
-         const requiredFields = {
-            title: inputs.title,
-            description: inputs.description,
-            bgImage: inputs.bgImage
-         }
-
-         const missingFields = Object.entries(requiredFields)
-            .filter(([key, value]) => !value || value.trim() === "")
-            .map(([key]) => key)
-
-         if (missingFields.length > 0) {
+         // Validate all active sections for publishing
+         const validation = validateActiveSections('landing', sections, inputs)
+         
+         if (!validation.isValid) {
             setError(true)
-            setErrorMessage(`Please fill in the following required fields to publish: ${missingFields.join(", ")}`)
+            setErrorMessage(`Please fill in the following required fields to publish: ${validation.errors.join(", ")}`)
             setIsPublishing(false)
             return
          }
@@ -192,8 +195,7 @@ const EditLandingLayout = ({params, children}) => {
                
                {/* Right Panel - Preview */}
                <div className="xl:w-3/4 lg:w-2/3">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 h-full">
-                     <h2 className="text-lg font-semibold text-gray-900 mb-4 sticky top-0 bg-white py-2">Live Preview</h2>
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100  h-full">
                      <div className="h-full overflow-y-auto">
                         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-inner">
                            <LandingPageDisplay />

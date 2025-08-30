@@ -38,6 +38,7 @@ const StripePaymentForm = ({
   onSuccess, 
   onError,
   designationId = null,
+  isAnonymous = false,
   loading: externalLoading = false
 }) => {
   const stripe = useStripe();
@@ -73,8 +74,8 @@ const StripePaymentForm = ({
       const guestDonorData = {
         organization_id: organizationId,
         email: donorData.email,
-        first_name: donorData.firstName,
-        last_name: donorData.lastName,
+        first_name: isAnonymous ? 'Anonymous' : donorData.firstName,
+        last_name: isAnonymous ? 'Donor' : donorData.lastName,
         phone: donorData.phone || null,
         address: donorData.address || null,
         city: donorData.city || null,
@@ -98,10 +99,11 @@ const StripePaymentForm = ({
         organizationId,
         donorEmail: donorData.email,
         metadata: {
-          donor_name: `${donorData.firstName} ${donorData.lastName}`,
+          donor_name: isAnonymous ? 'Anonymous Donor' : `${donorData.firstName} ${donorData.lastName}`,
           campaign_id: campaignId,
           organization_id: organizationId,
-          designation_id: designationId || ''
+          designation_id: designationId || '',
+          is_anonymous: isAnonymous
         }
       };
 
@@ -112,7 +114,7 @@ const StripePaymentForm = ({
         payment_method: {
           card: card,
           billing_details: {
-            name: `${donorData.firstName} ${donorData.lastName}`,
+            name: isAnonymous ? 'Anonymous Donor' : `${donorData.firstName} ${donorData.lastName}`,
             email: donorData.email,
             address: {
               line1: donorData.address || '',
@@ -143,7 +145,8 @@ const StripePaymentForm = ({
           processing_fee: StripeUtils.calculateProcessingFee(validatedAmount),
           net_amount: StripeUtils.calculateNetAmount(validatedAmount),
           payment_method_type: 'card',
-          designation_id: designationId
+          designation_id: designationId,
+          is_anonymous: isAnonymous
         };
 
         await StripeService.createTransaction(transactionData);

@@ -14,6 +14,7 @@ import {
   DatabaseError
 } from "../utils/errors.js"
 import imageService from "../services/imageService.js"
+import { checkAndUpdateOrganizationStatus } from "./organization_status.js"
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -239,70 +240,10 @@ export const createLandingPage = asyncHandler(async (req, res) => {
 
 export const updateLandingPage = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { 
-    title, 
-    description, 
-    about,
-    mainHeadline,
-    mainText,
-    impactText,
-    headlineOne,
-    descriptionOne,
-    headlineTwo,
-    descriptionTwo,
-    headlineThree,
-    descriptionThree,
-    // Color customization
-    bg_color, 
-    p_color, 
-    s_color, 
-    c_color, 
-    ct_color, 
-    b_color, 
-    bt_color,
-    // Font sizes
-    hero_title_size,
-    hero_subtitle_size,
-    section_title_size,
-    body_text_size,
-    button_text_size,
-    card_title_size,
-    // Layout & spacing
-    hero_height,
-    section_padding,
-    card_radius,
-    button_radius,
-    // Visual effects
-    overlay_opacity,
-    accent_color,
-    // Element visibility toggles
-    show_video_button,
-    show_hero_icons,
-    show_feature_icons,
-    show_campaign_badges,
-    show_trust_badge,
-    show_progress_indicators,
-    show_statistics,
-    show_hover_effects,
-    // Status 
-    active
-  } = req.body;
-  
-  console.log(req.body)
 
   if (!id) {
     throw new ValidationError('Landing page ID is required');
   }
-  
-  // Only validate required fields when publishing (active = true)
-  // if (active === true || active === 'true') {
-  //   if (!title) {
-  //     throw new ValidationError('Title is required to publish the page');
-  //   }
-  //   if (!description) {
-  //     throw new ValidationError('Description is required to publish the page');
-  //   }
-  // }
 
   return new Promise((resolve, reject) => {
     upload.fields([ 
@@ -323,6 +264,67 @@ export const updateLandingPage = asyncHandler(async (req, res) => {
       }
 
       try {
+        // Now req.body is properly populated by multer
+        const { 
+          title, 
+          description, 
+          about,
+          mainHeadline,
+          mainText,
+          impactText,
+          headlineOne,
+          descriptionOne,
+          headlineTwo,
+          descriptionTwo,
+          headlineThree,
+          descriptionThree,
+          // Color customization
+          bg_color, 
+          p_color, 
+          s_color, 
+          c_color, 
+          ct_color, 
+          b_color, 
+          bt_color,
+          // Font sizes
+          hero_title_size,
+          hero_subtitle_size,
+          section_title_size,
+          body_text_size,
+          button_text_size,
+          card_title_size,
+          // Layout & spacing
+          hero_height,
+          section_padding,
+          card_radius,
+          button_radius,
+          // Visual effects
+          overlay_opacity,
+          accent_color,
+          // Element visibility toggles
+          show_video_button,
+          show_hero_icons,
+          show_feature_icons,
+          show_campaign_badges,
+          show_trust_badge,
+          show_progress_indicators,
+          show_statistics,
+          show_hover_effects,
+          // Status 
+          active
+        } = req.body;
+        
+        // console.log('req.body after multer processing:', req.body);
+        
+        // Only validate required fields when publishing (active = true)
+        // if (active === true || active === 'true') {
+        //   if (!title) {
+        //     throw new ValidationError('Title is required to publish the page');
+        //   }
+        //   if (!description) {
+        //     throw new ValidationError('Description is required to publish the page');
+        //   }
+        // }
         // First, get current landing page to access existing image paths
         const getQuery = "SELECT * FROM landing_pages WHERE id = ?";
         
@@ -445,7 +447,7 @@ export const updateLandingPage = asyncHandler(async (req, res) => {
 
       console.log(values)
 
-      db.query(query, values, (err, data) => {
+      db.query(query, values, async (err, data) => {
         if (err) {
           reject(new DatabaseError('Failed to update landing page', err));
           return;
@@ -454,8 +456,29 @@ export const updateLandingPage = asyncHandler(async (req, res) => {
           reject(new NotFoundError('Landing page'));
           return;
         }
+
+        // Check and update organization status after landing page update
+        try {
+          // Get organization_id from the landing page
+          const getOrgQuery = "SELECT organization_id FROM landing_pages WHERE id = ?";
+          db.query(getOrgQuery, [id], async (orgErr, orgData) => {
+            if (!orgErr && orgData && orgData.length > 0) {
+              const organizationId = orgData[0].organization_id;
+              try {
+                await checkAndUpdateOrganizationStatus(organizationId);
+              } catch (statusError) {
+                console.error('Failed to update organization status after landing page update:', statusError);
+                // Don't fail the main operation, just log the error
+              }
+            }
+          });
+        } catch (statusError) {
+          console.error('Error checking organization status:', statusError);
+          // Don't fail the main operation
+        }
+
         sendUpdated(res, data, 'Landing page updated successfully');
-      resolve();
+        resolve();
       })
         })
       } catch (error) {

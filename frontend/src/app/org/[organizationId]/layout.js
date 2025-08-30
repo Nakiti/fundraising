@@ -12,18 +12,18 @@ import { HeaderPageContextProvider } from "@/app/context/organizationPages/heade
 import { FooterPageContextProvider } from "@/app/context/organizationPages/footerPageContext"
 
 const OrgLayout = ({params, children}) => {
-   const {currentUser, isLoggedIn, loading} = useContext(AuthContext)
+   const {currentUser, isLoggedIn, loading, initialCheckComplete, isCheckingAuth} = useContext(AuthContext)
    const organizationId = params.organizationId
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const router = useRouter()
 
-   // Redirect to login if not authenticated and not loading
+   // Redirect to login if not authenticated and initial check is complete
    useEffect(() => {
-      if (!loading && !isLoggedIn) {
+      if (initialCheckComplete && !isLoggedIn) {
          router.push('/login');
       }
-   }, [loading, isLoggedIn, router]);
+   }, [initialCheckComplete, isLoggedIn, router]);
 
    // Global error handler for the org layout
    const handleError = (error) => {
@@ -32,8 +32,8 @@ const OrgLayout = ({params, children}) => {
       setError(true)
    }
 
-   // Show loading spinner while auth is being checked
-   if (loading) {
+   // Show loading spinner while initial auth check is happening
+   if (!initialCheckComplete || isCheckingAuth) {
       return (
          <div className="flex items-center justify-center min-h-screen">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-700"></div>

@@ -23,7 +23,7 @@ const WhySection = () => {
                value={inputs.whyText}
                onChange={handleInputsChange} 
             />
-            <p className="text-xs text-gray-400">This content will appear in the "Why We Do It" section</p>
+            {/* <p className="text-xs text-gray-400">This content will appear in the "Why We Do It" section</p> */}
          </div>
       </div>
    )

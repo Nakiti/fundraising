@@ -11,12 +11,21 @@ const WhatSection = () => {
       if (file) {
          const reader = new FileReader();
          reader.onload = (event) => {
+            // Store both the preview URL and the File object
             handleInputsChange({
                target: {
                   name: e.target.name,
                   value: event.target.result
                }
             });
+            handleInputsChange({
+               target: {
+                  name: e.target.name + 'File',
+                  value: file
+               }
+            });
+            console.log('Image preview:', event.target.result);
+            console.log('File object:', file);
          };
          reader.readAsDataURL(file);
       }
@@ -39,7 +48,7 @@ const WhatSection = () => {
                value={inputs.whatText}
                onChange={handleInputsChange} 
             />
-            <p className="text-xs text-gray-400">This content will appear in the "What We Do" section</p>
+            {/* <p className="text-xs text-gray-400">This content will appear in the "What We Do" section</p> */}
          </div>
 
          {/* About Image Upload */}

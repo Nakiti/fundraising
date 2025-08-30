@@ -175,7 +175,7 @@ const Design = () => {
          ))}
 
          {/* Typography Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-3">
                <div className="p-1.5 bg-gray-50" style={{borderRadius: "4px"}}>
                   <FaFont className="w-4 h-4" />
@@ -205,14 +205,14 @@ const Design = () => {
                         value={thankPageInputs[control.name] || control.defaultValue}
                         onChange={handleThankInputsChange}
                      />
-                     {/* <p className="text-xs text-gray-400">{control.description}</p> */}
+                     <p className="text-xs text-gray-400">{control.description}</p>
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Layout Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-3">
                <div className="p-1.5 bg-gray-50" style={{borderRadius: "4px"}}>
                   <FaRuler className="w-4 h-4" />
@@ -242,11 +242,11 @@ const Design = () => {
                         value={thankPageInputs[control.name] || control.defaultValue}
                         onChange={handleThankInputsChange}
                      />
-                     {/* <p className="text-xs text-gray-400">{control.description}</p> */}
+                     <p className="text-xs text-gray-400">{control.description}</p>
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Save and Discard Actions */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>

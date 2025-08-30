@@ -13,6 +13,8 @@ import {
   DatabaseError
 } from "../utils/errors.js"
 import multer from "multer"
+import { checkAndUpdateOrganizationStatus } from "./organization_status.js"
+import imageService from "../services/imageService.js"
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage()
@@ -65,12 +67,28 @@ export const getFooterPage = asyncHandler(async (req, res) => {
 
   const query = "SELECT * FROM footer_pages WHERE organization_id = ?"
 
-  return new Promise((resolve, reject) => {
-    db.query(query, [organizationId], (err, data) => {
+  return new Promise(async (resolve, reject) => {
+    db.query(query, [organizationId], async (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch footer page', err))
       if (!data || data.length === 0) reject(new NotFoundError('Footer page'))
-      sendSuccess(res, data[0], 'Footer page retrieved successfully')
-      resolve()
+      
+      try {
+        const footerPage = data[0];
+        
+        // Generate SAS URL for logo image (or return local path in development)
+        const logoUrl = await imageService.getImageUrl(footerPage.logo, 'public');
+
+        // Replace image path with URL
+        const result = {
+          ...footerPage,
+          logo: logoUrl
+        };
+
+        sendSuccess(res, result, 'Footer page retrieved successfully')
+        resolve()
+      } catch (error) {
+        reject(new DatabaseError('Failed to generate image URL', error));
+      }
     })
   })
 })
@@ -114,9 +132,24 @@ export const updateFooterPage = asyncHandler(async (req, res) => {
 
     let logoUrl = logo
     if (req.files && req.files.logo) {
-      // In a real implementation, you would upload the file to cloud storage
-      // and get back a URL. For now, we'll use a placeholder
-      logoUrl = `/uploads/footers/${Date.now()}_${req.files.logo[0].originalname}`
+      // Get organization_id from the footer page first
+      const getOrgQuery = "SELECT organization_id FROM footer_pages WHERE id = ?";
+      const orgResult = await new Promise((resolve, reject) => {
+        db.query(getOrgQuery, [id], (err, data) => {
+          if (err) reject(err);
+          else resolve(data);
+        });
+      });
+      
+      if (!orgResult || orgResult.length === 0) {
+        throw new ValidationError('Footer page not found');
+      }
+      
+      const organizationId = orgResult[0].organization_id;
+      
+      // Validate and upload image using Azure blob storage
+      imageService.validateFile(req.files.logo[0]);
+      logoUrl = await imageService.uploadImage(organizationId, 'footer-pages', id, 'logo', req.files.logo[0]);
     }
 
     const query = `
@@ -164,9 +197,30 @@ export const updateFooterPage = asyncHandler(async (req, res) => {
     ]
 
     return new Promise((resolve, reject) => {
-      db.query(query, values, (err, data) => {
+      db.query(query, values, async (err, data) => {
         if (err) reject(new DatabaseError('Failed to update footer page', err))
         if (data.affectedRows === 0) reject(new NotFoundError('Footer page'))
+
+        // Check and update organization status after footer page update
+        try {
+          // Get organization_id from the footer page
+          const getOrgQuery = "SELECT organization_id FROM footer_pages WHERE id = ?";
+          db.query(getOrgQuery, [id], async (orgErr, orgData) => {
+            if (!orgErr && orgData && orgData.length > 0) {
+              const organizationId = orgData[0].organization_id;
+              try {
+                await checkAndUpdateOrganizationStatus(organizationId);
+              } catch (statusError) {
+                console.error('Failed to update organization status after footer page update:', statusError);
+                // Don't fail the main operation, just log the error
+              }
+            }
+          });
+        } catch (statusError) {
+          console.error('Error checking organization status:', statusError);
+          // Don't fail the main operation
+        }
+
         sendUpdated(res, data, 'Footer page updated successfully')
         resolve()
       })

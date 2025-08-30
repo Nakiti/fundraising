@@ -103,6 +103,10 @@ export class PageUpdateService {
          formData.append("b3_color", inputs.b3_color || "#10b981");
          formData.append("bt_color", inputs.bt_color || "#ffffff");
          
+         // Banner Text Colors
+         formData.append("bannerTitleColor", inputs.bannerTitleColor || "#ffffff");
+         formData.append("bannerSubtitleColor", inputs.bannerSubtitleColor || "#e2e8f0");
+         
          // Donation Amounts
          formData.append("button1", inputs.button1 || 25);
          formData.append("button2", inputs.button2 || 50);
@@ -139,6 +143,10 @@ export class PageUpdateService {
          formData.append("bodyTextSize", inputs.bodyTextSize || "16");
          formData.append("buttonTextSize", inputs.buttonTextSize || "16");
          formData.append("cardTitleSize", inputs.cardTitleSize || "18");
+         
+         // Banner Typography
+         formData.append("bannerTitleSize", inputs.bannerTitleSize || "56");
+         formData.append("bannerSubtitleSize", inputs.bannerSubtitleSize || "20");
          
          // Layout
          formData.append("heroHeight", inputs.heroHeight || "500");
@@ -186,23 +194,35 @@ export class PageUpdateService {
          formData.append("headlineThree", data.headlineThree || "");
          formData.append("descriptionThree", data.descriptionThree || "");
          
-         // Images
-         if (data.bgImage instanceof File) {
+         // Images - use File objects if available, otherwise check for File objects stored separately
+         if (data.bgImageFile instanceof File) {
+            formData.append("bgImage", data.bgImageFile);
+         } else if (data.bgImage instanceof File) {
             formData.append("bgImage", data.bgImage);
          }
-         if (data.aboutImage instanceof File) {
+         if (data.aboutImageFile instanceof File) {
+            formData.append("aboutImage", data.aboutImageFile);
+         } else if (data.aboutImage instanceof File) {
             formData.append("aboutImage", data.aboutImage);
          }
-         if (data.textImage instanceof File) {
+         if (data.textImageFile instanceof File) {
+            formData.append("textImage", data.textImageFile);
+         } else if (data.textImage instanceof File) {
             formData.append("textImage", data.textImage);
          }
-         if (data.imageOne instanceof File) {
+         if (data.imageOneFile instanceof File) {
+            formData.append("imageOne", data.imageOneFile);
+         } else if (data.imageOne instanceof File) {
             formData.append("imageOne", data.imageOne);
          }
-         if (data.imageTwo instanceof File) {
+         if (data.imageTwoFile instanceof File) {
+            formData.append("imageTwo", data.imageTwoFile);
+         } else if (data.imageTwo instanceof File) {
             formData.append("imageTwo", data.imageTwo);
          }
-         if (data.imageThree instanceof File) {
+         if (data.imageThreeFile instanceof File) {
+            formData.append("imageThree", data.imageThreeFile);
+         } else if (data.imageThree instanceof File) {
             formData.append("imageThree", data.imageThree);
          }
          
@@ -350,6 +370,19 @@ export class PageUpdateService {
          return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {
          console.error('Error updating footer page:', error);
+         throw error;
+      }
+   }
+
+   static async updatePageSection(id, active) {
+      try {
+         validators.id(id, 'Section ID');
+
+         const response = await api.put(`/sections/update/${id}`, { active: active });
+         
+         return response.success ? (response.data?.success ? null : response.data) : null;
+      } catch (error) {
+         console.error('Error updating page section:', error);
          throw error;
       }
    }
@@ -724,18 +757,7 @@ export class FooterPageUpdateService {
    }
 
    // Update page section
-   static async updatePageSection(id, active) {
-      try {
-         validators.id(id, 'Section ID');
 
-         const response = await api.put(`/sections/update/${id}`, { active: active });
-         
-         return response.success ? (response.data?.success ? null : response.data) : null;
-      } catch (error) {
-         console.error('Error updating page section:', error);
-         throw error;
-      }
-   }
 
    // Update about page
    static async updateAboutPage(id, data) {
@@ -892,10 +914,10 @@ export const deactivateCampaign = CampaignUpdateService.deactivateCampaign;
 export const updateDonationPage = PageUpdateService.updateDonationPage;
 export const updateLandingPage = PageUpdateService.updateLandingPage;
 export const updatePeerLandingPage = PageUpdateService.updatePeerLandingPage;
-export const updateDonationForm = PageUpdateService.updateDonationForm;
+export const updateDonationForm = FooterPageUpdateService.updateDonationForm;
 export const updateTicketPurchasePage = PageUpdateService.updateTicketPurchasePage;
 export const updatePeerFundraisingPage = PageUpdateService.updatePeerFundraisingPage;
-export const updateThankYouPage = PageUpdateService.updateThankYouPage;
+export const updateThankYouPage = FooterPageUpdateService.updateThankYouPage;
 export const updateTicketPage = PageUpdateService.updateTicketPage;
 export const updatePageSection = PageUpdateService.updatePageSection;
 export const updateAboutPage = PageUpdateService.updateAboutPage;

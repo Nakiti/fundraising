@@ -29,7 +29,8 @@ export const createTransaction = asyncHandler(async (req, res) => {
     net_amount,
     application_fee,
     payment_method_type,
-    designation_id
+    designation_id,
+    is_anonymous
   } = req.body;
   
   if (!campaign_id || !organization_id || !amount || !status || !method) {
@@ -52,7 +53,8 @@ export const createTransaction = asyncHandler(async (req, res) => {
       \`net_amount\`,
       \`application_fee\`,
       \`payment_method_type\`,
-      \`designation_id\`
+      \`designation_id\`,
+      \`is_anonymous\`
     ) VALUES (?)
   `;
 
@@ -71,7 +73,8 @@ export const createTransaction = asyncHandler(async (req, res) => {
     net_amount || amount, // Default to full amount if no processing fee
     application_fee || 0,
     payment_method_type || 'card',
-    designation_id || null
+    designation_id || null,
+    is_anonymous || false
   ]
 
   return new Promise((resolve, reject) => {
@@ -107,20 +110,37 @@ export const getTransaction = asyncHandler(async (req, res) => {
 
 export const getTransactionsbyCampaign = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const { isAdmin = false } = req.query; // Add admin flag to control visibility
   
   if (!id) {
     throw new ValidationError('Campaign ID is required');
   }
 
   const query = `
-    SELECT transactions.*, campaign_details.external_name 
+    SELECT transactions.*, campaign_details.external_name,
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
+             WHEN donors.is_guest = TRUE THEN CONCAT(donors.first_name, ' (Guest)')
+             ELSE donors.first_name
+           END as first_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Donor'
+             ELSE donors.last_name
+           END as last_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN NULL
+             ELSE donors.email
+           END as email, 
+           donors.is_guest,
+           transactions.is_anonymous
     FROM transactions 
     INNER JOIN campaign_details ON transactions.campaign_id = campaign_details.campaign_id 
+    LEFT JOIN donors ON transactions.donor_id = donors.id
     WHERE transactions.campaign_id = ?
   `;
 
   return new Promise((resolve, reject) => {
-    db.query(query, [id], (err, data) => {
+    db.query(query, [isAdmin === 'true', isAdmin === 'true', isAdmin === 'true', id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch campaign transactions', err));
       sendSuccess(res, data, 'Campaign transactions retrieved successfully');
       resolve();
@@ -130,6 +150,7 @@ export const getTransactionsbyCampaign = asyncHandler(async (req, res) => {
 
 export const getAllTransactions = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const { isAdmin = false } = req.query; // Add admin flag to control visibility
   
   if (!id) {
     throw new ValidationError('Organization ID is required');
@@ -138,10 +159,20 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
   const query = `
     SELECT transactions.*, campaign_details.external_name, 
            CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
              WHEN donors.is_guest = TRUE THEN CONCAT(donors.first_name, ' (Guest)')
              ELSE donors.first_name
            END as first_name, 
-           donors.last_name, donors.email, donors.is_guest
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Donor'
+             ELSE donors.last_name
+           END as last_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN NULL
+             ELSE donors.email
+           END as email, 
+           donors.is_guest,
+           transactions.is_anonymous
     FROM transactions 
     INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
     INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
@@ -150,7 +181,7 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
   `;
 
   return new Promise((resolve, reject) => {
-    db.query(query, [id], (err, data) => {
+    db.query(query, [isAdmin === 'true', isAdmin === 'true', isAdmin === 'true', id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch organization transactions', err));
       sendSuccess(res, data, 'Organization transactions retrieved successfully');
       resolve();

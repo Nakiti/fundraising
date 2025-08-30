@@ -8,6 +8,7 @@ export const AuthContextProvider = ({children}) => {
    const [currentUser, setCurrentUser] = useState(null);
    const [isLoggedIn, setIsLoggedIn] = useState(false);
    const [loading, setLoading] = useState(true);
+   const [initialCheckComplete, setInitialCheckComplete] = useState(false);
    const [error, setError] = useState(null);
    
    const { showError, showSuccess } = useToast();
@@ -98,6 +99,7 @@ export const AuthContextProvider = ({children}) => {
          clearInvalidToken();
       } finally {
          setLoading(false);
+         setInitialCheckComplete(true);
       }
    }, [getCurrentUser, clearInvalidToken]);
 
@@ -121,7 +123,9 @@ export const AuthContextProvider = ({children}) => {
          login, 
          logout, 
          isLoggedIn, 
-         loading: loading || loginLoading || logoutLoading || authCheckLoading, 
+         loading: loginLoading || logoutLoading, // Only include interactive loading states
+         initialCheckComplete,
+         isCheckingAuth: authCheckLoading,
          error, 
          clearError,
          checkAuthStatus,

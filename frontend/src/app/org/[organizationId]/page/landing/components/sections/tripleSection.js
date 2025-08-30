@@ -66,7 +66,7 @@ const TripleSection = () => {
                      className="hidden" 
                      name={imageKey}
                      accept="image/*"
-                     onChange={handleImageUpload}
+                     onChange={(e) => handleImageUpload(e, handleInputsChange)}
                   />
                </label>
             </div>

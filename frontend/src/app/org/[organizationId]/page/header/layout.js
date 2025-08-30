@@ -5,6 +5,7 @@ import { HeaderPageContext } from "@/app/context/organizationPages/headerPageCon
 import { Services } from "@/app/services"
 import { AuthContext } from "@/app/context/authContext"
 import Navbar from "../components/navbar"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const HeaderLayout = ({params, children}) => {
    const [error, setError] = useState(false)
@@ -28,6 +29,16 @@ const HeaderLayout = ({params, children}) => {
       setIsSaving(true)
 
       try {
+         // Validate all active sections before saving
+         const validation = validateActiveSections('header', sections, inputs)
+         
+         if (!validation.isValid) {
+            setError(true)
+            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+            setIsSaving(false)
+            return
+         }
+         
          // Use the service to save header page
          const result = await Services.Update.HeaderPage.saveHeaderPage(inputs.id, inputs, sections)
          
@@ -53,6 +64,16 @@ const HeaderLayout = ({params, children}) => {
       setIsPublishing(true)
 
       try {
+         // Validate all active sections for publishing
+         const validation = validateActiveSections('header', sections, inputs)
+         
+         if (!validation.isValid) {
+            setError(true)
+            setErrorMessage(`Please fill in the following required fields to publish: ${validation.errors.join(", ")}`)
+            setIsPublishing(false)
+            return
+         }
+         
          // Use the service to publish header page
          const result = await Services.Update.HeaderPage.publishHeaderPage(inputs.id, inputs, sections)
          
@@ -151,8 +172,7 @@ const HeaderLayout = ({params, children}) => {
                
                {/* Right Panel - Preview */}
                <div className="xl:w-3/4 lg:w-2/3">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 h-full">
-                     <h2 className="text-lg font-semibold text-gray-900 mb-4 sticky top-0 bg-white py-2">Live Preview</h2>
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-full">
                      <div className="h-full overflow-y-auto">
                         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-inner">
                            <HeaderPageDisplay />

@@ -135,13 +135,15 @@ export const updateDonationPage = asyncHandler(async (req, res) => {
             headline, description, subtitle, mainHeadline, mainText,
             banner_image, small_image, 
             bg_color, p_color, s_color, b1_color, b2_color, b3_color, bt_color,
+            bannerTitleColor, bannerSubtitleColor,
             button1, button2, button3, button4, button5, button6,
             goal_amount, raised_amount, donor_count, days_left,
             show_progress, show_donor_count, show_days_left, show_amount_grid,
             donate_button_text, share_button_text,
             footer_text, privacy_policy_url, terms_of_service_url,
             heroTitleSize, heroSubtitleSize, sectionTitleSize, bodyTextSize, 
-            buttonTextSize, cardTitleSize, heroHeight, sectionPadding, cardRadius, buttonRadius, overlayOpacity
+            buttonTextSize, cardTitleSize, bannerTitleSize, bannerSubtitleSize,
+            heroHeight, sectionPadding, cardRadius, buttonRadius, overlayOpacity
           } = req.body;
 
           // Handle image updates
@@ -158,7 +160,7 @@ export const updateDonationPage = asyncHandler(async (req, res) => {
             smallImagePath = await imageService.updateImage(organization_id, 'donation-pages', id, 'small', req.files.small_image[0], currentPage.small_image);
           }
 
-          const query = "UPDATE donation_pages SET `headline` = ?, `description` = ?, `subtitle` = ?, `mainHeadline` = ?, `mainText` = ?, `banner_image` = ?, `small_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `b1_color` = ?, `b2_color` = ?, `b3_color` = ?, `bt_color` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `goal_amount` = ?, `raised_amount` = ?, `donor_count` = ?, `days_left` = ?, `donate_button_text` = ?, `share_button_text` = ?, `footer_text` = ?, `privacy_policy_url` = ?, `terms_of_service_url` = ?, `heroTitleSize` = ?, `heroSubtitleSize` = ?, `sectionTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardTitleSize` = ?, `heroHeight` = ?, `sectionPadding` = ?, `cardRadius` = ?, `buttonRadius` = ?, `overlayOpacity` = ? WHERE `campaign_id` = ?"
+          const query = "UPDATE donation_pages SET `headline` = ?, `description` = ?, `subtitle` = ?, `mainHeadline` = ?, `mainText` = ?, `banner_image` = ?, `small_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `b1_color` = ?, `b2_color` = ?, `b3_color` = ?, `bt_color` = ?, `bannerTitleColor` = ?, `bannerSubtitleColor` = ?, `button1` = ?, `button2` = ?, `button3` = ?, `button4` = ?, `button5` = ?, `button6` = ?, `goal_amount` = ?, `raised_amount` = ?, `donor_count` = ?, `days_left` = ?, `donate_button_text` = ?, `share_button_text` = ?, `footer_text` = ?, `privacy_policy_url` = ?, `terms_of_service_url` = ?, `heroTitleSize` = ?, `heroSubtitleSize` = ?, `sectionTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardTitleSize` = ?,  `heroHeight` = ?, `sectionPadding` = ?, `cardRadius` = ?, `buttonRadius` = ?, `overlayOpacity` = ? WHERE `campaign_id` = ?"
 
           const values = [
             headline,
@@ -175,6 +177,8 @@ export const updateDonationPage = asyncHandler(async (req, res) => {
             b2_color,
             b3_color,
             bt_color,
+            bannerTitleColor,
+            bannerSubtitleColor,
             button1,
             button2,
             button3, 

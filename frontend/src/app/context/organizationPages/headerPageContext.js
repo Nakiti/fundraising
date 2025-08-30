@@ -7,6 +7,7 @@ export const HeaderPageContext = createContext()
 
 export const HeaderPageContextProvider = ({organizationId, children}) => {
    const [inputs, handleInputsChange, setInputs] = useFormInput({})
+   const [isLoading, setIsLoading] = useState(true)
 
    const [sections, setSections] = useState([
       {name: "logo", displayText: "Logo & Branding", active: true, required: true, dropdown: false, content: <LogoSection />}
@@ -21,7 +22,7 @@ export const HeaderPageContextProvider = ({organizationId, children}) => {
                id: response.id,
                // Basic content
                logo: response.logo || "",
-               organizationName: response.organizationName || "",
+               organization_name: response.organization_name || "",
                tagline: response.tagline || "",
                description: response.description || "",
                // Basic styling
@@ -44,6 +45,8 @@ export const HeaderPageContextProvider = ({organizationId, children}) => {
             })
          } catch (error) {
             console.error("Error fetching header page data:", error)
+         } finally {
+            setIsLoading(false)
          }
       }
 
@@ -51,7 +54,7 @@ export const HeaderPageContextProvider = ({organizationId, children}) => {
    }, [])
 
    return (
-      <HeaderPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections}}>
+      <HeaderPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections, isLoading}}>
          {children}
       </HeaderPageContext.Provider>
    )

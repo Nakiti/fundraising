@@ -14,7 +14,7 @@ import {
 } from "@/app/services/fetchService"
 import Link from "next/link"
 import { MdOpenInNew, MdTrendingUp, MdTrendingDown, MdMoreVert } from "react-icons/md";
-import { FaHandHoldingHeart, FaUserPlus, FaDollarSign, FaCalendarAlt, FaChartLine, FaBell, FaPlus, FaEye } from "react-icons/fa";
+import { FaHandHoldingHeart, FaUserPlus, FaDollarSign, FaCalendarAlt, FaChartLine, FaBell, FaPlus, FaEye, FaToggleOn, FaExclamationTriangle } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { BsArrowUpRight, BsArrowDownRight } from "react-icons/bs";
 import Modal from "../campaigns/components/modal"
@@ -34,6 +34,7 @@ const Home = ({params}) => {
    const [organizationStatus, setOrganizationStatus] = useState(null)
    const [notifications, setNotifications] = useState([])
    const [loading, setLoading] = useState(true)
+   const [initialLoading, setInitialLoading] = useState(true)
    const [error, setError] = useState(null)
    const [showModal, setShowModal] = useState(false)
 
@@ -107,6 +108,9 @@ const Home = ({params}) => {
             getDashboardNotifications(organizationId, 10)
          ]);
 
+
+         console.log(statusResponse)
+
          setSummaryData(summaryResponse);
          setRecentDonations(donationsResponse);
          setTopCampaigns(campaignsResponse);
@@ -117,6 +121,7 @@ const Home = ({params}) => {
          setError('Failed to load dashboard data. Please try again.');
       } finally {
          setLoading(false);
+         setInitialLoading(false);
       }
    }
 
@@ -155,9 +160,191 @@ const Home = ({params}) => {
       setActive(active);
    };
 
+   // Show initial loading state
+   if (initialLoading) {
+      return (
+         <div className="w-full bg-gray-50 min-h-screen">
+            <div className="p-6 space-y-6">
+               {/* Header Skeleton */}
+               <div className="flex justify-between items-center">
+                  <div>
+                     <div className="w-48 h-8 bg-gray-200 rounded animate-pulse mb-2"></div>
+                     <div className="w-96 h-4 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                     <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+                     <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+                     <div className="w-32 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+                  </div>
+               </div>
+
+               {/* Time Filter Skeleton */}
+               <div className="flex justify-end">
+                  <div className="w-80 h-12 bg-white rounded-lg shadow-sm animate-pulse"></div>
+               </div>
+
+               {/* Quick Stats Grid Skeleton */}
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                     <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div className="animate-pulse">
+                           <div className="flex items-center justify-between">
+                              <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                              <div className="w-16 h-4 bg-gray-200 rounded"></div>
+                           </div>
+                           <div className="mt-4">
+                              <div className="w-20 h-8 bg-gray-200 rounded mb-2"></div>
+                              <div className="w-24 h-4 bg-gray-200 rounded mb-1"></div>
+                              <div className="w-20 h-3 bg-gray-200 rounded"></div>
+                           </div>
+                        </div>
+                     </div>
+                  ))}
+               </div>
+
+               {/* Main Content Grid Skeleton */}
+               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Recent Activity Skeleton */}
+                  <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+                     <div className="p-6 border-b border-gray-100">
+                        <div className="w-32 h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+                        <div className="w-48 h-4 bg-gray-200 rounded animate-pulse"></div>
+                     </div>
+                     <div className="p-6">
+                        <div className="space-y-4">
+                           {Array.from({ length: 4 }).map((_, index) => (
+                              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                 <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+                                    <div>
+                                       <div className="w-24 h-4 bg-gray-200 rounded mb-1 animate-pulse"></div>
+                                       <div className="w-32 h-3 bg-gray-200 rounded animate-pulse"></div>
+                                    </div>
+                                 </div>
+                                 <div className="text-right">
+                                    <div className="w-16 h-4 bg-gray-200 rounded mb-1 animate-pulse"></div>
+                                    <div className="w-20 h-3 bg-gray-200 rounded animate-pulse"></div>
+                                 </div>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Top Campaigns Skeleton */}
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                     <div className="p-6 border-b border-gray-100">
+                        <div className="w-28 h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+                        <div className="w-40 h-4 bg-gray-200 rounded animate-pulse"></div>
+                     </div>
+                     <div className="p-6">
+                        <div className="space-y-4">
+                           {Array.from({ length: 3 }).map((_, index) => (
+                              <div key={index} className="p-4 border border-gray-100 rounded-lg">
+                                 <div className="animate-pulse">
+                                    <div className="flex items-center justify-between mb-2">
+                                       <div className="w-32 h-4 bg-gray-200 rounded"></div>
+                                       <div className="w-12 h-4 bg-gray-200 rounded"></div>
+                                    </div>
+                                    <div className="mb-3">
+                                       <div className="flex justify-between text-sm mb-1">
+                                          <div className="w-16 h-3 bg-gray-200 rounded"></div>
+                                          <div className="w-20 h-3 bg-gray-200 rounded"></div>
+                                       </div>
+                                       <div className="w-full bg-gray-200 rounded-full h-2"></div>
+                                    </div>
+                                    <div className="flex justify-between text-xs">
+                                       <div className="w-16 h-3 bg-gray-200 rounded"></div>
+                                       <div className="w-20 h-3 bg-gray-200 rounded"></div>
+                                    </div>
+                                 </div>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               {/* Organization Status Skeleton */}
+               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="p-6 border-b border-gray-100">
+                     <div className="w-40 h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+                     <div className="w-64 h-4 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                  <div className="p-6">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                           <div className="flex items-center justify-between mb-6">
+                              <div className="w-36 h-5 bg-gray-200 rounded animate-pulse"></div>
+                              <div className="w-20 h-6 bg-gray-200 rounded-full animate-pulse"></div>
+                           </div>
+                           <div className="space-y-4">
+                              {Array.from({ length: 3 }).map((_, index) => (
+                                 <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center space-x-3">
+                                       <div className="w-20 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                       <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                    </div>
+                                    <div className="w-16 h-6 bg-gray-200 rounded-full animate-pulse"></div>
+                                 </div>
+                              ))}
+                           </div>
+                        </div>
+                        <div>
+                           <div className="flex items-center justify-between mb-6">
+                              <div className="w-28 h-5 bg-gray-200 rounded animate-pulse"></div>
+                           </div>
+                           <div className="space-y-3">
+                              {Array.from({ length: 5 }).map((_, index) => (
+                                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center space-x-3">
+                                       <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                       <div className="w-32 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                    </div>
+                                    <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                 </div>
+                              ))}
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      );
+   }
+
    return (
       <div className="w-full bg-gray-50">
          <div className="p-6 space-y-6">
+            {/* Organization Activation Banner */}
+            {organizationStatus?.organization?.status !== 'active' && (
+               <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                     <div className="flex items-center space-x-3">
+                        <div className="flex-shrink-0">
+                           <FaExclamationTriangle className="h-5 w-5 text-amber-600" />
+                        </div>
+                        <div>
+                           <h3 className="text-sm font-medium text-amber-800">
+                              Organization Not Activated
+                           </h3>
+                           <p className="text-sm text-amber-700 mt-1">
+                              Complete the setup requirements to activate your organization and start accepting donations.
+                           </p>
+                        </div>
+                     </div>
+                     <Link
+                        href={`/org/${organizationId}/dashboard/settings/activation`}
+                        className="flex items-center space-x-2 px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-md hover:bg-amber-700 transition-colors duration-200"
+                     >
+                        <span>Complete Setup</span>
+                        <BsArrowUpRight className="w-4 h-4" />
+                     </Link>
+                  </div>
+               </div>
+            )}
+
             {/* Header Section */}
             <div className="flex justify-between items-center">
                <div>
@@ -483,6 +670,13 @@ const Home = ({params}) => {
                                  <span className="text-sm font-medium text-green-900">View Transactions</span>
                               </div>
                               <BsArrowUpRight className="text-green-600" />
+                           </Link>
+                           <Link href={`/org/${organizationId}/dashboard/settings/activation`} className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors duration-200">
+                              <div className="flex items-center space-x-3">
+                                 <FaToggleOn className="text-emerald-600" />
+                                 <span className="text-sm font-medium text-emerald-900">Organization Activation</span>
+                              </div>
+                              <BsArrowUpRight className="text-emerald-600" />
                            </Link>
                            <Link href={`/org/${organizationId}/dashboard/settings`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
                               <div className="flex items-center space-x-3">

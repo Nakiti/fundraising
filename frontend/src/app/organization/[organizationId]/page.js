@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import Card from "./components/card";
 import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext";
 import { FaHeart, FaUsers, FaChartLine, FaArrowRight, FaPlay, FaStar, FaCheckCircle } from "react-icons/fa";
+import AddToCartButton from "@/app/components/AddToCartButton";
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/autoplay';
@@ -564,29 +565,41 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                     >
                       {campaign.description || "Join us in making a difference through this important initiative that supports our community."}
                     </p>
-                    {showProgressIndicators && (
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                          <span className="text-xs text-gray-500">In Progress</span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-700">75% Funded</span>
-                      </div>
-                    )}
-                    <button 
-                      className={`w-full font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${showHoverEffects ? 'hover:bg-gray-50' : ''}`}
-                      style={{
-                        backgroundColor: inputs.b_color || customStyles.accentColor,
-                        color: inputs.bt_color || '#FFFFFF',
-                        borderRadius: customStyles.buttonRadius,
-                        fontSize: customStyles.buttonTextSize,
-                        padding: '12px 20px'
-                      }}
-                      onClick={() => router.push(`/organization/${organizationId}/campaign/${campaign.id}/donation-page`)}
-                    >
-                      <span>Learn More</span>
-                      {showHeroIcons && <FaArrowRight className="w-3 h-3" />}
-                    </button>
+                    <div className="space-y-2">
+                      {/* Learn More Button */}
+                      <button 
+                        className={`w-full font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${showHoverEffects ? 'hover:bg-gray-50' : ''}`}
+                        style={{
+                          backgroundColor: inputs.b_color || customStyles.accentColor,
+                          color: inputs.bt_color || '#FFFFFF',
+                          borderRadius: customStyles.buttonRadius,
+                          fontSize: customStyles.buttonTextSize,
+                          padding: '12px 20px'
+                        }}
+                        onClick={() => router.push(`/organization/${organizationId}/campaign/${campaign.id}/donation-page`)}
+                      >
+                        <span>Learn More</span>
+                        {showHeroIcons && <FaArrowRight className="w-3 h-3" />}
+                      </button>
+
+                      {/* Add to Cart Button */}
+                      <AddToCartButton
+                        campaignId={campaign.id}
+                        campaignName={campaign.external_name}
+                        size="medium"
+                        variant="outline"
+                        className="w-full"
+                        onSuccess={(data) => {
+                          if (data.action === 'added') {
+                            // Could show a toast notification here
+                            console.log(`Added ${data.campaignName} to cart`);
+                          }
+                        }}
+                        onError={(error) => {
+                          console.error('Cart error:', error);
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               ))

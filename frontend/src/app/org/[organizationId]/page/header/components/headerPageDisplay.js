@@ -4,7 +4,7 @@ import { HeaderPageContext } from "@/app/context/organizationPages/headerPageCon
 import { FaUser, FaHeart } from "react-icons/fa"
 
 const HeaderPageDisplay = () => {
-   const { inputs, sections } = useContext(HeaderPageContext)
+   const { inputs, sections, isLoading } = useContext(HeaderPageContext)
 
    const headerStyles = {
       backgroundColor: inputs.bgColor || "#FFFFFF",
@@ -16,6 +16,35 @@ const HeaderPageDisplay = () => {
 
    const linkStyles = {
       color: inputs.linkColor || "#3B82F6"
+   }
+
+   // Loading skeleton component
+   const LoadingSkeleton = () => (
+      <header className="w-full bg-white border-b border-gray-200 animate-pulse">
+         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            {/* Logo Section skeleton */}
+            <div className="flex items-center space-x-3">
+               <div className="h-8 w-8 bg-gray-300 rounded"></div>
+               <div>
+                  <div className="h-6 bg-gray-300 rounded w-32 mb-1"></div>
+                  <div className="h-4 bg-gray-300 rounded w-24"></div>
+               </div>
+            </div>
+
+            {/* Right Section skeleton */}
+            <div className="flex items-center space-x-4">
+               <div className="hidden lg:block">
+                  <div className="h-4 bg-gray-300 rounded w-40"></div>
+               </div>
+               <div className="h-10 bg-gray-300 rounded w-20"></div>
+               <div className="h-10 bg-gray-300 rounded w-24"></div>
+            </div>
+         </div>
+      </header>
+   )
+
+   if (isLoading) {
+      return <LoadingSkeleton />
    }
 
    return (
@@ -32,7 +61,7 @@ const HeaderPageDisplay = () => {
                )}
                <div>
                   <h1 className="font-semibold text-lg">
-                     {inputs.organizationName || "Organization Name"}
+                     {inputs.organization_name || "Organization Name"}
                   </h1>
                   {inputs.tagline && (
                      <p className="text-sm opacity-75">

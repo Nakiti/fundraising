@@ -8,7 +8,7 @@ import {
   sendConflict,
   sendDatabaseError
 } from "../utils/response.js"
-import {
+import { 
   ValidationError,
   NotFoundError,
   ConflictError,
@@ -112,12 +112,12 @@ export const getCampaignsByOrg = asyncHandler(async (req, res) => {
   }
 
   const query = `
-    SELECT campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.type, campaign_details.status, SUM(transactions.amount) AS amount_raised
+    SELECT campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.donations, campaign_details.type, campaign_details.status, SUM(transactions.amount) AS amount_raised
     FROM campaigns
     INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
     LEFT JOIN transactions ON campaigns.id = transactions.campaign_id
     WHERE campaigns.organization_id = ?
-    GROUP BY campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.type, campaign_details.status
+    GROUP BY campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.donations, campaign_details.type, campaign_details.status
     ORDER BY campaigns.id DESC
   `
 
@@ -313,6 +313,71 @@ export const sumRaised = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) reject(new DatabaseError('Failed to calculate raised amount', err));
       sendSuccess(res, data[0], 'Raised amount calculated successfully');
+      resolve();
+    })
+  })
+})
+
+export const getCampaignInsights = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
+
+  const query = `
+    SELECT 
+      cd.external_name,
+      cd.goal,
+      cd.raised,
+      cd.donations,
+      cd.visits,
+      COALESCE(SUM(t.amount), 0) as total_raised,
+      COUNT(DISTINCT t.id) as total_transactions,
+      COUNT(DISTINCT t.donor_id) as unique_donors,
+      COALESCE(AVG(t.amount), 0) as average_donation,
+      COALESCE(SUM(t.processing_fee), 0) as total_fees,
+      COALESCE(SUM(t.net_amount), 0) as net_amount
+    FROM campaign_details cd
+    LEFT JOIN transactions t ON cd.campaign_id = t.campaign_id AND t.status = 'completed'
+    WHERE cd.campaign_id = ?
+    GROUP BY cd.campaign_id, cd.external_name, cd.goal, cd.raised, cd.donations, cd.visits
+  `
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [id], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch campaign insights', err));
+      if (!data || data.length === 0) reject(new NotFoundError('Campaign insights'));
+      
+      const insights = data[0];
+      
+      // Convert all numeric values to proper numbers
+      const numericInsights = {
+        ...insights,
+        goal: parseFloat(insights.goal || 0),
+        raised: parseFloat(insights.raised || 0),
+        donations: parseInt(insights.donations || 0),
+        visits: parseInt(insights.visits || 0),
+        total_raised: parseFloat(insights.total_raised || 0),
+        total_transactions: parseInt(insights.total_transactions || 0),
+        unique_donors: parseInt(insights.unique_donors || 0),
+        average_donation: parseFloat(insights.average_donation || 0),
+        total_fees: parseFloat(insights.total_fees || 0),
+        net_amount: parseFloat(insights.net_amount || 0)
+      };
+      
+      const conversionRate = numericInsights.visits > 0 ? (numericInsights.donations / numericInsights.visits) * 100 : 0;
+      const percentageFunded = numericInsights.goal > 0 ? (numericInsights.total_raised / numericInsights.goal) * 100 : 0;
+      
+      const response = {
+        ...numericInsights,
+        conversion_rate: conversionRate,
+        percentage_funded: percentageFunded,
+        gross_amount: numericInsights.total_raised,
+        net_amount: numericInsights.net_amount || numericInsights.total_raised
+      };
+      
+      sendSuccess(res, response, 'Campaign insights retrieved successfully');
       resolve();
     })
   })

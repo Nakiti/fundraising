@@ -16,6 +16,7 @@ import { PeerFundraisingPageContext, PeerFundraisingPageContextProvider } from "
 import { DonationFormContext, DonationFormContextProvider } from "@/app/context/campaignPages/donationFormContext"
 import { ThankYouPageContext, ThankYouPageContextProvider } from "@/app/context/campaignPages/thankYouPageContext"
 import { TicketPurchasePageContext, TicketPurchasePageContextProvider } from "@/app/context/campaignPages/ticketPurchasePageContext"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const EditLayout = ({params, children}) => {
    const campaignId = params.id
@@ -62,26 +63,98 @@ const EditLayout = ({params, children}) => {
    ].filter(Boolean)
 
    const handlePublish = async() => {
+      // Reset error state
+      setError(false)
+      setErrorMessage("")
+
+      // Validate campaign details
       if (!campaignDetails || campaignDetails.campaignName === "" || campaignDetails.internalName === "" || 
          campaignDetails.goal === 0 || campaignDetails.shortUrl === "" || campaignDetails.designation === 0) {
-         setErrorMessage("Please Fill All Required Fields")
+         setErrorMessage("Please Fill All Required Campaign Fields")
          setError(true)
-      } else {
-         try {
-            const response = await CampaignUpdateService.updateCampaignDetails(campaignId, campaignDetails, "active", currentUser)
-            if (response) {
-               setError(true)
-               setErrorMessage(response)
-                     } else {
+         return
+      }
+
+      // Validate all active page sections based on campaign type
+      const validationErrors = []
+
+      // Validate donation page sections (for crowdfunding campaigns)
+      if (campaignType === "crowdfunding" && donationPageSections) {
+         const donationValidation = validateActiveSections('donation', donationPageSections, donationPageInputs)
+         if (!donationValidation.isValid) {
+            validationErrors.push(...donationValidation.errors)
+         }
+      }
+
+      // Validate ticket page sections (for ticketed events)
+      if (campaignType === "ticketed-event" && ticketPageSections) {
+         const ticketValidation = validateActiveSections('ticket', ticketPageSections, ticketPageInputs)
+         if (!ticketValidation.isValid) {
+            validationErrors.push(...ticketValidation.errors)
+         }
+      }
+
+      // Validate peer landing page sections (for peer-to-peer campaigns)
+      if (campaignType === "peer-to-peer" && peerLandingPageSections) {
+         const peerLandingValidation = validateActiveSections('peerLanding', peerLandingPageSections, peerLandingPageInputs)
+         if (!peerLandingValidation.isValid) {
+            validationErrors.push(...peerLandingValidation.errors)
+         }
+      }
+
+      // Validate peer fundraising page sections (for peer-to-peer campaigns)
+      if (campaignType === "peer-to-peer" && peerFundraisingPageSections) {
+         const peerFundraisingValidation = validateActiveSections('peerFundraising', peerFundraisingPageSections, peerFundraisingPageInputs)
+         if (!peerFundraisingValidation.isValid) {
+            validationErrors.push(...peerFundraisingValidation.errors)
+         }
+      }
+
+      // Validate donation form sections (for all campaigns)
+      if (donationFormSections) {
+         const donationFormValidation = validateActiveSections('donationForm', donationFormSections, donationFormInputs)
+         if (!donationFormValidation.isValid) {
+            validationErrors.push(...donationFormValidation.errors)
+         }
+      }
+
+      // Validate thank you page sections (for all campaigns)
+      if (thankyouPageSections) {
+         const thankYouValidation = validateActiveSections('thankYou', thankyouPageSections, thankPageInputs)
+         if (!thankYouValidation.isValid) {
+            validationErrors.push(...thankYouValidation.errors)
+         }
+      }
+
+      // Validate ticket purchase sections (for ticketed events)
+      if (campaignType === "ticketed-event" && ticketPurchaseSections) {
+         const ticketPurchaseValidation = validateActiveSections('ticketPurchase', ticketPurchaseSections, ticketPurchaseInputs)
+         if (!ticketPurchaseValidation.isValid) {
+            validationErrors.push(...ticketPurchaseValidation.errors)
+         }
+      }
+
+      // If there are validation errors, show them and return
+      if (validationErrors.length > 0) {
+         setErrorMessage(`Please fill in the following required fields to publish: ${validationErrors.join(", ")}`)
+         setError(true)
+         return
+      }
+
+      try {
+         const response = await CampaignUpdateService.updateCampaignDetails(campaignId, campaignDetails, "active", currentUser)
+         if (response) {
+            setError(true)
+            setErrorMessage(response)
+         } else {
             handleCampaignUpdates()
             markChangesAsSaved()
             router.push(`/org/${organizationId}/dashboard/campaigns`)
          }
-         } catch (err) {
-            const handledError = errorHandler.handle(err)
-            setError(true)
-            setErrorMessage(handledError.message)
-         }
+      } catch (err) {
+         const handledError = errorHandler.handle(err)
+         setError(true)
+         setErrorMessage(handledError.message)
       }
    }
 
@@ -290,19 +363,19 @@ const EditLayout = ({params, children}) => {
          {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="py-0">
             <DonationPageContextProvider campaignId={campaignId}>
-               <TicketPageContextProvider campaignId={campaignId}>
+               {/* <TicketPageContextProvider campaignId={campaignId}>
                   <PeerLandingPageContextProvider campaignId={campaignId}>
-                     <PeerFundraisingPageContextProvider campaignId={campaignId}>
+                     <PeerFundraisingPageContextProvider campaignId={campaignId}> */}
                         <DonationFormContextProvider campaignId={campaignId}>
                            <ThankYouPageContextProvider campaignId={campaignId}>
-                              <TicketPurchasePageContextProvider campaignId={campaignId}>
+                              {/* <TicketPurchasePageContextProvider campaignId={campaignId}> */}
                                  {children}
-                              </TicketPurchasePageContextProvider>
+                              {/* </TicketPurchasePageContextProvider> */}
                            </ThankYouPageContextProvider>
                         </DonationFormContextProvider>
-                     </PeerFundraisingPageContextProvider>
+                     {/* </PeerFundraisingPageContextProvider>
                   </PeerLandingPageContextProvider>
-               </TicketPageContextProvider>
+               </TicketPageContextProvider> */}
             </DonationPageContextProvider>
          </div>
       </div>

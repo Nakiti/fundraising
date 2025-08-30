@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { IoIosAdd } from "react-icons/io";
 
 const ProfileLayout = ({children}) => {
-   const { currentUser, isLoggedIn, loading: authLoading } = useContext(AuthContext)
+   const { currentUser, isLoggedIn, loading: authLoading, initialCheckComplete, isCheckingAuth } = useContext(AuthContext)
    const pathName = usePathname()
    const router = useRouter()
    const { showError } = useToast()
@@ -39,15 +39,15 @@ const ProfileLayout = ({children}) => {
       }
    }, [userDataError, showError]);
 
-   // Redirect to login if not authenticated and not loading
+   // Redirect to login if not authenticated and initial check is complete
    useEffect(() => {
-      if (!authLoading && !isLoggedIn) {
+      if (initialCheckComplete && !isLoggedIn) {
          router.push('/login');
       }
-   }, [authLoading, isLoggedIn, router]);
+   }, [initialCheckComplete, isLoggedIn, router]);
 
    // Show loading spinner while auth is being checked
-   if (authLoading) {
+   if (!initialCheckComplete || isCheckingAuth) {
       return (
          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
             <div className="text-center">

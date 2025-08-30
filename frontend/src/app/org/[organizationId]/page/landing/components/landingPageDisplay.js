@@ -6,7 +6,7 @@ import { IoIosClose } from "react-icons/io";
 import { FaHeart, FaUsers, FaChartLine, FaArrowRight, FaPlay, FaStar, FaCheckCircle } from "react-icons/fa";
 
 const LandingPageDisplay = () => {
-   const {inputs, sections} = useContext(LandingPageContext)
+   const {inputs, sections, isLoading} = useContext(LandingPageContext)
    const campaigns = ["Campaign One", "Campaign Two", "Campaign Three"]
 
    // Enhanced customization options
@@ -36,6 +36,68 @@ const LandingPageDisplay = () => {
    const showProgressIndicators = inputs.showProgressIndicators !== false
    const showStatistics = inputs.showStatistics !== false
    const showHoverEffects = inputs.showHoverEffects !== false
+
+   // Loading skeleton component
+   const LoadingSkeleton = () => (
+      <div className="bg-white w-full min-h-screen animate-pulse">
+         {/* Header skeleton */}
+         <div className="bg-gray-900 w-full px-6 py-4">
+            <div className="flex items-center justify-between">
+               <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
+                  <div className="h-4 bg-gray-600 rounded w-32"></div>
+               </div>
+               <div className="flex items-center space-x-4">
+                  <div className="h-3 bg-gray-600 rounded w-20"></div>
+                  <div className="flex space-x-1">
+                     <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                     <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                     <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         {/* Hero skeleton */}
+         <div className="relative w-full bg-gray-200" style={{height: "500px"}}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+               <div className="max-w-4xl mx-auto space-y-6">
+                  <div className="h-12 bg-gray-300 rounded w-3/4 mx-auto"></div>
+                  <div className="h-6 bg-gray-300 rounded w-2/3 mx-auto"></div>
+                  <div className="h-12 bg-gray-300 rounded w-40 mx-auto"></div>
+               </div>
+            </div>
+         </div>
+
+         {/* Content sections skeleton */}
+         <div className="px-8 py-20">
+            <div className="grid md:grid-cols-2 gap-16">
+               <div className="space-y-6">
+                  <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+                  <div className="space-y-3">
+                     <div className="h-4 bg-gray-300 rounded w-full"></div>
+                     <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+                     <div className="h-4 bg-gray-300 rounded w-4/5"></div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                     {[1,2,3].map((i) => (
+                        <div key={i} className="text-center p-4 bg-gray-200 rounded">
+                           <div className="h-6 bg-gray-300 rounded w-8 mx-auto mb-2"></div>
+                           <div className="h-4 bg-gray-300 rounded w-full mb-1"></div>
+                           <div className="h-3 bg-gray-300 rounded w-3/4 mx-auto"></div>
+                        </div>
+                     ))}
+                  </div>
+               </div>
+               <div className="h-80 bg-gray-300 rounded"></div>
+            </div>
+         </div>
+      </div>
+   )
+
+   if (isLoading) {
+      return <LoadingSkeleton />
+   }
 
    return (
       <div 
@@ -364,73 +426,73 @@ const LandingPageDisplay = () => {
                   </p>
                </div>
                
-                               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
-                   {[
-                      {
-                         image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-                         title: "Community Programs",
-                         description: "Supporting local initiatives that make a real difference in people's lives.",
-                         icon: <FaUsers className="w-5 h-5" />
-                      },
-                      {
-                         image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80",
-                         title: "Volunteer Network",
-                         description: "Connecting dedicated volunteers with meaningful opportunities to serve.",
-                         icon: <FaHeart className="w-5 h-5" />
-                      },
-                      {
-                         image: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-                         title: "Education & Training",
-                         description: "Providing resources and training to empower individuals and communities.",
-                         icon: <FaChartLine className="w-5 h-5" />
-                      }
-                   ].map((item, index) => (
-                      <div 
-                         key={index} 
-                         className={`bg-white border border-gray-100 overflow-hidden transition-all duration-200 ${showHoverEffects ? 'hover:border-gray-200 hover:shadow-sm' : ''}`}
-                         style={{borderRadius: customStyles.cardRadius}}
-                      >
-                         <div className="relative">
-                            <img
-                               className="w-full h-48 object-cover"
-                               src={item.image}
-                               alt={item.title}
-                            />
-                            {showFeatureIcons && (
-                               <div className="absolute top-3 right-3 bg-white border border-gray-100 p-2" style={{borderRadius: customStyles.cardRadius}}>
-                                  <div className="text-gray-600">{item.icon}</div>
-                               </div>
-                            )}
-                         </div>
-                         <div className="p-6">
-                            <h3 
-                               className="font-semibold mb-3" 
-                               style={{
-                                  color: inputs.p_color,
-                                  fontSize: customStyles.cardTitleSize
-                               }}
-                            >
-                               {item.title}
-                            </h3>
-                            <p 
-                               className="text-gray-500 leading-relaxed mb-4" 
-                               style={{
-                                  color: inputs.s_color,
-                                  fontSize: customStyles.bodyTextSize
-                               }}
-                            >
-                               {item.description}
-                            </p>
-                            {/* <button 
-                               className="text-gray-700 font-medium hover:text-gray-900 transition-colors duration-200 flex items-center space-x-2"
-                            >
-                               <span>Learn More</span>
-                               {showHeroIcons && <FaArrowRight className="w-3 h-3" />}
-                            </button> */}
-                         </div>
-                      </div>
-                   ))}
-                </div>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+                  {[
+                     {
+                        image: inputs.imageOne || "https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                        title: inputs.headlineOne || "Community Programs",
+                        description: inputs.descriptionOne || "Supporting local initiatives that make a real difference in people's lives.",
+                        icon: <FaUsers className="w-5 h-5" />
+                     },
+                     {
+                        image: inputs.imageTwo || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80",
+                        title: inputs.headlineTwo || "Volunteer Network",
+                        description: inputs.descriptionTwo || "Connecting dedicated volunteers with meaningful opportunities to serve.",
+                        icon: <FaHeart className="w-5 h-5" />
+                     },
+                     {
+                        image: inputs.imageThree || "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                        title: inputs.headlineThree || "Education & Training",
+                        description: inputs.descriptionThree || "Providing resources and training to empower individuals and communities.",
+                        icon: <FaChartLine className="w-5 h-5" />
+                     }
+                  ].map((item, index) => (
+                     <div 
+                        key={index} 
+                        className={`bg-white border border-gray-100 overflow-hidden transition-all duration-200 ${showHoverEffects ? 'hover:border-gray-200 hover:shadow-sm' : ''}`}
+                        style={{borderRadius: customStyles.cardRadius}}
+                     >
+                        <div className="relative">
+                           <img
+                              className="w-full h-48 object-cover"
+                              src={item.image}
+                              alt={item.title}
+                           />
+                           {showFeatureIcons && (
+                              <div className="absolute top-3 right-3 bg-white border border-gray-100 p-2" style={{borderRadius: customStyles.cardRadius}}>
+                                 <div className="text-gray-600">{item.icon}</div>
+                              </div>
+                           )}
+                        </div>
+                        <div className="p-6">
+                           <h3 
+                              className="font-semibold mb-3" 
+                              style={{
+                                 color: inputs.p_color,
+                                 fontSize: customStyles.cardTitleSize
+                              }}
+                           >
+                              {item.title}
+                           </h3>
+                           <p 
+                              className="text-gray-500 leading-relaxed mb-4" 
+                              style={{
+                                 color: inputs.s_color,
+                                 fontSize: customStyles.bodyTextSize
+                              }}
+                           >
+                              {item.description}
+                           </p>
+                           {/* <button 
+                              className="text-gray-700 font-medium hover:text-gray-900 transition-colors duration-200 flex items-center space-x-2"
+                           >
+                              <span>Learn More</span>
+                              {showHeroIcons && <FaArrowRight className="w-3 h-3" />}
+                           </button> */}
+                        </div>
+                     </div>
+                  ))}
+               </div>
             </div>
          )}
 

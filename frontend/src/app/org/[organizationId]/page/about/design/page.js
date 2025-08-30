@@ -128,7 +128,8 @@ const AboutDesign = () => {
          colors: [
             { name: "p_color", label: "Primary Text", description: "Main text color for headings and important content" },
             { name: "s_color", label: "Secondary Text", description: "Secondary text color for descriptions and body text" },
-            { name: "ct_color", label: "Card Text", description: "Text color for card content and overlays" }
+            { name: "banner_title_text", label: "Banner Title Text", description: "Text color for banner title" },
+            { name: "banner_subtitle_text", label: "Banner Subtitle Text", description: "Text color for banner subtitle" }
          ]
       },
       {
@@ -154,7 +155,7 @@ const AboutDesign = () => {
    // Visual effects options
    const visualOptions = [
       { name: "overlayOpacity", label: "Hero Overlay Opacity", min: 0, max: 0.8, step: 0.05, unit: "" },
-      { name: "accentColor", label: "Accent Color", type: "color" }
+      // { name: "accentColor", label: "Accent Color", type: "color" }
    ]
 
    // Font size options
@@ -210,11 +211,6 @@ const AboutDesign = () => {
 
    return (
       <div className="w-full space-y-4">
-         <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">Design Customization</h2>
-            <p className="text-xs text-gray-500">Customize the colors, layout, typography, and styling of your about page</p>
-         </div>
-
          {/* Color Customization */}
          {colorGroups.map((group, groupIndex) => (
             <div key={groupIndex} className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
@@ -250,7 +246,7 @@ const AboutDesign = () => {
                               />
                            </div>
                         </div>
-                        <p className="text-xs text-gray-400">{color.description}</p>
+                        {/* <p className="text-xs text-gray-400">{color.description}</p> */}
                      </div>
                   ))}
                </div>
@@ -258,7 +254,7 @@ const AboutDesign = () => {
          ))}
 
          {/* Layout & Spacing */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-3">
                <div className="p-1.5 bg-blue-50" style={{borderRadius: "4px"}}>
                   <FaRuler className="w-3 h-3 text-blue-600" />
@@ -290,10 +286,10 @@ const AboutDesign = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Typography & Font Sizes */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-3">
                <div className="p-1.5 bg-purple-50" style={{borderRadius: "4px"}}>
                   <FaFont className="w-3 h-3 text-purple-600" />
@@ -325,7 +321,7 @@ const AboutDesign = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Visual Effects */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
@@ -390,7 +386,7 @@ const AboutDesign = () => {
          </div>
 
          {/* Element Visibility */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-3">
                <div className="p-1.5 bg-indigo-50" style={{borderRadius: "4px"}}>
                   <FaEye className="w-3 h-3 text-indigo-600" />
@@ -419,28 +415,8 @@ const AboutDesign = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
-         {/* Preview Section */}
-         <div className="bg-white border border-gray-100 p-3" style={{borderRadius: "4px"}}>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Design Preview</h3>
-            <div className="grid grid-cols-2 gap-3">
-               <div className="space-y-2">
-                  <div className="text-xs text-gray-500">Colors</div>
-                  <div className="flex space-x-2">
-                     <div className="w-4 h-4 border border-gray-200" style={{backgroundColor: inputs.p_color, borderRadius: "2px"}}></div>
-                     <div className="w-4 h-4 border border-gray-200" style={{backgroundColor: inputs.s_color, borderRadius: "2px"}}></div>
-                     <div className="w-4 h-4 border border-gray-200" style={{backgroundColor: inputs.bg_color, borderRadius: "2px"}}></div>
-                  </div>
-               </div>
-               <div className="space-y-2">
-                  <div className="text-xs text-gray-500">Typography</div>
-                  <div className="text-xs font-medium text-gray-900" style={{fontSize: inputs.heroTitleSize}}>
-                     Sample Title
-                  </div>
-               </div>
-            </div>
-         </div>
 
          {/* Save and Discard Actions */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>

@@ -48,23 +48,35 @@ export class OrganizationCreateService {
          formData.append("headlineThree", data.headlineThree || "");
          formData.append("descriptionThree", data.descriptionThree || "");
          
-         // Images
-         if (data.bgImage instanceof File) {
+         // Images - use File objects if available, otherwise check for File objects stored separately
+         if (data.bgImageFile instanceof File) {
+            formData.append("bgImage", data.bgImageFile);
+         } else if (data.bgImage instanceof File) {
             formData.append("bgImage", data.bgImage);
          }
-         if (data.aboutImage instanceof File) {
+         if (data.aboutImageFile instanceof File) {
+            formData.append("aboutImage", data.aboutImageFile);
+         } else if (data.aboutImage instanceof File) {
             formData.append("aboutImage", data.aboutImage);
          }
-         if (data.textImage instanceof File) {
+         if (data.textImageFile instanceof File) {
+            formData.append("textImage", data.textImageFile);
+         } else if (data.textImage instanceof File) {
             formData.append("textImage", data.textImage);
          }
-         if (data.imageOne instanceof File) {
+         if (data.imageOneFile instanceof File) {
+            formData.append("imageOne", data.imageOneFile);
+         } else if (data.imageOne instanceof File) {
             formData.append("imageOne", data.imageOne);
          }
-         if (data.imageTwo instanceof File) {
+         if (data.imageTwoFile instanceof File) {
+            formData.append("imageTwo", data.imageTwoFile);
+         } else if (data.imageTwo instanceof File) {
             formData.append("imageTwo", data.imageTwo);
          }
-         if (data.imageThree instanceof File) {
+         if (data.imageThreeFile instanceof File) {
+            formData.append("imageThree", data.imageThreeFile);
+         } else if (data.imageThree instanceof File) {
             formData.append("imageThree", data.imageThree);
          }
          

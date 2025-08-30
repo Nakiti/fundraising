@@ -12,6 +12,7 @@ import {
   NotFoundError,
   DatabaseError
 } from "../utils/errors.js";
+import { checkAndUpdateOrganizationStatus } from "./organization_status.js";
 
 /**
  * Create Stripe Connect account for organization
@@ -239,9 +240,17 @@ export const getAccountStatus = asyncHandler(async (req, res) => {
           stripeAccount.charges_enabled,
           stripeAccount.payouts_enabled,
           organizationId
-        ], (updateErr) => {
+        ], async (updateErr) => {
           if (updateErr) {
             console.error('Failed to update Stripe account status:', updateErr);
+          }
+
+          // Check and update organization status after Stripe status update
+          try {
+            await checkAndUpdateOrganizationStatus(organizationId);
+          } catch (statusError) {
+            console.error('Failed to update organization status after Stripe update:', statusError);
+            // Don't fail the main operation, just log the error
           }
 
           sendSuccess(res, {
@@ -415,36 +424,81 @@ export const handleWebhook = asyncHandler(async (req, res) => {
  * Helper function to handle successful payment intent
  */
 async function handlePaymentIntentSucceeded(paymentIntent) {
-  const updateQuery = `
-    UPDATE transactions 
-    SET 
-      status = 'completed',
-      stripe_status = 'succeeded',
-      stripe_charge_id = ?,
-      processing_fee = ?,
-      net_amount = ?
+  // First, get the campaign_id from the transaction
+  const getTransactionQuery = `
+    SELECT campaign_id FROM transactions 
     WHERE stripe_payment_intent_id = ?
   `;
 
-  // Calculate fees (Stripe's standard rate is 2.9% + 30¢)
-  const amount = paymentIntent.amount / 100; // Convert from cents
-  const processingFee = (amount * 0.029) + 0.30;
-  const netAmount = amount - processingFee;
-
   return new Promise((resolve, reject) => {
-    db.query(updateQuery, [
-      paymentIntent.latest_charge,
-      processingFee.toFixed(2),
-      netAmount.toFixed(2),
-      paymentIntent.id
-    ], (err, result) => {
+    db.query(getTransactionQuery, [paymentIntent.id], (err, transactionData) => {
       if (err) {
-        console.error('Failed to update transaction after successful payment:', err);
+        console.error('Failed to get transaction data:', err);
         reject(err);
-      } else {
-        console.log(`Updated transaction for successful payment: ${paymentIntent.id}`);
-        resolve(result);
+        return;
       }
+
+      if (!transactionData || transactionData.length === 0) {
+        console.error('No transaction found for payment intent:', paymentIntent.id);
+        reject(new Error('Transaction not found'));
+        return;
+      }
+
+      const campaignId = transactionData[0].campaign_id;
+
+      // Update transaction
+      const updateTransactionQuery = `
+        UPDATE transactions 
+        SET 
+          status = 'completed',
+          stripe_status = 'succeeded',
+          stripe_charge_id = ?,
+          processing_fee = ?,
+          net_amount = ?
+        WHERE stripe_payment_intent_id = ?
+      `;
+
+      // Calculate fees (Stripe's standard rate is 2.9% + 30¢)
+      const amount = paymentIntent.amount / 100; // Convert from cents
+      const processingFee = (amount * 0.029) + 0.30;
+      const netAmount = amount - processingFee;
+
+      // Update campaign_details donations count
+      const updateCampaignQuery = `
+        UPDATE campaign_details 
+        SET 
+          donations = COALESCE(donations, 0) + 1,
+          raised = COALESCE(raised, 0) + ?,
+          updated_at = NOW()
+        WHERE campaign_id = ?
+      `;
+
+      // Execute both updates
+      db.query(updateTransactionQuery, [
+        paymentIntent.latest_charge,
+        processingFee.toFixed(2),
+        netAmount.toFixed(2),
+        paymentIntent.id
+      ], (updateErr, updateResult) => {
+        if (updateErr) {
+          console.error('Failed to update transaction after successful payment:', updateErr);
+          reject(updateErr);
+          return;
+        }
+
+        // Update campaign details
+        db.query(updateCampaignQuery, [amount, campaignId], (campaignErr, campaignResult) => {
+          if (campaignErr) {
+            console.error('Failed to update campaign donations count:', campaignErr);
+            // Don't reject here as the transaction update succeeded
+          } else {
+            console.log(`Updated campaign donations count for campaign: ${campaignId}`);
+          }
+          
+          console.log(`Updated transaction for successful payment: ${paymentIntent.id}`);
+          resolve(updateResult);
+        });
+      });
     });
   });
 }

@@ -35,24 +35,34 @@ export const login = asyncHandler(async (req, res) => {
     db.query(query, [email], (err, data) => {
       if (err) {
         reject(new DatabaseError('Failed to authenticate user', err));
+        return;
       }
       
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         reject(new AuthenticationError('Invalid email or password'));
+        return;
+      }
+      
+      // Ensure data[0] exists before accessing it
+      const user = data[0];
+      if (!user) {
+        reject(new AuthenticationError('Invalid email or password'));
+        return;
       }
    
-      const isPasswordCorrect = bcrypt.compareSync(password, data[0].password)
+      const isPasswordCorrect = bcrypt.compareSync(password, user.password)
    
       if (!isPasswordCorrect) {
         reject(new AuthenticationError('Invalid email or password'));
+        return;
       }
       
       const token = jwt.sign(
         {
-          id: data[0].id, 
-          organization_id: data[0].organization_id,
-          email: data[0].email,
-          role: data[0].role || 'user'
+          id: user.id, 
+          organization_id: user.organization_id,
+          email: user.email,
+          role: user.role || 'user'
         }, 
         config.jwt.secret,
         { expiresIn: config.jwt.expiresIn }
@@ -68,7 +78,7 @@ export const login = asyncHandler(async (req, res) => {
       });
 
       res.setHeader("Set-Cookie", cookie);
-      const {password: userPassword, ...userData} = data[0];
+      const {password: userPassword, ...userData} = user;
       sendSuccess(res, { user: userData }, 'Login successful');
       resolve();
     })
@@ -86,6 +96,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
       jwt.verify(token, config.jwt.secret, (err, decoded) => {
          if (err) {
             reject(new AuthenticationError('Token is not valid'));
+            return;
          }
          
          // Get full user data from database
@@ -94,15 +105,24 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
          db.query(query, [decoded.id], (err, data) => {
             if (err) {
                reject(new DatabaseError('Failed to fetch user data', err));
+               return;
             }
             
             // Check if data exists and has results
             if (!data || data.length === 0) {
                reject(new NotFoundError('User'));
+               return;
             }
             
-            sendSuccess(res, { user: data[0] }, 'User data retrieved successfully');
-      resolve();
+            // Ensure data[0] exists before accessing it
+            const userData = data[0];
+            if (!userData) {
+               reject(new NotFoundError('User'));
+               return;
+            }
+            
+            sendSuccess(res, { user: userData }, 'User data retrieved successfully');
+            resolve();
          });
       })
    })
@@ -205,13 +225,22 @@ export const getUser = asyncHandler(async (req, res) => {
     db.query(query, [id], (err, data) => {
       if (err) {
         reject(new DatabaseError('Failed to fetch user', err));
+        return;
       }
       
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         reject(new NotFoundError('User'));
+        return;
       }
       
-      sendSuccess(res, { user: data[0] }, 'User retrieved successfully');
+      // Ensure data[0] exists before accessing it
+      const user = data[0];
+      if (!user) {
+        reject(new NotFoundError('User'));
+        return;
+      }
+      
+      sendSuccess(res, { user: user }, 'User retrieved successfully');
       resolve();
     })
   })

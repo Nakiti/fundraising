@@ -8,6 +8,7 @@ export const FooterPageContext = createContext()
 
 export const FooterPageContextProvider = ({organizationId, children}) => {
    const [inputs, handleInputsChange, setInputs] = useFormInput({})
+   const [isLoading, setIsLoading] = useState(true)
 
    const [sections, setSections] = useState([
       {name: "contact", displayText: "Footer Contact", active: true, required: true, dropdown: false, content: <ContactSection />},
@@ -53,6 +54,8 @@ export const FooterPageContextProvider = ({organizationId, children}) => {
             })
          } catch (error) {
             console.error("Error fetching footer page data:", error)
+         } finally {
+            setIsLoading(false)
          }
       }
 
@@ -60,7 +63,7 @@ export const FooterPageContextProvider = ({organizationId, children}) => {
    }, [])
 
    return (
-      <FooterPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections}}>
+      <FooterPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections, isLoading}}>
          {children}
       </FooterPageContext.Provider>
    )

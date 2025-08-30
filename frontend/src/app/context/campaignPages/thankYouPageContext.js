@@ -13,7 +13,6 @@ export const ThankYouPageContextProvider = ({campaignId, children}) => {
       const fetchData = async() => {
          try {
             const thankYouResponse = await PageService.getThankYouPage(campaignId)
-            console.log("thanky response ", thankYouResponse)
             const thankYouPageId = thankYouResponse.id
 
             setThankPageInputs({

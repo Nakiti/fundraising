@@ -58,11 +58,11 @@ export const CampaignContextProvider = ({ children }) => {
    const { execute: fetchCampaignDetails, loading: detailsLoading } = useApi(Services.Campaign.getCampaignDetails);
    const { execute: fetchPageSections, loading: sectionsLoading } = useApi(Services.Page.getPageSections);
    const { execute: fetchThankYouPage, loading: thankYouLoading } = useApi(Services.Page.getThankYouPage);
-   const { execute: fetchTicketPage, loading: ticketLoading } = useApi(Services.Page.getTicketPage);
+   // const { execute: fetchTicketPage, loading: ticketLoading } = useApi(Services.Page.getTicketPage);
    const { execute: fetchDonationPage, loading: donationPageLoading } = useApi(Services.Page.getDonationPage);
-   const { execute: fetchPeerLandingPage, loading: peerLandingLoading } = useApi(Services.Page.getPeerLandingPage);
-   const { execute: fetchPeerFundraisingPage, loading: peerFundraisingLoading } = useApi(Services.Page.getPeerFundraisingPage);
-   const { execute: fetchTicketPurchasePage, loading: ticketPurchaseLoading } = useApi(Services.Page.getTicketPurchasePage);
+   // const { execute: fetchPeerLandingPage, loading: peerLandingLoading } = useApi(Services.Page.getPeerLandingPage);
+   // const { execute: fetchPeerFundraisingPage, loading: peerFundraisingLoading } = useApi(Services.Page.getPeerFundraisingPage);
+   // const { execute: fetchTicketPurchasePage, loading: ticketPurchaseLoading } = useApi(Services.Page.getTicketPurchasePage);
    const { execute: fetchActiveDesignations, loading: designationsLoading } = useApi(Services.Designation.getActiveDesignations);
    const { execute: fetchCustomQuestions, loading: questionsLoading } = useApi(Services.Content.getCustomQuestions);
    const { execute: fetchCampaignDesignations, loading: campaignDesignationsLoading } = useApi(Services.Designation.getCampaignDesignations);
@@ -188,16 +188,16 @@ export const CampaignContextProvider = ({ children }) => {
    const fetchCampaignData = useCallback(async (campaignId, organizationId) => {
       // Validate required parameters
       if (!campaignId) {
-         console.warn('No campaign ID provided for fetchCampaignData');
+         // console.warn('No campaign ID provided for fetchCampaignData');
          return;
       }
 
       if (!organizationId) {
-         console.warn('No organization ID provided for fetchCampaignData');
+         // console.warn('No organization ID provided for fetchCampaignData');
          return;
       }
 
-      console.log('Starting to fetch campaign data for campaignId:', campaignId, 'organizationId:', organizationId);
+      // console.log('Starting to fetch campaign data for campaignId:', campaignId, 'organizationId:', organizationId);
 
       setLoading(true);
       setError(null);
@@ -206,9 +206,9 @@ export const CampaignContextProvider = ({ children }) => {
 
       try {
          // Step 1: Fetch campaign details first to get the campaign type
-         console.log('Fetching campaign details...');
+         // console.log('Fetching campaign details...');
          const campaignDetailsResponse = await fetchCampaignDetails(campaignId);
-         console.log("Campaign details received:", campaignDetailsResponse);
+         // console.log("Campaign details received:", campaignDetailsResponse);
 
          if (!campaignDetailsResponse) {
             throw new Error('Failed to fetch campaign details');
@@ -258,137 +258,137 @@ export const CampaignContextProvider = ({ children }) => {
          setCampaignType(campaignType);
          setCampaignStatus(campaignDetailsResponse.status || "");
 
-         console.log('Campaign type determined:', campaignType);
+         // console.log('Campaign type determined:', campaignType);
 
          // Step 3: Fetch all the common data that every campaign type needs
-         console.log('Fetching common campaign data...');
+         // console.log('Fetching common campaign data...');
          
          // Fetch page sections (common to all campaigns)
-         console.log('Fetching page sections...');
+         // console.log('Fetching page sections...');
          const pageSectionsResponse = await fetchPageSections(campaignId);
          if (pageSectionsResponse) {
             setPageSections(pageSectionsResponse);
-            console.log('Page sections set successfully');
+            // console.log('Page sections set successfully');
          } else {
-            console.warn('Failed to fetch page sections');
+            // console.warn('Failed to fetch page sections');
          }
 
          // Fetch thank you page (common to all campaigns)
-         console.log('Fetching thank you page...');
+         // console.log('Fetching thank you page...');
          const thankYouPageResponse = await fetchThankYouPage(campaignId);
          if (thankYouPageResponse) {
             setThankYouPage(thankYouPageResponse);
-            console.log('Thank you page set successfully');
+            // console.log('Thank you page set successfully');
          } else {
-            console.warn('Failed to fetch thank you page');
+            // console.warn('Failed to fetch thank you page');
          }
 
          // Fetch active designations (common to all campaigns)
-         console.log('Fetching active designations...');
+         // console.log('Fetching active designations...');
          const activeDesignationsResponse = await fetchActiveDesignations(organizationId);
          if (activeDesignationsResponse) {
             setActiveDesignations(activeDesignationsResponse);
             setDesignations(activeDesignationsResponse);
-            console.log('Active designations set successfully');
+            // console.log('Active designations set successfully');
          } else {
-            console.warn('Failed to fetch active designations');
+            // console.warn('Failed to fetch active designations');
          }
 
          // Fetch custom questions (common to all campaigns)
-         console.log('Fetching custom questions...');
+         // console.log('Fetching custom questions...');
          const customQuestionsResponse = await fetchCustomQuestions(campaignId);
-         console.log("questions! ", customQuestionsResponse)
+         // console.log("questions! ", customQuestionsResponse)
          if (customQuestionsResponse) {
             setCustomQuestions(customQuestionsResponse);
-            console.log('Custom questions set successfully');
+            // console.log('Custom questions set successfully');
          } else {
-            console.warn('Failed to fetch custom questions');
+            // console.warn('Failed to fetch custom questions');
          }
 
          // Fetch campaign designations (common to all campaigns)
-         console.log('Fetching campaign designations...');
+         // console.log('Fetching campaign designations...');
          const campaignDesignationsResponse = await fetchCampaignDesignations(campaignId);
          if (campaignDesignationsResponse) {
             setCampaignDesignations(campaignDesignationsResponse);
             setSelectedDesignations(campaignDesignationsResponse);
-            console.log('Campaign designations set successfully');
+            // console.log('Campaign designations set successfully');
          } else {
-            console.warn('Failed to fetch campaign designations');
+            // console.warn('Failed to fetch campaign designations');
          }
 
          // Fetch FAQs (common to all campaigns)
-         console.log('Fetching FAQs...');
+         // console.log('Fetching FAQs...');
          const faqsResponse = await fetchFaqs(campaignId);
          if (faqsResponse) {
             setFaqs(faqsResponse);
-            console.log('FAQs set successfully');
+            // console.log('FAQs set successfully');
          } else {
-            console.warn('Failed to fetch FAQs');
+            // console.warn('Failed to fetch FAQs');
          }
 
          // Step 4: Fetch campaign type-specific data
-         console.log('Fetching campaign type-specific data for type:', campaignType);
+         // console.log('Fetching campaign type-specific data for type:', campaignType);
          
          if (campaignType === 'donation') {
-            console.log('Donation campaign - no additional pages needed');
+            // console.log('Donation campaign - no additional pages needed');
          }
          
          else if (campaignType === 'crowdfunding') {
-            console.log('Crowdfunding campaign - fetching donation page...');
+            // console.log('Crowdfunding campaign - fetching donation page...');
             const donationPageResponse = await fetchDonationPage(campaignId);
             if (donationPageResponse) {
                setDonationPage(donationPageResponse);
-               console.log('Donation page set successfully for crowdfunding campaign');
+               // console.log('Donation page set successfully for crowdfunding campaign');
             } else {
-               console.warn('Failed to fetch donation page for crowdfunding campaign');
+               // console.warn('Failed to fetch donation page for crowdfunding campaign');
             }
          }
          
-         else if (campaignType === 'peer-to-peer') {
-            console.log('Peer-to-peer campaign - fetching peer landing page...');
-            const peerLandingPageResponse = await fetchPeerLandingPage(campaignId);
-            if (peerLandingPageResponse) {
-               setPeerLandingPage(peerLandingPageResponse);
-               console.log('Peer landing page set successfully');
-            } else {
-               console.warn('Failed to fetch peer landing page');
-            }
+         // else if (campaignType === 'peer-to-peer') {
+         //    console.log('Peer-to-peer campaign - fetching peer landing page...');
+         //    const peerLandingPageResponse = await fetchPeerLandingPage(campaignId);
+         //    if (peerLandingPageResponse) {
+         //       setPeerLandingPage(peerLandingPageResponse);
+         //       console.log('Peer landing page set successfully');
+         //    } else {
+         //       console.warn('Failed to fetch peer landing page');
+         //    }
 
-            console.log('Peer-to-peer campaign - fetching peer fundraising page...');
-            const peerFundraisingPageResponse = await fetchPeerFundraisingPage(campaignId);
-            if (peerFundraisingPageResponse) {
-               setPeerFundraisingPage(peerFundraisingPageResponse);
-               console.log('Peer fundraising page set successfully');
-            } else {
-               console.warn('Failed to fetch peer fundraising page');
-            }
-         }
+         //    console.log('Peer-to-peer campaign - fetching peer fundraising page...');
+         //    const peerFundraisingPageResponse = await fetchPeerFundraisingPage(campaignId);
+         //    if (peerFundraisingPageResponse) {
+         //       setPeerFundraisingPage(peerFundraisingPageResponse);
+         //       console.log('Peer fundraising page set successfully');
+         //    } else {
+         //       console.warn('Failed to fetch peer fundraising page');
+         //    }
+         // }
          
-         else if (campaignType === 'ticketed-event') {
-            console.log('Ticketed event campaign - fetching ticket page...');
-            const ticketPageResponse = await fetchTicketPage(campaignId);
-            if (ticketPageResponse) {
-               setTicketPage(ticketPageResponse);
-               console.log('Ticket page set successfully');
-            } else {
-               console.warn('Failed to fetch ticket page');
-            }
+         // else if (campaignType === 'ticketed-event') {
+         //    console.log('Ticketed event campaign - fetching ticket page...');
+         //    const ticketPageResponse = await fetchTicketPage(campaignId);
+         //    if (ticketPageResponse) {
+         //       setTicketPage(ticketPageResponse);
+         //       console.log('Ticket page set successfully');
+         //    } else {
+         //       console.warn('Failed to fetch ticket page');
+         //    }
 
-            console.log('Ticketed event campaign - fetching ticket purchase page...');
-            const ticketPurchasePageResponse = await fetchTicketPurchasePage(campaignId);
-            if (ticketPurchasePageResponse) {
-               setTicketPurchasePage(ticketPurchasePageResponse);
-               console.log('Ticket purchase page set successfully');
-            } else {
-               console.warn('Failed to fetch ticket purchase page');
-            }
-         }
+         //    console.log('Ticketed event campaign - fetching ticket purchase page...');
+         //    const ticketPurchasePageResponse = await fetchTicketPurchasePage(campaignId);
+         //    if (ticketPurchasePageResponse) {
+         //       setTicketPurchasePage(ticketPurchasePageResponse);
+         //       console.log('Ticket purchase page set successfully');
+         //    } else {
+         //       console.warn('Failed to fetch ticket purchase page');
+         //    }
+         // }
          
          else {
-            console.warn('Unknown campaign type:', campaignType);
+            // console.warn('Unknown campaign type:', campaignType);
          }
 
-         console.log('Campaign data fetching completed successfully');
+         // console.log('Campaign data fetching completed successfully');
 
          // Update original data with all fetched data for change tracking
          setOriginalData(prev => ({
@@ -400,14 +400,14 @@ export const CampaignContextProvider = ({ children }) => {
          }));
 
       } catch (err) {
-         console.error('Error fetching campaign data:', err);
+         // console.error('Error fetching campaign data:', err);
          setError(err.message || 'Failed to load campaign data');
          showError('Error', 'Failed to load campaign data. Please try again.');
       } finally {
          setLoading(false);
-         console.log('Campaign data loading finished');
+         // console.log('Campaign data loading finished');
       }
-   }, [fetchCampaignDetails, fetchPageSections, fetchThankYouPage, fetchTicketPage, fetchDonationPage, fetchPeerLandingPage, fetchPeerFundraisingPage, fetchTicketPurchasePage, fetchActiveDesignations, fetchCustomQuestions, fetchCampaignDesignations, fetchFaqs, showError]);
+   }, [fetchCampaignDetails, fetchPageSections, fetchThankYouPage, fetchDonationPage, fetchActiveDesignations, fetchCustomQuestions, fetchCampaignDesignations, fetchFaqs, showError]);
 
    const clearError = () => {
       setError(null);
@@ -418,11 +418,11 @@ export const CampaignContextProvider = ({ children }) => {
                        detailsLoading || 
                        sectionsLoading || 
                        thankYouLoading || 
-                       ticketLoading || 
+                     //   ticketLoading || 
                        donationPageLoading || 
-                       peerLandingLoading || 
-                       peerFundraisingLoading || 
-                       ticketPurchaseLoading || 
+                     //   peerLandingLoading || 
+                     //   peerFundraisingLoading || 
+                     //   ticketPurchaseLoading || 
                        designationsLoading || 
                        questionsLoading || 
                        campaignDesignationsLoading || 
@@ -433,11 +433,11 @@ export const CampaignContextProvider = ({ children }) => {
       campaignDetails,
       pageSections,
       thankYouPage,
-      ticketPage,
+      // ticketPage,
       donationPage,
-      peerLandingPage,
-      peerFundraisingPage,
-      ticketPurchasePage,
+      // peerLandingPage,
+      // peerFundraisingPage,
+      // ticketPurchasePage,
       activeDesignations,
       customQuestions,
       setCustomQuestions,

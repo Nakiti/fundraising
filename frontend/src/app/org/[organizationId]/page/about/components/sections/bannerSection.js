@@ -11,12 +11,21 @@ const BannerSection = () => {
       if (file) {
          const reader = new FileReader();
          reader.onload = (event) => {
+            // Store both the preview URL and the File object
             handleInputsChange({
                target: {
                   name: e.target.name,
                   value: event.target.result
                }
             });
+            handleInputsChange({
+               target: {
+                  name: e.target.name + 'File',
+                  value: file
+               }
+            });
+            console.log('Image preview:', event.target.result);
+            console.log('File object:', file);
          };
          reader.readAsDataURL(file);
       }
@@ -73,24 +82,49 @@ const BannerSection = () => {
                value={inputs.headline}
                onChange={handleInputsChange}
             />
-            <p className="text-xs text-gray-400">This will be the main heading displayed on your about page</p>
+            {/* <p className="text-xs text-gray-400">This will be the main heading displayed on your about page</p> */}
          </div>
 
-         {/* About Text */}
+         {/* Hero Subtitle */}
          <div className="space-y-2">
             <label className="block text-xs font-medium text-gray-700">
-               About Text <span className="text-red-500">*</span>
+               Hero Subtitle
             </label>
             <textarea 
                className="w-full px-3 py-2 border border-gray-200 focus:ring-1 focus:ring-gray-300 focus:border-gray-300 resize-none transition-colors duration-200"
                style={{borderRadius: "4px"}}
-               rows={4}
-               placeholder="Describe your organization and its story..."
-               name="aboutText"
-               value={inputs.aboutText}
+               rows={3}
+               placeholder="Enter a brief subtitle for the hero section..."
+               name="heroSubtitle"
+               value={inputs.heroSubtitle || ""}
                onChange={handleInputsChange} 
             />
-            <p className="text-xs text-gray-400">This description will appear in the main about section</p>
+            {/* <p className="text-xs text-gray-400">This subtitle will appear below the main headline in the hero section</p> */}
+         </div>
+
+         {/* Hero Subtitle Color */}
+         <div className="space-y-2">
+            <label className="block text-xs font-medium text-gray-700">
+               Hero Subtitle Color
+            </label>
+            <div className="flex items-center space-x-2">
+               <input 
+                  type="color"
+                  className="w-12 h-8 border border-gray-200 rounded cursor-pointer"
+                  name="hero_subtitle_color"
+                  value={inputs.hero_subtitle_color || "#ffffff"}
+                  onChange={handleInputsChange}
+               />
+               <input 
+                  type="text"
+                  className="flex-1 px-3 py-2 border border-gray-200 focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors duration-200"
+                  style={{borderRadius: "4px"}}
+                  placeholder="#ffffff"
+                  name="hero_subtitle_color"
+                  value={inputs.hero_subtitle_color || "#ffffff"}
+                  onChange={handleInputsChange}
+               />
+            </div>
          </div>
       </div>
    )

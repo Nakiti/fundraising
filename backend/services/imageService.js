@@ -17,7 +17,7 @@ class ImageService {
          this.containerClient = this.blobServiceClient.getContainerClient(this.containerName);
          this.isAzureConfigured = true;
          console.log('✅ Azure Blob Storage configured successfully');
-         } catch (error) {
+         } catch (error) { 
          console.warn('⚠️ Azure Storage connection failed, falling back to local storage:', error.message);
          }
       } else {
@@ -75,11 +75,11 @@ class ImageService {
          return blobPath;
          }
          
-         // Get blob client
-         const blobClient = this.containerClient.getBlobClient(blobPath);
+         // Get block blob client
+         const blockBlobClient = this.containerClient.getBlockBlobClient(blobPath);
          
          // Upload file
-         await blobClient.uploadData(file.buffer, {
+         await blockBlobClient.uploadData(file.buffer, {
          blobHTTPHeaders: {
             blobContentType: file.mimetype,
          },

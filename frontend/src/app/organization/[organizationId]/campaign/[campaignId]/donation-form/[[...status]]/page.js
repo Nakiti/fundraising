@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDesignations, getCampaignDetails, getCustomQuestions, getDonationForm, getSingleDesignation } from "@/app/services/fetchService"
+import { getCampaignDesignations, getCampaignDetails, getCustomQuestions, getDonationForm, getSingleDesignation, DesignationService } from "@/app/services/fetchService"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
@@ -12,6 +12,8 @@ const DonationForm = ({params}) => {
    const [campaignDetails, setCampaignDetails] = useState(null)
    const [defaultDesignation, setDefaultDesignation] = useState(null)
    const [selectedFund, setSelectedFund] = useState(null)
+   const [organizationDesignations, setOrganizationDesignations] = useState(null)
+   const [noDesignationsError, setNoDesignationsError] = useState(false)
    const [selectedAmount, setSelectedAmount] = useState(null)
    const [customAmount, setCustomAmount] = useState("")
    const [amount, setAmount] = useState(0)
@@ -26,6 +28,7 @@ const DonationForm = ({params}) => {
       city: "",
       phone: ""
    })
+   const [isAnonymous, setIsAnonymous] = useState(false)
    const [showStripePayment, setShowStripePayment] = useState(false)
    const [paymentSuccess, setPaymentSuccess] = useState(false)
    const [loading, setLoading] = useState(true)
@@ -73,26 +76,42 @@ const DonationForm = ({params}) => {
          return false
       }
       
-      if (!formData.firstName.trim()) {
-         setError('Please enter your first name')
-         return false
-      }
-      
-      if (!formData.lastName.trim()) {
-         setError('Please enter your last name')
-         return false
-      }
-      
-      if (!formData.email.trim()) {
-         setError('Please enter your email address')
-         return false
-      }
-      
-      // Basic email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(formData.email)) {
-         setError('Please enter a valid email address')
-         return false
+      // If not anonymous, require donor information
+      if (!isAnonymous) {
+         if (!formData.firstName.trim()) {
+            setError('Please enter your first name')
+            return false
+         }
+         
+         if (!formData.lastName.trim()) {
+            setError('Please enter your last name')
+            return false
+         }
+         
+         if (!formData.email.trim()) {
+            setError('Please enter your email address')
+            return false
+         }
+         
+         // Basic email validation
+         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+         if (!emailRegex.test(formData.email)) {
+            setError('Please enter a valid email address')
+            return false
+         }
+      } else {
+         // For anonymous donations, only require email for receipt
+         if (!formData.email.trim()) {
+            setError('Please enter your email address for donation receipt')
+            return false
+         }
+         
+         // Basic email validation
+         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+         if (!emailRegex.test(formData.email)) {
+            setError('Please enter a valid email address')
+            return false
+         }
       }
 
       // Check if fund selection is required and selected
@@ -138,25 +157,36 @@ const DonationForm = ({params}) => {
          try {
             setLoading(true)
             setError("")
+            setNoDesignationsError(false)
             
             const campaignResponse = await getCampaignDetails(campaignId)
             
             if (campaignResponse.status == "active" || status == "preview") {
                setCampaignDetails(campaignResponse)
 
-               if (campaignResponse.default_designation != 0) {
-                  const defaultDesignationResponse = await getSingleDesignation(campaignResponse.default_designation)
-                  setDefaultDesignation(defaultDesignationResponse)
+               // First, check if organization has any designations
+               const orgDesignationsResponse = await DesignationService.getAllDesignations(organizationId)
+               setOrganizationDesignations(orgDesignationsResponse)
+
+               if (orgDesignationsResponse && orgDesignationsResponse.length > 0) {
+                  // Organization has designations, proceed with campaign setup
+                  if (campaignResponse.default_designation != 0) {
+                     const defaultDesignationResponse = await getSingleDesignation(campaignResponse.default_designation)
+                     setDefaultDesignation(defaultDesignationResponse)
+                  }
+
+                  const displayResponse = await getDonationForm(campaignId)
+                  setDisplay(displayResponse)
+
+                  const designationResponse = await getCampaignDesignations(campaignId)
+                  setDesignations(designationResponse)
+
+                  const questionsResponse = await getCustomQuestions(campaignId)
+                  setQuestions(questionsResponse)
+               } else {
+                  // No organization designations exist
+                  setNoDesignationsError(true)
                }
-
-               const displayResponse = await getDonationForm(campaignId)
-               setDisplay(displayResponse)
-
-               const designationResponse = await getCampaignDesignations(campaignId)
-               setDesignations(designationResponse)
-
-               const questionsResponse = await getCustomQuestions(campaignId)
-               setQuestions(questionsResponse)
             } else {
                setError("This campaign is not active")
             }
@@ -169,7 +199,7 @@ const DonationForm = ({params}) => {
       }
 
       fetchData()
-   }, [campaignId, status])
+   }, [campaignId, status, organizationId])
 
    if (loading) {
       return (
@@ -201,6 +231,37 @@ const DonationForm = ({params}) => {
       )
    }
 
+   if (noDesignationsError) {
+      return (
+         <div className="w-full min-h-screen flex items-center justify-center">
+            <div className="text-center max-w-md mx-auto p-6">
+               <div className="text-blue-600 text-6xl mb-4">📋</div>
+               <h2 className="text-xl font-semibold mb-2">Designations Required</h2>
+               <p className="text-gray-600 mb-4">
+                  This campaign requires designations to be set up before donations can be accepted. 
+                  Please create at least one designation for your organization.
+               </p>
+               <div className="space-y-3">
+                  <Link 
+                     href={`/org/${organizationId}/dashboard/settings/designations`}
+                     className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                     Manage Available Designations
+                  </Link>
+                  <div>
+                     <Link 
+                        href={`/organization/${organizationId}/campaigns`}
+                        className="text-sm text-gray-500 hover:text-gray-700"
+                     >
+                        ← Back to Campaigns
+                     </Link>
+                  </div>
+               </div>
+            </div>
+         </div>
+      )
+   }
+
    return (
       <div 
          className="w-full mb-4 mx-auto overflow-y-auto" 
@@ -215,6 +276,38 @@ const DonationForm = ({params}) => {
          {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
          {display && <div className="px-4 py-8">
             <div className={`max-w-xl mx-auto ${display.bg_image ? 'relative z-10' : ''}`}>
+               {/* Campaign Banner */}
+               {campaignDetails && (
+                  <div 
+                     className="mb-6 p-4 rounded-lg border"
+                     style={{ 
+                        backgroundColor: display.c_color || '#ffffff',
+                        borderColor: display.b1_color || '#475569',
+                        borderRadius: display.cardRadius ? `${display.cardRadius}px` : '8px'
+                     }}
+                  >
+                     <div className="text-center">
+                        <h2 
+                           className="font-semibold mb-1"
+                           style={{ 
+                              color: display.p_color || '#1e293b',
+                              fontSize: Math.min(parseInt(display.sectionTitleSize) || 16, 18) + 'px'
+                           }}
+                        >
+                           {campaignDetails.external_name || 'Campaign'}
+                        </h2>
+                        {campaignDetails.organization_name && (
+                           <p 
+                              className="text-sm"
+                              style={{ color: display.s_color || '#64748b' }}
+                           >
+                              {campaignDetails.organization_name}
+                           </p>
+                        )}
+                     </div>
+                  </div>
+               )}
+
                {/* Header */}
                <div className="text-center mb-6">
                   <h1 
@@ -244,11 +337,32 @@ const DonationForm = ({params}) => {
                   </div>
                )}
 
-               {/* Main Form */}
-               <div 
-                  className="bg-white border border-slate-200 p-6 shadow-sm"
-                  style={{ borderRadius: display.cardRadius ? `${display.cardRadius}px` : '12px' }}
-               >
+                                 {/* Main Form */}
+                  <div 
+                     className="bg-white border border-slate-200 p-6 shadow-sm"
+                     style={{ borderRadius: display.cardRadius ? `${display.cardRadius}px` : '12px' }}
+                  >
+                     {/* Campaign Indicator */}
+                     {campaignDetails && (
+                        <div className="mb-4 pb-3 border-b border-slate-100">
+                           <div className="flex items-center justify-center space-x-2">
+                              <div 
+                                 className="w-2 h-2 rounded-full"
+                                 style={{ backgroundColor: display.b1_color || '#475569' }}
+                              ></div>
+                              <span 
+                                 className="text-xs font-medium"
+                                 style={{ color: display.s_color || '#64748b' }}
+                              >
+                                 Donating to: {campaignDetails.external_name || 'Campaign'}
+                              </span>
+                              <div 
+                                 className="w-2 h-2 rounded-full"
+                                 style={{ backgroundColor: display.b1_color || '#475569' }}
+                              ></div>
+                           </div>
+                        </div>
+                     )}
                   {/* Donation Amount Section */}
                   <div className="mb-6">
                      <h2 
@@ -325,9 +439,47 @@ const DonationForm = ({params}) => {
                          designations.map((item, index) => {
                            return <option key={item.id} value={index}>{item.title}</option>
                         }) :
+                        organizationDesignations && organizationDesignations.length > 0 ?
+                         organizationDesignations.map((item, index) => {
+                           return <option key={item.id} value={index}>{item.title}</option>
+                        }) :
                         defaultDesignation && <option value={defaultDesignation.id}>{defaultDesignation.title}</option>
                         }
                      </select>
+                  </div>
+
+                  {/* Anonymous Donation Option */}
+                  <div className="mb-6">
+                     <div className="flex items-center space-x-3 p-4 border border-slate-200 rounded-lg bg-slate-50">
+                        <input
+                           type="checkbox"
+                           id="anonymous"
+                           checked={isAnonymous}
+                           onChange={(e) => setIsAnonymous(e.target.checked)}
+                           className="w-4 h-4 rounded focus:ring-2 focus:ring-blue-500"
+                           style={{ 
+                              accentColor: display.b1_color || '#475569'
+                           }}
+                        />
+                        <label 
+                           htmlFor="anonymous"
+                           className="text-sm font-medium cursor-pointer"
+                           style={{ 
+                              color: display.p_color || '#1e293b',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                           }}
+                        >
+                           Make this donation anonymous
+                        </label>
+                     </div>
+                     {isAnonymous && (
+                        <p 
+                           className="text-xs mt-2"
+                           style={{ color: display.s_color || '#64748b' }}
+                        >
+                           Your donation will appear as "Anonymous Donor" on public pages, but your information will still be available to the organization for tax receipts and records.
+                        </p>
+                     )}
                   </div>
 
                   {/* Personal Information */}
@@ -339,33 +491,35 @@ const DonationForm = ({params}) => {
                            fontSize: Math.min(parseInt(display.sectionTitleSize) || 16, 18) + 'px'
                         }}
                      >
-                        Your Information
+                        {isAnonymous ? 'Contact Information (for receipt)' : 'Your Information'}
                      </h2>
-                     <div className="grid grid-cols-2 gap-3 mb-3">
-                        <input 
-                           className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
-                           placeholder="First Name *"
-                           value={formData.firstName}
-                           onChange={(e) => handleFormDataChange('firstName', e.target.value)}
-                           style={{ 
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                              fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                           }}
-                        />
-                        <input 
-                           className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
-                           placeholder="Last Name *"
-                           value={formData.lastName}
-                           onChange={(e) => handleFormDataChange('lastName', e.target.value)}
-                           style={{ 
-                              borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                              fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                           }}
-                        />
-                     </div>
+                     {!isAnonymous && (
+                        <div className="grid grid-cols-2 gap-3 mb-3">
+                           <input 
+                              className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                              placeholder="First Name *"
+                              value={formData.firstName}
+                              onChange={(e) => handleFormDataChange('firstName', e.target.value)}
+                              style={{ 
+                                 borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                              }}
+                           />
+                           <input 
+                              className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                              placeholder="Last Name *"
+                              value={formData.lastName}
+                              onChange={(e) => handleFormDataChange('lastName', e.target.value)}
+                              style={{ 
+                                 borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                              }}
+                           />
+                        </div>
+                     )}
                      <input 
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-3 text-sm"
-                        placeholder="Email Address *"
+                        placeholder={isAnonymous ? "Email Address (for receipt) *" : "Email Address *"}
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleFormDataChange('email', e.target.value)}
@@ -507,6 +661,25 @@ const DonationForm = ({params}) => {
                         Donation Summary
                      </h3>
                      <div className="space-y-2">
+                        {campaignDetails && (
+                           <div className="flex justify-between items-center">
+                              <span 
+                                 className="text-sm"
+                                 style={{ color: display.s_color || '#64748b' }}
+                              >
+                                 Campaign:
+                              </span>
+                              <span 
+                                 className="font-semibold text-sm text-right"
+                                 style={{ 
+                                    color: display.p_color || '#1e293b',
+                                    fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                                 }}
+                              >
+                                 {campaignDetails.external_name || 'Campaign'}
+                              </span>
+                           </div>
+                        )}
                         <div className="flex justify-between items-center">
                            <span 
                               className="text-sm"
@@ -540,6 +713,8 @@ const DonationForm = ({params}) => {
                            >
                               {designations && designations.length > 0  ? 
                                  (selectedFund !== null ? designations[selectedFund]?.title : 'Please select a fund') :
+                                 organizationDesignations && organizationDesignations.length > 0 ?
+                                 (selectedFund !== null ? organizationDesignations[selectedFund]?.title : 'Please select a fund') :
                                  (defaultDesignation ? defaultDesignation.title : 'General Fund')
                               }
                            </span>
@@ -643,7 +818,11 @@ const DonationForm = ({params}) => {
                            campaignId={campaignId}
                            organizationId={organizationId}
                            donorData={formData}
-                           designationId={selectedFund !== null ? designations[selectedFund]?.id : defaultDesignation?.id}
+                           designationId={selectedFund !== null ? 
+                              (designations && designations.length > 0 ? designations[selectedFund]?.id : 
+                               organizationDesignations && organizationDesignations.length > 0 ? organizationDesignations[selectedFund]?.id : null) : 
+                              defaultDesignation?.id}
+                           isAnonymous={isAnonymous}
                            onSuccess={handlePaymentSuccess}
                            onError={handlePaymentError}
                         />

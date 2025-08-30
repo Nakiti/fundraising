@@ -4,7 +4,7 @@ import { FooterPageContext } from "@/app/context/organizationPages/footerPageCon
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaTiktok } from "react-icons/fa"
 
 const FooterPageDisplay = () => {
-   const { inputs, sections } = useContext(FooterPageContext)
+   const { inputs, sections, isLoading } = useContext(FooterPageContext)
 
    const footerStyles = {
       backgroundColor: inputs.bgColor || "#1F2937",
@@ -123,6 +123,41 @@ const FooterPageDisplay = () => {
             {renderSocialIcons()}
          </div>
       )
+   }
+
+   // Loading skeleton component  
+   const LoadingSkeleton = () => (
+      <footer className="w-full bg-gray-800 animate-pulse">
+         <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="text-center">
+               <div className="h-8 bg-gray-700 rounded w-32 mx-auto mb-4"></div>
+               <div className="h-4 bg-gray-700 rounded w-48 mx-auto mb-2"></div>
+               <div className="h-4 bg-gray-700 rounded w-64 mx-auto mb-4"></div>
+               
+               {/* Contact info skeleton */}
+               <div className="space-y-2 mb-4">
+                  <div className="h-3 bg-gray-700 rounded w-40 mx-auto"></div>
+                  <div className="h-3 bg-gray-700 rounded w-36 mx-auto"></div>
+                  <div className="h-3 bg-gray-700 rounded w-44 mx-auto"></div>
+               </div>
+               
+               {/* Social icons skeleton */}
+               <div className="flex space-x-4 justify-center mb-4">
+                  {[1,2,3,4].map((i) => (
+                     <div key={i} className="w-5 h-5 bg-gray-700 rounded"></div>
+                  ))}
+               </div>
+            </div>
+            
+            <div className="mt-8 pt-4 border-t border-gray-600 text-center">
+               <div className="h-3 bg-gray-700 rounded w-56 mx-auto"></div>
+            </div>
+         </div>
+      </footer>
+   )
+
+   if (isLoading) {
+      return <LoadingSkeleton />
    }
 
    return (

@@ -14,6 +14,7 @@ import {
   DatabaseError
 } from "../utils/errors.js"
 import imageService from "../services/imageService.js"
+import { checkAndUpdateOrganizationStatus } from "./organization_status.js"
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -51,6 +52,9 @@ export const createAboutPage = asyncHandler(async (req, res) => {
           title, 
           description, 
           headline,
+          heroSubtitle,
+          storyTitle,
+          storyText,
           aboutText,
           whatText,
           whyText,
@@ -62,6 +66,7 @@ export const createAboutPage = asyncHandler(async (req, res) => {
           bg_color, 
           p_color, 
           s_color, 
+          hero_subtitle_color,
           c_color, 
           ct_color, 
           b_color, 
@@ -99,6 +104,7 @@ export const createAboutPage = asyncHandler(async (req, res) => {
 
         // Handle image uploads
         let bgImagePath = null;
+        let storyImagePath = null;
         let aboutImagePath = null;
         let teamImagePath = null;
         let missionImagePath = null;
@@ -109,6 +115,11 @@ export const createAboutPage = asyncHandler(async (req, res) => {
         if (req.files?.bgImage?.[0]) {
           imageService.validateFile(req.files.bgImage[0]);
           bgImagePath = await imageService.uploadImage(organization_id, 'about-pages', 'temp', 'hero', req.files.bgImage[0]);
+        }
+
+        if (req.files?.storyImage?.[0]) {
+          imageService.validateFile(req.files.storyImage[0]);
+          storyImagePath = await imageService.uploadImage(organization_id, 'about-pages', 'temp', 'story', req.files.storyImage[0]);
         }
 
         if (req.files?.aboutImage?.[0]) {
@@ -137,10 +148,10 @@ export const createAboutPage = asyncHandler(async (req, res) => {
         }
 
         const query = `INSERT INTO about_pages (
-          organization_id, title, description, headline, aboutText, whatText, whyText, teamText,
+          organization_id, title, description, headline, heroSubtitle, storyTitle, storyText, aboutText, whatText, whyText, teamText,
           missionText, visionText, valuesText,
-          bgImage, aboutImage, teamImage, missionImage, visionImage, valuesImage,
-          bg_color, p_color, s_color, c_color, ct_color, b_color, bt_color,
+          bgImage, storyImage, aboutImage, teamImage, missionImage, visionImage, valuesImage,
+          bg_color, p_color, s_color, hero_subtitle_color, c_color, ct_color, b_color, bt_color, banner_title_text, banner_subtitle_text,
           hero_title_size, hero_subtitle_size, section_title_size, body_text_size, button_text_size, card_title_size,
           hero_height, section_padding, card_radius, button_radius,
           overlay_opacity, accent_color,
@@ -152,6 +163,9 @@ export const createAboutPage = asyncHandler(async (req, res) => {
           title,
           description,
           headline,
+          heroSubtitle,
+          storyTitle,
+          storyText,
           aboutText,
           whatText,
           whyText,
@@ -160,6 +174,7 @@ export const createAboutPage = asyncHandler(async (req, res) => {
           visionText,
           valuesText,
           bgImagePath,
+          storyImagePath,
           aboutImagePath,
           teamImagePath,
           missionImagePath,
@@ -168,10 +183,13 @@ export const createAboutPage = asyncHandler(async (req, res) => {
           bg_color,
           p_color,
           s_color,
+          hero_subtitle_color,
           c_color,
           ct_color,
           b_color,
           bt_color,
+          banner_title_text || '#ffffff',
+          banner_subtitle_text || '#ffffff',
           hero_title_size || '36px',
           hero_subtitle_size || '16px',
           section_title_size || '28px',
@@ -233,70 +251,15 @@ export const createAboutPage = asyncHandler(async (req, res) => {
 
 export const updateAboutPage = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { 
-    title, 
-    description, 
-    headline,
-    aboutText,
-    whatText,
-    whyText,
-    teamText,
-    missionText,
-    visionText,
-    valuesText,
-    // Color customization
-    bg_color, 
-    p_color, 
-    s_color, 
-    c_color, 
-    ct_color, 
-    b_color, 
-    bt_color,
-    // Font sizes
-    hero_title_size,
-    hero_subtitle_size,
-    section_title_size,
-    body_text_size,
-    button_text_size,
-    card_title_size,
-    // Layout & spacing
-    hero_height,
-    section_padding,
-    card_radius,
-    button_radius,
-    // Visual effects
-    overlay_opacity,
-    accent_color,
-    // Element visibility toggles
-    show_video_button,
-    show_hero_icons,
-    show_feature_icons,
-    show_team_photos,
-    show_mission_section,
-    show_vision_section, 
-    show_values_section, 
-    show_hover_effects, 
-    // Status 
-    active 
-  } = req.body;
   
   if (!id) {
     throw new ValidationError('About page ID is required');
   }
-  
-  // Only validate required fields when publishing (active = true)
-  // if (active === true || active === 'true') {
-  //   if (!title) {
-  //     throw new ValidationError('Title is required to publish the page');
-  //   }
-  //   if (!headline) {
-  //     throw new ValidationError('Headline is required to publish the page');
-  //   }
-  // }
 
   return new Promise((resolve, reject) => {
     upload.fields([
       { name: "bgImage", maxCount: 1 },
+      { name: "storyImage", maxCount: 1 },
       { name: "aboutImage", maxCount: 1 },
       { name: "teamImage", maxCount: 1 },
       { name: "missionImage", maxCount: 1 },
@@ -313,6 +276,72 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
       }
 
       try {
+        // Now req.body is properly populated by multer
+        const { 
+          title, 
+          description, 
+          headline,
+          heroSubtitle,
+          storyTitle,
+          storyText,
+          aboutText,
+          whatText,
+          whyText,
+          teamText,
+          missionText,
+          visionText,
+          valuesText,
+          // Color customization
+          bg_color, 
+          p_color, 
+          s_color, 
+          hero_subtitle_color,
+          c_color, 
+          ct_color, 
+          b_color, 
+          bt_color,
+          banner_title_text,
+          banner_subtitle_text,
+          // Font sizes
+          hero_title_size,
+          hero_subtitle_size,
+          section_title_size,
+          body_text_size,
+          button_text_size,
+          card_title_size,
+          // Layout & spacing
+          hero_height,
+          section_padding,
+          card_radius,
+          button_radius,
+          // Visual effects
+          overlay_opacity,
+          accent_color,
+          // Element visibility toggles
+          show_video_button,
+          show_hero_icons,
+          show_feature_icons,
+          show_team_photos,
+          show_mission_section,
+          show_vision_section, 
+          show_values_section, 
+          show_hover_effects, 
+          // Status 
+          active 
+        } = req.body;
+        
+        console.log('req.body after multer processing:', req.body);
+        
+        // Only validate required fields when publishing (active = true)
+        // if (active === true || active === 'true') {
+        //   if (!title) {
+        //     throw new ValidationError('Title is required to publish the page');
+        //   }
+        //   if (!headline) {
+        //     throw new ValidationError('Headline is required to publish the page');
+        //   }
+        // }
+        
         // First, get current about page to access existing image paths
         const getQuery = "SELECT * FROM about_pages WHERE id = ?";
         
@@ -332,6 +361,7 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
 
           // Handle image updates
           let bgImagePath = currentPage.bgImage;
+          let storyImagePath = currentPage.storyImage;
           let aboutImagePath = currentPage.aboutImage;
           let teamImagePath = currentPage.teamImage;
           let missionImagePath = currentPage.missionImage;
@@ -342,6 +372,11 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
           if (req.files?.bgImage?.[0]) {
             imageService.validateFile(req.files.bgImage[0]);
             bgImagePath = await imageService.updateImage(organization_id, 'about-pages', id, 'hero', req.files.bgImage[0], currentPage.bgImage);
+          }
+
+          if (req.files?.storyImage?.[0]) {
+            imageService.validateFile(req.files.storyImage[0]);
+            storyImagePath = await imageService.updateImage(organization_id, 'about-pages', id, 'story', req.files.storyImage[0], currentPage.storyImage);
           }
 
           if (req.files?.aboutImage?.[0]) {
@@ -370,14 +405,11 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
           }
 
           const query = `UPDATE about_pages SET 
-            title = ?, description = ?, headline = ?, aboutText = ?, whatText = ?, whyText = ?, teamText = ?,
+            title = ?, description = ?, headline = ?, heroSubtitle = ?, storyTitle = ?, storyText = ?, aboutText = ?, whatText = ?, whyText = ?, teamText = ?,
             missionText = ?, visionText = ?, valuesText = ?,
-            bgImage = ?, aboutImage = ?, teamImage = ?, missionImage = ?, visionImage = ?, valuesImage = ?,
-            bg_color = ?, p_color = ?, s_color = ?, c_color = ?, ct_color = ?, b_color = ?, bt_color = ?,
-            hero_title_size = ?, hero_subtitle_size = ?, section_title_size = ?, body_text_size = ?, button_text_size = ?, card_title_size = ?,
-            hero_height = ?, section_padding = ?, card_radius = ?, button_radius = ?,
-            overlay_opacity = ?, accent_color = ?,
-            show_video_button = ?, show_hero_icons = ?, show_feature_icons = ?, show_team_photos = ?, show_mission_section = ?, show_vision_section = ?, show_values_section = ?, show_hover_effects = ?,
+            bgImage = ?, storyImage = ?, aboutImage = ?, teamImage = ?, missionImage = ?, visionImage = ?, valuesImage = ?,
+            bg_color = ?, p_color = ?, s_color = ?, hero_subtitle_color = ?, c_color = ?, ct_color = ?, b_color = ?, bt_color = ?, banner_title_text = ?, banner_subtitle_text = ?,
+            overlay_opacity = ?,
             active = ?
             WHERE id = ?`
 
@@ -385,6 +417,9 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
             title,
             description,
             headline,
+            heroSubtitle,
+            storyTitle,
+            storyText,
             aboutText,
             whatText,
             whyText,
@@ -393,6 +428,7 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
             visionText,
             valuesText,
             bgImagePath,
+            storyImagePath,
             aboutImagePath,
             teamImagePath,
             missionImagePath,
@@ -401,30 +437,14 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
             bg_color,
             p_color,
             s_color,
+            hero_subtitle_color,
             c_color,
             ct_color,
             b_color,
             bt_color,
-            hero_title_size || '36px',
-            hero_subtitle_size || '16px',
-            section_title_size || '28px',
-            body_text_size || '14px',
-            button_text_size || '14px',
-            card_title_size || '18px',
-            hero_height || '500px',
-            section_padding || '80px',
-            card_radius || '4px',
-            button_radius || '4px',
+            banner_title_text,
+            banner_subtitle_text,
             overlay_opacity || 0.3,
-            accent_color || '#1F2937',
-            show_video_button !== false,
-            show_hero_icons !== false,
-            show_feature_icons !== false,
-            show_team_photos !== false,
-            show_mission_section !== false,
-            show_vision_section !== false,
-            show_values_section !== false,
-            show_hover_effects !== false,
             active === true || active === 'true',
             id
           ]
@@ -475,6 +495,7 @@ export const getAboutPage = asyncHandler(async (req, res) => {
         // Generate SAS URLs for all images (or return local paths in development)
         const imageUrls = await Promise.all([
           imageService.getImageUrl(aboutPage.bgImage, 'public'),
+          imageService.getImageUrl(aboutPage.storyImage, 'public'),
           imageService.getImageUrl(aboutPage.aboutImage, 'public'),
           imageService.getImageUrl(aboutPage.teamImage, 'public'),
           imageService.getImageUrl(aboutPage.missionImage, 'public'),
@@ -486,11 +507,12 @@ export const getAboutPage = asyncHandler(async (req, res) => {
         const result = {
           ...aboutPage,
           bgImage: imageUrls[0],
-          aboutImage: imageUrls[1],
-          teamImage: imageUrls[2],
-          missionImage: imageUrls[3],
-          visionImage: imageUrls[4],
-          valuesImage: imageUrls[5]
+          storyImage: imageUrls[1],
+          aboutImage: imageUrls[2],
+          teamImage: imageUrls[3],
+          missionImage: imageUrls[4],
+          visionImage: imageUrls[5],
+          valuesImage: imageUrls[6]
         };
 
         sendSuccess(res, result, 'About page retrieved successfully');

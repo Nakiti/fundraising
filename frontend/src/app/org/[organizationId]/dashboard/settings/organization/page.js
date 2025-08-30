@@ -17,6 +17,7 @@ const Organization = ({params}) => {
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
 
+
    const [info, handleInfoChange, setInfo] = useFormInput({
       name: "",
       url: "",
@@ -34,10 +35,21 @@ const Organization = ({params}) => {
    const fetchData = async() => {
       try {
          const response = await OrganizationService.getOrganization(organizationId)
-         setInfo((prevInfo) => ({
-            ...prevInfo, 
-            name: response.name,
-         }))
+         
+         // Add null checks and default values
+         if (response && response.name) {
+            setInfo((prevInfo) => ({
+               ...prevInfo, 
+               name: response.name,
+            }))
+         } else {
+            console.warn('Organization response missing name property:', response)
+            // Set default values to prevent errors
+            setInfo((prevInfo) => ({
+               ...prevInfo, 
+               name: response?.name || "",
+            }))
+         }
       } catch (err) {
          const handledError = errorHandler.handle(err)
          setErrorMessage(handledError.message)
@@ -80,6 +92,8 @@ const Organization = ({params}) => {
                <h1 className="text-3xl font-semibold mb-4 text-gray-800">Organization</h1>
                <p className="text-gray-700">Manage details about your organization</p>
             </div>
+
+
       
             <div className="w-full max-w-4xl p-6">
                <h2 className="text-xl font-semibold text-gray-800 mb-4">General:</h2>

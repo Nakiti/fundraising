@@ -1,7 +1,7 @@
 "use client"
 import { useContext, useState } from "react"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
-import { PageUpdateService } from "@/app/services/updateServices";
+import { PageUpdateService, updateDonationPage } from "@/app/services/updateServices";
 import { PageService } from "@/app/services/fetchService";
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
@@ -22,7 +22,7 @@ const Design = () => {
       
       try {
          // Update donation page
-         await PageUpdateService.updateDonationPage(campaignId, donationPageInputs)
+         await updateDonationPage(campaignId, donationPageInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationPageSections.filter(section => section.id && section.id > 0)
@@ -73,6 +73,10 @@ const Design = () => {
             b3_color: donationResponse.b3_color || "#10b981",
             bt_color: donationResponse.bt_color || "#ffffff",
             
+            // Banner Text Colors
+            bannerTitleColor: donationResponse.bannerTitleColor || "#ffffff",
+            bannerSubtitleColor: donationResponse.bannerSubtitleColor || "#e2e8f0",
+            
             // Donation Amounts
             button1: donationResponse.button1 || 25,
             button2: donationResponse.button2 || 50,
@@ -110,6 +114,10 @@ const Design = () => {
             buttonTextSize: donationResponse.buttonTextSize || "16",
             cardTitleSize: donationResponse.cardTitleSize || "18",
             
+            // Banner Typography
+            bannerTitleSize: donationResponse.bannerTitleSize || "56",
+            bannerSubtitleSize: donationResponse.bannerSubtitleSize || "20",
+            
             // Layout
             heroHeight: donationResponse.heroHeight || "500",
             sectionPadding: donationResponse.sectionPadding || "80",
@@ -133,7 +141,15 @@ const Design = () => {
 
    const colorGroups = [
       {
-         title: "Text Colors",
+         title: "Banner Text Colors",
+         icon: <FaFont className="w-4 h-4" />,
+         colors: [
+            { name: "bannerTitleColor", label: "Banner Title Color", description: "Color for the main headline in the banner" },
+            { name: "bannerSubtitleColor", label: "Banner Subtitle Color", description: "Color for the description text in the banner" }
+         ]
+      },
+      {
+         title: "Main Content Text Colors",
          icon: <FaFont className="w-4 h-4" />,
          colors: [
             { name: "p_color", label: "Primary Text Color", description: "Main text color for headings and important content" },
@@ -148,6 +164,13 @@ const Design = () => {
          ]
       },
       {
+         title: "Banner Image Overlay",
+         icon: <FaImage className="w-4 h-4" />,
+         colors: [
+            { name: "overlayOpacity", label: "Overlay Opacity", description: "Darkness of the overlay on banner images", type: "range", min: "0.1", max: "0.8", step: "0.1", defaultValue: "0.3" }
+         ]
+      },
+      {
          title: "Button Styles",
          icon: <FaMousePointer className="w-4 h-4" />,
          colors: [
@@ -157,127 +180,148 @@ const Design = () => {
       }
    ]
 
-   const layoutOptions = [
-      {
-         name: "heroHeight",
-         label: "Hero Section Height",
-         type: "range",
-         min: "300",
-         max: "800",
-         step: "50",
-         defaultValue: "500",
-         description: "Adjust the height of the main banner section"
-      },
-      {
-         name: "sectionPadding",
-         label: "Section Padding",
-         type: "range",
-         min: "40",
-         max: "120",
-         step: "20",
-         defaultValue: "80",
-         description: "Spacing between sections"
-      },
-      {
-         name: "cardRadius",
-         label: "Card Border Radius",
-         type: "range",
-         min: "0",
-         max: "16",
-         step: "2",
-         defaultValue: "4",
-         description: "Rounded corners for cards and containers"
-      },
-      {
-         name: "buttonRadius",
-         label: "Button Border Radius",
-         type: "range",
-         min: "0",
-         max: "12",
-         step: "2",
-         defaultValue: "4",
-         description: "Rounded corners for buttons"
-      }
-   ]
+   // const layoutOptions = [
+   //    {
+   //       name: "heroHeight",
+   //       label: "Hero Section Height",
+   //       type: "range",
+   //       min: "300",
+   //       max: "800",
+   //       step: "50",
+   //       defaultValue: "500",
+   //       description: "Adjust the height of the main banner section"
+   //    },
+   //    {
+   //       name: "sectionPadding",
+   //       label: "Section Padding",
+   //       type: "range",
+   //       min: "40",
+   //       max: "120",
+   //       step: "20",
+   //       defaultValue: "80",
+   //       description: "Spacing between sections"
+   //    },
+   //    {
+   //       name: "cardRadius",
+   //       label: "Card Border Radius",
+   //       type: "range",
+   //       min: "0",
+   //       max: "16",
+   //       step: "2",
+   //       defaultValue: "4",
+   //       description: "Rounded corners for cards and containers"
+   //    },
+   //    {
+   //       name: "buttonRadius",
+   //       label: "Button Border Radius",
+   //       type: "range",
+   //       min: "0",
+   //       max: "12",
+   //       step: "2",
+   //       defaultValue: "4",
+   //       description: "Rounded corners for buttons"
+   //    }
+   // ]
 
-   const fontSizeOptions = [
-      {
-         name: "heroTitleSize",
-         label: "Hero Title Size",
-         type: "range",
-         min: "24",
-         max: "64",
-         step: "2",
-         defaultValue: "36",
-         description: "Size of the main hero title"
-      },
-      {
-         name: "heroSubtitleSize",
-         label: "Hero Subtitle Size",
-         type: "range",
-         min: "14",
-         max: "24",
-         step: "1",
-         defaultValue: "16",
-         description: "Size of the hero subtitle/description"
-      },
-      {
-         name: "sectionTitleSize",
-         label: "Section Title Size",
-         type: "range",
-         min: "20",
-         max: "48",
-         step: "2",
-         defaultValue: "28",
-         description: "Size of section headings"
-      },
-      {
-         name: "bodyTextSize",
-         label: "Body Text Size",
-         type: "range",
-         min: "12",
-         max: "18",
-         step: "1",
-         defaultValue: "16",
-         description: "Size of body text and descriptions"
-      },
-      {
-         name: "buttonTextSize",
-         label: "Button Text Size",
-         type: "range",
-         min: "12",
-         max: "18",
-         step: "1",
-         defaultValue: "16",
-         description: "Size of button text"
-      },
-      {
-         name: "cardTitleSize",
-         label: "Card Title Size",
-         type: "range",
-         min: "14",
-         max: "24",
-         step: "1",
-         defaultValue: "18",
-         description: "Size of card titles"
-      }
-   ]
+   // const fontSizeOptions = [
+   //    {
+   //       name: "heroTitleSize",
+   //       label: "Hero Title Size",
+   //       type: "range",
+   //       min: "24",
+   //       max: "64",
+   //       step: "2",
+   //       defaultValue: "36",
+   //       description: "Size of the main hero title"
+   //    },
+   //    {
+   //       name: "heroSubtitleSize",
+   //       label: "Hero Subtitle Size",
+   //       type: "range",
+   //       min: "14",
+   //       max: "24",
+   //       step: "1",
+   //       defaultValue: "16",
+   //       description: "Size of the hero subtitle/description"
+   //    },
+   //    {
+   //       name: "sectionTitleSize",
+   //       label: "Section Title Size",
+   //       type: "range",
+   //       min: "20",
+   //       max: "48",
+   //       step: "2",
+   //       defaultValue: "28",
+   //       description: "Size of section headings"
+   //    },
+   //    {
+   //       name: "bodyTextSize",
+   //       label: "Body Text Size",
+   //       type: "range",
+   //       min: "12",
+   //       max: "18",
+   //       step: "1",
+   //       defaultValue: "16",
+   //       description: "Size of body text and descriptions"
+   //    },
+   //    {
+   //       name: "buttonTextSize",
+   //       label: "Button Text Size",
+   //       type: "range",
+   //       min: "12",
+   //       max: "18",
+   //       step: "1",
+   //       defaultValue: "16",
+   //       description: "Size of button text"
+   //    },
+   //    {
+   //       name: "cardTitleSize",
+   //       label: "Card Title Size",
+   //       type: "range",
+   //       min: "14",
+   //       max: "24",
+   //       step: "1",
+   //       defaultValue: "18",
+   //       description: "Size of card titles"
+   //    }
+   // ]
 
-   const visualOptions = [
-      {
-         name: "overlayOpacity",
-         label: "Hero Overlay Opacity",
-         type: "range",
-         min: "0.1",
-         max: "0.8",
-         step: "0.1",
-         defaultValue: "0.3",
-         description: "Darkness of the overlay on hero images"
-      }
-   ]
+   // const visualOptions = [
+   //    {
+   //       name: "overlayOpacity",
+   //       label: "Hero Overlay Opacity",
+   //       type: "range",
+   //       min: "0.1",
+   //       max: "0.8",
+   //       step: "0.1",
+   //       defaultValue: "0.3",
+   //       description: "Darkness of the overlay on hero images"
+   //    }
+   // ]
 
    return (
       <div className="w-full space-y-4">
+         <style jsx>{`
+            input[type="range"]::-webkit-slider-thumb {
+               appearance: none;
+               height: 16px;
+               width: 16px;
+               border-radius: 50%;
+               background: #3b82f6;
+               cursor: pointer;
+               border: 2px solid #ffffff;
+               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            input[type="range"]::-moz-range-thumb {
+               height: 16px;
+               width: 16px;
+               border-radius: 50%;
+               background: #3b82f6;
+               cursor: pointer;
+               border: 2px solid #ffffff;
+               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+         `}</style>
          {/* Color Customization */}
          {colorGroups.map((group, groupIndex) => (
             <div key={groupIndex} className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
@@ -291,29 +335,58 @@ const Design = () => {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {group.colors.map((color, colorIndex) => (
                      <div key={colorIndex} className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                           <label className="text-xs font-medium text-gray-700">
-                              {color.label}
-                           </label>
-                           <div className="relative">
+                        {color.type === "range" ? (
+                           // Range slider for overlay opacity
+                           <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                 <label className="text-xs font-medium text-gray-700">
+                                    {color.label}
+                                 </label>
+                                 <span className="text-xs font-mono text-gray-400">
+                                    {donationPageInputs[color.name] || color.defaultValue}
+                                 </span>
+                              </div>
                               <input 
-                                 type="color" 
-                                 className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
-                                 style={{borderRadius: "4px"}}
+                                 type="range"
+                                 className="w-full h-2 bg-gray-200 appearance-none cursor-pointer rounded-lg"
+                                 style={{
+                                    borderRadius: "8px",
+                                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((donationPageInputs[color.name] || color.defaultValue) - parseFloat(color.min)) / (parseFloat(color.max) - parseFloat(color.min)) * 100}%, #e5e7eb ${((donationPageInputs[color.name] || color.defaultValue) - parseFloat(color.min)) / (parseFloat(color.max) - parseFloat(color.min)) * 100}%, #e5e7eb 100%)`
+                                 }}
                                  name={color.name}
-                                 value={donationPageInputs[color.name]}
+                                 min={color.min}
+                                 max={color.max}
+                                 step={color.step}
+                                 value={donationPageInputs[color.name] || color.defaultValue}
                                  onChange={handleDonationPageInputsChange}
                               />
-                              <div 
-                                 className="w-6 h-6 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors duration-200" 
-                                 style={{ 
-                                    backgroundColor: donationPageInputs[color.name],
-                                    borderRadius: "4px"
-                                 }}
-                              />
+                              <p className="text-xs text-gray-400">{color.description}</p>
                            </div>
-                        </div>
-                        {/* <p className="text-xs text-gray-400">{color.description}</p> */}
+                        ) : (
+                           // Color picker for regular colors
+                           <div className="flex items-center justify-between">
+                              <label className="text-xs font-medium text-gray-700">
+                                 {color.label}
+                              </label>
+                              <div className="relative">
+                                 <input 
+                                    type="color" 
+                                    className="opacity-0 absolute inset-0 w-6 h-6 cursor-pointer"
+                                    style={{borderRadius: "4px"}}
+                                    name={color.name}
+                                    value={donationPageInputs[color.name]}
+                                    onChange={handleDonationPageInputsChange}
+                                 />
+                                 <div 
+                                    className="w-6 h-6 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors duration-200" 
+                                    style={{ 
+                                       backgroundColor: donationPageInputs[color.name],
+                                       borderRadius: "4px"
+                                    }}
+                                 />
+                              </div>
+                           </div>
+                        )}
                      </div>
                   ))}
                </div>
@@ -321,7 +394,117 @@ const Design = () => {
          ))}
 
          {/* Typography Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+            <div className="flex items-center space-x-2 mb-4">
+               <div className="p-1.5 bg-green-50" style={{borderRadius: "4px"}}>
+                  <FaFont className="w-3 h-3 text-green-600" />
+               </div>
+               <h3 className="text-sm font-medium text-gray-900">Typography & Font Sizes</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div className="space-y-4">
+                  <h4 className="text-xs font-semibold text-gray-700 border-b border-gray-200 pb-1">Banner Text</h4>
+                  <div className="space-y-3">
+                     <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                           <label className="text-xs font-medium text-gray-700">Banner Title Size</label>
+                           <span className="text-xs font-mono text-gray-400">
+                              {donationPageInputs.bannerTitleSize || "56"}px
+                           </span>
+                        </div>
+                        <input 
+                           type="range"
+                           className="w-full h-2 bg-gray-200 appearance-none cursor-pointer rounded-lg"
+                           style={{
+                              borderRadius: "8px",
+                              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((donationPageInputs.bannerTitleSize || 56) - 32) / (80 - 32) * 100}%, #e5e7eb ${((donationPageInputs.bannerTitleSize || 56) - 32) / (80 - 32) * 100}%, #e5e7eb 100%)`
+                           }}
+                           name="bannerTitleSize"
+                           min="32"
+                           max="80"
+                           step="2"
+                           value={donationPageInputs.bannerTitleSize || "56"}
+                           onChange={handleDonationPageInputsChange}
+                        />
+                     </div>
+                     <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                           <label className="text-xs font-medium text-gray-700">Banner Subtitle Size</label>
+                           <span className="text-xs font-mono text-gray-400">
+                              {donationPageInputs.bannerSubtitleSize || "20"}px
+                           </span>
+                        </div>
+                        <input 
+                           type="range"
+                           className="w-full h-2 bg-gray-200 appearance-none cursor-pointer rounded-lg"
+                           style={{
+                              borderRadius: "8px",
+                              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((donationPageInputs.bannerSubtitleSize || 20) - 14) / (28 - 14) * 100}%, #e5e7eb ${((donationPageInputs.bannerSubtitleSize || 20) - 14) / (28 - 14) * 100}%, #e5e7eb 100%)`
+                           }}
+                           name="bannerSubtitleSize"
+                           min="14"
+                           max="28"
+                           step="1"
+                           value={donationPageInputs.bannerSubtitleSize || "20"}
+                           onChange={handleDonationPageInputsChange}
+                        />
+                     </div>
+                  </div>
+               </div>
+
+               <div className="space-y-4">
+                  <h4 className="text-xs font-semibold text-gray-700 border-b border-gray-200 pb-1">Main Content</h4>
+                  <div className="space-y-3">
+                     <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                           <label className="text-xs font-medium text-gray-700">Section Title Size</label>
+                           <span className="text-xs font-mono text-gray-400">
+                              {donationPageInputs.sectionTitleSize || "36"}px
+                           </span>
+                        </div>
+                        <input 
+                           type="range"
+                           className="w-full h-2 bg-gray-200 appearance-none cursor-pointer rounded-lg"
+                           style={{
+                              borderRadius: "8px",
+                              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((donationPageInputs.sectionTitleSize || 36) - 24) / (48 - 24) * 100}%, #e5e7eb ${((donationPageInputs.sectionTitleSize || 36) - 24) / (48 - 24) * 100}%, #e5e7eb 100%)`
+                           }}
+                           name="sectionTitleSize"
+                           min="24"
+                           max="48"
+                           step="2"
+                           value={donationPageInputs.sectionTitleSize || "36"}
+                           onChange={handleDonationPageInputsChange}
+                        />
+                     </div>
+                     <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                           <label className="text-xs font-medium text-gray-700">Body Text Size</label>
+                           <span className="text-xs font-mono text-gray-400">
+                              {donationPageInputs.bodyTextSize || "18"}px
+                           </span>
+                        </div>
+                        <input 
+                           type="range"
+                           className="w-full h-2 bg-gray-200 appearance-none cursor-pointer rounded-lg"
+                           style={{
+                              borderRadius: "8px",
+                              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((donationPageInputs.bodyTextSize || 18) - 14) / (22 - 14) * 100}%, #e5e7eb ${((donationPageInputs.bodyTextSize || 18) - 14) / (22 - 14) * 100}%, #e5e7eb 100%)`
+                           }}
+                           name="bodyTextSize"
+                           min="14"
+                           max="22"
+                           step="1"
+                           value={donationPageInputs.bodyTextSize || "18"}
+                           onChange={handleDonationPageInputsChange}
+                        />
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div> */}
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-green-50" style={{borderRadius: "4px"}}>
                   <FaFont className="w-3 h-3 text-green-600" />
@@ -351,14 +534,14 @@ const Design = () => {
                         value={donationPageInputs[option.name] || option.defaultValue}
                         onChange={handleDonationPageInputsChange}
                      />
-                     {/* <p className="text-xs text-gray-400">{option.description}</p> */}
+                     <p className="text-xs text-gray-400">{option.description}</p>
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Layout Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-blue-50" style={{borderRadius: "4px"}}>
                   <FaRuler className="w-3 h-3 text-blue-600" />
@@ -388,14 +571,14 @@ const Design = () => {
                         value={donationPageInputs[option.name] || option.defaultValue}
                         onChange={handleDonationPageInputsChange}
                      />
-                     {/* <p className="text-xs text-gray-400">{option.description}</p> */}
+                     <p className="text-xs text-gray-400">{option.description}</p>
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Visual Effects */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-purple-50" style={{borderRadius: "4px"}}>
                   <FaImage className="w-3 h-3 text-purple-600" />
@@ -425,11 +608,11 @@ const Design = () => {
                         value={donationPageInputs[option.name] || option.defaultValue}
                         onChange={handleDonationPageInputsChange}
                      />
-                     {/* <p className="text-xs text-gray-400">{option.description}</p> */}
+                     <p className="text-xs text-gray-400">{option.description}</p>
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Save and Discard Actions */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
@@ -472,10 +655,8 @@ const Design = () => {
          {/* Error Modal */}
          {error && (
             <ErrorModal
-               isOpen={error}
-               onClose={() => setError(false)}
-               title="Error"
                message={errorMessage}
+               setError={setError}
             />
          )}
       </div>

@@ -13,6 +13,8 @@ import {
   DatabaseError
 } from "../utils/errors.js"
 import multer from "multer"
+import { checkAndUpdateOrganizationStatus } from "./organization_status.js"
+import imageService from "../services/imageService.js"
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage()
@@ -65,12 +67,28 @@ export const getHeaderPage = asyncHandler(async (req, res) => {
 
   const query = "SELECT * FROM header_pages WHERE organization_id = ?"
 
-  return new Promise((resolve, reject) => {
-    db.query(query, [organizationId], (err, data) => {
+  return new Promise(async (resolve, reject) => {
+    db.query(query, [organizationId], async (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch header page', err))
       if (!data || data.length === 0) reject(new NotFoundError('Header page'))
-      sendSuccess(res, data[0], 'Header page retrieved successfully')
-      resolve()
+      
+      try {
+        const headerPage = data[0];
+        
+        // Generate SAS URL for logo image (or return local path in development)
+        const logoUrl = await imageService.getImageUrl(headerPage.logo, 'public');
+
+        // Replace image path with URL
+        const result = {
+          ...headerPage,
+          logo: logoUrl
+        };
+
+        sendSuccess(res, result, 'Header page retrieved successfully')
+        resolve()
+      } catch (error) {
+        reject(new DatabaseError('Failed to generate image URL', error));
+      }
     })
   })
 })
@@ -106,9 +124,24 @@ export const updateHeaderPage = asyncHandler(async (req, res) => {
 
     let logoUrl = logo
     if (req.files && req.files.logo) {
-      // In a real implementation, you would upload the file to cloud storage
-      // and get back a URL. For now, we'll use a placeholder
-      logoUrl = `/uploads/headers/${Date.now()}_${req.files.logo[0].originalname}`
+      // Get organization_id from the header page first
+      const getOrgQuery = "SELECT organization_id FROM header_pages WHERE id = ?";
+      const orgResult = await new Promise((resolve, reject) => {
+        db.query(getOrgQuery, [id], (err, data) => {
+          if (err) reject(err);
+          else resolve(data);
+        });
+      });
+      
+      if (!orgResult || orgResult.length === 0) {
+        throw new ValidationError('Header page not found');
+      }
+      
+      const organizationId = orgResult[0].organization_id;
+      
+      // Validate and upload image using Azure blob storage
+      imageService.validateFile(req.files.logo[0]);
+      logoUrl = await imageService.uploadImage(organizationId, 'header-pages', id, 'logo', req.files.logo[0]);
     }
 
     const query = `
@@ -143,10 +176,33 @@ export const updateHeaderPage = asyncHandler(async (req, res) => {
       id
     ]
 
+    console.log("header page values", values)
+
     return new Promise((resolve, reject) => {
-      db.query(query, values, (err, data) => {
+      db.query(query, values, async (err, data) => {
         if (err) reject(new DatabaseError('Failed to update header page', err))
         if (data.affectedRows === 0) reject(new NotFoundError('Header page'))
+
+        // Check and update organization status after header page update
+        try {
+          // Get organization_id from the header page
+          const getOrgQuery = "SELECT organization_id FROM header_pages WHERE id = ?";
+          db.query(getOrgQuery, [id], async (orgErr, orgData) => {
+            if (!orgErr && orgData && orgData.length > 0) {
+              const organizationId = orgData[0].organization_id;
+              try {
+                await checkAndUpdateOrganizationStatus(organizationId);
+              } catch (statusError) {
+                console.error('Failed to update organization status after header page update:', statusError);
+                // Don't fail the main operation, just log the error
+              }
+            }
+          });
+        } catch (statusError) {
+          console.error('Error checking organization status:', statusError);
+          // Don't fail the main operation
+        }
+
         sendUpdated(res, data, 'Header page updated successfully')
         resolve()
       })

@@ -85,6 +85,30 @@ export class CampaignService {
          throw error;
       }
    }
+
+   // Get campaign sum raised
+   static async getSumRaised(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/campaign/sumRaised/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching campaign sum raised:', error);
+         throw error;
+      }
+   }
+
+   // Get campaign insights
+   static async getCampaignInsights(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/campaign/insights/${campaignId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching campaign insights:', error);
+         throw error;
+      }
+   }
 }
 
 // Page Services
@@ -354,9 +378,21 @@ export class OrganizationService {
       try {
          validators.id(organizationId, 'Organization ID');
          const response = await api.get(`/organization/get/${organizationId}`);
-         return response.success ? response.data[0] : null;
+         return response.success ? response.data : null;
       } catch (error) {
          console.error('Error fetching organization:', error);
+         throw error;
+      }
+   }
+
+   // Get organization status
+   static async getOrganizationStatus(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/dashboard/organization-status/${organizationId}`);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error fetching organization status:', error);
          throw error;
       }
    }
@@ -469,10 +505,12 @@ export class UserService {
 // Transaction Services
 export class TransactionService {
    // Get transactions by organization
-   static async getTransactionsByOrg(organizationId) {
+   static async getTransactionsByOrg(organizationId, isAdmin = true) {
       try {
          validators.id(organizationId, 'Organization ID');
-         const response = await api.get(`/transaction/getByOrg/${organizationId}`);
+         const response = await api.get(`/transaction/getByOrg/${organizationId}`, {
+            params: { isAdmin }
+         });
          return response.success ? response.data : [];
       } catch (error) {
          console.error('Error fetching transactions by org:', error);
@@ -481,10 +519,12 @@ export class TransactionService {
    }
 
    // Get transactions by campaign
-   static async getTransactionsByCampaign(campaignId) {
+   static async getTransactionsByCampaign(campaignId, isAdmin = true) {
       try {
          validators.id(campaignId, 'Campaign ID');
-         const response = await api.get(`/transaction/getByCampaign/${campaignId}`);
+         const response = await api.get(`/transaction/getByCampaign/${campaignId}`, {
+            params: { isAdmin }
+         });
          return response.success ? response.data : [];
       } catch (error) {
          console.error('Error fetching transactions by campaign:', error);
@@ -552,6 +592,34 @@ export class TransactionService {
          return response.success ? response.data : [];
       } catch (error) {
          console.error('Error searching transactions:', error);
+         throw error;
+      }
+   }
+
+   // Get public transactions by organization (for donor-facing pages)
+   static async getPublicTransactionsByOrg(organizationId) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/transaction/getByOrg/${organizationId}`, {
+            params: { isAdmin: false }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching public transactions by org:', error);
+         throw error;
+      }
+   }
+
+   // Get public transactions by campaign (for donor-facing pages)
+   static async getPublicTransactionsByCampaign(campaignId) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         const response = await api.get(`/transaction/getByCampaign/${campaignId}`, {
+            params: { isAdmin: false }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching public transactions by campaign:', error);
          throw error;
       }
    }
@@ -674,6 +742,8 @@ export const getAllCampaigns = CampaignService.getAllCampaigns;
 export const getCampaignSearch = CampaignService.searchCampaigns;
 export const getCampaignsFiltered = CampaignService.getFilteredCampaigns;
 export const getCampaignsDateRange = CampaignService.getCampaignsByDateRange;
+export const getSumRaised = CampaignService.getSumRaised;
+export const getCampaignInsights = CampaignService.getCampaignInsights;
 
 export const getDonationPage = PageService.getDonationPage;
 export const getTicketPurchasePage = PageService.getTicketPurchasePage;
@@ -687,6 +757,7 @@ export const getLandingPage = PageService.getLandingPage;
 export const getAboutPage = PageService.getAboutPage;
 
 export const getOrganization = OrganizationService.getOrganization;
+export const getOrganizationStatusService = OrganizationService.getOrganizationStatus;
 
 export const getCampaignDesignations = DesignationService.getCampaignDesignations;
 export const getSingleDesignation = DesignationService.getSingleDesignation;

@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import useFormInput from "@/app/hooks/useFormInput";
 import { PageService } from "@/app/services/fetchService";
 import BannerSection from "@/app/org/[organizationId]/page/about/components/sections/bannerSection";
+import StorySection from "@/app/org/[organizationId]/page/about/components/sections/storySection";
 import WhatSection from "@/app/org/[organizationId]/page/about/components/sections/whatSection";
 import WhySection from "@/app/org/[organizationId]/page/about/components/sections/whySection";
 import TeamSection from "@/app/org/[organizationId]/page/about/components/sections/teamSection";
@@ -10,9 +11,11 @@ export const AboutPageContext = createContext()
 
 export const AboutPageContextProvider = ({organizationId, children}) => {
    const [inputs, handleInputsChange, setInputs] = useFormInput({})
+   const [isLoading, setIsLoading] = useState(true)
 
    const [sections, setSections] = useState([
       {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
+      {name: "story", displayText: "Our Story", active: true, required: false, dropdown: false, content: <StorySection />},
       {name: "what", displayText: "What We Do", active: false, required: false, dropdown: false, content: <WhatSection />},
       {name: "why", displayText: "Why We Do It", active: false, required: false, dropdown: false, content: <WhySection />},
       {name: "team", displayText: "Our Team", active: false, required: false, dropdown: false, content: <TeamSection />}
@@ -20,6 +23,8 @@ export const AboutPageContextProvider = ({organizationId, children}) => {
 
    useEffect(() => {
       const fetchData = async() => {
+         if (!organizationId) return;
+         
          try {
             const response = await PageService.getAboutPage(organizationId)
             const aboutPageId = response.id
@@ -27,11 +32,15 @@ export const AboutPageContextProvider = ({organizationId, children}) => {
             setInputs({
                // Page ID for updates
                id: aboutPageId,
+               organizationId: organizationId,
                
                // Content fields
                title: response.title || "",
                description: response.description || "",
                headline: response.headline || "",
+               heroSubtitle: response.heroSubtitle || "",
+               storyTitle: response.storyTitle || "",
+               storyText: response.storyText || "",
                aboutText: response.aboutText || "",
                whatText: response.whatText || "",
                whyText: response.whyText || "",
@@ -42,6 +51,7 @@ export const AboutPageContextProvider = ({organizationId, children}) => {
                
                // Images
                bgImage: response.bgImage || "", // Now contains SAS URL
+               storyImage: response.storyImage || "", // Now contains SAS URL
                aboutImage: response.aboutImage || "", // Now contains SAS URL
                teamImage: response.teamImage || "", // Now contains SAS URL
                missionImage: response.missionImage || "", // Now contains SAS URL
@@ -52,10 +62,13 @@ export const AboutPageContextProvider = ({organizationId, children}) => {
                bg_color: response.bg_color || "#FFFFFF",
                p_color: response.p_color || "#000000",
                s_color: response.s_color || "#666666",
+               hero_subtitle_color: response.hero_subtitle_color || "#ffffff",
                c_color: response.c_color || "#FFFFFF",
                ct_color: response.ct_color || "#000000",
                b_color: response.b_color || "#1F2937",
                bt_color: response.bt_color || "#FFFFFF",
+               banner_title_text: response.banner_title_text || "#ffffff",
+               banner_subtitle_text: response.banner_subtitle_text || "#ffffff",
                
                // Font sizes
                heroTitleSize: response.hero_title_size || "36px",
@@ -97,15 +110,73 @@ export const AboutPageContextProvider = ({organizationId, children}) => {
                })
             })
          } catch (err) {
-            console.log(err)
+            console.log('Error fetching about page data:', err)
+            // Set default values if about page doesn't exist
+            setInputs({
+               organizationId: organizationId,
+               id: null,
+               title: "",
+               description: "",
+               headline: "About Our Organization",
+               heroSubtitle: "We are dedicated to making a positive impact in our community through innovative solutions and unwavering commitment to our mission.",
+               storyTitle: "Our Story",
+               storyText: "",
+               aboutText: "",
+               whatText: "",
+               whyText: "",
+               teamText: "",
+               missionText: "",
+               visionText: "",
+               valuesText: "",
+               bgImage: "",
+               storyImage: "",
+               aboutImage: "",
+               teamImage: "",
+               missionImage: "",
+               visionImage: "",
+               valuesImage: "",
+               bg_color: "#FFFFFF",
+               p_color: "#000000",
+               s_color: "#666666",
+               hero_subtitle_color: "#ffffff",
+               c_color: "#FFFFFF",
+               ct_color: "#000000",
+               b_color: "#1F2937",
+               bt_color: "#FFFFFF",
+               banner_title_text: "#ffffff",
+               banner_subtitle_text: "#ffffff",
+               heroTitleSize: "36px",
+               heroSubtitleSize: "16px",
+               sectionTitleSize: "28px",
+               bodyTextSize: "14px",
+               buttonTextSize: "14px",
+               cardTitleSize: "18px",
+               heroHeight: "500px",
+               sectionPadding: "80px",
+               cardRadius: "4px",
+               buttonRadius: "4px",
+               overlayOpacity: "0.3",
+               accentColor: "#1F2937",
+               showVideoButton: true,
+               showHeroIcons: true,
+               showFeatureIcons: true,
+               showTeamPhotos: true,
+               showMissionSection: true,
+               showVisionSection: true,
+               showValuesSection: true,
+               showHoverEffects: true,
+               active: false
+            })
+         } finally {
+            setIsLoading(false)
          }
       }
 
       fetchData()
-   }, [])
+   }, [organizationId])
 
    return (
-      <AboutPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections}}>
+      <AboutPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections, isLoading}}>
          {children}
       </AboutPageContext.Provider>
    )

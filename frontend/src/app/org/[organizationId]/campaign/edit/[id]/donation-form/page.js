@@ -6,6 +6,7 @@ import { DonationFormContext } from "@/app/context/campaignPages/donationFormCon
 import { AuthContext } from "@/app/context/authContext"
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const DonationForm = () => {
    const {donationFormSections, setDonationFormSections, donationFormInputs, campaignId, donationFormId} = useContext(DonationFormContext)
@@ -27,6 +28,16 @@ const DonationForm = () => {
       setSuccessMessage("")
       
       try {
+         // Validate all active sections before saving
+         const validation = validateActiveSections('donationForm', donationFormSections, donationFormInputs)
+         
+         if (!validation.isValid) {
+            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+            setError(true)
+            setIsLoading(false)
+            return
+         }
+         
          // Update donation form
          await PageUpdateService.updateDonationForm(donationFormId, donationFormInputs, currentUser.id)
          

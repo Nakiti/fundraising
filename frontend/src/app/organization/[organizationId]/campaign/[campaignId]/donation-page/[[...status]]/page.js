@@ -1,18 +1,20 @@
 "use client"
-import { getCampaignDesignations, getCampaignDetails, getDonationPage, getSumRaised } from "@/app/services/fetchService"
+import { getCampaignDesignations, getCampaignDetails, getDonationPage, getCampaignInsights } from "@/app/services/fetchService"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
-import { FaArrowLeft, FaShare, FaHeart, FaUsers } from "react-icons/fa"
+import { FaArrowLeft, FaShare, FaHeart, FaUsers, FaShoppingCart } from "react-icons/fa"
 import Link from "next/link"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
+import DonationLeaderboard from "./components/DonationLeaderboard"
+import AddToCartButton from "@/app/components/AddToCartButton"
 
 const DonationLandingPage = ({params}) => {
    const [display, setDisplay] = useState(null)
    const [designations, setDesignations] = useState(null)
    const [campaignDetails, setCampaignDetails] = useState(null)
-   const [amountRaised, setAmountRaised] = useState(0)
-   const [donorCount, setDonorCount] = useState(0)
+   const [campaignInsights, setCampaignInsights] = useState(null)
+   const [loading, setLoading] = useState(true)
    const router = useRouter()
    const parameters = useParams()
 
@@ -22,35 +24,77 @@ const DonationLandingPage = ({params}) => {
 
    useEffect(() => {
       const fetchData = async() => {
-         const campaignResponse = await getCampaignDetails(campaignId)
-         console.log(campaignResponse, parameters, campaignId)
-         
-         if (campaignResponse.status == "active" || status == "preview") {
-            setCampaignDetails(campaignResponse)
+         try {
+            setLoading(true)
+            
+            const campaignResponse = await getCampaignDetails(campaignId)
+            console.log("Campaign details:", campaignResponse)
+            
+            if (campaignResponse.status == "active" || status == "preview") {
+               setCampaignDetails(campaignResponse)
 
-            const displayResponse = await getDonationPage(campaignId)
-            setDisplay(displayResponse)
-            console.log("asdasd", displayResponse)
+               const displayResponse = await getDonationPage(campaignId)
+               setDisplay(displayResponse)
+               console.log("Donation page display:", displayResponse)
 
-            const designationResponse = await getCampaignDesignations(campaignId)
-            setDesignations(designationResponse)
-            console.log(designationResponse)
+               const designationResponse = await getCampaignDesignations(campaignId)
+               setDesignations(designationResponse)
+               console.log("Designations:", designationResponse)
 
-            // Fetch amount raised
-            try {
-               const raisedResponse = await getSumRaised(campaignId)
-               setAmountRaised(raisedResponse.total_raised || 0)
-            } catch (error) {
-               console.log("Error fetching amount raised:", error)
+               // Fetch campaign insights for real statistics
+               try {
+                  const insightsResponse = await getCampaignInsights(campaignId)
+                  setCampaignInsights(insightsResponse)
+                  console.log("Campaign insights:", insightsResponse)
+               } catch (error) {
+                  console.log("Error fetching campaign insights:", error)
+                  // Fallback to basic campaign details
+                  setCampaignInsights({
+                     total_raised: campaignResponse.raised || 0,
+                     donations: campaignResponse.donations || 0,
+                     unique_donors: 0,
+                     average_donation: 0
+                  })
+               }
             }
+         } catch (error) {
+            console.error("Error fetching campaign data:", error)
+         } finally {
+            setLoading(false)
          }
       }
 
       fetchData()
-   }, [])
+   }, [campaignId, status])
 
-   // Calculate progress percentage
-   const progressPercentage = campaignDetails?.goal ? Math.min((amountRaised / campaignDetails.goal) * 100, 100) : 0
+   // Calculate progress percentage using real data
+   const progressPercentage = campaignDetails?.goal && campaignInsights?.total_raised 
+      ? Math.min((campaignInsights.total_raised / campaignDetails.goal) * 100, 100) 
+      : 0
+
+   // Show loading state
+   if (loading) {
+      return (
+         <div className="w-full min-h-screen flex items-center justify-center">
+            <div className="text-center">
+               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+               <p className="mt-4 text-gray-600">Loading campaign...</p>
+            </div>
+         </div>
+      )
+   }
+
+   // Check if campaign exists and is active (unless in preview mode)
+   if (!campaignDetails || (!campaignDetails.status === "active" && status !== "preview")) {
+      return (
+         <div className="w-full min-h-screen flex items-center justify-center">
+            <div className="text-center">
+               <div className="text-red-600 text-xl mb-4">Campaign Not Found</div>
+               <p className="text-gray-600">This campaign may be inactive or no longer available.</p>
+            </div>
+         </div>
+      )
+   }
 
    return (
       <div 
@@ -66,7 +110,7 @@ const DonationLandingPage = ({params}) => {
       {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
       {display && <div>
          {/* Hero Section */}
-         <div className="relative w-full" style={{height: Math.min(parseInt(display.heroHeight) || 300, 400)}}>
+         <div className="relative w-full" style={{height: 600}}>
             <img
                src={display.banner_image || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
                alt="Campaign Banner"
@@ -83,8 +127,8 @@ const DonationLandingPage = ({params}) => {
                   <h1 
                      className="font-bold text-white leading-tight"
                      style={{
-                        color: display.p_color || '#ffffff',
-                        fontSize: Math.min(parseInt(display.heroTitleSize) || 28, 32) + 'px'
+                        color: display.bannerTitleColor || '#ffffff',
+                        fontSize: Math.min(parseInt(display.bannerTitleSize) || 56, 80) + 'px'
                      }}
                   >
                      {display.headline || "Support Our Cause"}
@@ -92,8 +136,8 @@ const DonationLandingPage = ({params}) => {
                   <p 
                      className="text-slate-100 max-w-xl mx-auto leading-relaxed"
                      style={{
-                        color: display.s_color || '#e2e8f0',
-                        fontSize: Math.min(parseInt(display.heroSubtitleSize) || 14, 16) + 'px'
+                        color: display.bannerSubtitleColor || '#e2e8f0',
+                        fontSize: Math.min(parseInt(display.bannerSubtitleSize) || 20, 28) + 'px'
                      }}
                   >
                      {display.description || "Your support makes a real difference in our community. Every donation, no matter the size, helps us achieve our mission and create positive change for those who need it most."}
@@ -116,6 +160,28 @@ const DonationLandingPage = ({params}) => {
                         <FaHeart className="w-3 h-3" />
                         <span>{display.donate_button_text || "Donate Now"}</span>
                      </Link>
+                     
+                     <AddToCartButton
+                        campaignId={campaignId}
+                        campaignName={campaignDetails?.external_name || campaignDetails?.internal_name}
+                        size="medium"
+                        variant="secondary"
+                        className="font-semibold transition-all duration-300 hover:shadow-md transform hover:-translate-y-0.5"
+                        style={{
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
+                           fontSize: Math.min(parseInt(display.buttonTextSize) || 14, 16) + 'px',
+                           padding: '10px 20px'
+                        }}
+                        onSuccess={(data) => {
+                           if (data.action === 'added') {
+                              console.log(`Added ${data.campaignName} to cart`);
+                           }
+                        }}
+                        onError={(error) => {
+                           console.error('Cart error:', error);
+                        }}
+                     />
+                     
                      <button 
                         className="font-semibold transition-all duration-300 flex items-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
                         style={{
@@ -135,164 +201,182 @@ const DonationLandingPage = ({params}) => {
          </div>
 
          {/* Main Content */}
-         <div className="flex flex-col lg:flex-row w-full px-6 space-y-8 lg:space-y-0 lg:space-x-8" 
+         <div className="max-w-7xl mx-auto px-6" 
               style={{
                  paddingTop: Math.min(parseInt(display.sectionPadding) || 40, 60), 
                  paddingBottom: Math.min(parseInt(display.sectionPadding) || 40, 60)
               }}>
-            <div className="lg:w-2/3">
-               {/* Header Section */}
-               <div className="flex flex-row justify-between mb-6 w-full">
+            <div className="grid lg:grid-cols-3 gap-8">
+               {/* Main Content Area */}
+               <div className="lg:col-span-2 space-y-8">
+                  {/* Header Section */}
                   <div>
-                     <p 
-                        className="text-sm mb-2"
-                        style={{ 
-                           color: display.s_color || '#64748b',
-                           fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                        }}
-                     >
-                        {display.subtitle || "Fundraiser"}
-                     </p>
-                     <h2 
-                        className="text-2xl font-semibold"
-                        style={{ 
-                           color: display.p_color || '#1e293b',
-                           fontSize: Math.min(parseInt(display.sectionTitleSize) || 24, 28) + 'px'
-                        }}
-                     >
-                        {display.mainHeadline || "Making a Difference Together"}
-                     </h2>
-                  </div>
-                  <button 
-                     className="text-sm hover:underline flex items-center space-x-1"
-                     style={{ 
-                        color: display.b1_color || '#475569',
-                        fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                     }}
-                  >
-                     <FaShare className="w-3 h-3" />
-                     <span>{display.share_button_text || "Share"}</span>
-                  </button>
-               </div>
-
-               {/* Main Content Text */}
-               <p 
-                  className="leading-relaxed mb-6"
-                  style={{
-                     color: display.s_color || '#64748b',
-                     fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                  }}
-               >
-                  {display.mainText || "Our organization works tirelessly to create positive change in the community. Through innovative programs and dedicated volunteers, we're building a better future for everyone."}
-               </p>
-               
-               {/* Progress Section */}
-               {display.show_progress !== false && (
-                  <div className="mb-6">
-                     <div className="flex justify-between items-center mb-2">
-                        <span 
-                           className="font-medium text-sm"
-                           style={{ 
-                              color: display.s_color || '#64748b',
-                              fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                           }}
-                        >
-                           ${amountRaised.toLocaleString()} raised
-                        </span>
-                        <span 
-                           className="font-medium text-sm"
-                           style={{ 
-                              color: display.s_color || '#64748b',
-                              fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                           }}
-                        >
-                           of ${campaignDetails?.goal?.toLocaleString() || '0'} goal
-                        </span>
-                     </div>
-                     <div className="w-full bg-slate-200 rounded-full h-2 mb-3 overflow-hidden">
-                        <div 
-                           className="h-2 rounded-full transition-all duration-500 ease-out"
-                           style={{ 
-                              backgroundColor: display.s_color || '#475569',
-                              width: `${progressPercentage}%`
-                           }}
-                        ></div>
-                     </div>
-                     <div className="flex justify-start items-center space-x-4 text-sm" style={{ color: display.s_color || '#64748b' }}>
-                        {display.show_donor_count !== false && (
-                           <div className="flex items-center space-x-1.5">
-                              <FaUsers className="text-slate-600 w-3 h-3" />
-                              <span>{donorCount} donors</span>
-                           </div>
-                        )}
-                        {display.show_days_left !== false && (
-                           <div className="flex items-center space-x-1.5">
-                              <FaHeart className="text-rose-500 w-3 h-3" />
-                              <span>{display.days_left || 23} days left</span>
-                           </div>
-                        )}
-                     </div>
-                  </div>
-               )}
-            </div>
-
-            {/* Sidebar */}
-            <div className="lg:w-1/3">
-               <div 
-                  className="bg-white border border-slate-200 p-4 shadow-sm"
-                  style={{borderRadius: display.cardRadius ? `${display.cardRadius}px` : '8px'}}
-               >
-                  <h3 
-                     className="font-semibold mb-4"
-                     style={{
-                        color: display.p_color || '#1e293b',
-                        fontSize: Math.min(parseInt(display.cardTitleSize) || 18, 20) + 'px'
-                     }}
-                  >
-                     Choose Your Amount
-                  </h3>
-                  {display.show_amount_grid !== false && (
-                     <div className="space-y-2 mb-4">
-                        {[display.button1, display.button2, display.button3, display.button4, display.button5, display.button6].map((amount, index) => (
-                           <button
-                              key={index}
-                              className="w-full p-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-center"
-                              style={{borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px'}}
+                     <div className="flex items-start justify-between mb-4">
+                        <div>
+                           <p 
+                              className="text-sm font-medium mb-2"
+                              style={{ 
+                                 color: display.s_color || '#64748b',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                              }}
                            >
-                              <div 
-                                 className="font-semibold text-sm"
-                                 style={{ 
-                                    color: display.p_color || '#1e293b',
-                                    fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
-                                 }}
-                              >
-                                 ${amount || '25'}
+                              {display.subtitle || "Fundraiser"}
+                           </p>
+                           <h2 
+                              className="text-3xl font-bold leading-tight"
+                              style={{ 
+                                 color: display.p_color || '#1e293b',
+                                 fontSize: Math.min(parseInt(display.sectionTitleSize) || 28, 32) + 'px'
+                              }}
+                           >
+                              {display.mainHeadline || "Making a Difference Together"}
+                           </h2>
+                        </div>
+                        <button 
+                           className="text-sm hover:opacity-80 transition-opacity flex items-center space-x-2 px-3 py-2 rounded-md"
+                           style={{ 
+                              color: display.b1_color || '#475569',
+                              backgroundColor: display.b1_color ? `${display.b1_color}15` : '#f1f5f9',
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                           }}
+                        >
+                           <FaShare className="w-3 h-3" />
+                           <span>{display.share_button_text || "Share"}</span>
+                        </button>
+                     </div>
+
+                     {/* Main Content Text */}
+                     <p 
+                        className="leading-relaxed text-lg"
+                        style={{
+                           color: display.s_color || '#64748b',
+                           fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                        }}
+                     >
+                        {display.mainText || "Our organization works tirelessly to create positive change in the community. Through innovative programs and dedicated volunteers, we're building a better future for everyone."}
+                     </p>
+                  </div>
+                  
+                  {/* Progress Section */}
+                  {display.show_progress !== false && (
+                     <div className="bg-white border border-slate-100 p-6 rounded-xl">
+                        <div className="flex justify-between items-center mb-4">
+                           <span 
+                              className="font-semibold text-lg"
+                              style={{ 
+                                 color: display.p_color || '#1e293b',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                              }}
+                           >
+                              ${(campaignInsights?.total_raised || 0).toLocaleString()} raised
+                           </span>
+                           <span 
+                              className="font-medium text-sm"
+                              style={{ 
+                                 color: display.s_color || '#64748b',
+                                 fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                              }}
+                           >
+                              of ${(campaignDetails?.goal || 0).toLocaleString()} goal
+                           </span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-3 mb-4 overflow-hidden">
+                           <div 
+                              className="h-3 rounded-full transition-all duration-500 ease-out"
+                              style={{ 
+                                 backgroundColor: display.b1_color || '#475569',
+                                 width: `${progressPercentage}%`
+                              }}
+                           ></div>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm" style={{ color: display.s_color || '#64748b' }}>
+                           {display.show_donor_count !== false && (
+                              <div className="flex items-center space-x-2">
+                                 <FaUsers className="text-slate-400 w-4 h-4" />
+                                 <span>{campaignInsights?.donations || 0} donations</span>
                               </div>
-                              <div 
-                                 className="text-xs mt-0.5"
-                                 style={{ color: display.s_color || '#64748b' }}
-                              >
-                                 Donation
+                           )}
+                           {campaignInsights?.unique_donors > 0 && (
+                              <div className="flex items-center space-x-2">
+                                 <FaUsers className="text-slate-400 w-4 h-4" />
+                                 <span>{campaignInsights.unique_donors} unique donors</span>
                               </div>
-                           </button>
-                        ))}
+                           )}
+                           {campaignInsights?.average_donation > 0 && (
+                              <div className="flex items-center space-x-2">
+                                 <FaHeart className="text-rose-400 w-4 h-4" />
+                                 <span>${campaignInsights.average_donation.toFixed(2)} avg</span>
+                              </div>
+                           )}
+                           {display.show_days_left !== false && (
+                              <div className="flex items-center space-x-2">
+                                 <FaHeart className="text-rose-400 w-4 h-4" />
+                                 <span>{display.days_left || 23} days left</span>
+                              </div>
+                           )}
+                        </div>
                      </div>
                   )}
-                  <Link 
-                     href={status ? 
-                        `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview` :
-                        `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
-                     }
-                     className="w-full py-3 px-4 font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
-                     style={{
-                        backgroundColor: display.b1_color || '#475569',
-                        borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                        fontSize: Math.min(parseInt(display.buttonTextSize) || 14, 16) + 'px'
-                     }}
-                  >
-                     <FaHeart className="w-3 h-3" />
-                     <span>{display.donate_button_text || "Donate Now"}</span>
-                  </Link>
+
+                  {/* Donation Leaderboard */}
+                  <DonationLeaderboard campaignId={campaignId} display={display} />
+               </div>
+
+               {/* Sidebar */}
+               <div className="lg:col-span-1">
+                  <div className="bg-white border border-slate-100 p-6 rounded-xl sticky top-6">
+                     <h3 
+                        className="font-bold text-xl mb-6"
+                        style={{
+                           color: display.p_color || '#1e293b',
+                           fontSize: Math.min(parseInt(display.cardTitleSize) || 20, 24) + 'px'
+                        }}
+                     >
+                        Choose Your Amount
+                     </h3>
+                     {display.show_amount_grid !== false && (
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                           {[display.button1, display.button2, display.button3, display.button4, display.button5, display.button6].map((amount, index) => (
+                              <button
+                                 key={index}
+                                 className="p-4 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-center rounded-lg"
+                                 style={{borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '8px'}}
+                              >
+                                 <div 
+                                    className="font-bold text-lg"
+                                    style={{ 
+                                       color: display.p_color || '#1e293b',
+                                       fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                                    }}
+                                 >
+                                    ${amount || '25'}
+                                 </div>
+                                 <div 
+                                    className="text-xs mt-1"
+                                    style={{ color: display.s_color || '#64748b' }}
+                                 >
+                                    Donation
+                                 </div>
+                              </button>
+                           ))}
+                        </div>
+                     )}
+                     <Link 
+                        href={status ? 
+                           `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview` :
+                           `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
+                        }
+                        className="w-full py-4 px-6 font-bold text-white transition-all duration-300 flex items-center justify-center space-x-3 hover:opacity-90 text-lg"
+                        style={{
+                           backgroundColor: display.b1_color || '#475569',
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '12px',
+                           fontSize: Math.min(parseInt(display.buttonTextSize) || 16, 18) + 'px'
+                        }}
+                     >
+                        <FaHeart className="w-4 h-4" />
+                        <span>{display.donate_button_text || "Donate Now"}</span>
+                     </Link>
+                  </div>
                </div>
             </div>
          </div>

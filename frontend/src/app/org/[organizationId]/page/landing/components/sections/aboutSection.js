@@ -10,10 +10,13 @@ const AboutSection = () => {
       if (file) {
          const reader = new FileReader();
          reader.onloadend = () => {
+            // Store both the preview URL and the File object
             handleInputsChange({ target: { name: e.target.name, value: reader.result } });
-            console.log(reader.result)
+            handleInputsChange({ target: { name: e.target.name + 'File', value: file } });
+            console.log('Image preview:', reader.result);
+            console.log('File object:', file);
          };
-         reader.readAsDataURL(file); // Convert the file to base64
+         reader.readAsDataURL(file); // Convert the file to base64 for preview
       }
    }
 

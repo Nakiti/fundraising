@@ -1,10 +1,11 @@
 "use client"
 import { useContext, useState } from "react"
 import SectionManager from "@/app/components/sectionManager"
-import { PageUpdateService } from "@/app/services/updateServices"
+import { PageUpdateService, updateDonationPage } from "@/app/services/updateServices"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const DonationPage = () => {
    const {donationPageSections, setDonationPageSections, donationPageInputs, campaignId} = useContext(DonationPageContext)
@@ -19,8 +20,18 @@ const DonationPage = () => {
       setSuccessMessage("")
       
       try {
+         // Validate all active sections before saving
+         const validation = validateActiveSections('donation', donationPageSections, donationPageInputs)
+         
+         if (!validation.isValid) {
+            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+            setError(true)
+            setIsLoading(false)
+            return
+         }
+         
          // Update donation page
-         await PageUpdateService.updateDonationPage(campaignId, donationPageInputs)
+         await updateDonationPage(campaignId, donationPageInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationPageSections.filter(section => section.id && section.id > 0)

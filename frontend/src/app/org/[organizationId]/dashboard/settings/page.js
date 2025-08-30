@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { FaBuilding, FaUsers, FaTags, FaPalette, FaCreditCard } from "react-icons/fa"
+import { FaBuilding, FaUsers, FaTags, FaPalette, FaCreditCard, FaToggleOn } from "react-icons/fa"
 
 /*
    Component: Settings
@@ -14,6 +14,12 @@ const Settings = ({params}) => {
          description: "Edit information regarding your organization",
          href: `/org/${organizationId}/dashboard/settings/organization`,
          icon: <FaBuilding className="w-6 h-6 text-blue-600" />
+      },
+      {
+         title: "Organization Activation",
+         description: "Complete setup requirements and activate your organization",
+         href: `/org/${organizationId}/dashboard/settings/activation`,
+         icon: <FaToggleOn className="w-6 h-6 text-emerald-600" />
       },
       {
          title: "Users",

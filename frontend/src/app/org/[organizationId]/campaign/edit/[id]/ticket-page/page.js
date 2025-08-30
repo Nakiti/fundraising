@@ -6,6 +6,7 @@ import { PageUpdateService } from "@/app/services/updateServices"
 import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const LandingPage = () => {
    const {ticketPageSections, setTicketPageSections, ticketsPageInputs, campaignId} = useContext(TicketPageContext)
@@ -14,6 +15,15 @@ const LandingPage = () => {
 
    const handleSave = async() => {
       try {
+         // Validate all active sections before saving
+         const validation = validateActiveSections('ticket', ticketPageSections, ticketsPageInputs)
+         
+         if (!validation.isValid) {
+            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+            setError(true)
+            return
+         }
+         
          await PageUpdateService.updateTicketPage(campaignId, ticketsPageInputs)
          for (const section of ticketPageSections) {
             await PageUpdateService.updatePageSection(section.id, section.active)

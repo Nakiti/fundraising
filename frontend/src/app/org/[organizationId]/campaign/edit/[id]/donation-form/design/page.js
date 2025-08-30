@@ -248,12 +248,12 @@ const Design = () => {
          ))}
 
          {/* Typography Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-green-50" style={{borderRadius: "4px"}}>
                   <FaFont className="w-3 h-3 text-green-600" />
                </div>
-               {/* <h3 className="text-sm font-medium text-gray-900">Typography & Font Sizes</h3> */}
+               <h3 className="text-sm font-medium text-gray-900">Typography & Font Sizes</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -278,14 +278,14 @@ const Design = () => {
                         value={donationFormInputs[option.name] || option.defaultValue}
                         onChange={handleDonationFormInputsChange}
                      />
-                     {/* <p className="text-xs text-gray-400">{option.description}</p> */}
+                     <p className="text-xs text-gray-400">{option.description}</p>
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Layout Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-blue-50" style={{borderRadius: "4px"}}>
                   <FaRuler className="w-3 h-3 text-blue-600" />
@@ -315,11 +315,11 @@ const Design = () => {
                         value={donationFormInputs[option.name] || option.defaultValue}
                         onChange={handleDonationFormInputsChange}
                      />
-                     {/* <p className="text-xs text-gray-400">{option.description}</p> */}
+                     <p className="text-xs text-gray-400">{option.description}</p>
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Save and Discard Actions */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>

@@ -5,6 +5,7 @@ import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageCon
 import { PageUpdateService } from "@/app/services/updateServices"
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const ThankYouPage = () => {
    const {thankYouPageSections, setThankYouPageSections, campaignId, thankPageInputs} = useContext(ThankYouPageContext)
@@ -19,6 +20,16 @@ const ThankYouPage = () => {
       setSuccessMessage("")
       
       try {
+         // Validate all active sections before saving
+         const validation = validateActiveSections('thankYou', thankYouPageSections, thankPageInputs)
+         
+         if (!validation.isValid) {
+            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+            setError(true)
+            setIsLoading(false)
+            return
+         }
+         
          // Update thank you page
          await PageUpdateService.updateThankYouPage(campaignId, thankPageInputs)
          

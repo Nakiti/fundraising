@@ -4,6 +4,7 @@ import AboutPageDisplay from "./components/aboutPageDisplay"
 import { useContext, useState } from "react"
 import { AboutPageContext } from "@/app/context/organizationPages/aboutPageContext"
 import { updateAboutPage, updatePageSection } from "@/app/services/updateServices"
+import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const EditAboutLayout = ({params, children}) => {
    const [error, setError] = useState(false)
@@ -26,10 +27,20 @@ const EditAboutLayout = ({params, children}) => {
       setIsSaving(true)
 
       try {
+         // Validate all active sections before saving
+         const validation = validateActiveSections('about', sections, inputs)
+         
+         if (!validation.isValid) {
+            setError(true)
+            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+            setIsSaving(false)
+            return
+         }
+         
          // Get the about page ID from the context
          const aboutPageId = inputs.id
 
-         // Update about page content and styling (no validation for save)
+         // Update about page content and styling
          await updateAboutPage(aboutPageId, inputs)
          
          // Update section visibility states
@@ -61,20 +72,12 @@ const EditAboutLayout = ({params, children}) => {
       setIsPublishing(true)
 
       try {
-         // Validate required fields for publishing
-         const requiredFields = {
-            headline: inputs.headline,
-            aboutText: inputs.aboutText,
-            bgImage: inputs.bgImage
-         }
-
-         const missingFields = Object.entries(requiredFields)
-            .filter(([key, value]) => !value || value.trim() === "")
-            .map(([key]) => key)
-
-         if (missingFields.length > 0) {
+         // Validate all active sections for publishing
+         const validation = validateActiveSections('about', sections, inputs)
+         
+         if (!validation.isValid) {
             setError(true)
-            setErrorMessage(`Please fill in the following required fields to publish: ${missingFields.join(", ")}`)
+            setErrorMessage(`Please fill in the following required fields to publish: ${validation.errors.join(", ")}`)
             setIsPublishing(false)
             return
          }
@@ -190,7 +193,7 @@ const EditAboutLayout = ({params, children}) => {
                {/* Left Panel - Content Editor */}
                <div className="xl:w-1/4 lg:w-1/3">
                   <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-2 h-full overflow-y-auto">
-                     <h2 className="text-lg font-semibold text-gray-900 mb-4 sticky top-0 bg-white py-2">Content Editor</h2>
+                     <h2 className="text-lg font-semibold text-gray-900 mb-4 sticky top-0 bg-white ">Content Editor</h2>
                      <div className="space-y-4">
                         {children}
                      </div>
@@ -199,8 +202,7 @@ const EditAboutLayout = ({params, children}) => {
                
                {/* Right Panel - Preview */}
                <div className="xl:w-3/4 lg:w-2/3">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 h-full">
-                     <h2 className="text-lg font-semibold text-gray-900 mb-4 sticky top-0 bg-white py-2">Live Preview</h2>
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-full">
                      <div className="h-full overflow-y-auto">
                         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-inner">
                            <AboutPageDisplay />

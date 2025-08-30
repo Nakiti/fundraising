@@ -1,6 +1,6 @@
 "use client"
 
-import { FaTrash } from "react-icons/fa"
+import { FaTrash, FaCog } from "react-icons/fa"
 import { useContext, useState } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { getCampaignDesignations } from "@/app/services/fetchService"
@@ -80,6 +80,23 @@ const Designations = () => {
       <div className="w-full max-w-4xl mx-auto py-8 px-6">
          <h1 className="text-4xl font-light text-gray-900 mb-4">Designations</h1>
          <h3 className="text-md text-gray-600 mb-8">Select the designations that users will be able to delegate their donation to:</h3>
+         
+         {/* Organization Designations Management Link */}
+         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+               <div>
+                  <h4 className="text-sm font-medium text-blue-900 mb-1">Need to add or edit designations?</h4>
+                  <p className="text-sm text-blue-700">Manage all available designations for your organization.</p>
+               </div>
+               <a 
+                  href={`/org/${currentUser.organization_id}/dashboard/settings/designations`}
+                  className="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+               >
+                  <FaCog className="mr-2" />
+                  Manage Designations
+               </a>
+            </div>
+         </div>
          
          <div className="border-b border-gray-300 my-4"/>
 

@@ -21,11 +21,12 @@ export const createCampaignDetails = asyncHandler(async (req, res) => {
       throw new ValidationError('Missing required fields: campaign_id, internalName, type, user_id');
    }
 
-   const query = "INSERT INTO campaign_details (`campaign_id`, `internal_name`, `raised`, `visits`, `status`, `type`, `updated_at`, `updated_by`) VALUES (?)"
+   const query = "INSERT INTO campaign_details (`campaign_id`, `internal_name`, `raised`, `visits`, `donations`, `status`, `type`, `updated_at`, `updated_by`) VALUES (?)"
 
    const values = [
       campaign_id,
       internalName,
+      0,
       0,
       0,
       "inactive",

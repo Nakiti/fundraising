@@ -14,6 +14,7 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
    // const organizationId = currentUser.organization_id
  
    const [inputs, handleInputsChange, setInputs] = useFormInput({})
+   const [isLoading, setIsLoading] = useState(true)
 
    const [sections, setSections] = useState([
       {name: "banner", displayText: "Banner Section", active: true, required: true, dropdown: false, content: <BannerSection />},
@@ -26,10 +27,10 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
 
    useEffect(() => {
       const fetchData = async() => {
-
-         const response = await PageService.getLandingPage(organizationId)
-         const landingPageId = response.id
-         setInputs({
+         try {
+            const response = await PageService.getLandingPage(organizationId)
+            const landingPageId = response.id
+            setInputs({
             // Page ID
             id: response.id,
             // Content fields
@@ -91,22 +92,27 @@ export const LandingPageContextProvider = ({organizationId, children}) => {
             
             // Status
             active: response.active == 1 ? true : false
-         })
-
-         const sectionsResponse = await PageService.getPageSectionsByPage(organizationId, 'landing', landingPageId)
-         setSections((prevSections) => {
-            return prevSections.map(section => {
-               const match = sectionsResponse.find((item) => item.name == section.name)
-               return match ? { ...section, id: match.id, active: match.active } : {...section}
             })
-         })
+
+            const sectionsResponse = await PageService.getPageSectionsByPage(organizationId, 'landing', landingPageId)
+            setSections((prevSections) => {
+               return prevSections.map(section => {
+                  const match = sectionsResponse.find((item) => item.name == section.name)
+                  return match ? { ...section, id: match.id, active: match.active } : {...section}
+               })
+            })
+         } catch (error) {
+            console.error("Error fetching landing page data:", error)
+         } finally {
+            setIsLoading(false)
+         }
       }
 
       fetchData()
    }, [])
 
    return (
-      <LandingPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections}}>
+      <LandingPageContext.Provider value={{inputs, handleInputsChange, setInputs, sections, setSections, isLoading}}>
          {children}
       </LandingPageContext.Provider>
    )

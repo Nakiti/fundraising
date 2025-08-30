@@ -15,9 +15,12 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
+            console.log("campaignId", campaignId)
             const donationResponse = await PageService.getDonationPage(campaignId)
             const donationPageId = donationResponse.id
             const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
+
+            console.log("donation response", donationResponse)
             
             setDonationPageInputs({
                // Basic Content
@@ -39,6 +42,10 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
                b2_color: donationResponse.b2_color || "#6b7280",
                b3_color: donationResponse.b3_color || "#10b981",
                bt_color: donationResponse.bt_color || "#ffffff",
+               
+               // Banner Text Colors
+               bannerTitleColor: donationResponse.bannerTitleColor || "#ffffff",
+               bannerSubtitleColor: donationResponse.bannerSubtitleColor || "#e2e8f0",
                
                // Donation Amounts
                button1: donationResponse.button1 || 25,
@@ -77,6 +84,10 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
                buttonTextSize: donationResponse.buttonTextSize || "16",
                cardTitleSize: donationResponse.cardTitleSize || "18",
                
+               // Banner Typography
+               bannerTitleSize: donationResponse.bannerTitleSize || "56",
+               bannerSubtitleSize: donationResponse.bannerSubtitleSize || "20",
+               
                // Layout
                heroHeight: donationResponse.heroHeight || "500",
                sectionPadding: donationResponse.sectionPadding || "80",
@@ -102,10 +113,8 @@ export const DonationPageContextProvider = ({campaignId, children}) => {
          }
       }
 
-      if (campaignType == "donation") {
-         fetchData()
-      }
-   }, [])
+      fetchData()
+   }, [campaignId])
 
       return (
       <DonationPageContext.Provider value={{donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs,

@@ -54,7 +54,6 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { 
     headline, description, bg_image, bg_color, p_color, s_color,
-    heroTitleSize, bodyTextSize, buttonTextSize, cardRadius, buttonRadius
   } = req.body;
   
   if (!id) {
@@ -98,7 +97,7 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
             bgImagePath = await imageService.updateImage(organization_id, 'thankyou-pages', id, 'background', req.file, currentPage.bg_image);
           }
 
-          const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ?, `heroTitleSize` = ?, `bodyTextSize` = ?, `buttonTextSize` = ?, `cardRadius` = ?, `buttonRadius` = ? WHERE `campaign_id` = ?"
+          const query = "UPDATE thankyou_pages SET `headline` = ?, `description` = ?, `bg_image` = ?, `bg_color` = ?, `p_color` = ?, `s_color` = ? WHERE `campaign_id` = ?"
 
           const values = [
             headline,
@@ -107,11 +106,6 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
             bg_color,
             p_color,
             s_color,
-            heroTitleSize,
-            bodyTextSize,
-            buttonTextSize,
-            cardRadius,
-            buttonRadius,
             id
           ]
 

@@ -7,7 +7,7 @@ import { FiRefreshCw, FiExternalLink, FiUsers } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
 
 const Profile = () => {
-   const { currentUser, isLoggedIn, loading: authLoading, refetchAuth } = useContext(AuthContext)
+   const { currentUser, isLoggedIn, loading: authLoading, initialCheckComplete, isCheckingAuth, refetchAuth } = useContext(AuthContext)
    const { showError, showSuccess } = useToast()
    const [hasInitiatedFetch, setHasInitiatedFetch] = useState(false)
 
@@ -61,7 +61,7 @@ const Profile = () => {
    };
 
    // Show loading state while authentication is being checked
-   if (authLoading) {
+   if (!initialCheckComplete || isCheckingAuth) {
       return (
          <div className="flex items-center justify-center min-h-64">
             <div className="text-center">

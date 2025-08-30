@@ -3,6 +3,7 @@ import { Services, useApi, useToast } from "@/app/services";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaArrowRight, FaHeart, FaUsers, FaCalendarAlt, FaChartLine } from "react-icons/fa";
+import AddToCartButton from "@/app/components/AddToCartButton";
 
 const Campaigns = ({ params }) => {
   const organizationId = params.organizationId;
@@ -178,14 +179,32 @@ const Campaigns = ({ params }) => {
                     </div>
                   )}
 
-                  {/* Action Button */}
-                  <Link 
-                    href={`/organization/${organizationId}/campaign/${campaign.id}`}
-                    className="block w-full bg-blue-600 text-white text-center py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <span>View Campaign</span>
-                    <FaArrowRight className="w-4 h-4" />
-                  </Link>
+                  {/* Action Buttons */}
+                  <div className="space-y-2">
+                    <Link 
+                      href={`/organization/${organizationId}/campaign/${campaign.id}`}
+                      className="block w-full bg-blue-600 text-white text-center py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+                    >
+                      <span>View Campaign</span>
+                      <FaArrowRight className="w-4 h-4" />
+                    </Link>
+                    
+                    <AddToCartButton
+                      campaignId={campaign.id}
+                      campaignName={campaign.external_name}
+                      size="medium"
+                      variant="outline"
+                      className="w-full"
+                      onSuccess={(data) => {
+                        if (data.action === 'added') {
+                          console.log(`Added ${data.campaignName} to cart`);
+                        }
+                      }}
+                      onError={(error) => {
+                        console.error('Cart error:', error);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { Services } from "@/app/services"
 import { FaUser, FaHeart } from "react-icons/fa"
 import { useRouter } from "next/navigation"
+import CartIcon from "@/app/components/CartIcon"
 
 const Header = ({ organizationId }) => {
    const [headerData, setHeaderData] = useState(null)
@@ -118,6 +119,13 @@ const Header = ({ organizationId }) => {
                      </p>
                   </div>
                )}
+
+               {/* Cart Icon */}
+               <CartIcon 
+                  organizationId={organizationId}
+                  showLabel={false}
+                  className="hover:bg-gray-100 hover:bg-opacity-20"
+               />
 
                {/* Login Button */}
                <button 

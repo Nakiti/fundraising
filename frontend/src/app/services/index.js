@@ -305,7 +305,8 @@ export const Services = {
       getFooterPage: PageService.getFooterPage
    },
    Organization: {
-      getOrganization: OrganizationService.getOrganization
+      getOrganization: OrganizationService.getOrganization,
+      getOrganizationStatus: OrganizationService.getOrganizationStatus
    },
    Designation: {
       getCampaignDesignations: DesignationService.getCampaignDesignations,

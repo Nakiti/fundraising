@@ -166,10 +166,14 @@ export const getRecentDonations = (req, res) => {
       t.date,
       t.status,
       CASE 
+        WHEN t.is_anonymous = TRUE THEN 'Anonymous'
         WHEN d.is_guest = TRUE THEN CONCAT(d.first_name, ' (Guest)')
         ELSE COALESCE(d.first_name, 'Anonymous')
       END as first_name,
-      COALESCE(d.last_name, 'Donor') as last_name,
+      CASE 
+        WHEN t.is_anonymous = TRUE THEN 'Donor'
+        ELSE COALESCE(d.last_name, 'Donor')
+      END as last_name,
       d.email,
       COALESCE(cd.external_name, 'Unknown Campaign') as campaign_name
     FROM transactions t
@@ -228,6 +232,7 @@ export const getTopCampaigns = (req, res) => {
       COALESCE(cd.external_name, 'Unnamed Campaign') as name,
       COALESCE(cd.goal, 0) as goal,
       COALESCE(SUM(t.amount), 0) as raised,
+      COALESCE(cd.donations, 0) as donations,
       COUNT(DISTINCT CASE WHEN t.donor_id IS NOT NULL THEN t.donor_id END) as donors,
       c.status
     FROM campaigns c
@@ -235,7 +240,7 @@ export const getTopCampaigns = (req, res) => {
     LEFT JOIN transactions t ON c.id = t.campaign_id AND t.status = 'completed'
     WHERE c.organization_id = ?
     AND c.status = 'active'
-    GROUP BY c.id, cd.external_name, cd.goal, c.status
+    GROUP BY c.id, cd.external_name, cd.goal, cd.donations, c.status
     ORDER BY raised DESC
     LIMIT ?
   `;
@@ -260,6 +265,7 @@ export const getTopCampaigns = (req, res) => {
         name: campaign.name,
         raised: campaign.raised,
         goal: campaign.goal,
+        donations: campaign.donations,
         donors: campaign.donors,
         trend: trend,
         percentageFunded: Math.round(percentageFunded)
@@ -302,13 +308,40 @@ export const getOrganizationStatus = (req, res) => {
     GROUP BY o.id, o.name, o.status, o.created_at
   `;
 
-  // Check if pages exist 
+  // Check page statuses
   const pagesQuery = `
     SELECT 
       'landing' as page_type,
-      CASE WHEN lp.id IS NOT NULL THEN 'active' ELSE 'inactive' END as status
+      CASE WHEN lp.active = 1 THEN 'active' ELSE 'inactive' END as status
     FROM organizations o
     LEFT JOIN landing_pages lp ON o.id = lp.organization_id
+    WHERE o.id = ?
+    
+    UNION ALL
+     
+    SELECT 
+      'about' as page_type,
+      CASE WHEN ap.active = 1 THEN 'active' ELSE 'inactive' END as status
+    FROM organizations o 
+    LEFT JOIN about_pages ap ON o.id = ap.organization_id
+    WHERE o.id = ?
+    
+    UNION ALL
+    
+    SELECT 
+      'footer' as page_type,
+      CASE WHEN fp.active = 1 THEN 'active' ELSE 'inactive' END as status
+    FROM organizations o 
+    LEFT JOIN footer_pages fp ON o.id = fp.organization_id
+    WHERE o.id = ?
+    
+    UNION ALL
+    
+    SELECT 
+      'header' as page_type,
+      CASE WHEN hp.active = 1 THEN 'active' ELSE 'inactive' END as status
+    FROM organizations o
+    LEFT JOIN header_pages hp ON o.id = hp.organization_id
     WHERE o.id = ?
   `;
 
@@ -330,7 +363,7 @@ export const getOrganizationStatus = (req, res) => {
     
     const org = orgData[0];
     
-    db.query(pagesQuery, [id], (err2, pagesData) => {
+    db.query(pagesQuery, [id, id, id, id], (err2, pagesData) => {
       if (err2) {
         logSQLError(err2, 'Pages status query');
         throw new DatabaseError('Failed to fetch pages status', err2);

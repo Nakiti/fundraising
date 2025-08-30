@@ -6,11 +6,11 @@ import {
   sendUpdated,
   sendDeleted,
   sendNotFound,
-  sendDatabaseError
+  sendDatabaseError 
 } from "../utils/response.js"
 import {
   ValidationError,
-  NotFoundError,
+  NotFoundError,  
   DatabaseError
 } from "../utils/errors.js"
 
@@ -61,7 +61,7 @@ export const getFaqs = asyncHandler(async (req, res) => {
     })
   })
 })
-
+ 
 export const deleteFaq = asyncHandler(async (req, res) => {
   const { id } = req.params;
   
@@ -98,5 +98,5 @@ export const deleteFaqsBatch = asyncHandler(async (req, res) => {
       sendDeleted(res, `Deleted ${data.affectedRows} FAQs successfully`);
       resolve();
     })
-  })
+  }) 
 })
