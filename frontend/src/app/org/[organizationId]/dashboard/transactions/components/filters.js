@@ -43,8 +43,14 @@ const Filters = ({setData, organizationId}) => {
 
    const handleCampaignFilter = async(e) => {
       try {
-         const response = await TransactionService.getTransactionsByCampaign(e.target.value)
-         setData(response)
+         const campaignId = e.target.value;
+         if (campaignId === 'all') {
+            const response = await TransactionService.getTransactionsByOrg(organizationId);
+            setData(response);
+         } else {
+            const response = await TransactionService.getTransactionsByCampaignInOrg(campaignId, organizationId);
+            setData(response);
+         }
       } catch (err) {
          const handledError = errorHandler.handle(err)
          console.error('Transaction campaign filter error:', handledError.message);
@@ -66,11 +72,11 @@ const Filters = ({setData, organizationId}) => {
    }, [])
 
    return (
-      <div className="flex flex-row mt-4 space-x-4">
+      <div className="flex flex-row space-x-4">
   <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-lg shadow-sm">
   <FaRegCheckCircle className="absolute left-3 text-gray-500" />
             <select
-               className="pl-10 pr-4 py-2 text-sm text-gray-700 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+               className="pl-10 pr-4 py-3 text-sm text-gray-700 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors h-12"
                defaultValue="temp"
                onChange={handleFilter}
             >
@@ -81,7 +87,7 @@ const Filters = ({setData, organizationId}) => {
                <option value="Failed">Failed</option>
             </select>
          </div>
-         <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-lg shadow-sm">
+         {/* <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-lg shadow-sm">
             <IoMegaphoneOutline className="absolute left-3 text-gray-500" />
             <select
                className="pl-10 pr-4 py-2 text-sm text-gray-700 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
@@ -89,12 +95,13 @@ const Filters = ({setData, organizationId}) => {
                onChange={handleCampaignFilter}
             >
                <option value="temp" disabled>Campaign</option>
+               <option value="all">All Campaigns</option>
                {campaigns && campaigns.map((item) => (
-                  <option value={item.id}>{item.campaign_name}</option>
+                  <option key={item.id} value={item.id}>{item.campaign_name}</option>
                ))}
             </select>
-         </div>
-         <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-lg shadow-sm pl-3 pr-4 py-2">
+         </div> */}
+         <div className="relative inline-flex items-center bg-white border border-gray-300 rounded-lg shadow-sm pl-3 pr-4 py-3 h-12">
             <FaRegCalendarAlt className="text-gray-500" />
 
             <DatePicker

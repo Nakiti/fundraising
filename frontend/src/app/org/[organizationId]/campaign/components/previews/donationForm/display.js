@@ -74,7 +74,7 @@ const Display = () => {
                         Choose Your Amount
                      </h2>
                      <div className="grid grid-cols-3 gap-2 mb-3">
-                        {[donationFormInputs.button1, donationFormInputs.button2, donationFormInputs.button3, donationFormInputs.button4, donationFormInputs.button5].map((amount, index) => (
+                        {[donationFormInputs.button1, donationFormInputs.button2, donationFormInputs.button3, donationFormInputs.button4, donationFormInputs.button5, donationFormInputs.button6].map((amount, index) => (
                            <button
                               key={index}
                               className="p-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-center"

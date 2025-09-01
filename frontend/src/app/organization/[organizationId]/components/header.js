@@ -4,6 +4,7 @@ import { Services } from "@/app/services"
 import { FaUser, FaHeart } from "react-icons/fa"
 import { useRouter } from "next/navigation"
 import CartIcon from "@/app/components/CartIcon"
+import Link from "next/link"
 
 const Header = ({ organizationId }) => {
    const [headerData, setHeaderData] = useState(null)
@@ -68,9 +69,7 @@ const Header = ({ organizationId }) => {
                   <button className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200">
                      Login
                   </button>
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
-                     Donate
-                  </button>
+
                </div>
             </div>
          </header>
@@ -88,9 +87,9 @@ const Header = ({ organizationId }) => {
 
    return (
       <header className="w-full" style={headerStyles}>
-         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+         <div className=" mx-auto px-8 py-2 flex items-center justify-between">
             {/* Logo Section */}
-            <div className="flex items-center space-x-3">
+            <Link href={`/organization/${organizationId}`} className="flex items-center space-x-3 cursor-pointer">
                {headerData.logo && (
                   <img 
                      src={headerData.logo} 
@@ -99,7 +98,7 @@ const Header = ({ organizationId }) => {
                   />
                )}
                <div>
-                  <h1 className="font-semibold text-lg">
+                  <h1 className="font-semibold text-md">
                      {headerData.organizationName || headerData.organization_name || "Organization Name"}
                   </h1>
                   {(headerData.tagline) && (
@@ -108,7 +107,7 @@ const Header = ({ organizationId }) => {
                      </p>
                   )}
                </div>
-            </div>
+            </Link>
 
             {/* Right Section - Description and Buttons */}
             <div className="flex items-center space-x-4">
@@ -120,13 +119,6 @@ const Header = ({ organizationId }) => {
                   </div>
                )}
 
-               {/* Cart Icon */}
-               <CartIcon 
-                  organizationId={organizationId}
-                  showLabel={false}
-                  className="hover:bg-gray-100 hover:bg-opacity-20"
-               />
-
                {/* Login Button */}
                <button 
                   className="px-4 py-2 hover:bg-gray-100 rounded-md transition-colors duration-200 flex items-center space-x-2"
@@ -136,18 +128,12 @@ const Header = ({ organizationId }) => {
                   <FaUser className="w-4 h-4" />
                   <span>Login</span>
                </button>
-
-               {/* Donate Button */}
-               <button 
-                  className="px-4 py-2 rounded-md transition-colors duration-200 flex items-center space-x-2"
-                  style={{ 
-                     backgroundColor: headerData.textColor || headerData.text_color || "#000000",
-                     color: headerData.bgColor || headerData.bg_color || "#FFFFFF"
-                  }}
-               >
-                  <FaHeart className="w-4 h-4" />
-                  <span>Donate</span>
-               </button>
+                              {/* Cart Icon */}
+               <CartIcon 
+                  organizationId={organizationId}
+                  showLabel={false}
+                  className="hover:bg-gray-100 hover:bg-opacity-20"
+               />
             </div>
          </div>
       </header>

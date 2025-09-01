@@ -109,7 +109,7 @@ const Home = ({params}) => {
          ]);
 
 
-         console.log(statusResponse)
+         console.log("top campaigns", campaignsResponse)
 
          setSummaryData(summaryResponse);
          setRecentDonations(donationsResponse);

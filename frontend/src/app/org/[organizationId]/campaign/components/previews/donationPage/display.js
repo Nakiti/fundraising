@@ -266,7 +266,7 @@ const Display = () => {
                            Choose Your Amount
                         </h3>
                         <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-6">
-                           {[donationPageInputs.button1, donationPageInputs.button2, donationPageInputs.button3, donationPageInputs.button4, donationPageInputs.button5, donationPageInputs.button6].map((amount, index) => (
+                           {["xx", "xx", "xx", "xx", "xx", "xx"].map((amount, index) => (
                               <button
                                  key={index}
                                  className="p-2 sm:p-3 lg:p-4 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-center rounded-lg"
@@ -291,7 +291,7 @@ const Display = () => {
                            ))}
                         </div>
                         <button 
-                           className="w-full py-2 sm:py-3 lg:py-4 px-4 sm:px-6 font-bold text-white transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 hover:opacity-90 text-sm"
+                           className="w-full py-2 sm:py-3 lg:py-3 px-4 sm:px-6 font-bold text-white transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 hover:opacity-90 text-sm"
                            style={{
                               backgroundColor: donationPageInputs.b1_color || '#475569',
                               borderRadius: donationPageInputs.buttonRadius || '12px',
@@ -300,6 +300,17 @@ const Display = () => {
                         >
                            <FaHeart className="w-3 h-3 sm:w-4 sm:h-4" />
                            <span>Donate Now</span>
+                        </button>
+                        <button 
+                           className="mt-4 w-full py-2 sm:py-3 lg:py-3 px-4 sm:px-6 font-bold text-white transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 hover:opacity-90 text-sm"
+                           style={{
+                              backgroundColor: "gray",
+                              borderRadius: donationPageInputs.buttonRadius || '12px',
+                              fontSize: '14px'
+                           }}
+                        >
+                           <FaHeart className="w-3 h-3 sm:w-4 sm:h-4" />
+                           <span>Add to Cart</span>
                         </button>
                      </div>
                   </div>

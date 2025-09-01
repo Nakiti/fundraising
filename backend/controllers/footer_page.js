@@ -1,229 +1,68 @@
-import { db } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js"
 import {
   sendSuccess,
   sendCreated,
   sendUpdated,
-  sendNotFound,
-  sendDatabaseError
+  sendNotFound
 } from "../utils/response.js"
-import {
-  ValidationError,
-  NotFoundError,
-  DatabaseError
-} from "../utils/errors.js"
-import multer from "multer"
-import { checkAndUpdateOrganizationStatus } from "./organization_status.js"
-import imageService from "../services/imageService.js"
+import { ValidationError } from "../utils/errors.js"
+import { getPageService } from "../services/ServiceRegistry.js"
+import { handlePageFileUpload, getImageFieldsForPageType } from "../utils/fileUploadHelper.js"
 
-// Configure multer for file uploads
-const storage = multer.memoryStorage()
-const upload = multer({ 
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true)
-    } else {
-      cb(new ValidationError('Only image files are allowed'), false)
-    }
-  }
-})
+// Initialize service
+const pageService = getPageService()
 
 export const createFooterPage = asyncHandler(async (req, res) => {
-  upload.fields([
-    { name: 'logo', maxCount: 1 }
-  ])(req, res, async (err) => {
-    if (err) {
-      throw new ValidationError(err.message)
-    }
-
-    const { organization_id, user_id } = req.body
-    
-    if (!organization_id || !user_id) {
-      throw new ValidationError('Missing required fields: organization_id, user_id')
-    }
-
-    const query = "INSERT INTO footer_pages (`organization_id`, `user_id`, `created_at`, `updated_at`) VALUES (?, ?, NOW(), NOW())"
-
-    return new Promise((resolve, reject) => {
-      db.query(query, [organization_id, user_id], (err, data) => {
-        if (err) reject(new DatabaseError('Failed to create footer page', err))
-        sendCreated(res, { pageId: data.insertId }, 'Footer page created successfully')
-        resolve()
-      })
-    })
-  })
-})
-
-export const getFooterPage = asyncHandler(async (req, res) => {
-  const { organizationId } = req.params
+  // Handle file upload
+  await handlePageFileUpload(req, res, getImageFieldsForPageType('footer'));
   
-  if (!organizationId) {
-    throw new ValidationError('Organization ID is required')
+  // Validate required fields
+  if (!req.body.organization_id) {
+    throw new ValidationError('Organization ID is required');
   }
-
-  const query = "SELECT * FROM footer_pages WHERE organization_id = ?"
-
-  return new Promise(async (resolve, reject) => {
-    db.query(query, [organizationId], async (err, data) => {
-      if (err) reject(new DatabaseError('Failed to fetch footer page', err))
-      if (!data || data.length === 0) reject(new NotFoundError('Footer page'))
-      
-      try {
-        const footerPage = data[0];
-        
-        // Generate SAS URL for logo image (or return local path in development)
-        const logoUrl = await imageService.getImageUrl(footerPage.logo, 'public');
-
-        // Replace image path with URL
-        const result = {
-          ...footerPage,
-          logo: logoUrl
-        };
-
-        sendSuccess(res, result, 'Footer page retrieved successfully')
-        resolve()
-      } catch (error) {
-        reject(new DatabaseError('Failed to generate image URL', error));
-      }
-    })
-  })
+  if (!req.body.user_id) {
+    throw new ValidationError('User ID is required');
+  }
+  
+  // Delegate to PageService
+  const footerPage = await pageService.createFooterPage(req.body.organization_id, req.body, req.files);
+  
+  sendCreated(res, { pageId: footerPage.id }, 'Footer page created successfully');
 })
 
 export const updateFooterPage = asyncHandler(async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   
-  upload.fields([
-    { name: 'logo', maxCount: 1 }
-  ])(req, res, async (err) => {
-    if (err) {
-      throw new ValidationError(err.message)
+  if (!id) {
+    throw new ValidationError('Footer page ID is required');
+  }
+  
+  // Handle file upload
+  await handlePageFileUpload(req, res, getImageFieldsForPageType('footer'));
+  
+  // Delegate to PageService
+  const footerPage = await pageService.updateFooterPage(id, req.body, req.files);
+  
+  sendUpdated(res, { pageId: footerPage.id }, 'Footer page updated successfully');
+})
+
+export const getFooterPage = asyncHandler(async (req, res) => {
+  const { organizationId } = req.params;
+  
+  if (!organizationId) {
+    throw new ValidationError('Organization ID is required');
+  }
+  
+  try {
+    // Delegate to PageService
+    const footerPage = await pageService.getFooterPage(organizationId);
+    
+    sendSuccess(res, footerPage, 'Footer page retrieved successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Header page not found');
+    } else {
+      throw error;
     }
-
-    const { 
-      logo, 
-      organizationName, 
-      tagline, 
-      description,
-      // Contact section fields
-      address,
-      phone,
-      email,
-      businessHours,
-      contactFormUrl,
-      // Social section fields
-      socialLinks,
-      // Basic styling
-      bgColor,
-      textColor,
-      fontSize,
-      borderTop,
-      borderColor,
-      shadow,
-      active
-    } = req.body
-
-    if (!id) {
-      throw new ValidationError('Footer page ID is required')
-    }
-
-    let logoUrl = logo
-    if (req.files && req.files.logo) {
-      // Get organization_id from the footer page first
-      const getOrgQuery = "SELECT organization_id FROM footer_pages WHERE id = ?";
-      const orgResult = await new Promise((resolve, reject) => {
-        db.query(getOrgQuery, [id], (err, data) => {
-          if (err) reject(err);
-          else resolve(data);
-        });
-      });
-      
-      if (!orgResult || orgResult.length === 0) {
-        throw new ValidationError('Footer page not found');
-      }
-      
-      const organizationId = orgResult[0].organization_id;
-      
-      // Validate and upload image using Azure blob storage
-      imageService.validateFile(req.files.logo[0]);
-      logoUrl = await imageService.uploadImage(organizationId, 'footer-pages', id, 'logo', req.files.logo[0]);
-    }
-
-    const query = `
-      UPDATE footer_pages SET 
-        logo = ?, 
-        organization_name = ?, 
-        tagline = ?, 
-        description = ?,
-        address = ?,
-        phone = ?,
-        email = ?,
-        business_hours = ?,
-        contact_form_url = ?,
-        social_links = ?,
-        bg_color = ?,
-        text_color = ?,
-        font_size = ?,
-        border_top = ?,
-        border_color = ?,
-        shadow = ?,
-        active = ?,
-        updated_at = NOW()
-      WHERE id = ?
-    `
-
-    const values = [
-      logoUrl,
-      organizationName || "",
-      tagline || "",
-      description || "",
-      address || "",
-      phone || "",
-      email || "",
-      businessHours || "",
-      contactFormUrl || "",
-      socialLinks ? JSON.stringify(socialLinks) : "[]",
-      bgColor || "#1F2937",
-      textColor || "#FFFFFF",
-      fontSize || "14px",
-      borderTop === 'true' || borderTop === true ? 1 : 0,
-      borderColor || "#374151",
-      shadow === 'true' || shadow === true ? 1 : 0,
-      active === 'true' || active === true ? 1 : 0,
-      id
-    ]
-
-    return new Promise((resolve, reject) => {
-      db.query(query, values, async (err, data) => {
-        if (err) reject(new DatabaseError('Failed to update footer page', err))
-        if (data.affectedRows === 0) reject(new NotFoundError('Footer page'))
-
-        // Check and update organization status after footer page update
-        try {
-          // Get organization_id from the footer page
-          const getOrgQuery = "SELECT organization_id FROM footer_pages WHERE id = ?";
-          db.query(getOrgQuery, [id], async (orgErr, orgData) => {
-            if (!orgErr && orgData && orgData.length > 0) {
-              const organizationId = orgData[0].organization_id;
-              try {
-                await checkAndUpdateOrganizationStatus(organizationId);
-              } catch (statusError) {
-                console.error('Failed to update organization status after footer page update:', statusError);
-                // Don't fail the main operation, just log the error
-              }
-            }
-          });
-        } catch (statusError) {
-          console.error('Error checking organization status:', statusError);
-          // Don't fail the main operation
-        }
-
-        sendUpdated(res, data, 'Footer page updated successfully')
-        resolve()
-      })
-    })
-  })
+  }
 })

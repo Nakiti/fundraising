@@ -162,6 +162,46 @@ export const DonorProvider = ({ children, organizationId }) => {
         setError(null);
     };
 
+    const checkGuestDonations = async (email) => {
+        try {
+            if (!email || !email.trim()) {
+                throw new Error('Email is required');
+            }
+            return await DonorFetchService.checkGuestDonations(organizationId, email);
+        } catch (error) {
+            console.error('Check guest donations error:', error);
+            throw error;
+        }
+    };
+
+    const convertGuestToRegistered = async (conversionData) => {
+        try {
+            setLoading(true);
+            setError(null);
+            
+            // Validate required fields
+            if (!conversionData.email || !conversionData.password || !conversionData.firstName || !conversionData.lastName) {
+                throw new Error('Missing required fields');
+            }
+            
+            const result = await DonorCreateService.convertGuestToRegistered(organizationId, conversionData);
+
+            if (result && result.donor) {
+                setDonor(result.donor);
+                return { success: true, linkedDonations: result.linkedDonations || 0 };
+            } else {
+                setError('Conversion failed');
+                return { success: false, error: 'Conversion failed' };
+            }
+        } catch (error) {
+            const errorMessage = error.message || 'Conversion failed';
+            setError(errorMessage);
+            return { success: false, error: errorMessage };
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const value = {
         donor,
         loading,
@@ -177,7 +217,9 @@ export const DonorProvider = ({ children, organizationId }) => {
         updatePreference,
         getPreferences,
         clearError,
-        checkSession
+        checkSession,
+        checkGuestDonations,
+        convertGuestToRegistered
     };
 
     return (

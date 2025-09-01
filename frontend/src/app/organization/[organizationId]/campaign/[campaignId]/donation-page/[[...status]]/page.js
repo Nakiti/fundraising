@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDesignations, getCampaignDetails, getDonationPage, getCampaignInsights } from "@/app/services/fetchService"
+import { getCampaignDesignations, getCampaignDetails, getDonationPage, getCampaignInsights, getDonationForm } from "@/app/services/fetchService"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
@@ -8,6 +8,7 @@ import Link from "next/link"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
 import DonationLeaderboard from "./components/DonationLeaderboard"
 import AddToCartButton from "@/app/components/AddToCartButton"
+import { useCart } from "@/app/context/cartContext"
 
 const DonationLandingPage = ({params}) => {
    const [display, setDisplay] = useState(null)
@@ -15,12 +16,52 @@ const DonationLandingPage = ({params}) => {
    const [campaignDetails, setCampaignDetails] = useState(null)
    const [campaignInsights, setCampaignInsights] = useState(null)
    const [loading, setLoading] = useState(true)
+   const [selectedAmount, setSelectedAmount] = useState(null)
    const router = useRouter()
    const parameters = useParams()
+   const { addToCart } = useCart()
+   const [donationForm, setDonationForm] = useState(null)
 
    const status = params.status
    const campaignId = params.campaignId
    const organizationId = params.organizationId
+
+   // Handle amount selection
+   const handleAmountSelect = (amount) => {
+      const numAmount = parseInt(amount)
+      if (selectedAmount === numAmount) {
+         // Deactivate if same amount is clicked
+         setSelectedAmount(null)
+      } else {
+         // Activate the selected amount
+         setSelectedAmount(numAmount)
+      }
+   }
+
+   // Handle add to cart with selected amount
+   const handleAddToCart = async () => {
+      if (!selectedAmount) {
+         alert('Please select a donation amount first')
+         return
+      }
+      
+      try {
+         await addToCart(campaignId, selectedAmount)
+         alert('Campaign added to cart successfully!')
+      } catch (error) {
+         console.error('Error adding to cart:', error)
+         alert('Failed to add to cart. Please try again.')
+      }
+   }
+
+   // Generate donation form URL with amount parameter
+   const getDonateUrl = () => {
+      const baseUrl = status ? 
+         `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview` :
+         `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
+      
+      return selectedAmount ? `${baseUrl}?amount=${selectedAmount}` : baseUrl
+   }
 
    useEffect(() => {
       const fetchData = async() => {
@@ -40,6 +81,10 @@ const DonationLandingPage = ({params}) => {
                const designationResponse = await getCampaignDesignations(campaignId)
                setDesignations(designationResponse)
                console.log("Designations:", designationResponse)
+
+               const donationFormResponse = await getDonationForm(campaignId)
+               setDonationForm(donationFormResponse)
+               console.log("Donation form:", donationFormResponse)
 
                // Fetch campaign insights for real statistics
                try {
@@ -144,10 +189,7 @@ const DonationLandingPage = ({params}) => {
                   </p>
                   <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-3">
                      <Link 
-                        href={status ? 
-                           `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview` :
-                           `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
-                        }
+                        href={getDonateUrl()}
                         className="font-semibold transition-all duration-300 flex items-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
                         style={{
                            backgroundColor: display.b1_color || '#475569',
@@ -160,41 +202,6 @@ const DonationLandingPage = ({params}) => {
                         <FaHeart className="w-3 h-3" />
                         <span>{display.donate_button_text || "Donate Now"}</span>
                      </Link>
-                     
-                     <AddToCartButton
-                        campaignId={campaignId}
-                        campaignName={campaignDetails?.external_name || campaignDetails?.internal_name}
-                        size="medium"
-                        variant="secondary"
-                        className="font-semibold transition-all duration-300 hover:shadow-md transform hover:-translate-y-0.5"
-                        style={{
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                           fontSize: Math.min(parseInt(display.buttonTextSize) || 14, 16) + 'px',
-                           padding: '10px 20px'
-                        }}
-                        onSuccess={(data) => {
-                           if (data.action === 'added') {
-                              console.log(`Added ${data.campaignName} to cart`);
-                           }
-                        }}
-                        onError={(error) => {
-                           console.error('Cart error:', error);
-                        }}
-                     />
-                     
-                     <button 
-                        className="font-semibold transition-all duration-300 flex items-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
-                        style={{
-                           backgroundColor: display.b2_color || '#64748b',
-                           color: display.bt_color || '#FFFFFF',
-                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                           fontSize: Math.min(parseInt(display.buttonTextSize) || 14, 16) + 'px',
-                           padding: '10px 20px'
-                        }}
-                     >
-                        <FaShare className="w-3 h-3" />
-                        <span>{display.share_button_text || "Share"}</span>
-                     </button>
                   </div>
                </div>
             </div>
@@ -336,36 +343,48 @@ const DonationLandingPage = ({params}) => {
                      </h3>
                      {display.show_amount_grid !== false && (
                         <div className="grid grid-cols-2 gap-3 mb-6">
-                           {[display.button1, display.button2, display.button3, display.button4, display.button5, display.button6].map((amount, index) => (
-                              <button
-                                 key={index}
-                                 className="p-4 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-center rounded-lg"
-                                 style={{borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '8px'}}
-                              >
-                                 <div 
-                                    className="font-bold text-lg"
-                                    style={{ 
-                                       color: display.p_color || '#1e293b',
-                                       fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                           {donationForm && [donationForm.button1, donationForm.button2, donationForm.button3, donationForm.button4, donationForm.button5, donationForm.button6].map((amount, index) => {
+                              const buttonAmount = parseInt(amount || '25')
+                              const isSelected = selectedAmount === buttonAmount
+                              return (
+                                 <button
+                                    key={index}
+                                    onClick={() => handleAmountSelect(amount || '25')}
+                                    className={`p-4 border transition-all duration-200 text-center rounded-lg ${
+                                       isSelected 
+                                          ? 'border-2' 
+                                          : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                    }`}
+                                    style={{
+                                       borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '8px',
+                                       borderColor: isSelected ? (display.b1_color || '#475569') : undefined,
+                                       backgroundColor: isSelected ? `${display.b1_color || '#475569'}15` : undefined
                                     }}
                                  >
-                                    ${amount || '25'}
-                                 </div>
-                                 <div 
-                                    className="text-xs mt-1"
-                                    style={{ color: display.s_color || '#64748b' }}
-                                 >
-                                    Donation
-                                 </div>
-                              </button>
-                           ))}
+                                    <div 
+                                       className="font-bold text-lg"
+                                       style={{ 
+                                          color: isSelected ? (display.b1_color || '#475569') : (display.p_color || '#1e293b'),
+                                          fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                                       }}
+                                    >
+                                       ${amount || '25'}
+                                    </div>
+                                    <div 
+                                       className="text-xs mt-1"
+                                       style={{ 
+                                          color: isSelected ? (display.b1_color || '#475569') : (display.s_color || '#64748b')
+                                       }}
+                                    >
+                                       Donation
+                                    </div>
+                                 </button>
+                              )
+                           })}
                         </div>
                      )}
                      <Link 
-                        href={status ? 
-                           `/organization/${organizationId}/campaign/${campaignId}/donation-form/preview` :
-                           `/organization/${organizationId}/campaign/${campaignId}/donation-form/`
-                        }
+                        href={getDonateUrl()}
                         className="w-full py-4 px-6 font-bold text-white transition-all duration-300 flex items-center justify-center space-x-3 hover:opacity-90 text-lg"
                         style={{
                            backgroundColor: display.b1_color || '#475569',
@@ -376,6 +395,18 @@ const DonationLandingPage = ({params}) => {
                         <FaHeart className="w-4 h-4" />
                         <span>{display.donate_button_text || "Donate Now"}</span>
                      </Link>
+                     <button 
+                        onClick={handleAddToCart}
+                        className="w-full py-4 px-6 font-bold mt-4 text-white transition-all duration-300 flex items-center justify-center space-x-3 hover:opacity-90 text-lg"
+                        style={{
+                           backgroundColor: '#64748b',
+                           borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '12px',
+                           fontSize: Math.min(parseInt(display.buttonTextSize) || 16, 18) + 'px'
+                        }}
+                     >
+                        <FaShoppingCart className="w-4 h-4" />
+                        <span>Add to Cart</span>
+                     </button>
                   </div>
                </div>
             </div>

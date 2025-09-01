@@ -137,7 +137,7 @@ const Table = ({setData, data, organizationId}) => {
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               <span className="capitalize">
-                                 {row.type.replace('-', ' ')}
+                                 {row.type}
                               </span>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap">
@@ -148,7 +148,7 @@ const Table = ({setData, data, organizationId}) => {
                                        : "bg-green-100 text-green-800"
                                  }`}
                               >
-                                 {row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase()}
+                                 {row.status}
                               </span>
                            </td>
                         </tr>

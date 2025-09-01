@@ -53,7 +53,7 @@ const Transactions = ({params}) => {
 
             {/* Search and Filters */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-               <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+               <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                   <Searchbar setData={setData} organizationId={organizationId}/>
                   <Filters setData={setData} organizationId={organizationId}/>
                </div>

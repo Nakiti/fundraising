@@ -160,14 +160,13 @@ export const getRecentDonations = (req, res) => {
   }
 
   const query = `
-    SELECT 
+    SELECT   
       t.id,
       t.amount,
       t.date,
       t.status,
       CASE 
         WHEN t.is_anonymous = TRUE THEN 'Anonymous'
-        WHEN d.is_guest = TRUE THEN CONCAT(d.first_name, ' (Guest)')
         ELSE COALESCE(d.first_name, 'Anonymous')
       END as first_name,
       CASE 
@@ -231,25 +230,46 @@ export const getTopCampaigns = (req, res) => {
       c.id,
       COALESCE(cd.external_name, 'Unnamed Campaign') as name,
       COALESCE(cd.goal, 0) as goal,
-      COALESCE(SUM(t.amount), 0) as raised,
-      COALESCE(cd.donations, 0) as donations,
-      COUNT(DISTINCT CASE WHEN t.donor_id IS NOT NULL THEN t.donor_id END) as donors,
-      c.status
+      COALESCE(
+        (SELECT SUM(t.amount) 
+         FROM transactions t 
+         WHERE t.campaign_id = c.id 
+         AND t.status = 'completed'), 
+        0
+      ) as raised,
+      COALESCE(
+        (SELECT COUNT(*) 
+         FROM transactions t 
+         WHERE t.campaign_id = c.id 
+         AND t.status = 'completed'), 
+        0
+      ) as donations,
+      COALESCE(
+        (SELECT COUNT(DISTINCT t.donor_id) 
+         FROM transactions t 
+         WHERE t.campaign_id = c.id 
+         AND t.status = 'completed'
+         AND t.donor_id IS NOT NULL), 
+        0
+      ) as donors,
+      cd.status
     FROM campaigns c
     LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
-    LEFT JOIN transactions t ON c.id = t.campaign_id AND t.status = 'completed'
     WHERE c.organization_id = ?
-    AND c.status = 'active'
-    GROUP BY c.id, cd.external_name, cd.goal, cd.donations, c.status
+    AND cd.status = 'active'
     ORDER BY raised DESC
     LIMIT ?
   `;
+
+  console.log(id)
 
   db.query(query, [id, parseInt(limit)], (err, data) => {
     if (err) {
       logSQLError(err, 'Top campaigns query');
       throw new DatabaseError('Failed to fetch top campaigns', err);
     }
+
+    console.log("top campaigns", data)
     
     // Ensure data is an array and handle null/undefined cases
     const campaignsData = Array.isArray(data) ? data : [];
@@ -301,9 +321,10 @@ export const getOrganizationStatus = (req, res) => {
       o.status,
       o.created_at,
       COUNT(DISTINCT c.id) as total_campaigns,
-      COUNT(DISTINCT CASE WHEN c.status = 'active' THEN c.id END) as active_campaigns
+      COUNT(DISTINCT CASE WHEN cd.status = 'active' THEN c.id END) as active_campaigns
     FROM organizations o
     LEFT JOIN campaigns c ON o.id = c.organization_id
+    LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
     WHERE o.id = ?
     GROUP BY o.id, o.name, o.status, o.created_at
   `;
@@ -468,7 +489,7 @@ export const getDashboardNotifications = (req, res) => {
     LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
     LEFT JOIN transactions t ON c.id = t.campaign_id AND t.status = 'completed'
     WHERE c.organization_id = ?
-    AND c.status = 'active'
+    AND cd.status = 'active'
     AND COALESCE(cd.goal, 0) > 0
     GROUP BY c.id, cd.external_name, cd.goal
     HAVING (COALESCE(SUM(t.amount), 0) / COALESCE(cd.goal, 1)) >= 0.5

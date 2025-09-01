@@ -82,6 +82,23 @@ export class DonorFetchService {
          throw error;
       }
    }
+
+   // Check for existing guest donations by email
+   static async checkGuestDonations(organizationId, email) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.required(email, 'Email');
+         validators.email(email, 'Email');
+
+         const response = await api.post(`/donor/${organizationId}/check-guest-donations`, {
+            email
+         });
+         return response.success ? response.data : { hasGuestDonations: false, guestDonors: [] };
+      } catch (error) {
+         console.error('Error checking guest donations:', error);
+         throw error;
+      }
+   }
 }
 
 // Donor Create Services
@@ -135,6 +152,25 @@ export class DonorCreateService {
          return response.success ? response.data : null;
       } catch (error) {
          console.error('Error recording donation:', error);
+         throw error;
+      }
+   }
+
+   // Convert guest donor to registered donor
+   static async convertGuestToRegistered(organizationId, conversionData) {
+      try {
+         validators.id(organizationId, 'Organization ID');
+         validators.required(conversionData.email, 'Email');
+         validators.required(conversionData.password, 'Password');
+         validators.required(conversionData.firstName, 'First Name');
+         validators.required(conversionData.lastName, 'Last Name');
+         validators.email(conversionData.email, 'Email');
+         validators.minLength(conversionData.password, 6, 'Password');
+
+         const response = await api.post(`/donor/${organizationId}/convert-guest`, conversionData);
+         return response.success ? response.data : null;
+      } catch (error) {
+         console.error('Error converting guest to registered donor:', error);
          throw error;
       }
    }

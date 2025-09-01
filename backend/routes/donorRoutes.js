@@ -12,7 +12,9 @@ import {
   updateDonorPreferences,
   checkSession,
   getOrganizationDonors,
-  getDonorAnalytics
+  getDonorAnalytics,
+  checkGuestDonations,
+  convertGuestToRegistered
 } from "../controllers/donorController.js"
 import { donorAuthMiddleware, optionalDonorAuthMiddleware } from "../middleware/donorAuth.js"
 import { verifyToken } from "../middleware/auth.js"
@@ -24,6 +26,10 @@ router.post("/:organizationId/register", registerDonor)
 router.post("/:organizationId/login", loginDonor)
 router.post("/logout", logoutDonor)
 router.get("/session", checkSession)
+
+// Guest donation conversion routes
+router.post("/:organizationId/check-guest-donations", checkGuestDonations)
+router.post("/:organizationId/convert-guest", convertGuestToRegistered)
 
 // Protected donor routes (requires donor authentication)
 router.get("/profile", donorAuthMiddleware, getDonorProfile)

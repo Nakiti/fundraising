@@ -5,6 +5,9 @@ import Link from "next/link"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
 import { FaCreditCard, FaPaypal, FaLock, FaHeart, FaArrowLeft, FaSpinner } from "react-icons/fa"
 import StripeCheckout from "@/app/components/StripeCheckout"
+import PostDonationAccountModal from "@/app/components/PostDonationAccountModal"
+import { useSearchParams } from "next/navigation"
+import { DonorCreateService } from "@/app/services/donorServices"
 
 const DonationForm = ({params}) => {
    const [display, setDisplay] = useState(null)
@@ -33,6 +36,10 @@ const DonationForm = ({params}) => {
    const [paymentSuccess, setPaymentSuccess] = useState(false)
    const [loading, setLoading] = useState(true)
    const [error, setError] = useState("")
+   const searchParams = useSearchParams()
+   const [showAccountModal, setShowAccountModal] = useState(false)
+   const [creatingAccount, setCreatingAccount] = useState(false)
+   const [lastDonationData, setLastDonationData] = useState(null)
 
    const handleFundChange = (e) => {
       const value = e.target.value
@@ -126,13 +133,72 @@ const DonationForm = ({params}) => {
 
    const handlePaymentSuccess = (paymentData) => {
       setPaymentSuccess(true)
+      setLastDonationData(paymentData)
       console.log('Payment successful:', paymentData)
-      // Redirect to thank you page after successful payment
+      
+      // Show account creation modal for non-anonymous donations
+      if (!isAnonymous && formData.email) {
+         setTimeout(() => {
+            setShowAccountModal(true)
+         }, 1500)
+      } else {
+         // Redirect directly to thank you page for anonymous donations
+         setTimeout(() => {
+            redirectToThankYou()
+         }, 2000)
+      }
+   }
+
+   const redirectToThankYou = () => {
+      window.location.href = status ?
+         `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/preview` :
+         `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/`
+   }
+
+   const handleCreateAccount = async (password) => {
+      try {
+         setCreatingAccount(true)
+         
+         const donorData = {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            password: password,
+            phone: formData.phone,
+            address: formData.address,
+            city: formData.city,
+            zipCode: formData.zipCode
+         }
+         
+         // Try to convert guest donor (will handle both guest conversion and new registration)
+         const result = await DonorCreateService.convertGuestToRegistered(organizationId, {
+            ...donorData,
+            linkDonorIds: [] // This will be empty for post-donation flow
+         })
+         
+         if (result) {
+            // Account created successfully, redirect to thank you page
+            setTimeout(() => {
+               redirectToThankYou()
+            }, 1000)
+         }
+      } catch (error) {
+         console.error('Error creating account:', error)
+         // Still redirect to thank you page even if account creation fails
+         setTimeout(() => {
+            redirectToThankYou()
+         }, 1000)
+      } finally {
+         setCreatingAccount(false)
+         setShowAccountModal(false)
+      }
+   }
+
+   const handleSkipAccount = () => {
+      setShowAccountModal(false)
       setTimeout(() => {
-         window.location.href = status ?
-            `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/preview` :
-            `/organization/${organizationId}/campaign/${campaignId}/thank-you-page/`
-      }, 2000)
+         redirectToThankYou()
+      }, 500)
    }
 
    const handlePaymentError = (error) => {
@@ -200,6 +266,29 @@ const DonationForm = ({params}) => {
 
       fetchData()
    }, [campaignId, status, organizationId])
+
+   // Handle URL parameter for pre-selecting amount
+   useEffect(() => {
+      const amountParam = searchParams.get('amount')
+      if (amountParam && display) {
+         const paramAmount = parseInt(amountParam)
+         if (paramAmount > 0) {
+            // Check if the amount matches one of the preset buttons
+            const presetAmounts = [display.button1, display.button2, display.button3, display.button4, display.button5]
+            if (presetAmounts.includes(paramAmount)) {
+               // Pre-select the matching button
+               setSelectedAmount(paramAmount)
+               setAmount(paramAmount)
+               setCustomAmount("")
+            } else {
+               // Set as custom amount
+               setSelectedAmount(null)
+               setCustomAmount(paramAmount.toString())
+               setAmount(paramAmount)
+            }
+         }
+      }
+   }, [searchParams, display])
 
    if (loading) {
       return (
@@ -275,9 +364,9 @@ const DonationForm = ({params}) => {
       >
          {status == "preview" && <PreviewBar organizationId={organizationId} campaignId={campaignId}/>}
          {display && <div className="px-4 py-8">
-            <div className={`max-w-xl mx-auto ${display.bg_image ? 'relative z-10' : ''}`}>
+            <div className={`max-w-2xl mx-auto ${display.bg_image ? 'relative z-10' : ''}`}>
                {/* Campaign Banner */}
-               {campaignDetails && (
+               {/* {campaignDetails && (
                   <div 
                      className="mb-6 p-4 rounded-lg border"
                      style={{ 
@@ -306,7 +395,7 @@ const DonationForm = ({params}) => {
                         )}
                      </div>
                   </div>
-               )}
+               )} */}
 
                {/* Header */}
                <div className="text-center mb-6">
@@ -339,7 +428,7 @@ const DonationForm = ({params}) => {
 
                                  {/* Main Form */}
                   <div 
-                     className="bg-white border border-slate-200 p-6 shadow-sm"
+                     className="bg-white border border-slate-200 p-8 shadow-sm"
                      style={{ borderRadius: display.cardRadius ? `${display.cardRadius}px` : '12px' }}
                   >
                      {/* Campaign Indicator */}
@@ -374,41 +463,51 @@ const DonationForm = ({params}) => {
                      >
                         Choose Your Amount
                      </h2>
-                     <div className="grid grid-cols-3 gap-2 mb-3">
-                        {[display.button1, display.button2, display.button3, display.button4, display.button5].map((buttonAmount, index) => (
-                           <button
-                              key={index}
-                              className={`p-3 border transition-all duration-200 text-center ${
-                                 selectedAmount === buttonAmount ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                              }`}
-                              style={{ borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px' }}
-                              onClick={() => handleAmountChange(buttonAmount)}
-                           >
-                              <div 
-                                 className="font-semibold text-sm"
+                     <div className="grid grid-cols-3 gap-3 mb-4">
+                        {[display.button1, display.button2, display.button3, display.button4, display.button5, display.button6].map((buttonAmount, index) => {
+                           const isSelected = selectedAmount === buttonAmount
+                           return (
+                              <button
+                                 key={index}
+                                 className={`p-4 border transition-all duration-200 text-center ${
+                                    isSelected ? 'border-2' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                 }`}
                                  style={{ 
-                                    color: display.p_color || '#1e293b',
-                                    fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                                    borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
+                                    borderColor: isSelected ? (display.b1_color || '#475569') : undefined,
+                                    backgroundColor: isSelected ? `${display.b1_color || '#475569'}15` : undefined
                                  }}
+                                 onClick={() => handleAmountChange(buttonAmount)}
                               >
-                                 ${buttonAmount || '25'}
-                              </div>
-                           </button>
-                        ))}
+                                 <div 
+                                    className="font-semibold text-lg"
+                                    style={{ 
+                                       color: isSelected ? (display.b1_color || '#475569') : (display.p_color || '#1e293b'),
+                                       fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px'
+                                    }}
+                                 >
+                                    ${buttonAmount || '25'}
+                                 </div>
+                              </button>
+                           )
+                        })}
                         <input 
-                           className={`p-3 border focus:outline-none transition-all duration-200 text-center text-sm ${
-                              customAmount ? 'border-blue-500 bg-blue-50' : 'border-slate-200 focus:border-slate-300'
+                           className={`p-4 border focus:outline-none transition-all duration-200 text-center text-lg ${
+                              customAmount ? 'border-2' : 'border-slate-200 focus:border-slate-300'
                            }`}
-                           placeholder="Custom"
+                           placeholder="Custom Amount"
                            type="number"
                            min="1"
                            step="0.01"
                            value={customAmount}
                            onChange={handleCustomAmountChange}
                            style={{ 
-                              gridColumn: 'span 2',
+                              gridColumn: 'span 3',
                               borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
-                              fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
+                              fontSize: Math.min(parseInt(display.bodyTextSize) || 16, 18) + 'px',
+                              borderColor: customAmount ? (display.b1_color || '#475569') : undefined,
+                              backgroundColor: customAmount ? `${display.b1_color || '#475569'}15` : undefined,
+                              color: customAmount ? (display.b1_color || '#475569') : undefined
                            }}
                         />
                      </div>
@@ -426,7 +525,7 @@ const DonationForm = ({params}) => {
                         Select Fund
                      </h2>
                      <select 
-                        className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 bg-white text-sm"
+                        className="w-full p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 bg-white text-base"
                         value={selectedFund !== null ? selectedFund : "select"}
                         onChange={handleFundChange}
                         style={{ 
@@ -494,9 +593,9 @@ const DonationForm = ({params}) => {
                         {isAnonymous ? 'Contact Information (for receipt)' : 'Your Information'}
                      </h2>
                      {!isAnonymous && (
-                        <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="grid grid-cols-2 gap-4 mb-4">
                            <input 
-                              className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                              className="p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-base"
                               placeholder="First Name *"
                               value={formData.firstName}
                               onChange={(e) => handleFormDataChange('firstName', e.target.value)}
@@ -506,7 +605,7 @@ const DonationForm = ({params}) => {
                               }}
                            />
                            <input 
-                              className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                              className="p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-base"
                               placeholder="Last Name *"
                               value={formData.lastName}
                               onChange={(e) => handleFormDataChange('lastName', e.target.value)}
@@ -518,7 +617,7 @@ const DonationForm = ({params}) => {
                         </div>
                      )}
                      <input 
-                        className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-3 text-sm"
+                        className="w-full p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-4 text-base"
                         placeholder={isAnonymous ? "Email Address (for receipt) *" : "Email Address *"}
                         type="email"
                         value={formData.email}
@@ -529,7 +628,7 @@ const DonationForm = ({params}) => {
                         }}
                      />
                      <input 
-                        className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-3 text-sm"
+                        className="w-full p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-4 text-base"
                         placeholder="Street Address"
                         value={formData.address}
                         onChange={(e) => handleFormDataChange('address', e.target.value)}
@@ -538,9 +637,9 @@ const DonationForm = ({params}) => {
                            fontSize: Math.min(parseInt(display.bodyTextSize) || 14, 16) + 'px'
                         }}
                      />
-                     <div className="grid grid-cols-3 gap-3 mb-3">
+                     <div className="grid grid-cols-3 gap-4 mb-4">
                         <input 
-                           className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                           className="p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-base"
                            placeholder="City"
                            value={formData.city}
                            onChange={(e) => handleFormDataChange('city', e.target.value)}
@@ -550,7 +649,7 @@ const DonationForm = ({params}) => {
                            }}
                         />
                         <input 
-                           className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                           className="p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-base"
                            placeholder="State"
                            style={{ 
                               borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
@@ -558,7 +657,7 @@ const DonationForm = ({params}) => {
                            }}
                         />
                         <input 
-                           className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                           className="p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-base"
                            placeholder="ZIP Code"
                            value={formData.zipCode}
                            onChange={(e) => handleFormDataChange('zipCode', e.target.value)}
@@ -569,7 +668,7 @@ const DonationForm = ({params}) => {
                         />
                      </div>
                      <input 
-                        className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
+                        className="w-full p-4 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-base"
                         placeholder="Phone Number"
                         type="tel"
                         value={formData.phone}
@@ -756,9 +855,9 @@ const DonationForm = ({params}) => {
                         >
                            Payment Method
                         </h2>
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                            <button 
-                              className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
+                              className="w-full p-4 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
                               style={{ borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px' }}
                               disabled
                            >
@@ -775,7 +874,7 @@ const DonationForm = ({params}) => {
                            </button>
                            <button 
                               onClick={handleCreditCardClick}
-                              className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2"
+                              className="w-full p-4 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2"
                               style={{ 
                                  borderRadius: display.buttonRadius ? `${display.buttonRadius}px` : '6px',
                                  borderColor: display.b1_color || '#475569'
@@ -858,6 +957,18 @@ const DonationForm = ({params}) => {
                </div>
             </div>
          </div>}
+
+         {/* Post-donation account creation modal */}
+         <PostDonationAccountModal
+            isOpen={showAccountModal}
+            onClose={handleSkipAccount}
+            donorEmail={formData.email}
+            donorName={`${formData.firstName} ${formData.lastName}`}
+            donationAmount={amount}
+            organizationId={organizationId}
+            onCreateAccount={handleCreateAccount}
+            loading={creatingAccount}
+         />
       </div>
    )
 }

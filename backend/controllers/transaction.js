@@ -120,7 +120,6 @@ export const getTransactionsbyCampaign = asyncHandler(async (req, res) => {
     SELECT transactions.*, campaign_details.external_name,
            CASE 
              WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
-             WHEN donors.is_guest = TRUE THEN CONCAT(donors.first_name, ' (Guest)')
              ELSE donors.first_name
            END as first_name, 
            CASE 
@@ -160,7 +159,6 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
     SELECT transactions.*, campaign_details.external_name, 
            CASE 
              WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
-             WHEN donors.is_guest = TRUE THEN CONCAT(donors.first_name, ' (Guest)')
              ELSE donors.first_name
            END as first_name, 
            CASE 
@@ -234,6 +232,7 @@ export const updateTransaction = asyncHandler(async (req, res) => {
 export const getTransactionsOverTime = asyncHandler(async (req, res) => {
   const { start, end } = req.query;
   const { id } = req.params;
+  const { isAdmin = false } = req.query;
   
   if (!start || !end) {
     throw new ValidationError('Start and end dates are required');
@@ -244,19 +243,34 @@ export const getTransactionsOverTime = asyncHandler(async (req, res) => {
   }
 
   const query = `
-    SELECT 
-      COUNT(*) as transactionsCount,
-      SUM(amount) as totalRaised
+    SELECT transactions.*, campaign_details.external_name,
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
+             ELSE donors.first_name
+           END as first_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Donor'
+             ELSE donors.last_name
+           END as last_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN NULL
+             ELSE donors.email
+           END as email, 
+           donors.is_guest,
+           transactions.is_anonymous
     FROM transactions 
-    WHERE date between ? and ? and organization_id = ?
+    INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
+    INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
+    LEFT JOIN donors ON transactions.donor_id = donors.id 
+    WHERE transactions.date BETWEEN ? AND ? AND transactions.organization_id = ?
   `
 
-  const values = [start, end, id]
+  const values = [isAdmin === 'true', isAdmin === 'true', isAdmin === 'true', start, end, id]
 
   return new Promise((resolve, reject) => {
     db.query(query, values, (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch transactions over time', err));
-      sendSuccess(res, data[0], 'Transactions over time retrieved successfully');
+      sendSuccess(res, data, 'Transactions over time retrieved successfully');
       resolve();
     })
   })
@@ -265,6 +279,7 @@ export const getTransactionsOverTime = asyncHandler(async (req, res) => {
 export const searchTransactions = asyncHandler(async (req, res) => {
   const { q } = req.query;
   const { id } = req.params;
+  const { isAdmin = false } = req.query;
   
   if (!q) {
     throw new ValidationError('Search query is required');
@@ -275,12 +290,38 @@ export const searchTransactions = asyncHandler(async (req, res) => {
   }
 
   const query = `
-    SELECT * FROM transactions 
-    WHERE CONCAT(first_name, ' ', last_name, ' ', id, ' ') LIKE ? 
-    AND organization_id = ?
+    SELECT transactions.*, campaign_details.external_name,
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
+             ELSE donors.first_name
+           END as first_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Donor'
+             ELSE donors.last_name
+           END as last_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN NULL
+             ELSE donors.email
+           END as email, 
+           donors.is_guest,
+           transactions.is_anonymous
+    FROM transactions 
+    INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
+    INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
+    LEFT JOIN donors ON transactions.donor_id = donors.id 
+    WHERE transactions.organization_id = ?
+    AND (
+      CONCAT(COALESCE(donors.first_name, ''), ' ', COALESCE(donors.last_name, '')) LIKE ? OR
+      CAST(transactions.id AS CHAR) LIKE ? OR
+      CAST(transactions.amount AS CHAR) LIKE ? OR
+      transactions.status LIKE ? OR
+      campaign_details.external_name LIKE ? OR
+      donors.email LIKE ?
+    )
   `;
 
-  const values = [`%${q}%`, id]
+  const searchTerm = `%${q}%`;
+  const values = [isAdmin === 'true', isAdmin === 'true', isAdmin === 'true', id, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm]
 
   return new Promise((resolve, reject) => {
     db.query(query, values, (err, data) => {
@@ -294,19 +335,36 @@ export const searchTransactions = asyncHandler(async (req, res) => {
 export const getFiltered = asyncHandler(async (req, res) => {
   const { status } = req.query;
   const { id } = req.params;
+  const { isAdmin = false } = req.query;
   
   if (!id) {
     throw new ValidationError('Organization ID is required');
   }
 
   let query = `
-    SELECT transactions.*, campaigns.campaign_name 
+    SELECT transactions.*, campaign_details.external_name,
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
+             ELSE donors.first_name
+           END as first_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Donor'
+             ELSE donors.last_name
+           END as last_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN NULL
+             ELSE donors.email
+           END as email, 
+           donors.is_guest,
+           transactions.is_anonymous
     FROM transactions 
-    INNER JOIN campaigns ON transactions.campaign_id = campaigns.id 
+    INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
+    INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
+    LEFT JOIN donors ON transactions.donor_id = donors.id 
     WHERE transactions.organization_id = ?
   `;
   
-  const params = [id];
+  const params = [isAdmin === 'true', isAdmin === 'true', isAdmin === 'true', id];
 
   if (status && status !== "all") {
     query += " AND transactions.status = ?";
@@ -317,6 +375,50 @@ export const getFiltered = asyncHandler(async (req, res) => {
     db.query(query, params, (err, data) => {
       if (err) reject(new DatabaseError('Failed to fetch filtered transactions', err));
       sendSuccess(res, data, 'Filtered transactions retrieved successfully');
+      resolve();
+    })
+  })
+})
+
+export const getTransactionsByCampaignInOrg = asyncHandler(async (req, res) => {
+  const { campaignId, organizationId } = req.params;
+  const { isAdmin = false } = req.query;
+  
+  if (!campaignId) {
+    throw new ValidationError('Campaign ID is required');
+  }
+  
+  if (!organizationId) {
+    throw new ValidationError('Organization ID is required');
+  }
+
+  const query = `
+    SELECT transactions.*, campaign_details.external_name,
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
+             ELSE donors.first_name
+           END as first_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Donor'
+             ELSE donors.last_name
+           END as last_name, 
+           CASE 
+             WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN NULL
+             ELSE donors.email
+           END as email, 
+           donors.is_guest,
+           transactions.is_anonymous
+    FROM transactions 
+    INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
+    INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
+    LEFT JOIN donors ON transactions.donor_id = donors.id 
+    WHERE transactions.campaign_id = ? AND transactions.organization_id = ?
+  `;
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [isAdmin === 'true', isAdmin === 'true', isAdmin === 'true', campaignId, organizationId], (err, data) => {
+      if (err) reject(new DatabaseError('Failed to fetch campaign transactions', err));
+      sendSuccess(res, data, 'Campaign transactions retrieved successfully');
       resolve();
     })
   })

@@ -533,14 +533,14 @@ export class TransactionService {
    }
 
    // Get transactions over time
-   static async getTransactionsOverTime(organizationId, start, end) {
+   static async getTransactionsOverTime(start, end, organizationId, isAdmin = true) {
       try {
          validators.id(organizationId, 'Organization ID');
          validators.date(start, 'Start Date');
          validators.date(end, 'End Date');
          
          const response = await api.get(`/transaction/getTimeframe/${organizationId}`, {
-            params: { start, end }
+            params: { start, end, isAdmin }
          });
          return response.success ? response.data : [];
       } catch (error) {
@@ -620,6 +620,21 @@ export class TransactionService {
          return response.success ? response.data : [];
       } catch (error) {
          console.error('Error fetching public transactions by campaign:', error);
+         throw error;
+      }
+   }
+
+   // Get transactions by campaign within organization (for admin filtering)
+   static async getTransactionsByCampaignInOrg(campaignId, organizationId, isAdmin = true) {
+      try {
+         validators.id(campaignId, 'Campaign ID');
+         validators.id(organizationId, 'Organization ID');
+         const response = await api.get(`/transaction/getByCampaign/${campaignId}/org/${organizationId}`, {
+            params: { isAdmin }
+         });
+         return response.success ? response.data : [];
+      } catch (error) {
+         console.error('Error fetching transactions by campaign in org:', error);
          throw error;
       }
    }

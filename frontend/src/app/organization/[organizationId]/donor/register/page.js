@@ -3,11 +3,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDonor } from "@/app/context/donorContext";
 import Link from "next/link";
+import GuestDonationLinkModal from "@/app/components/GuestDonationLinkModal";
 
 const DonorRegister = ({ params }) => {
     const { organizationId } = params;
     const router = useRouter();
-    const { register, loading, error, clearError } = useDonor();
+    const { register, loading, error, clearError, checkGuestDonations, convertGuestToRegistered } = useDonor();
     
     const [formData, setFormData] = useState({
         firstName: "",
@@ -23,6 +24,9 @@ const DonorRegister = ({ params }) => {
     });
 
     const [passwordError, setPasswordError] = useState("");
+    const [showLinkModal, setShowLinkModal] = useState(false);
+    const [guestDonors, setGuestDonors] = useState([]);
+    const [checkingGuest, setCheckingGuest] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -59,7 +63,35 @@ const DonorRegister = ({ params }) => {
         if (!validateForm()) {
             return;
         }
-        
+
+        // First check for existing guest donations
+        try {
+            setCheckingGuest(true);
+            
+            if (!formData.email || !formData.email.trim()) {
+                throw new Error('Email is required to check for previous donations');
+            }
+            
+            const guestCheck = await checkGuestDonations(formData.email);
+            
+            if (guestCheck.hasGuestDonations && guestCheck.guestDonors.length > 0) {
+                // Show linking modal
+                setGuestDonors(guestCheck.guestDonors);
+                setShowLinkModal(true);
+                return;
+            }
+        } catch (error) {
+            console.error('Error checking guest donations:', error);
+            // Continue with normal registration if check fails - don't show error for this optional feature
+        } finally {
+            setCheckingGuest(false);
+        }
+
+        // Proceed with normal registration
+        await proceedWithRegistration();
+    };
+
+    const proceedWithRegistration = async (linkDonorIds = []) => {
         const donorData = {
             firstName: formData.firstName,
             lastName: formData.lastName,
@@ -71,12 +103,32 @@ const DonorRegister = ({ params }) => {
             state: formData.state,
             zipCode: formData.zipCode
         };
-        
-        const result = await register(donorData);
+
+        let result;
+        if (linkDonorIds.length > 0) {
+            // Convert guest donor to registered
+            result = await convertGuestToRegistered({
+                ...donorData,
+                linkDonorIds
+            });
+        } else {
+            // Regular registration
+            result = await register(donorData);
+        }
         
         if (result.success) {
             router.push(`/organization/${organizationId}/donor/dashboard`);
         }
+    };
+
+    const handleLinkDonations = async (selectedDonorIds) => {
+        setShowLinkModal(false);
+        await proceedWithRegistration(selectedDonorIds);
+    };
+
+    const handleSkipLinking = async () => {
+        setShowLinkModal(false);
+        await proceedWithRegistration();
     };
 
     return (
@@ -257,10 +309,10 @@ const DonorRegister = ({ params }) => {
                         <div>
                             <button
                                 type="submit"
-                                disabled={loading}
+                                disabled={loading || checkingGuest}
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? "Creating account..." : "Create account"}
+                                {checkingGuest ? "Checking previous donations..." : loading ? "Creating account..." : "Create account"}
                             </button>
                         </div>
                     </form>
@@ -286,6 +338,15 @@ const DonorRegister = ({ params }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Guest Donation Link Modal */}
+            <GuestDonationLinkModal
+                isOpen={showLinkModal}
+                onClose={handleSkipLinking}
+                guestDonors={guestDonors}
+                onConfirmLink={handleLinkDonations}
+                loading={loading}
+            />
         </div>
     );
 };

@@ -38,6 +38,7 @@ const CampaignPage = ({params}) => {
    */
    const fetchData = async() => {
       const campaignResponse = await getCampaign(campaignId)
+      console.log("campaign", campaignResponse)
       setCampaign(campaignResponse)
       setCampaignType(campaignResponse.type)
    }

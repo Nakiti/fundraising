@@ -1,11 +1,12 @@
 import express from "express"
-import { createTransaction, getAllTransactions, getFiltered, getTransaction, getTransactionsbyCampaign, getTransactionsOverTime, searchTransactions, updateTransaction } from "../controllers/transaction.js"
+import { createTransaction, getAllTransactions, getFiltered, getTransaction, getTransactionsbyCampaign, getTransactionsByCampaignInOrg, getTransactionsOverTime, searchTransactions, updateTransaction } from "../controllers/transaction.js"
 
 const router = express.Router()
 
 router.post("/create", createTransaction)
 router.get("/get/:id", getTransaction)
 router.get("/getByCampaign/:id", getTransactionsbyCampaign)
+router.get("/getByCampaign/:campaignId/org/:organizationId", getTransactionsByCampaignInOrg)
 router.get("/getByOrg/:id", getAllTransactions)
 router.put("/update/:id", updateTransaction)
 router.get("/getTimeframe/:id", getTransactionsOverTime)

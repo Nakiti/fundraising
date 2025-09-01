@@ -2,7 +2,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useDonor } from "@/app/context/donorContext";
-import { FaDollarSign, FaChartLine, FaCalendarAlt, FaHeart, FaDownload, FaCog, FaUser } from "react-icons/fa";
+import LoadingSpinner from "./components/LoadingSpinner";
+import WelcomeSection from "./components/WelcomeSection";
+import SummaryCards from "./components/SummaryCards";
+import RecentDonationsTable from "./components/RecentDonationsTable";
 
 const DonorDashboard = ({ params }) => {
     const { organizationId } = params;
@@ -34,6 +37,7 @@ const DonorDashboard = ({ params }) => {
                 getSummary()
             ]);
             
+            console.log("donationsData", donationsData)
             setDonations(donationsData);
             setSummary(summaryData);
         } catch (error) {
@@ -60,24 +64,9 @@ const DonorDashboard = ({ params }) => {
 
     if (loading || dashboardLoading) {
         return (
-            <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600 font-medium">Loading your dashboard...</p>
-                </div>
-            </div>
-        );
-    }
-
-    // Show loading while checking authentication
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center bg-gray-50 h-full">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600 font-medium">Checking authentication...</p>
-                </div>
-            </div>
+            <LoadingSpinner 
+                message={loading ? "Checking authentication..." : "Loading your dashboard..."} 
+            />
         );
     }
 
@@ -89,61 +78,15 @@ const DonorDashboard = ({ params }) => {
     return (
         <div className="bg-gray-50 h-full">
             <div className="p-6">
-                {/* Welcome Section */}
-                <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Welcome back, {donor.firstName}!
-                    </h1>
-                    <p className="text-gray-600 mt-1">Here's your donation overview and recent activity</p>
-                </div>
-                {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-500 mb-1">Total Donations</p>
-                                <p className="text-3xl font-bold text-gray-900">
-                                    {summary?.total_donations || 0}
-                                </p>
-                                <p className="text-sm text-gray-500 mt-1">Lifetime contributions</p>
-                            </div>
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <FaHeart className="w-6 h-6 text-blue-600" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-500 mb-1">Total Amount</p>
-                                <p className="text-3xl font-bold text-gray-900">
-                                    {formatCurrency(summary?.total_amount)}
-                                </p>
-                                <p className="text-sm text-gray-500 mt-1">Impact generated</p>
-                            </div>
-                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <FaDollarSign className="w-6 h-6 text-green-600" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-500 mb-1">Last Donation</p>
-                                <p className="text-3xl font-bold text-gray-900">
-                                    {summary?.last_donation ? formatDate(summary.last_donation) : 'Never'}
-                                </p>
-                                <p className="text-sm text-gray-500 mt-1">Most recent activity</p>
-                            </div>
-                            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <FaCalendarAlt className="w-6 h-6 text-purple-600" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <WelcomeSection 
+                    donor={donor} 
+                    hasLinkedDonations={donations.length > 0} 
+                />
+                <SummaryCards 
+                    summary={summary} 
+                    formatCurrency={formatCurrency} 
+                    formatDate={formatDate} 
+                />
 
                 {/* Recent Donations */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200">
@@ -151,71 +94,15 @@ const DonorDashboard = ({ params }) => {
                         <h3 className="text-lg font-semibold text-gray-900">Recent Donations</h3>
                     </div>
                     <div className="overflow-hidden">
-                        {donations.length === 0 ? (
-                            <div className="p-12 text-center">
-                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FaHeart className="w-8 h-8 text-gray-400" />
-                                </div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">No donations yet</h3>
-                                <p className="text-gray-500 mb-6">Start making a difference today!</p>
-                                <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                                    Make Your First Donation
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Date
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Campaign
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Designation
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Amount
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Status
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {donations.slice(0, 10).map((donation) => (
-                                            <tr key={donation.id} className="hover:bg-gray-50 transition-colors">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {formatDate(donation.donation_date)}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {donation.campaign_name || 'General'}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {donation.designation_name || 'General'}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                                    {formatCurrency(donation.amount)}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                                                        donation.payment_status === 'completed' 
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : donation.payment_status === 'pending'
-                                                            ? 'bg-yellow-100 text-yellow-800'
-                                                            : 'bg-red-100 text-red-800'
-                                                    }`}>
-                                                        {donation.payment_status}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                        <RecentDonationsTable 
+                            donations={donations}
+                            formatCurrency={formatCurrency}
+                            formatDate={formatDate}
+                            onMakeDonation={() => {
+                                // TODO: Add navigation to donation form
+                                console.log('Navigate to donation form');
+                            }}
+                        />
                     </div>
                 </div>
             </div>
