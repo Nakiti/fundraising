@@ -4,7 +4,7 @@ import { createAboutPage, getAboutPage, updateAboutPage } from "../controllers/a
 const router = express.Router()
 
 router.post("/create", createAboutPage)
-router.get("/get/:id", getAboutPage)
-router.put("/update/:id", updateAboutPage)
+router.get("/get/:organizationId", getAboutPage)
+router.put("/update/:organizationId", updateAboutPage)
 
 export default router

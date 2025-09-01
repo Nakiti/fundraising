@@ -48,6 +48,7 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
 
 export const getAboutPage = asyncHandler(async (req, res) => {
   const { organizationId } = req.params;
+  console.log("organizationId", organizationId)
   
   if (!organizationId) {
     throw new ValidationError('Organization ID is required');

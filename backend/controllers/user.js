@@ -1,6 +1,4 @@
-import { db } from "../db.js"
 import jwt from "jsonwebtoken"
-import bcrypt from "bcryptjs"
 import { serialize } from "cookie"
 import { config } from "../config.js"
 import { asyncHandler } from "../middleware/errorHandler.js"
@@ -10,17 +8,13 @@ import {
   sendUpdated,
   sendDeleted,
   sendUnauthorized,
-  sendNotFound,
-  sendConflict,
-  sendDatabaseError
+  sendNotFound
 } from "../utils/response.js"
-import {
-  ValidationError,
-  AuthenticationError,
-  NotFoundError,
-  ConflictError,
-  DatabaseError
-} from "../utils/errors.js"
+import { ValidationError, AuthenticationError } from "../utils/errors.js"
+import { getUserService } from "../services/ServiceRegistry.js"
+
+// Initialize service
+const userService = getUserService()
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -29,103 +23,52 @@ export const login = asyncHandler(async (req, res) => {
     throw new ValidationError('Email and password are required');
   }
 
-  const query = "SELECT * FROM users WHERE email = ?"
+  try {
+    // Delegate to UserService
+    const authResult = await userService.authenticateUser(email, password);
+    
+    // Set cookie
+    const cookie = serialize("session", authResult.token, {
+      httpOnly: config.cookie.httpOnly,
+      secure: config.cookie.secure,
+      sameSite: config.cookie.sameSite,
+      maxAge: config.cookie.maxAge,
+      path: config.cookie.path,
+      domain: config.cookie.domain
+    });
 
-  return new Promise((resolve, reject) => {
-    db.query(query, [email], (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to authenticate user', err));
-        return;
-      }
-      
-      if (!data || data.length === 0) {
-        reject(new AuthenticationError('Invalid email or password'));
-        return;
-      }
-      
-      // Ensure data[0] exists before accessing it
-      const user = data[0];
-      if (!user) {
-        reject(new AuthenticationError('Invalid email or password'));
-        return;
-      }
-   
-      const isPasswordCorrect = bcrypt.compareSync(password, user.password)
-   
-      if (!isPasswordCorrect) {
-        reject(new AuthenticationError('Invalid email or password'));
-        return;
-      }
-      
-      const token = jwt.sign(
-        {
-          id: user.id, 
-          organization_id: user.organization_id,
-          email: user.email,
-          role: user.role || 'user'
-        }, 
-        config.jwt.secret,
-        { expiresIn: config.jwt.expiresIn }
-      );
-
-      const cookie = serialize("session", token, {
-        httpOnly: config.cookie.httpOnly,
-        secure: config.cookie.secure,
-        sameSite: config.cookie.sameSite,
-        maxAge: config.cookie.maxAge,
-        path: config.cookie.path,
-        domain: config.cookie.domain
-      });
-
-      res.setHeader("Set-Cookie", cookie);
-      const {password: userPassword, ...userData} = user;
-      sendSuccess(res, { user: userData }, 'Login successful');
-      resolve();
-    })
-  })
+    res.setHeader("Set-Cookie", cookie);
+    sendSuccess(res, { user: authResult.user }, 'Login successful');
+  } catch (error) {
+    if (error.name === 'AuthenticationError') {
+      sendUnauthorized(res, error.message);
+    } else {
+      throw error;
+    }
+  }
 })
 
 export const getCurrentUser = asyncHandler(async (req, res) => {
-   const token = req.cookies.session;
+  const token = req.cookies.session;
 
-   if (!token) {
-      throw new AuthenticationError('Not authenticated');
-   }
+  if (!token) {
+    throw new AuthenticationError('Not authenticated');
+  }
 
-   return new Promise((resolve, reject) => {
-      jwt.verify(token, config.jwt.secret, (err, decoded) => {
-         if (err) {
-            reject(new AuthenticationError('Token is not valid'));
-            return;
-         }
-         
-         // Get full user data from database
-         const query = "SELECT id, first_name, last_name, email, created_at FROM users WHERE id = ?";
-         
-         db.query(query, [decoded.id], (err, data) => {
-            if (err) {
-               reject(new DatabaseError('Failed to fetch user data', err));
-               return;
-            }
-            
-            // Check if data exists and has results
-            if (!data || data.length === 0) {
-               reject(new NotFoundError('User'));
-               return;
-            }
-            
-            // Ensure data[0] exists before accessing it
-            const userData = data[0];
-            if (!userData) {
-               reject(new NotFoundError('User'));
-               return;
-            }
-            
-            sendSuccess(res, { user: userData }, 'User data retrieved successfully');
-            resolve();
-         });
-      })
-   })
+  try {
+    // Delegate to UserService
+    const userData = await userService.getCurrentUser(token);
+    
+    sendSuccess(res, userData, 'User data retrieved successfully');
+  } catch (error) {
+    if (error.name === 'AuthenticationError') {
+      sendUnauthorized(res, error.message);
+    } else if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'User not found');
+    } else {
+      throw error;
+    }
+  }
 })
 
 export const updatePassword = asyncHandler(async (req, res) => {
@@ -135,25 +78,18 @@ export const updatePassword = asyncHandler(async (req, res) => {
     throw new ValidationError('Email and password are required');
   }
 
-  const salt = bcrypt.genSaltSync(10);
-  const hash = bcrypt.hashSync(password, salt);
-
-  const q = "UPDATE users SET `password` = ? WHERE `email` = ?"
-
-  return new Promise((resolve, reject) => {
-    db.query(q, [hash, email], (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to update password', err));
-      }
-      
-      if (data.affectedRows === 0) {
-        reject(new NotFoundError('User'));
-      }
-      
-      sendUpdated(res, null, 'Password updated successfully');
-      resolve();
-    })
-  })
+  try {
+    // Delegate to UserService
+    await userService.updatePassword(email, password);
+    
+    sendUpdated(res, null, 'Password updated successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'User not found');
+    } else {
+      throw error;
+    }
+  }
 })
 
 export const logout = asyncHandler(async (req, res) => {
@@ -175,41 +111,23 @@ export const createUser = asyncHandler(async (req, res) => {
     throw new ValidationError('Missing required fields: firstName, lastName, email, password');
   }
 
-  const q = "SELECT * FROM users WHERE email = ?"
-
-  return new Promise((resolve, reject) => {
-    db.query(q, [email], (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to check existing user', err));
-      }
-      
-      if (data.length > 0) {
-        reject(new ConflictError('Email already in use'));
-      }
-  
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(password, salt);
+  try {
+    // Delegate to UserService
+    const user = await userService.createUser({
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      password
+    });
     
-      const query = "INSERT INTO users (`first_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`) VALUES (?)"
-      const values = [
-        firstName,
-        lastName,
-        email,
-        hash,
-        (new Date()).toISOString().slice(0, 19).replace('T', ' '),
-        (new Date()).toISOString().slice(0, 19).replace('T', ' ')
-      ]
-  
-      db.query(query, [values], (err, data) => {
-        if (err) {
-          reject(new DatabaseError('Failed to create user', err));
-        }
-        
-        sendCreated(res, { userId: data.insertId }, 'User created successfully');
-      resolve();
-      })
-    })
-  })
+    sendCreated(res, { userId: user.id }, 'User created successfully');
+  } catch (error) {
+    if (error.name === 'ConflictError') {
+      sendUnauthorized(res, error.message);
+    } else {
+      throw error;
+    }
+  }
 })
 
 export const getUser = asyncHandler(async (req, res) => {
@@ -219,31 +137,18 @@ export const getUser = asyncHandler(async (req, res) => {
     throw new ValidationError('User ID is required');
   }
 
-  const query = "SELECT id, first_name, last_name, email, created_at FROM users WHERE `id` = ?"
-
-  return new Promise((resolve, reject) => {
-    db.query(query, [id], (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to fetch user', err));
-        return;
-      }
-      
-      if (!data || data.length === 0) {
-        reject(new NotFoundError('User'));
-        return;
-      }
-      
-      // Ensure data[0] exists before accessing it
-      const user = data[0];
-      if (!user) {
-        reject(new NotFoundError('User'));
-        return;
-      }
-      
-      sendSuccess(res, { user: user }, 'User retrieved successfully');
-      resolve();
-    })
-  })
+  try {
+    // Delegate to UserService
+    const userData = await userService.getUser(id);
+    
+    sendSuccess(res, userData, 'User retrieved successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'User not found');
+    } else {
+      throw error;
+    }
+  }
 })
 
 export const getUsersbyOrg = asyncHandler(async (req, res) => {
@@ -253,25 +158,10 @@ export const getUsersbyOrg = asyncHandler(async (req, res) => {
     throw new ValidationError('Organization ID is required');
   }
 
-  const query = `
-    SELECT users.id, users.first_name, users.last_name, users.email, 
-           users.organization_id, users.role, users.created_at,
-           user_organizations.status as org_status
-    FROM user_organizations
-    JOIN users ON users.id = user_organizations.user_id
-    WHERE organization_id = ?
-  `
-
-  return new Promise((resolve, reject) => {
-    db.query(query, [id], (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to fetch organization users', err));
-      }
-      
-      sendSuccess(res, { users: data }, 'Organization users retrieved successfully');
-      resolve();
-    })
-  })
+  // Delegate to UserService
+  const usersData = await userService.getUsersByOrganization(id);
+  
+  sendSuccess(res, usersData, 'Organization users retrieved successfully');
 })
 
 export const updateUser = asyncHandler(async (req, res) => {
@@ -286,22 +176,18 @@ export const updateUser = asyncHandler(async (req, res) => {
     throw new ValidationError('Role is required');
   }
 
-  const query = "UPDATE users SET `role` = ? WHERE `id` = ?"
-
-  return new Promise((resolve, reject) => {
-    db.query(query, [role, id], (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to update user', err));
-      }
-      
-      if (data.affectedRows === 0) {
-        reject(new NotFoundError('User'));
-      }
-      
-      sendUpdated(res, null, 'User updated successfully');
-      resolve();
-    })
-  })
+  try {
+    // Delegate to UserService
+    const userData = await userService.updateUserRole(id, role);
+    
+    sendUpdated(res, userData, 'User updated successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'User not found');
+    } else {
+      throw error;
+    }
+  }
 })
 
 export const deleteUser = asyncHandler(async (req, res) => {
@@ -311,20 +197,123 @@ export const deleteUser = asyncHandler(async (req, res) => {
     throw new ValidationError('User ID is required');
   }
 
-  const query = "DELETE FROM users WHERE `id` = ?"
+  try {
+    // Delegate to UserService
+    await userService.deleteUser(id);
+    
+    sendDeleted(res, 'User deleted successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'User not found');
+    } else {
+      throw error;
+    }
+  }
+})
 
-  return new Promise((resolve, reject) => {
-    db.query(query, [id], (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to delete user', err));
-      }
-      
-      if (data.affectedRows === 0) {
-        reject(new NotFoundError('User'));
-      }
-      
-      sendDeleted(res, 'User deleted successfully');
-      resolve();
-    })
-  })
+/**
+ * Additional endpoint for searching users
+ */
+export const searchUsers = asyncHandler(async (req, res) => {
+  const { q, organizationId } = req.query;
+  
+  if (!q) {
+    throw new ValidationError('Search query is required');
+  }
+
+  // Delegate to UserService
+  const users = await userService.searchUsers(q, organizationId);
+  
+  sendSuccess(res, { users }, 'User search completed');
+})
+
+/**
+ * Additional endpoint for user statistics
+ */
+export const getUserStats = asyncHandler(async (req, res) => {
+  const { organizationId } = req.query;
+
+  // Delegate to UserService
+  const stats = await userService.getUserStats(organizationId);
+  
+  sendSuccess(res, stats, 'User statistics retrieved successfully');
+})
+
+/**
+ * Additional endpoint for bulk creating users
+ */
+export const bulkCreateUsers = asyncHandler(async (req, res) => {
+  const { users } = req.body;
+  
+  if (!users || !Array.isArray(users)) {
+    throw new ValidationError('Users array is required');
+  }
+
+  // Delegate to UserService
+  const results = await userService.bulkCreateUsers(users);
+  
+  const successCount = results.filter(r => r.success).length;
+  const failureCount = results.filter(r => !r.success).length;
+  
+  sendSuccess(res, {
+    results,
+    summary: {
+      total: results.length,
+      successful: successCount,
+      failed: failureCount
+    }
+  }, `Bulk user creation completed: ${successCount} successful, ${failureCount} failed`);
+})
+
+/**
+ * Additional endpoint for password reset request
+ */
+export const requestPasswordReset = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    throw new ValidationError('Email is required');
+  }
+
+  try {
+    // Delegate to UserService
+    const resetToken = await userService.resetPassword(email);
+    
+    // In a real application, you would send this token via email
+    // For now, we'll return it in the response
+    sendSuccess(res, { 
+      message: 'Password reset token generated',
+      resetToken // Remove this in production and send via email
+    }, 'Password reset request processed');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'User not found');
+    } else {
+      throw error;
+    }
+  }
+})
+
+/**
+ * Additional endpoint for password reset completion
+ */
+export const completePasswordReset = asyncHandler(async (req, res) => {
+  const { resetToken, newPassword } = req.body;
+  
+  if (!resetToken || !newPassword) {
+    throw new ValidationError('Reset token and new password are required');
+  }
+
+  try {
+    // Delegate to UserService
+    await userService.verifyResetTokenAndUpdatePassword(resetToken, newPassword);
+    
+    sendSuccess(res, null, 'Password reset completed successfully');
+  } catch (error) {
+    if (error.name === 'AuthenticationError') {
+      sendUnauthorized(res, error.message);
+    } else {
+      throw error;
+    }
+  }
 })

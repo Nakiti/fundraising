@@ -2,6 +2,13 @@ import { CampaignService } from './CampaignService.js';
 import { DonorService } from './DonorService.js';
 import { OrganizationService } from './OrganizationService.js';
 import { PageService } from './PageService.js';
+import { DesignationService } from './DesignationService.js';
+import { SectionService } from './SectionService.js';
+import { OrganizationStatusService } from './OrganizationStatusService.js';
+import { TransactionService } from './TransactionService.js';
+import { UserOrganizationService } from './UserOrganizationService.js';
+import { UserService } from './UserService.js';
+import { StripeService } from './StripeService.js';
 
 /**
  * Service Registry - Central location for managing all services
@@ -26,6 +33,13 @@ export class ServiceRegistry {
     this._services.set('donor', new DonorService());
     this._services.set('organization', new OrganizationService());
     this._services.set('page', new PageService());
+    this._services.set('designation', new DesignationService());
+    this._services.set('section', new SectionService());
+    this._services.set('organizationStatus', new OrganizationStatusService());
+    this._services.set('transaction', new TransactionService());
+    this._services.set('userOrganization', new UserOrganizationService());
+    this._services.set('user', new UserService());
+    this._services.set('stripe', new StripeService());
     
     this._initialized = true;
     console.log('Service Registry initialized with services:', Array.from(this._services.keys()));
@@ -118,3 +132,10 @@ export const getCampaignService = () => serviceRegistry.get('campaign');
 export const getDonorService = () => serviceRegistry.get('donor');
 export const getOrganizationService = () => serviceRegistry.get('organization');
 export const getPageService = () => serviceRegistry.get('page');
+export const getDesignationService = () => serviceRegistry.get('designation');
+export const getSectionService = () => serviceRegistry.get('section');
+export const getOrganizationStatusService = () => serviceRegistry.get('organizationStatus');
+export const getTransactionService = () => serviceRegistry.get('transaction');
+export const getUserOrganizationService = () => serviceRegistry.get('userOrganization');
+export const getUserService = () => serviceRegistry.get('user');
+export const getStripeService = () => serviceRegistry.get('stripe');

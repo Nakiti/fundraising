@@ -55,7 +55,10 @@ export const PAGE_IMAGE_CONFIGS = {
   about: ['bgImage', 'storyImage', 'aboutImage', 'teamImage', 'missionImage', 'visionImage', 'valuesImage'],
   landing: ['bgImage', 'aboutImage', 'textImage', 'imageOne', 'imageTwo', 'imageThree'],
   header: ['logo'],
-  footer: ['logo']
+  footer: ['logo'],
+  'donation-page': ['banner_image', 'small_image'],
+  'donation-form': ['bg_image'],
+  'thankyou-page': ['bg_image']
 };
 
 /**

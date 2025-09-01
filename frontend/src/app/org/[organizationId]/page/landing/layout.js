@@ -40,7 +40,7 @@ const EditLandingLayout = ({params, children}) => {
          }
          
          // Update landing page content and styling
-         await updateLandingPage(inputs.id, inputs)
+         await updateLandingPage(inputs.id, inputs, organizationId)
          
          // Update section visibility states
          for (const section of sections) {
@@ -83,7 +83,7 @@ const EditLandingLayout = ({params, children}) => {
 
          // Update landing page content and styling with active status
          const publishData = { ...inputs, active: true }
-         await updateLandingPage(inputs.id, publishData)
+         await updateLandingPage(inputs.id, publishData, organizationId)
          
          // Update section visibility states
          for (const section of sections) {
@@ -119,7 +119,7 @@ const EditLandingLayout = ({params, children}) => {
       try {
          // Update landing page content and styling with inactive status
          const deactivateData = { ...inputs, active: false }
-         await updateLandingPage(inputs.id, deactivateData)
+         await updateLandingPage(inputs.id, deactivateData, organizationId)
          
          // Update section visibility states
          for (const section of sections) {

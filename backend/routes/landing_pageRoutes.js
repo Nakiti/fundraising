@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.post("/create", createLandingPage)
 router.put("/update/:id", updateLandingPage)
-router.get("/get/:id", getLandingPage)
+router.get("/get/:organizationId", getLandingPage)
 
 export default router

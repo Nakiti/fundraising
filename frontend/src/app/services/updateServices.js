@@ -171,12 +171,16 @@ export class PageUpdateService {
    }
 
    // Update landing page
-   static async updateLandingPage(id, data) {
+   static async updateLandingPage(id, data, organizationId) {
       try {
          validators.id(id, 'Page ID');
          validators.required(data, 'Page Data');
+         validators.id(organizationId, 'Organization ID');
 
          const formData = new FormData();
+         
+         // Organization ID (required by backend)
+         formData.append("organization_id", organizationId);
          
          // Basic content
          formData.append("title", data.title);

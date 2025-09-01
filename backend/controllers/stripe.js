@@ -1,18 +1,15 @@
-import { db } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
-import { stripeService } from "../services/stripeService.js";
 import {
   sendSuccess,
   sendCreated,
   sendUpdated,
   sendNotFound
 } from "../utils/response.js";
-import {
-  ValidationError,
-  NotFoundError,
-  DatabaseError
-} from "../utils/errors.js";
-import { checkAndUpdateOrganizationStatus } from "./organization_status.js";
+import { ValidationError } from "../utils/errors.js";
+import { getStripeService } from "../services/ServiceRegistry.js";
+
+// Initialize service
+const stripeService = getStripeService();
 
 /**
  * Create Stripe Connect account for organization
@@ -29,86 +26,28 @@ export const createConnectAccount = asyncHandler(async (req, res) => {
     throw new ValidationError('Email is required for Stripe Connect account');
   }
 
-  return new Promise((resolve, reject) => {
-    // First, check if organization exists and doesn't already have a Stripe account
-    const checkQuery = "SELECT id, name, stripe_account_id FROM organizations WHERE id = ?";
-    
-    db.query(checkQuery, [organizationId], async (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to check organization', err));
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        reject(new NotFoundError('Organization'));
-        return;
-      }
-
-      const organization = data[0];
-
-      if (organization.stripe_account_id) {
-        reject(new ValidationError('Organization already has a Stripe Connect account'));
-        return;
-      }
-
-      try {
-        // Create Stripe Connect account
-        const stripeAccount = await stripeService.createConnectedAccount({
-          id: organizationId,
-          name: organization.name,
-          email: email,
-          country: country
-        });
-
-        // Update organization with Stripe account info
-        const updateQuery = `
-          UPDATE organizations 
-          SET stripe_account_id = ?, 
-              stripe_account_status = 'pending',
-              stripe_onboarding_completed = FALSE,
-              updated_at = NOW()
-          WHERE id = ?
-        `;
-
-        db.query(updateQuery, [stripeAccount.id, organizationId], (updateErr, updateData) => {
-          if (updateErr) {
-            reject(new DatabaseError('Failed to update organization with Stripe account', updateErr));
-            return;
-          }
-
-          // Also create record in stripe_connect_accounts table
-          const connectQuery = `
-            INSERT INTO stripe_connect_accounts 
-            (organization_id, stripe_account_id, account_type, country, email, is_active)
-            VALUES (?, ?, ?, ?, ?, TRUE)
-          `;
-
-          db.query(connectQuery, [
-            organizationId, 
-            stripeAccount.id, 
-            'standard', 
-            country, 
-            email
-          ], (connectErr, connectData) => {
-            if (connectErr) {
-              console.error('Failed to create stripe_connect_accounts record:', connectErr);
-              // Don't reject here as the main operation succeeded
-            }
-
-            sendCreated(res, {
-              stripeAccountId: stripeAccount.id,
-              accountStatus: 'pending',
-              onboardingRequired: true
-            }, 'Stripe Connect account created successfully');
-            resolve();
-          });
-        });
-
-      } catch (stripeError) {
-        reject(new Error(`Stripe account creation failed: ${stripeError.message}`));
-      }
+  try {
+    // Delegate to StripeService
+    const accountData = await stripeService.createConnectAccount({
+      organizationId: parseInt(organizationId),
+      email,
+      country
     });
-  });
+    
+    sendCreated(res, {
+      stripeAccountId: accountData.stripeAccountId,
+      accountStatus: accountData.accountStatus,
+      onboardingRequired: accountData.onboardingRequired
+    }, 'Stripe Connect account created successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Organization not found');
+    } else if (error.name === 'ValidationError') {
+      sendNotFound(res, error.message);
+    } else {
+      throw error;
+    }
+  }
 });
 
 /**
@@ -126,45 +65,27 @@ export const createAccountLink = asyncHandler(async (req, res) => {
     throw new ValidationError('Both refresh URL and return URL are required');
   }
 
-  return new Promise((resolve, reject) => {
-    const query = "SELECT stripe_account_id FROM organizations WHERE id = ?";
-    
-    db.query(query, [organizationId], async (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to fetch organization', err));
-        return;
-      }
+  try {
+    // Delegate to StripeService
+    const accountLink = await stripeService.createAccountLink(
+      parseInt(organizationId),
+      refreshUrl,
+      returnUrl
+    );
 
-      if (!data || data.length === 0) {
-        reject(new NotFoundError('Organization'));
-        return;
-      }
-
-      const stripeAccountId = data[0].stripe_account_id;
-
-      if (!stripeAccountId) {
-        reject(new ValidationError('Organization does not have a Stripe Connect account'));
-        return;
-      }
-
-      try {
-        const accountLink = await stripeService.createAccountLink(
-          stripeAccountId,
-          refreshUrl,
-          returnUrl
-        );
-
-        sendSuccess(res, {
-          url: accountLink.url,
-          expiresAt: accountLink.expires_at
-        }, 'Account link created successfully');
-        resolve();
-
-      } catch (stripeError) {
-        reject(new Error(`Account link creation failed: ${stripeError.message}`));
-      }
-    });
-  });
+    sendSuccess(res, {
+      url: accountLink.url,
+      expiresAt: accountLink.expiresAt
+    }, 'Account link created successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Organization not found');
+    } else if (error.name === 'ValidationError') {
+      sendNotFound(res, error.message);
+    } else {
+      throw error;
+    }
+  }
 });
 
 /**
@@ -177,100 +98,18 @@ export const getAccountStatus = asyncHandler(async (req, res) => {
     throw new ValidationError('Organization ID is required');
   }
 
-  return new Promise((resolve, reject) => {
-    const query = `
-      SELECT 
-        stripe_account_id,
-        stripe_account_status,
-        stripe_onboarding_completed,
-        stripe_details_submitted,
-        stripe_charges_enabled,
-        stripe_payouts_enabled
-      FROM organizations 
-      WHERE id = ?
-    `;
+  try {
+    // Delegate to StripeService
+    const accountStatus = await stripeService.getAccountStatus(parseInt(organizationId));
     
-    db.query(query, [organizationId], async (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to fetch organization', err));
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        reject(new NotFoundError('Organization'));
-        return;
-      }
-
-      const orgData = data[0];
-
-      if (!orgData.stripe_account_id) {
-        sendSuccess(res, {
-          hasStripeAccount: false,
-          accountStatus: null,
-          onboardingCompleted: false
-        }, 'No Stripe account found');
-        resolve();
-        return;
-      }
-
-      try {
-        // Get fresh data from Stripe
-        const stripeAccount = await stripeService.retrieveAccount(orgData.stripe_account_id);
-
-        // Update our database with fresh Stripe data
-        const updateQuery = `
-          UPDATE organizations 
-          SET 
-            stripe_account_status = ?,
-            stripe_onboarding_completed = ?,
-            stripe_details_submitted = ?,
-            stripe_charges_enabled = ?,
-            stripe_payouts_enabled = ?,
-            updated_at = NOW()
-          WHERE id = ?
-        `;
-
-        const accountStatus = stripeAccount.charges_enabled ? 'enabled' : 
-                            stripeAccount.details_submitted ? 'restricted' : 'pending';
-
-        db.query(updateQuery, [
-          accountStatus,
-          stripeAccount.details_submitted && stripeAccount.charges_enabled,
-          stripeAccount.details_submitted,
-          stripeAccount.charges_enabled,
-          stripeAccount.payouts_enabled,
-          organizationId
-        ], async (updateErr) => {
-          if (updateErr) {
-            console.error('Failed to update Stripe account status:', updateErr);
-          }
-
-          // Check and update organization status after Stripe status update
-          try {
-            await checkAndUpdateOrganizationStatus(organizationId);
-          } catch (statusError) {
-            console.error('Failed to update organization status after Stripe update:', statusError);
-            // Don't fail the main operation, just log the error
-          }
-
-          sendSuccess(res, {
-            hasStripeAccount: true,
-            stripeAccountId: orgData.stripe_account_id,
-            accountStatus: accountStatus,
-            onboardingCompleted: stripeAccount.details_submitted && stripeAccount.charges_enabled,
-            chargesEnabled: stripeAccount.charges_enabled,
-            payoutsEnabled: stripeAccount.payouts_enabled,
-            requirements: stripeAccount.requirements,
-            businessProfile: stripeAccount.business_profile
-          }, 'Stripe account status retrieved successfully');
-          resolve();
-        });
-
-      } catch (stripeError) {
-        reject(new Error(`Failed to retrieve Stripe account: ${stripeError.message}`));
-      }
-    });
-  });
+    sendSuccess(res, accountStatus, 'Stripe account status retrieved successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Organization not found');
+    } else {
+      throw error;
+    }
+  }
 });
 
 /**
@@ -294,64 +133,32 @@ export const createPaymentIntent = asyncHandler(async (req, res) => {
     throw new ValidationError('Campaign ID and Organization ID are required');
   }
 
-  return new Promise((resolve, reject) => {
-    // Get organization's Stripe account
-    const query = `
-      SELECT stripe_account_id, stripe_charges_enabled 
-      FROM organizations 
-      WHERE id = ?
-    `;
-    
-    db.query(query, [organizationId], async (err, data) => {
-      if (err) {
-        reject(new DatabaseError('Failed to fetch organization', err));
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        reject(new NotFoundError('Organization'));
-        return;
-      }
-
-      const org = data[0];
-
-      if (!org.stripe_account_id) {
-        reject(new ValidationError('Organization does not have Stripe payments set up. Please contact the organization administrator.'));
-        return;
-      }
-
-      if (!org.stripe_charges_enabled) {
-        reject(new ValidationError('Organization\'s Stripe account is not enabled for charges. Please contact the organization administrator.'));
-        return;
-      }
-
-      try {
-        const paymentIntent = await stripeService.createPaymentIntent({
-          amount: amount,
-          currency: currency,
-          connectedAccountId: org.stripe_account_id,
-          applicationFeeAmount: 0, // You can add platform fees here
-          metadata: {
-            ...metadata,
-            campaign_id: campaignId.toString(),
-            organization_id: organizationId.toString(),
-            donor_email: donorEmail || '',
-          }
-        });
-
-        sendCreated(res, {
-          clientSecret: paymentIntent.client_secret,
-          paymentIntentId: paymentIntent.id,
-          amount: amount,
-          currency: currency
-        }, 'Payment intent created successfully');
-        resolve();
-
-      } catch (stripeError) {
-        reject(new Error(`Payment intent creation failed: ${stripeError.message}`));
-      }
+  try {
+    // Delegate to StripeService
+    const paymentIntent = await stripeService.createPaymentIntent({
+      amount,
+      currency,
+      campaignId,
+      organizationId,
+      donorEmail,
+      metadata
     });
-  });
+
+    sendCreated(res, {
+      clientSecret: paymentIntent.clientSecret,
+      paymentIntentId: paymentIntent.paymentIntentId,
+      amount: paymentIntent.amount,
+      currency: paymentIntent.currency
+    }, 'Payment intent created successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Organization not found');
+    } else if (error.name === 'ValidationError') {
+      sendNotFound(res, error.message);
+    } else {
+      throw error;
+    }
+  }
 });
 
 /**
@@ -365,55 +172,10 @@ export const handleWebhook = asyncHandler(async (req, res) => {
   }
 
   try {
-    const event = await stripeService.handleWebhook(req.body, signature);
-
-    // Log the webhook event
-    const logQuery = `
-      INSERT INTO stripe_webhook_events 
-      (stripe_event_id, event_type, event_data, processed)
-      VALUES (?, ?, ?, FALSE)
-    `;
-
-    db.query(logQuery, [
-      event.id,
-      event.type,
-      JSON.stringify(event.data)
-    ], (logErr) => {
-      if (logErr) {
-        console.error('Failed to log webhook event:', logErr);
-      }
-    });
-
-    // Handle specific event types
-    switch (event.type) {
-      case 'payment_intent.succeeded':
-        await handlePaymentIntentSucceeded(event.data.object);
-        break;
-      case 'payment_intent.payment_failed':
-        await handlePaymentIntentFailed(event.data.object);
-        break;
-      case 'account.updated':
-        await handleAccountUpdated(event.data.object);
-        break;
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
-    }
-
-    // Mark webhook as processed
-    const updateQuery = `
-      UPDATE stripe_webhook_events 
-      SET processed = TRUE, processed_at = NOW() 
-      WHERE stripe_event_id = ?
-    `;
-
-    db.query(updateQuery, [event.id], (updateErr) => {
-      if (updateErr) {
-        console.error('Failed to mark webhook as processed:', updateErr);
-      }
-    });
-
+    // Delegate to StripeService
+    await stripeService.handleWebhook(req.body, signature);
+    
     res.status(200).send('Webhook handled successfully');
-
   } catch (error) {
     console.error('Webhook handling failed:', error);
     res.status(400).send(`Webhook error: ${error.message}`);
@@ -421,167 +183,94 @@ export const handleWebhook = asyncHandler(async (req, res) => {
 });
 
 /**
- * Helper function to handle successful payment intent
- */
-async function handlePaymentIntentSucceeded(paymentIntent) {
-  // First, get the campaign_id from the transaction
-  const getTransactionQuery = `
-    SELECT campaign_id FROM transactions 
-    WHERE stripe_payment_intent_id = ?
-  `;
-
-  return new Promise((resolve, reject) => {
-    db.query(getTransactionQuery, [paymentIntent.id], (err, transactionData) => {
-      if (err) {
-        console.error('Failed to get transaction data:', err);
-        reject(err);
-        return;
-      }
-
-      if (!transactionData || transactionData.length === 0) {
-        console.error('No transaction found for payment intent:', paymentIntent.id);
-        reject(new Error('Transaction not found'));
-        return;
-      }
-
-      const campaignId = transactionData[0].campaign_id;
-
-      // Update transaction
-      const updateTransactionQuery = `
-        UPDATE transactions 
-        SET 
-          status = 'completed',
-          stripe_status = 'succeeded',
-          stripe_charge_id = ?,
-          processing_fee = ?,
-          net_amount = ?
-        WHERE stripe_payment_intent_id = ?
-      `;
-
-      // Calculate fees (Stripe's standard rate is 2.9% + 30¢)
-      const amount = paymentIntent.amount / 100; // Convert from cents
-      const processingFee = (amount * 0.029) + 0.30;
-      const netAmount = amount - processingFee;
-
-      // Update campaign_details donations count
-      const updateCampaignQuery = `
-        UPDATE campaign_details 
-        SET 
-          donations = COALESCE(donations, 0) + 1,
-          raised = COALESCE(raised, 0) + ?,
-          updated_at = NOW()
-        WHERE campaign_id = ?
-      `;
-
-      // Execute both updates
-      db.query(updateTransactionQuery, [
-        paymentIntent.latest_charge,
-        processingFee.toFixed(2),
-        netAmount.toFixed(2),
-        paymentIntent.id
-      ], (updateErr, updateResult) => {
-        if (updateErr) {
-          console.error('Failed to update transaction after successful payment:', updateErr);
-          reject(updateErr);
-          return;
-        }
-
-        // Update campaign details
-        db.query(updateCampaignQuery, [amount, campaignId], (campaignErr, campaignResult) => {
-          if (campaignErr) {
-            console.error('Failed to update campaign donations count:', campaignErr);
-            // Don't reject here as the transaction update succeeded
-          } else {
-            console.log(`Updated campaign donations count for campaign: ${campaignId}`);
-          }
-          
-          console.log(`Updated transaction for successful payment: ${paymentIntent.id}`);
-          resolve(updateResult);
-        });
-      });
-    });
-  });
-}
-
-/**
- * Helper function to handle failed payment intent
- */
-async function handlePaymentIntentFailed(paymentIntent) {
-  const updateQuery = `
-    UPDATE transactions 
-    SET 
-      status = 'failed',
-      stripe_status = 'payment_failed',
-      failure_reason = ?
-    WHERE stripe_payment_intent_id = ?
-  `;
-
-  return new Promise((resolve, reject) => {
-    db.query(updateQuery, [
-      paymentIntent.last_payment_error?.message || 'Payment failed',
-      paymentIntent.id
-    ], (err, result) => {
-      if (err) {
-        console.error('Failed to update transaction after failed payment:', err);
-        reject(err);
-      } else {
-        console.log(`Updated transaction for failed payment: ${paymentIntent.id}`);
-        resolve(result);
-      }
-    });
-  });
-}
-
-/**
- * Helper function to handle account updates
- */
-async function handleAccountUpdated(account) {
-  const updateQuery = `
-    UPDATE organizations 
-    SET 
-      stripe_account_status = ?,
-      stripe_onboarding_completed = ?,
-      stripe_details_submitted = ?,
-      stripe_charges_enabled = ?,
-      stripe_payouts_enabled = ?,
-      updated_at = NOW()
-    WHERE stripe_account_id = ?
-  `;
-
-  const accountStatus = account.charges_enabled ? 'enabled' : 
-                      account.details_submitted ? 'restricted' : 'pending';
-
-  return new Promise((resolve, reject) => {
-    db.query(updateQuery, [
-      accountStatus,
-      account.details_submitted && account.charges_enabled,
-      account.details_submitted,
-      account.charges_enabled,
-      account.payouts_enabled,
-      account.id
-    ], (err, result) => {
-      if (err) {
-        console.error('Failed to update organization after account update:', err);
-        reject(err);
-      } else {
-        console.log(`Updated organization for account: ${account.id}`);
-        resolve(result);
-      }
-    });
-  });
-}
-
-/**
  * Get Stripe publishable key for frontend
  */
 export const getPublishableKey = asyncHandler(async (req, res) => { 
-  const publishableKey = stripeService.getPublishableKey();
-  
-  if (!publishableKey) {
-    throw new ValidationError('Stripe publishable key is not configured');
+  try {
+    // Delegate to StripeService
+    const publishableKey = stripeService.getPublishableKey();
+    
+    sendSuccess(res, {
+      publishableKey: publishableKey
+    }, 'Publishable key retrieved successfully');
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      sendNotFound(res, error.message);
+    } else {
+      throw error;
+    }
+  }
+});
+
+/**
+ * Additional endpoint for getting organization's Stripe account details
+ */
+export const getOrganizationStripeAccount = asyncHandler(async (req, res) => {
+  const { organizationId } = req.params;
+
+  if (!organizationId) {
+    throw new ValidationError('Organization ID is required');
   }
 
-  sendSuccess(res, {
-    publishableKey: publishableKey
-  }, 'Publishable key retrieved successfully');
+  try {
+    // Delegate to StripeService
+    const accountDetails = await stripeService.getOrganizationStripeAccount(parseInt(organizationId));
+    
+    sendSuccess(res, accountDetails, 'Organization Stripe account details retrieved successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Organization not found');
+    } else {
+      throw error;
+    }
+  }
+});
+
+/**
+ * Additional endpoint for getting webhook events
+ */
+export const getWebhookEvents = asyncHandler(async (req, res) => {
+  const { organizationId } = req.params;
+  const { limit = 50 } = req.query;
+
+  if (!organizationId) {
+    throw new ValidationError('Organization ID is required');
+  }
+
+  try {
+    // Delegate to StripeService
+    const events = await stripeService.getWebhookEvents(parseInt(organizationId), parseInt(limit));
+    
+    sendSuccess(res, { events }, 'Webhook events retrieved successfully');
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      sendNotFound(res, error.message);
+    } else {
+      throw error;
+    }
+  }
+});
+
+/**
+ * Additional endpoint for getting Stripe account statistics
+ */
+export const getStripeAccountStats = asyncHandler(async (req, res) => {
+  const { organizationId } = req.params;
+
+  if (!organizationId) {
+    throw new ValidationError('Organization ID is required');
+  }
+
+  try {
+    // Delegate to StripeService
+    const stats = await stripeService.getStripeAccountStats(parseInt(organizationId));
+    
+    sendSuccess(res, stats, 'Stripe account statistics retrieved successfully');
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      sendNotFound(res, error.message);
+    } else {
+      throw error;
+    }
+  }
 });

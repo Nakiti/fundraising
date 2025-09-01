@@ -5,7 +5,8 @@ import {
   DatabaseError 
 } from '../utils/errors.js';
 import imageService from './imageService.js';
-import { checkAndUpdateOrganizationStatus } from '../controllers/organization_status.js';
+// Note: Organization status updates are handled by the OrganizationStatusService
+// We'll access it through the service registry to avoid circular dependencies
 
 /**
  * Page Service - Unified service for managing all page types (about, landing, header, footer, etc.)
@@ -118,6 +119,84 @@ export class PageService extends BaseService {
         requiredFields: ['organization_id', 'user_id'],
         designDefaults: {},
         booleanDefaults: {}
+      },
+      'donation-page': {
+        table: 'donation_pages',
+        folder: 'donation-pages',
+        images: {
+          banner_image: { category: 'banner', required: false },
+          small_image: { category: 'small', required: false }
+        },
+        requiredFields: ['campaign_id'],
+        isCampaignBased: true,
+        designDefaults: {
+          bg_color: '#ffffff',
+          p_color: '#374151',
+          s_color: '#6B7280',
+          b1_color: '#3B82F6',
+          b2_color: '#10B981',
+          b3_color: '#EF4444',
+          bt_color: '#ffffff',
+          bannerTitleColor: '#ffffff',
+          bannerSubtitleColor: '#ffffff',
+          heroTitleSize: '36px',
+          heroSubtitleSize: '18px',
+          sectionTitleSize: '28px',
+          bodyTextSize: '16px',
+          buttonTextSize: '16px',
+          cardTitleSize: '20px',
+          bannerTitleSize: '48px',
+          bannerSubtitleSize: '20px',
+          heroHeight: '500px',
+          sectionPadding: '80px',
+          cardRadius: '8px',
+          buttonRadius: '6px',
+          overlayOpacity: 0.4
+        },
+        booleanDefaults: {
+          show_progress: true,
+          show_donor_count: true,
+          show_days_left: true,
+          show_amount_grid: true
+        }
+      },
+      'donation-form': {
+        table: 'donation_forms',
+        folder: 'donation-forms',
+        images: {
+          bg_image: { category: 'background', required: false }
+        },
+        requiredFields: ['campaign_id', 'updated_by'],
+        isCampaignBased: true,
+        designDefaults: {
+          bg_color: '#ffffff',
+          p_color: '#374151',
+          s_color: '#6B7280',
+          t_color: '#111827',
+          b1_color: '#3B82F6',
+          heroTitleSize: '32px',
+          sectionTitleSize: '24px',
+          bodyTextSize: '16px',
+          buttonTextSize: '16px',
+          cardRadius: '8px',
+          buttonRadius: '6px'
+        },
+        booleanDefaults: {}
+      },
+      'thankyou-page': {
+        table: 'thankyou_pages',
+        folder: 'thankyou-pages',
+        images: {
+          bg_image: { category: 'background', required: false }
+        },
+        requiredFields: ['campaign_id', 'updated_by'],
+        isCampaignBased: true,
+        designDefaults: {
+          bg_color: '#ffffff',
+          p_color: '#374151',
+          s_color: '#6B7280'
+        },
+        booleanDefaults: {}
       }
     };
 
@@ -129,16 +208,39 @@ export class PageService extends BaseService {
   }
 
   /**
+   * Get organization ID for campaign-based pages
+   * @param {number} campaignId - Campaign ID
+   * @returns {Promise<number>} Organization ID
+   */
+  async getOrganizationIdFromCampaign(campaignId) {
+    const query = 'SELECT organization_id FROM campaigns WHERE id = ?';
+    const results = await this.executeQuery(query, [campaignId]);
+    
+    if (!results || results.length === 0) {
+      throw new NotFoundError('Campaign not found');
+    }
+    
+    return results[0].organization_id;
+  }
+
+  /**
    * Process and upload images for a page
    * @param {string} pageType - Type of page
-   * @param {number} organizationId - Organization ID
+   * @param {number} organizationId - Organization ID (for org-based pages)
+   * @param {number} campaignId - Campaign ID (for campaign-based pages)
    * @param {Object} files - Uploaded files from multer
    * @param {string|number} pageId - Page ID ('temp' for new pages)
    * @returns {Promise<Object>} Object with uploaded image paths
    */
-  async processPageImages(pageType, organizationId, files = {}, pageId = 'temp') {
+  async processPageImages(pageType, organizationId, campaignId, files = {}, pageId = 'temp') {
     const pageConfig = this.getPageSchema(pageType);
     const uploadedPaths = {};
+
+    // For campaign-based pages, get organization ID from campaign
+    let actualOrgId = organizationId;
+    if (pageConfig.isCampaignBased && campaignId) {
+      actualOrgId = await this.getOrganizationIdFromCampaign(campaignId);
+    }
 
     // Process each configured image field
     for (const [fieldName, imageConfig] of Object.entries(pageConfig.images)) {
@@ -149,7 +251,7 @@ export class PageService extends BaseService {
           
           // Upload to appropriate location
           const uploadPath = await imageService.uploadImage(
-            organizationId,
+            actualOrgId,
             pageConfig.folder,
             pageId,
             imageConfig.category,
@@ -189,24 +291,31 @@ export class PageService extends BaseService {
   /**
    * Move images from temporary location to final page location
    * @param {string} pageType - Type of page
-   * @param {number} organizationId - Organization ID
+   * @param {number} organizationId - Organization ID (for org-based pages)
+   * @param {number} campaignId - Campaign ID (for campaign-based pages)
    * @param {Object} tempPaths - Temporary image paths
    * @param {number} finalPageId - Final page ID
    * @param {Object} originalFiles - Original file objects from multer
    */
-  async moveImagesFromTemp(pageType, organizationId, tempPaths, finalPageId, originalFiles) {
+  async moveImagesFromTemp(pageType, organizationId, campaignId, tempPaths, finalPageId, originalFiles) {
     if (!imageService.getStatus().isAzureConfigured) {
       return;
     }
 
     const pageConfig = this.getPageSchema(pageType);
 
+    // For campaign-based pages, get organization ID from campaign
+    let actualOrgId = organizationId;
+    if (pageConfig.isCampaignBased && campaignId) {
+      actualOrgId = await this.getOrganizationIdFromCampaign(campaignId);
+    }
+
     try {
       for (const [fieldName, tempPath] of Object.entries(tempPaths)) {
         if (tempPath && originalFiles[fieldName]?.[0]) {
           const imageConfig = pageConfig.images[fieldName];
           await imageService.updateImage(
-            organizationId,
+            actualOrgId,
             pageConfig.folder,
             finalPageId,
             imageConfig.category,
@@ -366,44 +475,66 @@ export class PageService extends BaseService {
   /**
    * Create a new page of specified type
    * @param {string} pageType - Type of page to create
-   * @param {number} organizationId - Organization ID
+   * @param {number} organizationId - Organization ID (for org-based pages)
+   * @param {number} campaignId - Campaign ID (for campaign-based pages)  
    * @param {Object} pageData - Page content and design data
    * @param {Object} files - Uploaded files
    * @returns {Promise<Object>} Created page data
    */
-  async createPage(pageType, organizationId, pageData, files = {}) {
-    // Validate page data
-    this.validatePageData(pageType, { ...pageData, organization_id: organizationId });
+  async createPage(pageType, organizationId, campaignId, pageData, files = {}) {
+    const pageConfig = this.getPageSchema(pageType);
+    
+    // For campaign-based pages, validate campaign_id instead of organization_id
+    if (pageConfig.isCampaignBased) {
+      this.validatePageData(pageType, { ...pageData, campaign_id: campaignId });
+    } else {
+      this.validatePageData(pageType, { ...pageData, organization_id: organizationId });
+    }
 
     // Apply default design settings
     const dataWithDefaults = this.applyDefaultDesignSettings(pageType, pageData);
 
     // Process image uploads
-    const imagePaths = await this.processPageImages(pageType, organizationId, files, 'temp');
+    const imagePaths = await this.processPageImages(pageType, organizationId, campaignId, files, 'temp');
 
     try {
       // Build and execute database query
-      const { sql, values } = this.buildPageQuery(pageType, 'INSERT', {
-        organization_id: organizationId,
-        ...dataWithDefaults
-      }, imagePaths);
+      let queryData;
+      if (pageConfig.isCampaignBased) {
+        queryData = {
+          campaign_id: campaignId,
+          ...dataWithDefaults
+        };
+      } else {
+        queryData = {
+          organization_id: organizationId,
+          ...dataWithDefaults
+        };
+      }
+
+      const { sql, values } = this.buildPageQuery(pageType, 'INSERT', queryData, imagePaths);
 
       const result = await this.executeQuery(sql, values);
       const pageId = result.insertId;
 
       // Move images from temp to final location
-      await this.moveImagesFromTemp(pageType, organizationId, imagePaths, pageId, files);
+      await this.moveImagesFromTemp(pageType, organizationId, campaignId, imagePaths, pageId, files);
 
-      // Update organization status
-      try {
-        await checkAndUpdateOrganizationStatus(organizationId);
-      } catch (statusError) {
-        console.warn('Failed to update organization status:', statusError.message);
+      // Update organization status (for organization-based pages)
+      if (!pageConfig.isCampaignBased) {
+        try {
+          // Use dynamic import to avoid circular dependency
+          const { getOrganizationStatusService } = await import('./ServiceRegistry.js');
+          const orgStatusService = getOrganizationStatusService();
+          await orgStatusService.checkAndUpdateOrganizationStatus(organizationId);
+        } catch (statusError) {
+          console.warn('Failed to update organization status:', statusError.message);
+        }
       }
 
       return {
         id: pageId,
-        organization_id: organizationId,
+        ...(pageConfig.isCampaignBased ? { campaign_id: campaignId } : { organization_id: organizationId }),
         ...dataWithDefaults,
         ...imagePaths
       };
@@ -426,11 +557,15 @@ export class PageService extends BaseService {
   async updatePage(pageType, pageId, pageData, files = {}) {
     const pageConfig = this.getPageSchema(pageType);
 
-    // Validate that page exists
-    const existingPage = await this.executeQuery(
-      `SELECT * FROM ${pageConfig.table} WHERE id = ?`,
-      [pageId]
-    );
+    // For campaign-based pages, get the page with campaign info
+    let query;
+    if (pageConfig.isCampaignBased) {
+      query = `SELECT p.*, c.organization_id FROM ${pageConfig.table} p JOIN campaigns c ON p.campaign_id = c.id WHERE p.id = ?`;
+    } else {
+      query = `SELECT * FROM ${pageConfig.table} WHERE id = ?`;
+    }
+
+    const existingPage = await this.executeQuery(query, [pageId]);
 
     if (!existingPage || existingPage.length === 0) {
       throw new NotFoundError(`${pageType} page`);
@@ -443,7 +578,9 @@ export class PageService extends BaseService {
     const dataWithDefaults = this.applyDefaultDesignSettings(pageType, pageData);
 
     // Process new image uploads if any
-    const imagePaths = await this.processPageImages(pageType, existingPage[0].organization_id, files, pageId);
+    const organizationId = existingPage[0].organization_id;
+    const campaignId = pageConfig.isCampaignBased ? existingPage[0].campaign_id : null;
+    const imagePaths = await this.processPageImages(pageType, organizationId, campaignId, files, pageId);
 
     try {
       // Build and execute update query
@@ -455,7 +592,7 @@ export class PageService extends BaseService {
       await this.executeQuery(sql, values);
 
       // Move new images from temp to final location
-      await this.moveImagesFromTemp(pageType, existingPage[0].organization_id, imagePaths, pageId, files);
+      await this.moveImagesFromTemp(pageType, organizationId, campaignId, imagePaths, pageId, files);
 
       return {
         id: pageId,
@@ -471,18 +608,23 @@ export class PageService extends BaseService {
   }
 
   /**
-   * Get a page by ID or organization ID
+   * Get a page by ID, organization ID, or campaign ID
    * @param {string} pageType - Type of page
-   * @param {number} identifier - Page ID or organization ID
-   * @param {string} identifierType - 'id' or 'organization_id'
+   * @param {number} identifier - Page ID, organization ID, or campaign ID
+   * @param {string} identifierType - 'id', 'organization_id', or 'campaign_id'
    * @returns {Promise<Object>} Page data with image URLs
    */
   async getPage(pageType, identifier, identifierType = 'organization_id') {
     const pageConfig = this.getPageSchema(pageType);
-    const validIdentifierTypes = ['id', 'organization_id'];
+    const validIdentifierTypes = ['id', 'organization_id', 'campaign_id'];
 
     if (!validIdentifierTypes.includes(identifierType)) {
       throw new ValidationError(`Invalid identifier type: ${identifierType}`);
+    }
+
+    // For campaign-based pages, use appropriate identifier type
+    if (pageConfig.isCampaignBased && identifierType === 'organization_id') {
+      identifierType = 'campaign_id';
     }
 
     const query = `SELECT * FROM ${pageConfig.table} WHERE ${identifierType} = ?`;
@@ -577,5 +719,42 @@ export class PageService extends BaseService {
 
   async getFooterPage(organizationId) {
     return await this.getPage('footer', organizationId);
+  }
+
+  // Convenience methods for donation-related pages
+  async createDonationPage(campaignId, pageData, files) {
+    return await this.createPage('donation-page', null, campaignId, pageData, files);
+  }
+
+  async createDonationForm(campaignId, pageData, files) {
+    return await this.createPage('donation-form', null, campaignId, pageData, files);
+  }
+
+  async createThankYouPage(campaignId, pageData, files) {
+    return await this.createPage('thankyou-page', null, campaignId, pageData, files);
+  }
+
+  async updateDonationPage(pageId, pageData, files) {
+    return await this.updatePage('donation-page', pageId, pageData, files);
+  }
+
+  async updateDonationForm(pageId, pageData, files) {
+    return await this.updatePage('donation-form', pageId, pageData, files);
+  }
+
+  async updateThankYouPage(pageId, pageData, files) {
+    return await this.updatePage('thankyou-page', pageId, pageData, files);
+  }
+
+  async getDonationPage(campaignId) {
+    return await this.getPage('donation-page', campaignId, 'campaign_id');
+  }
+
+  async getDonationForm(campaignId) {
+    return await this.getPage('donation-form', campaignId, 'campaign_id');
+  }
+
+  async getThankYouPage(campaignId) {
+    return await this.getPage('thankyou-page', campaignId, 'campaign_id');
   }
 }
