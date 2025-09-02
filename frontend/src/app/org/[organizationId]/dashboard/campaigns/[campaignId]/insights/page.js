@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
+import { getCampaignService } from "@/app/services"
 
 const Insights = () => {
    const params = useParams()
@@ -13,12 +14,9 @@ const Insights = () => {
       const fetchInsights = async () => {
          try {
             setLoading(true)
-            const response = await fetch(`/api/campaign/insights/${campaignId}`)
-            if (!response.ok) {
-               throw new Error('Failed to fetch campaign insights')
-            }
-            const data = await response.json()
-            setInsights(data.data)
+            const campaignService = getCampaignService();
+            const response = await campaignService.getCampaignInsights(campaignId)
+            setInsights(response)
          } catch (err) {
             console.error('Error fetching campaign insights:', err)
             setError(err.message)

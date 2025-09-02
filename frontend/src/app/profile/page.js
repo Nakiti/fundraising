@@ -1,7 +1,7 @@
 "use client"
 import { useState, useContext, useEffect } from "react"
 import { AuthContext } from "../context/authContext"
-import { Services, useApi, useToast } from "../services";
+import { getUserService, useApi, useToast } from "../services";
 import Link from "next/link";
 import { FiRefreshCw, FiExternalLink, FiUsers } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
@@ -11,13 +11,16 @@ const Profile = () => {
    const { showError, showSuccess } = useToast()
    const [hasInitiatedFetch, setHasInitiatedFetch] = useState(false)
 
+   // Get UserService instance
+   const userService = getUserService();
+
    // API hook for fetching user organizations
    const { 
       data: organizations, 
       loading, 
       error, 
       execute: fetchOrganizations 
-   } = useApi(Services.User.getUserOrganizations);
+   } = useApi(userService.getUserOrganizations.bind(userService));
 
    useEffect(() => {
       // Wait for authentication to be fully loaded and user to be available
@@ -25,7 +28,7 @@ const Profile = () => {
          setHasInitiatedFetch(true);
          fetchOrganizations(currentUser.id);
       }
-   }, [currentUser?.id, isLoggedIn, authLoading, fetchOrganizations]); // Added fetchOrganizations to dependencies
+   }, []); // Added fetchOrganizations to dependencies
 
    // Add a retry mechanism if organizations haven't loaded after a delay
    useEffect(() => {

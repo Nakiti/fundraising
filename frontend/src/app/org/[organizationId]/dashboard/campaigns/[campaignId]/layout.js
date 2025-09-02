@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
-import { getCampaignDetails } from "@/app/services/fetchService";
+import { getCampaignService } from "@/app/services";
 import HeaderBar from "./components/headerBar";
 
 const CampaignPageLayout = ({children, params}) => {
@@ -13,10 +13,11 @@ const CampaignPageLayout = ({children, params}) => {
       const fetchData = async() => {
          try {
             console.log(campaignId)
-            const response = await getCampaignDetails(campaignId)
+            const campaignService = getCampaignService();
+            const response = await campaignService.getCampaignDetails(campaignId)
             console.log("response from campaign ", response)
-            setCampaign(response)
-            setCampaignType(response.type)
+            setCampaign(response.data)
+            setCampaignType(response.data.type)
          } catch (err) {
             console.log(err)
          }

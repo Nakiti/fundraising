@@ -2,7 +2,7 @@
 import SectionManager from "@/app/components/sectionManager"
 import { useContext, useState } from "react"
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
-import { PageUpdateService } from "@/app/services/updateServices"
+import { getPageService } from "@/app/services"
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
 import { validateActiveSections } from "@/app/utils/pageValidation"
@@ -30,14 +30,17 @@ const ThankYouPage = () => {
             return
          }
          
+         // Get service instance
+         const pageService = getPageService();
+         
          // Update thank you page
-         await PageUpdateService.updateThankYouPage(campaignId, thankPageInputs)
+         await pageService.updateThankYouPage(campaignId, thankPageInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = thankYouPageSections.filter(section => section.id && section.id > 0)
          if (validSections.length > 0) {
             const sectionPromises = validSections.map(section => 
-               PageUpdateService.updatePageSection(section.id, section.active)
+               pageService.updatePageSection(section.id, section.active)
             )
             await Promise.all(sectionPromises)
          }

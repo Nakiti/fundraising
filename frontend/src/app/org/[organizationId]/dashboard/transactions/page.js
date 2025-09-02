@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { TransactionService } from "@/app/services/fetchService";
+import { getTransactionService } from "@/app/services";
 import { errorHandler } from "@/app/services/apiClient";
 import ErrorModal from "@/app/components/errorModal";
 import Searchbar from "./components/searchbar";
@@ -18,7 +18,8 @@ const Transactions = ({params}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await TransactionService.getTransactionsByOrg(organizationId)
+            const transactionService = getTransactionService();
+            const response = await transactionService.getTransactionsByOrg(organizationId)
             console.log(response)
             setData(response)
          } catch (err) {

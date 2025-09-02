@@ -5,9 +5,7 @@ import { useContext, useState, useEffect } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
 import ErrorModal from "@/app/components/errorModal"
-import { CampaignUpdateService, PageUpdateService } from "@/app/services/updateServices"
-import { CampaignService } from "@/app/services/fetchService"
-import { CampaignCreateService } from "@/app/services/createServices"
+import { getCampaignService, getPageService, getDesignationService } from "@/app/services"
 import { errorHandler } from "@/app/services/apiClient"
 import { DonationPageContext, DonationPageContextProvider } from "@/app/context/campaignPages/donationPageContext"
 import { TicketPageContext, TicketPageContextProvider } from "@/app/context/campaignPages/ticketPageContext"
@@ -142,7 +140,8 @@ const EditLayout = ({params, children}) => {
       }
 
       try {
-         const response = await CampaignUpdateService.updateCampaignDetails(campaignId, campaignDetails, "active", currentUser)
+         const campaignService = getCampaignService();
+         const response = await campaignService.updateCampaign(campaignId, campaignDetails)
          if (response) {
             setError(true)
             setErrorMessage(response)
@@ -166,7 +165,8 @@ const EditLayout = ({params, children}) => {
       }
       
       try {
-         const response = await CampaignUpdateService.updateCampaignDetails(campaignId, campaignDetails, 'inactive', currentUser);
+         const campaignService = getCampaignService();
+         const response = await campaignService.updateCampaign(campaignId, campaignDetails);
          if (response) {
             setError(true)
             setErrorMessage(response)
@@ -185,42 +185,44 @@ const EditLayout = ({params, children}) => {
    const handleCampaignUpdates = async() => {
       try {
          const updatePromises = []
+         const campaignService = getCampaignService();
+         const pageService = getPageService();
 
          // Campaign type specific updates
          if (campaignType === "crowdfunding") {
-            updatePromises.push(CampaignUpdateService.updateDonationPage(campaignId, donationPageInputs))
+            updatePromises.push(pageService.updateDonationPage(campaignId, donationPageInputs))
             
             if (donationPageSections) {
                updatePromises.push(...donationPageSections.map(section => 
-                  CampaignUpdateService.updatePageSection(section.id, section.active)
+                  pageService.updatePageSection(section.id, section.active)
                ))
             }
          } else if (campaignType === "ticketed-event") {
             updatePromises.push(
-               CampaignUpdateService.updateTicketPage(campaignId, ticketPageInputs),
-               CampaignUpdateService.updateTicketPurchasePage(campaignId, ticketPurchaseInputs, currentUser.id),
+               pageService.updateTicketPage(campaignId, ticketPageInputs),
+               pageService.updateTicketPurchasePage(campaignId, ticketPurchaseInputs, currentUser.id),
                updateCampaignTickets()
             )
             
             if (ticketPageSections) {
                updatePromises.push(...ticketPageSections.map(section => 
-                  CampaignUpdateService.updatePageSection(section.id, section.active)
+                  pageService.updatePageSection(section.id, section.active)
                ))
             }
          } else if (campaignType === "peer-to-peer") {
             updatePromises.push(
-               CampaignUpdateService.updatePeerLandingPage(campaignId, peerLandingPageInputs),
-               CampaignUpdateService.updatePeerFundraisingPage(campaignId, peerFundraisingPageInputs, currentUser.id)
+               pageService.updatePeerLandingPage(campaignId, peerLandingPageInputs),
+               pageService.updatePeerFundraisingPage(campaignId, peerFundraisingPageInputs, currentUser.id)
             )
             
             if (peerLandingPageSections) {
                updatePromises.push(...peerLandingPageSections.map(section => 
-                  CampaignUpdateService.updatePageSection(section.id, section.active)
+                  pageService.updatePageSection(section.id, section.active)
                ))
             }
             if (peerFundraisingPageSections) {
                updatePromises.push(...peerFundraisingPageSections.map(section => 
-                  CampaignUpdateService.updatePageSection(section.id, section.active)
+                  pageService.updatePageSection(section.id, section.active)
                ))
             }
          }
@@ -229,19 +231,19 @@ const EditLayout = ({params, children}) => {
          updatePromises.push(
             updateCustomQuestions(),
             updateCampaignDesignations(),
-            CampaignUpdateService.updateThankYouPage(campaignId, thankPageInputs),
-            CampaignUpdateService.updateDonationForm(campaignId, donationFormInputs, currentUser.id)
+            pageService.updateThankYouPage(campaignId, thankPageInputs),
+            pageService.updateDonationForm(campaignId, donationFormInputs, currentUser.id)
          )
 
          // Add section updates for thank you page and donation form
          if (thankyouPageSections) {
             updatePromises.push(...thankyouPageSections.map(section => 
-               CampaignUpdateService.updatePageSection(section.id, section.active)
+               pageService.updatePageSection(section.id, section.active)
             ))
          }
          if (donationFormSections) {
             updatePromises.push(...donationFormSections.map(section => 
-               CampaignUpdateService.updatePageSection(section.id, section.active)
+               pageService.updatePageSection(section.id, section.active)
             ))
          }
 
@@ -256,15 +258,17 @@ const EditLayout = ({params, children}) => {
 
    const updateCampaignDesignations = async() => {
       try {
-         const existingRelations = await CampaignService.getCampaignDesignations(campaignId)
+         const campaignService = getCampaignService();
+         const designationService = getDesignationService();
+         const existingRelations = await campaignService.getCampaignDesignations(campaignId)
          const relationsToAdd = selectedDesignations.filter(designation =>!existingRelations.includes(designation))
          const relationsToRemove = existingRelations.filter(designation =>!selectedDesignations.includes(designation))
 
          if (relationsToAdd.length > 0) {
-            await CampaignCreateService.createCampaignDesignation(campaignId, relationsToAdd)
+            await designationService.addCampaignDesignation(campaignId, relationsToAdd)
          }
          if (relationsToRemove.length > 0) {
-            await CampaignService.deleteCampaignDesignationBatch(relationsToRemove)
+            await designationService.removeCampaignDesignation(relationsToRemove)
          }
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -274,15 +278,16 @@ const EditLayout = ({params, children}) => {
 
    const updateCustomQuestions = async() => {
       try {
-         const existingQuestions = await CampaignService.getCustomQuestions(campaignId)
+         const campaignService = getCampaignService();
+         const existingQuestions = await campaignService.getCustomQuestions(campaignId)
          const questionsToAdd = customQuestions.filter(item => !existingQuestions.includes(item))
          const questionsToRemove = existingQuestions.filter(item => !customQuestions.includes(item))
 
          if (questionsToAdd.length > 0) {
-            await CampaignCreateService.createCustomQuestion(campaignId, questionsToAdd)
+            await campaignService.addCampaignQuestion(campaignId, questionsToAdd)
          }
          if (questionsToRemove.length > 0) {
-            await CampaignService.deleteCampaignQuestionsBatch(questionsToRemove)
+            await campaignService.removeCampaignQuestion(questionsToRemove)
          }
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -292,15 +297,16 @@ const EditLayout = ({params, children}) => {
 
    const updateCampaignTickets = async() => {
       try {
-         const existingTickets = await CampaignService.getCampaignTickets(campaignId)
+         const campaignService = getCampaignService();
+         const existingTickets = await campaignService.getCampaignTickets(campaignId)
          const ticketsToAdd = tickets.filter(item => !existingTickets.includes(item))
          const ticketsToRemove = existingTickets.filter(item => !tickets.includes(item))
 
          if (ticketsToAdd.length > 0) {
-            await CampaignCreateService.createCampaignTicket(campaignId, ticketsToAdd)
+            await campaignService.addCampaignTicket(campaignId, ticketsToAdd)
          }
          if (ticketsToRemove.length > 0) {
-            await CampaignService.deleteCampaignTicketsBatch(ticketsToRemove)
+            await campaignService.removeCampaignTicket(ticketsToRemove)
          }
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -316,7 +322,8 @@ const EditLayout = ({params, children}) => {
       }
       
       try {
-         await CampaignUpdateService.deactivateCampaign(campaignId, currentUser.id);
+         const campaignService = getCampaignService();
+         await campaignService.deactivateCampaign(campaignId, currentUser.id);
          router.push(`/org/${organizationId}/dashboard/campaigns`)
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -362,12 +369,12 @@ const EditLayout = ({params, children}) => {
          />
          {error && <ErrorModal message={errorMessage} setError={setError} />}
          <div className="py-0">
-            <DonationPageContextProvider campaignId={campaignId}>
+            <DonationPageContextProvider campaignId={campaignId} organizationId={organizationId}>
                {/* <TicketPageContextProvider campaignId={campaignId}>
                   <PeerLandingPageContextProvider campaignId={campaignId}>
                      <PeerFundraisingPageContextProvider campaignId={campaignId}> */}
-                        <DonationFormContextProvider campaignId={campaignId}>
-                           <ThankYouPageContextProvider campaignId={campaignId}>
+                        <DonationFormContextProvider campaignId={campaignId} organizationId={organizationId}>
+                           <ThankYouPageContextProvider campaignId={campaignId} organizationId={organizationId}>
                               {/* <TicketPurchasePageContextProvider campaignId={campaignId}> */}
                                  {children}
                               {/* </TicketPurchasePageContextProvider> */}

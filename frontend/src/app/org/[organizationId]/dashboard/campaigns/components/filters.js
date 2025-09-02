@@ -4,7 +4,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import { CampaignService } from "@/app/services/fetchService";
+import { getCampaignService } from "@/app/services";
 import { errorHandler } from "@/app/services/apiClient";
 
 /*
@@ -43,11 +43,12 @@ const Filters = ({setData, organizationId}) => {
       setEndDate(end)
 
       try {
+         const campaignService = getCampaignService();
          if (start && end) {
-            const response = await CampaignService.getCampaignsByDateRange(start, end, organizationId);
+            const response = await campaignService.getCampaignsByDateRange(start, end, organizationId);
             setData(response);
          } else {
-            const response = await CampaignService.getFilteredCampaigns(organizationId, "all")
+            const response = await campaignService.getFilteredCampaigns(organizationId, { status: "all" })
             setData(response)
          }
       } catch (err) {
@@ -59,7 +60,8 @@ const Filters = ({setData, organizationId}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await CampaignService.getFilteredCampaigns(organizationId, status, type)
+            const campaignService = getCampaignService();
+            const response = await campaignService.getFilteredCampaigns(organizationId, { status, type })
             setData(response)
          } catch (err) {
             const handledError = errorHandler.handle(err)

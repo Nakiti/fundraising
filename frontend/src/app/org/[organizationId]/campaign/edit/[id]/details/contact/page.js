@@ -2,7 +2,7 @@
 import { useContext, useState } from "react";
 import { CampaignContext } from "@/app/context/campaignContext";
 import { AuthContext } from "@/app/context/authContext";
-import { CampaignUpdateService } from "@/app/services/updateServices";
+import { getCampaignService } from "@/app/services";
 import { errorHandler } from "@/app/services/apiClient";
 import ErrorModal from "@/app/components/errorModal";
 
@@ -14,7 +14,8 @@ const CampaignContact = () => {
 
    const handleSave = async() => {
              try {
-                    await CampaignUpdateService.updateCampaignDetails(campaignId, campaignDetails, campaignStatus, currentUser);
+                    const campaignService = getCampaignService();
+                    await campaignService.updateCampaign(campaignId, campaignDetails);
            markChangesAsSaved();
            markPageChangesAsSaved('contact');
       } catch (err) {

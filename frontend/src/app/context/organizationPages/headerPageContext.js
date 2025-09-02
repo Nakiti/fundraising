@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState } from "react";
+"use client";
+import { getPageService } from "@/app/services";
+import { createContext, useContext, useState, useEffect } from "react";
 import LogoSection from "@/app/org/[organizationId]/page/header/components/sections/logoSection";
-import { PageService } from "@/app/services/fetchService";
 import useFormInput from "@/app/hooks/useFormInput";
 
 export const HeaderPageContext = createContext()
@@ -16,30 +17,40 @@ export const HeaderPageContextProvider = ({organizationId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await PageService.getHeaderPage(organizationId)
-            const headerPageId = response.id
+            const pageService = getPageService();
+            const response = await pageService.getHeaderPage(organizationId)
+            console.log('Header page response:', response);
+            const headerPageId = response.data.id
             setInputs({
-               id: response.id,
-               // Basic content
-               logo: response.logo || "",
-               organization_name: response.organization_name || "",
-               tagline: response.tagline || "",
+               // Basic Content
+               title: response.title || "",
+               subtitle: response.subtitle || "",
                description: response.description || "",
-               // Basic styling
-               bgColor: response.bgColor || "#FFFFFF",
-               textColor: response.textColor || "#000000",
-               linkColor: response.linkColor || "#3B82F6",
-               fontSize: response.fontSize || "16px",
-               borderBottom: response.borderBottom !== false,
-               borderColor: response.borderColor || "#E5E7EB",
-               shadow: response.shadow !== false,
-               active: response.active || false
+               
+               // Colors
+               bg_color: response.bg_color || "#ffffff",
+               p_color: response.p_color || "#1f2937",
+               s_color: response.s_color || "#6b7280",
+               b_color: response.b_color || "#3b82f6",
+               bt_color: response.bt_color || "#ffffff",
+               
+               // Typography
+               heroTitleSize: response.heroTitleSize || "36",
+               heroSubtitleSize: response.heroSubtitleSize || "16",
+               sectionTitleSize: response.sectionTitleSize || "28",
+               bodyTextSize: response.bodyTextSize || "16",
+               buttonTextSize: response.buttonTextSize || "16",
+               
+               // Layout
+               cardRadius: response.cardRadius || "4",
+               buttonRadius: response.buttonRadius || "4",
             })
 
-            const sectionsResponse = await PageService.getPageSectionsByPage(organizationId, 'header', headerPageId)
+            // Fetch page sections for the header
+            const sectionsResponse = await pageService.getPageSectionsByPage(organizationId, 'header', headerPageId)
             setSections((prevSections) => {
                return prevSections.map(section => {
-                  const match = sectionsResponse.find((item) => item.name == section.name)
+                  const match = sectionsResponse.data.find((item) => item.name == section.name)
                   return match ? { ...section, id: match.id, active: match.active } : {...section}
                })
             })

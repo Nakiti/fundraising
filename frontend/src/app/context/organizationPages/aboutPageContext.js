@@ -1,6 +1,7 @@
-import { createContext, useEffect, useState } from "react";
+"use client";
+import { getPageService } from "@/app/services";
+import { createContext, useContext, useState, useEffect } from "react";
 import useFormInput from "@/app/hooks/useFormInput";
-import { PageService } from "@/app/services/fetchService";
 import BannerSection from "@/app/org/[organizationId]/page/about/components/sections/bannerSection";
 import StorySection from "@/app/org/[organizationId]/page/about/components/sections/storySection";
 import WhatSection from "@/app/org/[organizationId]/page/about/components/sections/whatSection";
@@ -26,86 +27,42 @@ export const AboutPageContextProvider = ({organizationId, children}) => {
          if (!organizationId) return;
          
          try {
-            const response = await PageService.getAboutPage(organizationId)
-            const aboutPageId = response.id
+            const pageService = getPageService();
+            const response = await pageService.getAboutPage(organizationId)
+            console.log('About page response:', response);
+            const aboutPageId = response.data.id
             
             setInputs({
-               // Page ID for updates
-               id: aboutPageId,
-               organizationId: organizationId,
-               
-               // Content fields
+               // Basic Content
                title: response.title || "",
+               subtitle: response.subtitle || "",
                description: response.description || "",
-               headline: response.headline || "",
-               heroSubtitle: response.heroSubtitle || "",
-               storyTitle: response.storyTitle || "",
-               storyText: response.storyText || "",
-               aboutText: response.aboutText || "",
-               whatText: response.whatText || "",
-               whyText: response.whyText || "",
-               teamText: response.teamText || "",
-               missionText: response.missionText || "",
-               visionText: response.visionText || "",
-               valuesText: response.valuesText || "",
                
-               // Images
-               bgImage: response.bgImage || "", // Now contains SAS URL
-               storyImage: response.storyImage || "", // Now contains SAS URL
-               aboutImage: response.aboutImage || "", // Now contains SAS URL
-               teamImage: response.teamImage || "", // Now contains SAS URL
-               missionImage: response.missionImage || "", // Now contains SAS URL
-               visionImage: response.visionImage || "", // Now contains SAS URL
-               valuesImage: response.valuesImage || "", // Now contains SAS URL
+               // Colors
+               bg_color: response.bg_color || "#ffffff",
+               p_color: response.p_color || "#1f2937",
+               s_color: response.s_color || "#6b7280",
+               b_color: response.b_color || "#3b82f6",
+               bt_color: response.bt_color || "#ffffff",
                
-               // Color customization
-               bg_color: response.bg_color || "#FFFFFF",
-               p_color: response.p_color || "#000000",
-               s_color: response.s_color || "#666666",
-               hero_subtitle_color: response.hero_subtitle_color || "#ffffff",
-               c_color: response.c_color || "#FFFFFF",
-               ct_color: response.ct_color || "#000000",
-               b_color: response.b_color || "#1F2937",
-               bt_color: response.bt_color || "#FFFFFF",
-               banner_title_text: response.banner_title_text || "#ffffff",
-               banner_subtitle_text: response.banner_subtitle_text || "#ffffff",
+               // Typography
+               heroTitleSize: response.heroTitleSize || "36",
+               heroSubtitleSize: response.heroSubtitleSize || "16",
+               sectionTitleSize: response.sectionTitleSize || "28",
+               bodyTextSize: response.bodyTextSize || "16",
+               buttonTextSize: response.buttonTextSize || "16",
                
-               // Font sizes
-               heroTitleSize: response.hero_title_size || "36px",
-               heroSubtitleSize: response.hero_subtitle_size || "16px",
-               sectionTitleSize: response.section_title_size || "28px",
-               bodyTextSize: response.body_text_size || "14px",
-               buttonTextSize: response.button_text_size || "14px",
-               cardTitleSize: response.card_title_size || "18px",
-               
-               // Layout & spacing
-               heroHeight: response.hero_height || "500px",
-               sectionPadding: response.section_padding || "80px",
-               cardRadius: response.card_radius || "4px",
-               buttonRadius: response.button_radius || "4px",
-               
-               // Visual effects
-               overlayOpacity: response.overlay_opacity || "0.3",
-               accentColor: response.accent_color || "#1F2937",
-               
-               // Element visibility toggles
-               showVideoButton: response.show_video_button !== false,
-               showHeroIcons: response.show_hero_icons !== false,
-               showFeatureIcons: response.show_feature_icons !== false,
-               showTeamPhotos: response.show_team_photos !== false,
-               showMissionSection: response.show_mission_section !== false,
-               showVisionSection: response.show_vision_section !== false,
-               showValuesSection: response.show_values_section !== false,
-               showHoverEffects: response.show_hover_effects !== false,
-               
-               // Status
-               active: response.active || false
+               // Layout
+               cardRadius: response.cardRadius || "4",
+               buttonRadius: response.buttonRadius || "4",
             })
 
-            const sectionsResponse = await PageService.getPageSectionsByPage(organizationId, 'about', aboutPageId)
+            // Fetch page sections for the about page
+            const sectionsResponse = await pageService.getPageSectionsByPage(organizationId, 'about', aboutPageId)
+            console.log('Sections response:', sectionsResponse)
             setSections((prevSections) => {
                return prevSections.map(section => {
-                  const match = sectionsResponse.find((item) => item.name == section.name)
+                  const match = sectionsResponse.data.find((item) => item.name == section.name)
                   return match ? { ...section, id: match.id, active: match.active } : {...section}
                })
             })

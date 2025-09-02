@@ -1,6 +1,6 @@
 "use client"
+import { getTransactionService } from "@/app/services"
 import { useState, useEffect } from "react"
-import { getTransactionsByCampaign } from "@/app/services/fetchService"
 import { FaTrophy, FaClock, FaHeart } from "react-icons/fa"
 
 const DonationLeaderboard = ({ campaignId, display }) => {
@@ -12,7 +12,8 @@ const DonationLeaderboard = ({ campaignId, display }) => {
       const fetchTransactions = async () => {
          try {
             setLoading(true)
-            const response = await getTransactionsByCampaign(campaignId)
+            const transactionService = getTransactionService();
+            const response = await transactionService.getTransactionsByCampaign(campaignId)
             // Filter only completed transactions
             const completedTransactions = response.filter(t => t.status === 'completed')
             setTransactions(completedTransactions)

@@ -1,5 +1,5 @@
 "use client"
-import { getTransactionsByCampaign } from "@/app/services/fetchService"
+import { getTransactionService } from "@/app/services"
 import { useState, useEffect } from "react"
 
 /*
@@ -23,7 +23,8 @@ const Transactions = ({params}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await getTransactionsByCampaign(campaignId)
+            const transactionService = getTransactionService();
+            const response = await transactionService.getTransactionsByCampaign(campaignId)
             setData(response)
          } catch (err) {
             console.log(err)

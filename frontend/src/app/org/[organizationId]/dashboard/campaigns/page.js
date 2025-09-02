@@ -5,7 +5,7 @@ import Modal from "./components/modal"
 import { useState, useEffect, useContext } from "react"
 import Searchbar from "./components/searchbar"
 import Filters from "./components/filters"
-import { CampaignService } from "@/app/services/fetchService"
+import { getCampaignService } from "@/app/services"
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
 
@@ -26,8 +26,9 @@ const Campaigns = ({params}) => {
       */
       const fetchData = async() => {
          try {
-            const response = await CampaignService.getAllCampaigns(organizationId)
-            setData(response)
+            const campaignService = getCampaignService();
+         const response = await campaignService.getCampaignsByOrganization(organizationId)
+            setData(response.data)
             console.log(response)
          } catch (err) {
             const handledError = errorHandler.handle(err)

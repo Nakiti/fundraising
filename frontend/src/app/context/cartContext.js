@@ -1,6 +1,6 @@
 "use client"
 import { createContext, useContext, useReducer, useEffect } from 'react';
-import { getCampaignDesignations, getAllDesignations, getCampaignDetails, getCustomQuestions } from '@/app/services/fetchService';
+import { getCampaignService, getDesignationService } from '@/app/services';
 
 const CartContext = createContext();
 
@@ -189,11 +189,14 @@ export const CartContextProvider = ({ children, organizationId }) => {
 
       // Fetch all required data for the campaign
       console.log('Fetching campaign data...');
+      const campaignService = getCampaignService();
+      const designationService = getDesignationService();
+      
       const [campaignDetails, campaignDesignations, organizationDesignations, customQuestions] = await Promise.all([
-        getCampaignDetails(campaignId),
-        getCampaignDesignations(campaignId),
-        getAllDesignations(organizationId),
-        getCustomQuestions(campaignId)
+        campaignService.getCampaignDetails(campaignId),
+        campaignService.getCampaignDesignations(campaignId),
+        designationService.getAllDesignations(organizationId),
+        campaignService.getCustomQuestions(campaignId)
       ]);
 
       console.log('Fetched data:', { campaignDetails, campaignDesignations, organizationDesignations, customQuestions });

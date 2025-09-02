@@ -1,9 +1,8 @@
 "use client"
-import { getCampaign, getCampaignDetails } from "@/app/services/fetchService"
+import { getCampaignService } from "@/app/services"
 import { useState, useEffect, useContext } from "react"
 import Link from "next/link"
 import { AuthContext } from "@/app/context/authContext"
-import { deactivateCampaign } from "@/app/services/updateServices"
 import { FaExternalLinkAlt } from "react-icons/fa"
 
 /*
@@ -22,7 +21,8 @@ const CampaignPage = ({params}) => {
    */
    const handleDeactivate = async () => {
       try {
-         await deactivateCampaign(campaignId, currentUser.id)
+         const campaignService = getCampaignService();
+         await campaignService.deactivateCampaign(campaignId, currentUser.id)
          fetchData()
       } catch (err) {
          console.log(err)
@@ -37,10 +37,11 @@ const CampaignPage = ({params}) => {
       Description: get campaign
    */
    const fetchData = async() => {
-      const campaignResponse = await getCampaign(campaignId)
+      const campaignService = getCampaignService();
+      const campaignResponse = await campaignService.getCampaign(campaignId)
       console.log("campaign", campaignResponse)
-      setCampaign(campaignResponse)
-      setCampaignType(campaignResponse.type)
+      setCampaign(campaignResponse.data)
+      setCampaignType(campaignResponse.data.type)
    }
 
    return (

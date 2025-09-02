@@ -1,5 +1,5 @@
 "use client"
-import { Services, useApi, useToast } from "@/app/services";
+import { getOrganizationService, getCampaignService, useApi, useToast } from "@/app/services";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaArrowRight, FaHeart, FaUsers, FaCalendarAlt, FaChartLine } from "react-icons/fa";
@@ -13,9 +13,9 @@ const Campaigns = ({ params }) => {
   
   const { showError } = useToast();
 
-  // API hooks for data fetching
-  const { execute: fetchOrganization } = useApi(Services.Organization.getOrganization);
-  const { execute: fetchCampaigns } = useApi(Services.Campaign.getFilteredCampaigns);
+  // Get service instances
+  const organizationService = getOrganizationService();
+  const campaignService = getCampaignService();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,13 +23,13 @@ const Campaigns = ({ params }) => {
         setLoading(true);
         
         // Fetch organization data
-        const organizationResponse = await fetchOrganization(organizationId);
+        const organizationResponse = await organizationService.getOrganization(organizationId);
         if (organizationResponse) {
           setOrganization(organizationResponse);
         }
 
         // Fetch all active campaigns
-        const campaignResponse = await fetchCampaigns(organizationId, "active");
+        const campaignResponse = await campaignService.getFilteredCampaigns(organizationId, { status: "active" });
         if (campaignResponse) {
           setCampaigns(campaignResponse);
         }
@@ -43,7 +43,7 @@ const Campaigns = ({ params }) => {
     };
 
     fetchData();
-  }, [organizationId, fetchOrganization, fetchCampaigns, showError]);
+  }, [organizationId, organizationService, campaignService, showError]);
 
   // Show loading state
   if (loading) {

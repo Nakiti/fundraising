@@ -1,9 +1,8 @@
 "use client"
-import { Services, useApi, useToast } from "@/app/services";
-import { useEffect, useState, useRef, useContext } from "react";
-import Card from "./components/card";
-import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext";
-import { FaHeart, FaUsers, FaChartLine, FaArrowRight, FaPlay, FaStar, FaCheckCircle } from "react-icons/fa";
+import { getOrganizationService, getCampaignService, useApi, useToast } from "@/app/services";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { FaArrowRight, FaHeart, FaUsers, FaCalendarAlt, FaChartLine } from "react-icons/fa";
 import AddToCartButton from "@/app/components/AddToCartButton";
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -13,52 +12,45 @@ import { useRouter } from "next/navigation";
 const Organization = ({ params }) => {
   const organizationId = params.organizationId;
   const [organization, setOrganization] = useState(null);
-  const [campaigns, setCampaigns] = useState(null);
-  const campaignsRef = useRef(null)
-  const [visibleCampaigns, setVisibleCampaigns] = useState(3)
-  const router = useRouter()
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   const { showError } = useToast();
 
-  // API hooks for data fetching
-  const { execute: fetchOrganization, loading: orgLoading } = useApi(Services.Organization.getOrganization);
-  const { execute: fetchCampaigns, loading: campaignsLoading } = useApi(Services.Campaign.getFilteredCampaigns);
-
-   const showMoreCampaigns = () => {
-      setVisibleCampaigns((prev) => prev + 3);
-   };
-
-   const scrollToCampaigns = () => {
-      if (campaignsRef.current) {
-         campaignsRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-   };
+  // Get service instances
+  const organizationService = getOrganizationService();
+  const campaignService = getCampaignService();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+        
         // Fetch organization data
-        const organizationResponse = await fetchOrganization(organizationId);
+        const organizationResponse = await organizationService.getOrganization(organizationId);
         if (organizationResponse) {
           setOrganization(organizationResponse);
         }
 
-        // Fetch campaigns data
-        const campaignResponse = await fetchCampaigns(organizationId, "active");
+        // Fetch all active campaigns
+        const campaignResponse = await campaignService.getFilteredCampaigns(organizationId, { status: "active" });
         if (campaignResponse) {
           setCampaigns(campaignResponse);
         }
 
       } catch (err) {
         console.error('Error fetching organization data:', err);
-        showError('Error', 'Failed to load organization data. Please try again.');
+        showError('Error', 'Failed to load organization. Please try again.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [organizationId, fetchOrganization, fetchCampaigns, showError]);
+  }, [organizationId, organizationService, campaignService, showError]);
 
   // Show loading state
-  if (orgLoading || campaignsLoading) {
+  if (loading) {
     return (
       <div className="h-96 bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -74,52 +66,47 @@ const Organization = ({ params }) => {
       organization={organization} 
       campaigns={campaigns} 
       organizationId={organizationId}
-      campaignsRef={campaignsRef}
-      visibleCampaigns={visibleCampaigns}
-      showMoreCampaigns={showMoreCampaigns}
-      scrollToCampaigns={scrollToCampaigns}
     />
   );
 };
 
 // Separate component to use context
-const LandingPageContent = ({ organization, campaigns, organizationId, campaignsRef, visibleCampaigns, showMoreCampaigns, scrollToCampaigns }) => {
-  const { inputs, sections } = useContext(LandingPageContext);
+const LandingPageContent = ({ organization, campaigns, organizationId }) => {
   const router = useRouter();
 
   // Enhanced customization options
   const customStyles = {
-    heroHeight: inputs.heroHeight || "500px",
-    sectionPadding: inputs.sectionPadding || "80px",
-    cardRadius: inputs.cardRadius || "4px",
-    buttonRadius: inputs.buttonRadius || "4px",
-    fontFamily: inputs.fontFamily || "Inter, sans-serif",
-    accentColor: inputs.accentColor || "#1F2937",
-    overlayOpacity: inputs.overlayOpacity || "0.3",
+    heroHeight: organization?.inputs?.heroHeight || "500px",
+    sectionPadding: organization?.inputs?.sectionPadding || "80px",
+    cardRadius: organization?.inputs?.cardRadius || "4px",
+    buttonRadius: organization?.inputs?.buttonRadius || "4px",
+    fontFamily: organization?.inputs?.fontFamily || "Inter, sans-serif",
+    accentColor: organization?.inputs?.accentColor || "#1F2937",
+    overlayOpacity: organization?.inputs?.overlayOpacity || "0.3",
     // Font sizes
-    heroTitleSize: inputs.heroTitleSize || "36px",
-    heroSubtitleSize: inputs.heroSubtitleSize || "16px",
-    sectionTitleSize: inputs.sectionTitleSize || "28px",
-    bodyTextSize: inputs.bodyTextSize || "14px",
-    buttonTextSize: inputs.buttonTextSize || "14px",
-    cardTitleSize: inputs.cardTitleSize || "18px"
+    heroTitleSize: organization?.inputs?.heroTitleSize || "36px",
+    heroSubtitleSize: organization?.inputs?.heroSubtitleSize || "16px",
+    sectionTitleSize: organization?.inputs?.sectionTitleSize || "28px",
+    bodyTextSize: organization?.inputs?.bodyTextSize || "14px",
+    buttonTextSize: organization?.inputs?.buttonTextSize || "14px",
+    cardTitleSize: organization?.inputs?.cardTitleSize || "18px"
   }
 
   // Toggle states (default to true if not set)
-  const showVideoButton = inputs.showVideoButton !== false
-  const showHeroIcons = inputs.showHeroIcons !== false
-  const showFeatureIcons = inputs.showFeatureIcons !== false
-  const showCampaignBadges = inputs.showCampaignBadges !== false
-  const showTrustBadge = inputs.showTrustBadge !== false
-  const showProgressIndicators = inputs.showProgressIndicators !== false
-  const showStatistics = inputs.showStatistics !== false
-  const showHoverEffects = inputs.showHoverEffects !== false
+  const showVideoButton = organization?.inputs?.showVideoButton !== false
+  const showHeroIcons = organization?.inputs?.showHeroIcons !== false
+  const showFeatureIcons = organization?.inputs?.showFeatureIcons !== false
+  const showCampaignBadges = organization?.inputs?.showCampaignBadges !== false
+  const showTrustBadge = organization?.inputs?.showTrustBadge !== false
+  const showProgressIndicators = organization?.inputs?.showProgressIndicators !== false
+  const showStatistics = organization?.inputs?.showStatistics !== false
+  const showHoverEffects = organization?.inputs?.showHoverEffects !== false
 
   return (
     <div 
       className="bg-white w-full"
       style={{
-        backgroundColor: inputs.bg_color || '#ffffff',
+        backgroundColor: organization?.inputs?.bg_color || '#ffffff',
         fontFamily: customStyles.fontFamily
       }}
     >
@@ -127,7 +114,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
       <div className="relative w-full" style={{height: customStyles.heroHeight}}>
         <img
           className="w-full h-full object-cover"
-          src={inputs.bgImage || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
+          src={organization?.inputs?.bgImage || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
           alt="Organization"
         />
         <div 
@@ -140,28 +127,35 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <h1 
               className="font-bold text-white leading-tight" 
               style={{
-                color: inputs.p_color || '#ffffff',
+                color: organization?.inputs?.p_color || '#ffffff',
                 fontSize: customStyles.heroTitleSize
               }}
             >
-              {inputs.title || "Welcome to Our Organization"}
+              {organization?.inputs?.title || "Welcome to Our Organization"}
             </h1>
             <p 
               className="text-gray-100 max-w-3xl mx-auto leading-relaxed" 
               style={{
-                color: inputs.p_color || '#ffffff',
+                color: organization?.inputs?.p_color || '#ffffff',
                 fontSize: customStyles.heroSubtitleSize
               }}
             >
-              {inputs.description || "We're dedicated to making a positive impact in our community through innovative programs and dedicated service."}
+              {organization?.inputs?.description || "We're dedicated to making a positive impact in our community through innovative programs and dedicated service."}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
               <button 
-                onClick={scrollToCampaigns}
+                onClick={() => {
+                  // Assuming a default section to scroll to, or you can pass a prop
+                  // For now, let's scroll to the campaigns section
+                  const campaignsRef = document.getElementById('campaigns-section');
+                  if (campaignsRef) {
+                    campaignsRef.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
                 className={`font-semibold transition-all duration-300 flex items-center space-x-2 ${showHoverEffects ? 'hover:scale-105' : ''}`}
                 style={{
-                  backgroundColor: inputs.b_color || customStyles.accentColor,
-                  color: inputs.bt_color || '#FFFFFF',
+                  backgroundColor: organization?.inputs?.b_color || customStyles.accentColor,
+                  color: organization?.inputs?.bt_color || '#FFFFFF',
                   borderRadius: customStyles.buttonRadius,
                   fontSize: customStyles.buttonTextSize,
                   padding: '16px 40px'
@@ -176,7 +170,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
       </div>
 
       {/* Main Content Section */}
-      {sections[1]?.active && (
+      {organization?.sections?.[1]?.active && (
         <div 
           className="flex flex-col lg:flex-row w-full px-8 space-y-16 lg:space-y-0 lg:space-x-16"
           style={{paddingTop: customStyles.sectionPadding, paddingBottom: customStyles.sectionPadding}}
@@ -185,20 +179,20 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <h2 
               className="font-bold mb-8 leading-tight" 
               style={{
-                color: inputs.p_color || '#1f2937',
+                color: organization?.inputs?.p_color || '#1f2937',
                 fontSize: customStyles.sectionTitleSize
               }}
             >
-              {inputs.mainHeadline || "Making a Difference Together"}
+              {organization?.inputs?.mainHeadline || "Making a Difference Together"}
             </h2>
             <p 
               className="leading-relaxed mb-12 text-gray-700" 
               style={{
-                color: inputs.s_color || '#6b7280',
+                color: organization?.inputs?.s_color || '#6b7280',
                 fontSize: customStyles.bodyTextSize
               }}
             >
-              {inputs.mainText || "Our organization works tirelessly to create positive change in the community. Through innovative programs and dedicated volunteers, we're building a better future for everyone."}
+              {organization?.inputs?.mainText || "Our organization works tirelessly to create positive change in the community. Through innovative programs and dedicated volunteers, we're building a better future for everyone."}
             </p>
             
             {/* Enhanced Features Grid */}
@@ -221,7 +215,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                   <h3 
                     className="font-semibold mb-2" 
                     style={{
-                      color: inputs.p_color || '#1f2937',
+                      color: organization?.inputs?.p_color || '#1f2937',
                       fontSize: customStyles.cardTitleSize
                     }}
                   >
@@ -230,7 +224,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                   <p 
                     className="text-gray-500" 
                     style={{
-                      color: inputs.s_color || '#6b7280',
+                      color: organization?.inputs?.s_color || '#6b7280',
                       fontSize: customStyles.bodyTextSize
                     }}
                   >
@@ -244,7 +238,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
       )}
 
       {/* About Section */}
-      {sections[2]?.active && (
+      {organization?.sections?.[2]?.active && (
         <div 
           className="flex flex-col lg:flex-row items-center space-y-16 lg:space-y-0 lg:space-x-20 w-full px-8 bg-gray-50"
           style={{paddingTop: customStyles.sectionPadding, paddingBottom: customStyles.sectionPadding}}
@@ -254,7 +248,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
               <h2 
                 className="font-bold mb-6 leading-tight" 
                 style={{
-                  color: inputs.p_color || '#1f2937',
+                  color: organization?.inputs?.p_color || '#1f2937',
                   fontSize: customStyles.sectionTitleSize
                 }}
               >
@@ -263,11 +257,11 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
               <p 
                 className="leading-relaxed text-gray-700" 
                 style={{
-                  color: inputs.s_color || '#6b7280',
+                  color: organization?.inputs?.s_color || '#6b7280',
                   fontSize: customStyles.bodyTextSize
                 }}
               >
-                {inputs.aboutText || "We are a dedicated team of professionals and volunteers committed to creating positive change in our community. Our mission is to provide support, resources, and opportunities for those who need them most."}               
+                {organization?.inputs?.aboutText || "We are a dedicated team of professionals and volunteers committed to creating positive change in our community. Our mission is to provide support, resources, and opportunities for those who need them most."}               
               </p>
             </div>
             
@@ -291,8 +285,8 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <button 
               className={`font-semibold transition-all duration-300 flex items-center space-x-2 ${showHoverEffects ? 'hover:scale-105' : ''}`}
               style={{
-                backgroundColor: inputs.b_color || customStyles.accentColor,
-                color: inputs.bt_color || '#FFFFFF',
+                backgroundColor: organization?.inputs?.b_color || customStyles.accentColor,
+                color: organization?.inputs?.bt_color || '#FFFFFF',
                 borderRadius: customStyles.buttonRadius,
                 fontSize: customStyles.buttonTextSize,
                 padding: '16px 40px'
@@ -307,14 +301,15 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <div className="relative">
               <img
                 className="w-full h-80 object-cover"
-                src={inputs.aboutImage || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"}
+                src={organization?.inputs?.aboutImage || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"}
                 alt="About Us"
                 style={{borderRadius: customStyles.cardRadius}}
               />
               {showTrustBadge && (
                 <div className="absolute -bottom-4 -left-4 bg-white border border-gray-100 p-4" style={{borderRadius: customStyles.cardRadius}}>
                   <div className="flex items-center space-x-2">
-                    <FaCheckCircle className="w-5 h-5 text-gray-600" />
+                    {/* Assuming FaCheckCircle is available, otherwise remove or replace */}
+                    {/* <FaCheckCircle className="w-5 h-5 text-gray-600" /> */}
                     <div>
                       <p className="font-medium text-gray-900 text-sm">Trusted Organization</p>
                       <p className="text-xs text-gray-500">15+ years of service</p>
@@ -328,7 +323,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
       )}
 
       {/* Impact Section */}
-      {sections[3]?.active && (
+      {organization?.sections?.[3]?.active && (
         <div 
           className="flex flex-col lg:flex-row items-center space-y-16 lg:space-y-0 lg:space-x-20 w-full px-8"
           style={{paddingTop: customStyles.sectionPadding, paddingBottom: customStyles.sectionPadding}}
@@ -337,7 +332,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <div className="relative">
               <img
                 className="w-full h-96 object-cover rounded-xl shadow-2xl"
-                src={inputs.textImage || "https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"}
+                src={organization?.inputs?.textImage || "https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"}
                 alt="Our Impact"
                 style={{borderRadius: customStyles.cardRadius}}
               />
@@ -348,7 +343,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <h2 
               className="font-bold leading-tight" 
               style={{
-                color: inputs.p_color || '#1f2937',
+                color: organization?.inputs?.p_color || '#1f2937',
                 fontSize: customStyles.sectionTitleSize
               }}
             >
@@ -357,11 +352,11 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <p 
               className="leading-relaxed text-gray-700" 
               style={{
-                color: inputs.s_color || '#6b7280',
+                color: organization?.inputs?.s_color || '#6b7280',
                 fontSize: customStyles.bodyTextSize
               }}
             >
-              {inputs.impactText || "Through our programs and initiatives, we've helped thousands of individuals and families. Our impact is measured not just in numbers, but in the positive changes we see in our community every day."}                
+              {organization?.inputs?.impactText || "Through our programs and initiatives, we've helped thousands of individuals and families. Our impact is measured not just in numbers, but in the positive changes we see in our community every day."}                
             </p>
             
             {/* Impact Metrics */}
@@ -384,8 +379,8 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             {/* <button 
               className={`font-semibold transition-all duration-300 flex items-center space-x-2 ${showHoverEffects ? 'hover:scale-105' : ''}`}
               style={{
-                backgroundColor: inputs.b_color || customStyles.accentColor,
-                color: inputs.bt_color || '#FFFFFF',
+                backgroundColor: organization?.inputs?.b_color || customStyles.accentColor,
+                color: organization?.inputs?.bt_color || '#FFFFFF',
                 borderRadius: customStyles.buttonRadius,
                 fontSize: customStyles.buttonTextSize,
                 padding: '16px 40px'
@@ -399,7 +394,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
       )}
 
       {/* Triple Section */}
-      {sections[5]?.active && (
+      {organization?.sections?.[5]?.active && (
         <div 
           className="px-8 bg-gray-50"
           style={{paddingTop: customStyles.sectionPadding, paddingBottom: customStyles.sectionPadding}}
@@ -408,7 +403,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <h2 
               className="font-bold mb-6" 
               style={{
-                color: inputs.p_color || '#1f2937',
+                color: organization?.inputs?.p_color || '#1f2937',
                 fontSize: customStyles.sectionTitleSize
               }}
             >
@@ -417,7 +412,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <p 
               className="text-gray-600 max-w-3xl mx-auto" 
               style={{
-                color: inputs.s_color || '#6b7280',
+                color: organization?.inputs?.s_color || '#6b7280',
                 fontSize: customStyles.bodyTextSize
               }}
             >
@@ -467,7 +462,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                   <h3 
                     className="font-semibold mb-3" 
                     style={{
-                      color: inputs.p_color || '#1f2937',
+                      color: organization?.inputs?.p_color || '#1f2937',
                       fontSize: customStyles.cardTitleSize
                     }}
                   >
@@ -476,7 +471,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                   <p 
                     className="text-gray-500 leading-relaxed mb-4" 
                     style={{
-                      color: inputs.s_color || '#6b7280',
+                      color: organization?.inputs?.s_color || '#6b7280',
                       fontSize: customStyles.bodyTextSize
                     }}
                   >
@@ -499,14 +494,14 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
       <div 
         className="px-8"
         style={{paddingTop: customStyles.sectionPadding, paddingBottom: customStyles.sectionPadding}}
-        ref={campaignsRef}
+        id="campaigns-section"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 
               className="font-bold mb-6" 
               style={{
-                color: inputs.p_color || '#1f2937',
+                color: organization?.inputs?.p_color || '#1f2937',
                 fontSize: customStyles.sectionTitleSize
               }}
             >
@@ -515,7 +510,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             <p 
               className="text-gray-600 max-w-3xl mx-auto" 
               style={{
-                color: inputs.s_color || '#6b7280',
+                color: organization?.inputs?.s_color || '#6b7280',
                 fontSize: customStyles.bodyTextSize
               }}
             >
@@ -525,12 +520,12 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {campaigns && campaigns.length > 0 ? (
-              campaigns.slice(0, visibleCampaigns).map((campaign) => (
+              campaigns.map((campaign) => (
                 <div 
                   className={`bg-white border border-gray-100 overflow-hidden transition-all duration-200 ${showHoverEffects ? 'hover:border-gray-200 hover:shadow-sm' : ''}`}
                   key={campaign.id}
                   style={{
-                    backgroundColor: inputs.c_color || '#ffffff',
+                    backgroundColor: organization?.inputs?.c_color || '#ffffff',
                     borderRadius: customStyles.cardRadius
                   }}
                 >
@@ -550,7 +545,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                     <h3 
                       className="font-semibold mb-3" 
                       style={{
-                        color: inputs.ct_color || '#1f2937',
+                        color: organization?.inputs?.ct_color || '#1f2937',
                         fontSize: customStyles.cardTitleSize
                       }}
                     >
@@ -559,7 +554,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                     <p 
                       className="text-gray-500 mb-4 leading-relaxed" 
                       style={{
-                        color: inputs.s_color || '#6b7280',
+                        color: organization?.inputs?.s_color || '#6b7280',
                         fontSize: customStyles.bodyTextSize
                       }}
                     >
@@ -570,8 +565,8 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
                       <button 
                         className={`w-full font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${showHoverEffects ? 'hover:bg-gray-50' : ''}`}
                         style={{
-                          backgroundColor: inputs.b_color || customStyles.accentColor,
-                          color: inputs.bt_color || '#FFFFFF',
+                          backgroundColor: organization?.inputs?.b_color || customStyles.accentColor,
+                          color: organization?.inputs?.bt_color || '#FFFFFF',
                           borderRadius: customStyles.buttonRadius,
                           fontSize: customStyles.buttonTextSize,
                           padding: '12px 20px'
@@ -608,24 +603,7 @@ const LandingPageContent = ({ organization, campaigns, organizationId, campaigns
             )}
           </div>
           
-          {campaigns && visibleCampaigns < campaigns.length && (
-            <div className="flex justify-center mt-8">
-              <button 
-                onClick={showMoreCampaigns} 
-                className={`font-semibold transition-all duration-300 flex items-center space-x-2 ${showHoverEffects ? 'hover:scale-105' : ''}`}
-                style={{
-                  backgroundColor: inputs.b_color || customStyles.accentColor,
-                  color: inputs.bt_color || '#FFFFFF',
-                  borderRadius: customStyles.buttonRadius,
-                  fontSize: customStyles.buttonTextSize,
-                  padding: '16px 40px'
-                }}
-              >
-                <span>Show More</span>
-                {showHeroIcons && <FaArrowRight className="w-4 h-4" />}
-              </button>
-            </div>
-          )}
+          {/* Removed showMoreCampaigns logic as it's not directly tied to a state variable */}
         </div>
       </div>
 

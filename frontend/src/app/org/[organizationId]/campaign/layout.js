@@ -11,17 +11,17 @@ import { DonationFormContextProvider } from "@/app/context/campaignPages/donatio
 import { TicketPurchasePageContextProvider } from "@/app/context/campaignPages/ticketPurchasePageContext";
 
 // Inner component that uses the campaign context
-const CampaignLayoutInner = ({ children, campaignId }) => {
+const CampaignLayoutInner = ({ children, campaignId, organizationId }) => {
   const { campaignType } = useContext(CampaignContext);
 
   return (
     <>
       {/* Always load these providers (common to all campaign types) */}
-      <DonationFormContextProvider campaignId={campaignId}>
-        <ThankYouPageContextProvider campaignId={campaignId}>
+      <DonationFormContextProvider campaignId={campaignId} organizationId={organizationId}>
+        <ThankYouPageContextProvider campaignId={campaignId} organizationId={organizationId}>
           {/* Conditionally load campaign type specific providers */}
           {campaignType === "crowdfunding" && (
-            <DonationPageContextProvider campaignId={campaignId}>
+            <DonationPageContextProvider campaignId={campaignId} organizationId={organizationId}>
               {children}
             </DonationPageContextProvider>
           )}
@@ -58,10 +58,11 @@ const CampaignLayout = ({ children }) => {
   const params = useParams();
   const campaignId = params?.id;
   const organizationId = params?.organizationId;
+  console.log("organizationId", organizationId)
 
   return (
     <CampaignContextProvider campaignId={campaignId} organizationId={organizationId}>
-      <CampaignLayoutInner campaignId={campaignId}>
+      <CampaignLayoutInner campaignId={campaignId} organizationId={organizationId}>
         {children}
       </CampaignLayoutInner>
     </CampaignContextProvider>

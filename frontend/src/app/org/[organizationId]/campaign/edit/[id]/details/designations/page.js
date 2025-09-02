@@ -1,14 +1,10 @@
 "use client"
-
-import { FaTrash, FaCog } from "react-icons/fa"
-import { useContext, useState } from "react"
+import { getCampaignService, getDesignationService } from "@/app/services"
+import { useState, useEffect, useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
-import { getCampaignDesignations } from "@/app/services/fetchService"
-import { deleteCampaignDesignationBatch } from "@/app/services/deleteService"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext"
 import { AuthContext } from "@/app/context/authContext"
-import { updateCampaignDetails } from "@/app/services/updateServices"
-import { createCampaignDesignation } from "@/app/services/createServices"
+import { FaTrash, FaCog } from "react-icons/fa"
 
 const Designations = () => {
    const {designations, campaignDetails, handleCampaignDetailsChange, campaignId, campaignStatus, selectedDesignations, setSelectedDesignationsWithTracking, loading, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
@@ -39,19 +35,22 @@ const Designations = () => {
 
    const handleSave = async() => {
       try {
-         const existingRelations = await getCampaignDesignations(campaignId)
+         const campaignService = getCampaignService();
+         const designationService = getDesignationService();
+         
+         const existingRelations = await campaignService.getCampaignDesignations(campaignId)
          const relationsToAdd = selectedDesignations.filter(designation =>!existingRelations.includes(designation))
          const relationsToRemove = existingRelations.filter(designation =>!selectedDesignations.includes(designation))
 
          console.log(relationsToAdd, relationsToRemove)
          if (relationsToAdd.length > 0) {
-            await createCampaignDesignation(campaignId, relationsToAdd)
+            await designationService.addCampaignDesignation(campaignId, relationsToAdd)
          }
          if (relationsToRemove.length > 0) {
-            await deleteCampaignDesignationBatch(relationsToRemove)
+            await designationService.removeCampaignDesignation(relationsToRemove)
          }
 
-                   await updateCampaignDetails(campaignId, campaignDetails, campaignStatus, currentUser)
+         await campaignService.updateCampaign(campaignId, campaignDetails)
           markChangesAsSaved()
           markPageChangesAsSaved('designations')
       } catch (err) {
@@ -114,7 +113,7 @@ const Designations = () => {
                   onChange={handleCampaignDetailsChangeWrapper}
                >
                   <option value="" disabled>Select an Option</option>
-                  {designations && designations.map(item => (
+                  {(designations || []).map(item => (
                      <option value={item.id} key={item.id}>{item.title}</option>
                   ))}
                </select>
@@ -151,7 +150,7 @@ const Designations = () => {
                      </tr>
                   </thead>
                   <tbody>
-                     {designations && designations.map((item, index) => (
+                     {(designations || []).map((item, index) => (
                         <tr key={index} className="border-b border-gray-300 hover:bg-gray-50">
                            <td className="px-4 py-2 text-sm">
                               <input 

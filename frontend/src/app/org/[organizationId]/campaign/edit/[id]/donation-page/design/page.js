@@ -1,8 +1,7 @@
 "use client"
 import { useContext, useState } from "react"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
-import { PageUpdateService, updateDonationPage } from "@/app/services/updateServices";
-import { PageService } from "@/app/services/fetchService";
+import { getPageService } from "@/app/services";
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
 import { FaPalette, FaFont, FaMousePointer, FaRuler, FaSave, FaImage, FaUndo } from "react-icons/fa";
@@ -21,14 +20,17 @@ const Design = () => {
       setSuccessMessage("")
       
       try {
+         // Get service instance
+         const pageService = getPageService();
+         
          // Update donation page
-         await updateDonationPage(campaignId, donationPageInputs)
+         await pageService.updateDonationPage(campaignId, donationPageInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationPageSections.filter(section => section.id && section.id > 0)
          if (validSections.length > 0) {
             const sectionPromises = validSections.map(section => 
-               PageUpdateService.updatePageSection(section.id, section.active)
+               pageService.updatePageSection(section.id, section.active)
             )
             await Promise.all(sectionPromises)
          }
@@ -50,7 +52,8 @@ const Design = () => {
       setSuccessMessage("")
       
       try {
-         const donationResponse = await PageService.getDonationPage(campaignId)
+         const pageService = getPageService();
+         const donationResponse = await pageService.getDonationPage(campaignId)
          
          setDonationPageInputs({
             // Basic Content

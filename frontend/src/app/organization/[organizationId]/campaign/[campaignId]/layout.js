@@ -28,7 +28,7 @@ const CampaignLayout = ({ children }) => {
     <CampaignContextProvider>
       <CampaignDataInitializer campaignId={campaignId} organizationId={organizationId}>
         <DonationFormContextProvider campaignId={campaignId}>
-          <ThankYouPageContextProvider campaignId={campaignId}>
+          <ThankYouPageContextProvider campaignId={campaignId} organizationId={organizationId}>
             <DonationPageContextProvider campaignId={campaignId}>
                       {children}
             </DonationPageContextProvider>

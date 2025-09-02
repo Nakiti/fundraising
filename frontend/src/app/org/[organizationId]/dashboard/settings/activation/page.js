@@ -1,6 +1,6 @@
 "use client"
-import { useEffect, useState } from "react"
-import { getOrganizationStatus } from "@/app/services/fetchService";
+import { getOrganizationService } from "@/app/services"
+import { useState, useEffect } from "react"
 import { errorHandler } from "@/app/services/apiClient";
 import ErrorModal from "@/app/components/errorModal";
 import Link from "next/link";
@@ -25,7 +25,8 @@ const Activation = ({ params }) => {
    const fetchData = async () => {
       try {
          setLoading(true)
-         const statusResponse = await getOrganizationStatus(organizationId)
+         const organizationService = getOrganizationService();
+         const statusResponse = await organizationService.getOrganizationStatus(organizationId)
          setOrganizationStatus(statusResponse)
       } catch (err) {
          const handledError = errorHandler.handle(err)

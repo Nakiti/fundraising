@@ -44,6 +44,21 @@ export const getDesignations = asyncHandler(async (req, res) => {
   sendSuccess(res, designations, 'Designations retrieved successfully');
 })
 
+export const getDesignationsByCampaign = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
+  console.log("id", id)
+  
+  // Delegate to DesignationService
+  const designations = await designationService.getDesignationsByCampaign(id);
+  console.log("designations", designations)
+  
+  sendSuccess(res, designations, 'Campaign designations retrieved successfully');
+})
+
 export const getActiveDesignations = asyncHandler(async (req, res) => {
   const { id } = req.params;
   

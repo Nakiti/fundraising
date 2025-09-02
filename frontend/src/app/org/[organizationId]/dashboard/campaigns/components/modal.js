@@ -1,7 +1,7 @@
 "use client"
 import { useState, useContext, act } from 'react';
 import { IoIosClose } from "react-icons/io";
-import { CampaignCreateService, PageCreateService } from '@/app/services/createServices';
+import { getCampaignService, getPageService } from '@/app/services';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/app/context/authContext';
 import { errorHandler } from '@/app/services/apiClient';
@@ -48,26 +48,30 @@ const Modal = ({setShow, organizationId }) => {
       setIsLoading(true)
 
       try {
+           // Get service instances
+           const campaignService = getCampaignService();
+           const pageService = getPageService();
+           
            // Step 1: Create campaign and campaign details (must be sequential)
-           const id = await CampaignCreateService.createCampaign(currentUser, organizationId);
-           await CampaignCreateService.createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
+           const id = await campaignService.createCampaign(currentUser, organizationId);
+           await campaignService.createCampaignDetails(id, currentUser, tabContent[activeTab].content, internalName);
 
            // Step 2: Create all pages in parallel (they don't depend on each other)
            const pagePromises = [];
            
            if (tabContent[activeTab].content === "crowdfunding") {
-              pagePromises.push(PageCreateService.createDonationPage(id, currentUser));
+              pagePromises.push(pageService.createDonationPage(id, currentUser));
            } else if (tabContent[activeTab].content == "ticketed-event") {
-              pagePromises.push(PageCreateService.createTicketPage(id));
-              pagePromises.push(PageCreateService.createTicketPurchasePage(id, currentUser));
+              pagePromises.push(pageService.createTicketPage(id));
+              pagePromises.push(pageService.createTicketPurchasePage(id, currentUser));
            } else if (tabContent[activeTab].content == "peer-to-peer") {
-              pagePromises.push(PageCreateService.createPeerLandingPage(id, currentUser));
-              pagePromises.push(PageCreateService.createPeerFundraisingPage(id, currentUser));
+              pagePromises.push(pageService.createPeerLandingPage(id, currentUser));
+              pagePromises.push(pageService.createPeerFundraisingPage(id, currentUser));
            }
            
            // Always create donation form and thank you page
-           pagePromises.push(PageCreateService.createDonationForm(id, currentUser));
-           pagePromises.push(PageCreateService.createThankYouPage(id, currentUser));
+           pagePromises.push(pageService.createDonationForm(id, currentUser));
+           pagePromises.push(pageService.createThankYouPage(id, currentUser));
            
            // Wait for all pages to be created
            const pageResults = await Promise.all(pagePromises);
@@ -78,45 +82,45 @@ const Modal = ({setShow, organizationId }) => {
            if (tabContent[activeTab].content === "crowdfunding") {
               const donationPageId = pageResults[0];
               sectionPromises.push(
-                 PageCreateService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "banner", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "title", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "desc", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "donate", true, currentUser)
+                 pageService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "banner", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "title", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "desc", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "donation_page", donationPageId, "donate", true, currentUser)
               );
            } else if (tabContent[activeTab].content == "ticketed-event") {
               const ticketPageId = pageResults[0];
               const ticketPurchasePageId = pageResults[1];
               sectionPromises.push(
-                 PageCreateService.createPageSectionByPage(organizationId, "ticket_page", ticketPageId, "banner", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "ticket_page", ticketPageId, "about", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "ticket_page", ticketPageId, "event", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "ticket_purchase_page", ticketPurchasePageId, "title", true, currentUser)
+                 pageService.createPageSectionByPage(organizationId, "ticket_page", ticketPageId, "banner", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "ticket_page", ticketPageId, "about", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "ticket_page", ticketPageId, "event", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "ticket_purchase_page", ticketPurchasePageId, "title", true, currentUser)
               );
            } else if (tabContent[activeTab].content == "peer-to-peer") {
               const peerLandingPageId = pageResults[0];
               const peerFundraisingPageId = pageResults[1];
               sectionPromises.push(
-                 PageCreateService.createPageSectionByPage(organizationId, "peer_landing_page", peerLandingPageId, "banner", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "peer_landing_page", peerLandingPageId, "description", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "peer_fundraising_page", peerFundraisingPageId, "banner", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "peer_fundraising_page", peerFundraisingPageId, "description", true, currentUser),
-                 PageCreateService.createPageSectionByPage(organizationId, "peer_fundraising_page", peerFundraisingPageId, "title", true, currentUser)
+                 pageService.createPageSectionByPage(organizationId, "peer_landing_page", peerLandingPageId, "banner", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "peer_landing_page", peerLandingPageId, "description", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "peer_fundraising_page", peerFundraisingPageId, "banner", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "peer_fundraising_page", peerFundraisingPageId, "description", true, currentUser),
+                 pageService.createPageSectionByPage(organizationId, "peer_fundraising_page", peerFundraisingPageId, "title", true, currentUser)
               );
            }
            
            // Add donation form sections
            const donationFormId = pageResults[pageResults.length - 2]; // Second to last
            sectionPromises.push(
-              PageCreateService.createPageSectionByPage(organizationId, "donation_form", donationFormId, "header", true, currentUser),
-              PageCreateService.createPageSectionByPage(organizationId, "donation_form", donationFormId, "background", true, currentUser),
-              PageCreateService.createPageSectionByPage(organizationId, "donation_form", donationFormId, "buttons", true, currentUser)
+              pageService.createPageSectionByPage(organizationId, "donation_form", donationFormId, "header", true, currentUser),
+              pageService.createPageSectionByPage(organizationId, "donation_form", donationFormId, "background", true, currentUser),
+              pageService.createPageSectionByPage(organizationId, "donation_form", donationFormId, "buttons", true, currentUser)
            );
            
            // Add thank you page sections
            const thankyouPageId = pageResults[pageResults.length - 1]; // Last
            sectionPromises.push(
-              PageCreateService.createPageSectionByPage(organizationId, "thankyou_page", thankyouPageId, "message", true, currentUser),
-              PageCreateService.createPageSectionByPage(organizationId, "thankyou_page", thankyouPageId, "background", true, currentUser)
+              pageService.createPageSectionByPage(organizationId, "thankyou_page", thankyouPageId, "message", true, currentUser),
+              pageService.createPageSectionByPage(organizationId, "thankyou_page", thankyouPageId, "background", true, currentUser)
            );
            
            // Wait for all sections to be created

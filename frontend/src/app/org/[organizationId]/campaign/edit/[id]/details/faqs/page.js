@@ -1,11 +1,9 @@
 "use client"
-import { FaTrash } from "react-icons/fa"
-import { CampaignContext } from "@/app/context/campaignContext"
-import { useState, useContext } from "react"
+import { getCampaignService } from "@/app/services"
+import { useState, useEffect, useContext } from "react"
 import useFormInput from "@/app/hooks/useFormInput"
-import { getFaqs } from "@/app/services/fetchService"
-import { createFaq } from "@/app/services/createServices"
-import { deleteFaq, deleteFaqsBatch } from "@/app/services/deleteService"
+import { CampaignContext } from "@/app/context/campaignContext"
+import { FaTrash } from "react-icons/fa"
 
 const Faqs = () =>{
    const {faqs, setFaqsWithTracking, campaignId, loading, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
@@ -30,15 +28,16 @@ const Faqs = () =>{
 
    const handleSave = async () => {
       try {
-         const existingFaqs = await getFaqs(campaignId)
+         const campaignService = getCampaignService();
+         const existingFaqs = await campaignService.getCampaignFaqs(campaignId)
          const relationsToAdd = faqs.filter(faq =>!existingFaqs.includes(faq))
          const relationsToRemove = existingFaqs.filter(faq =>!faqs.includes(faq))
 
          if (relationsToAdd.length > 0) {
-            await createFaq(campaignId, relationsToAdd)
+            await campaignService.addCampaignFaq(campaignId, relationsToAdd)
          }
                    if (relationsToRemove.length > 0) {
-             await deleteFaqsBatch(relationsToRemove)
+             await campaignService.removeCampaignFaq(relationsToRemove)
           }
           markChangesAsSaved()
           markPageChangesAsSaved('faqs')

@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
-import { DonorFetchService, DonorCreateService, DonorUpdateService, DonorAuthService } from "../services/donorServices";
+import { getDonorService } from "../services";
 
 const DonorContext = createContext();
 
@@ -8,6 +8,9 @@ export const DonorProvider = ({ children, organizationId }) => {
     const [donor, setDonor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Get DonorService instance
+    const donorService = getDonorService();
 
     // Check session on mount
     useEffect(() => {
@@ -17,7 +20,7 @@ export const DonorProvider = ({ children, organizationId }) => {
     const checkSession = async () => {
         try {
             setLoading(true);
-            const sessionData = await DonorFetchService.checkSession();
+            const sessionData = await donorService.checkSession();
             
             if (sessionData.authenticated && sessionData.donor) {
                 setDonor(sessionData.donor);
@@ -37,7 +40,7 @@ export const DonorProvider = ({ children, organizationId }) => {
             setLoading(true);
             setError(null);
             
-            const result = await DonorCreateService.loginDonor(organizationId, email, password);
+            const result = await donorService.loginDonor(organizationId, email, password);
 
             if (result && result.donor) {
                 setDonor(result.donor);
@@ -60,7 +63,7 @@ export const DonorProvider = ({ children, organizationId }) => {
             setLoading(true);
             setError(null);
             
-            const result = await DonorCreateService.registerDonor(organizationId, donorData);
+            const result = await donorService.registerDonor(organizationId, donorData);
 
             if (result) {
                 // After registration, log them in
@@ -80,7 +83,7 @@ export const DonorProvider = ({ children, organizationId }) => {
 
     const logout = async () => {
         try {
-            await DonorAuthService.logoutDonor();
+            await donorService.logoutDonor();
             setDonor(null);
             setError(null);
         } catch (error) {
@@ -93,7 +96,7 @@ export const DonorProvider = ({ children, organizationId }) => {
             setLoading(true);
             setError(null);
             
-            const result = await DonorUpdateService.updateDonorProfile(profileData);
+            const result = await donorService.updateDonorProfile(profileData);
 
             if (result) {
                 // Update local donor state
@@ -114,7 +117,7 @@ export const DonorProvider = ({ children, organizationId }) => {
 
     const getDonations = async () => {
         try {
-            return await DonorFetchService.getDonorDonations();
+            return await donorService.getDonorDonations();
         } catch (error) {
             console.error('Get donations error:', error);
             return [];
@@ -123,7 +126,7 @@ export const DonorProvider = ({ children, organizationId }) => {
 
     const getSummary = async () => {
         try {
-            return await DonorFetchService.getDonorSummary();
+            return await donorService.getDonorSummary();
         } catch (error) {
             console.error('Get summary error:', error);
             return null;
@@ -132,7 +135,7 @@ export const DonorProvider = ({ children, organizationId }) => {
 
     const recordDonation = async (donationData) => {
         try {
-            return await DonorCreateService.recordDonation(donationData);
+            return await donorService.recordDonation(donationData);
         } catch (error) {
             console.error('Record donation error:', error);
             return null;
@@ -141,7 +144,7 @@ export const DonorProvider = ({ children, organizationId }) => {
 
     const updatePreference = async (key, value) => {
         try {
-            const result = await DonorUpdateService.updateDonorPreferences(key, value);
+            const result = await donorService.updateDonorPreference(key, value);
             return result !== null;
         } catch (error) {
             console.error('Update preference error:', error);
@@ -151,7 +154,7 @@ export const DonorProvider = ({ children, organizationId }) => {
 
     const getPreferences = async () => {
         try {
-            return await DonorFetchService.getDonorPreferences();
+            return await donorService.getDonorPreferences();
         } catch (error) {
             console.error('Get preferences error:', error);
             return {};
@@ -167,7 +170,7 @@ export const DonorProvider = ({ children, organizationId }) => {
             if (!email || !email.trim()) {
                 throw new Error('Email is required');
             }
-            return await DonorFetchService.checkGuestDonations(organizationId, email);
+            return await donorService.checkGuestDonations(organizationId, email);
         } catch (error) {
             console.error('Check guest donations error:', error);
             throw error;
@@ -184,7 +187,7 @@ export const DonorProvider = ({ children, organizationId }) => {
                 throw new Error('Missing required fields');
             }
             
-            const result = await DonorCreateService.convertGuestToRegistered(organizationId, conversionData);
+            const result = await donorService.convertGuestToRegistered(organizationId, conversionData);
 
             if (result && result.donor) {
                 setDonor(result.donor);

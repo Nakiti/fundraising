@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDetails, getCampaignTickets, getTicketPurchasePage } from "@/app/services/fetchService"
+import { getCampaignService, getPageService } from "@/app/services"
 import { useState, useEffect } from "react"
 import Ticket from "./ticketComponent"
 import Footer from "@/app/organization/[organizationId]/components/footer"
@@ -14,15 +14,18 @@ const TicketPurchasePage = ({params}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const campaignResponse = await getCampaignDetails(campaignId)
+            const campaignService = getCampaignService();
+            const pageService = getPageService();
+            
+            const campaignResponse = await campaignService.getCampaignDetails(campaignId)
             setCampaignDetails(campaignResponse)
             const campaignStatus = campaignResponse.status
 
             if (status == "preview" || campaignStatus == "active") {
-               const response = await getTicketPurchasePage(campaignId)
+               const response = await pageService.getTicketPurchasePage(campaignId)
                setPageInputs(response)
 
-               const ticketResponse = await getCampaignTickets(campaignId)
+               const ticketResponse = await campaignService.getCampaignTickets(campaignId)
                setTickets(ticketResponse)
 
                console.log("tickets", ticketResponse)

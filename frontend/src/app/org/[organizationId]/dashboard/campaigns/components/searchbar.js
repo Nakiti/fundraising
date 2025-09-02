@@ -1,6 +1,6 @@
 import { useState } from "react"
 import debounce from "lodash/debounce"
-import { CampaignService } from "@/app/services/fetchService"
+import { getCampaignService } from "@/app/services"
 import { errorHandler } from "@/app/services/apiClient"
 import { IoIosSearch } from "react-icons/io";
 
@@ -27,7 +27,8 @@ const Searchbar = ({setData, organizationId}) => {
    */
    const debouncedSearch = debounce(async (query) => {
       try {
-         const response = await CampaignService.searchCampaigns(query, organizationId);
+         const campaignService = getCampaignService();
+         const response = await campaignService.searchCampaigns(query, organizationId);
          setData(response)
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -40,7 +41,8 @@ const Searchbar = ({setData, organizationId}) => {
    */
    const handleSearch = async() => {
       try {
-         const response = await CampaignService.searchCampaigns(query, organizationId)
+         const campaignService = getCampaignService();
+         const response = await campaignService.searchCampaigns(query, organizationId)
          setData(response)
       } catch (err) {
          const handledError = errorHandler.handle(err)

@@ -1,7 +1,8 @@
+"use client";
+import { getPageService } from "@/app/services";
+import { createContext, useContext, useState, useEffect } from "react";
 import { initialTicketPageSections } from "@/app/constants/pageSectionsConfig";
 import useFormInput from "@/app/hooks/useFormInput";
-import { PageService, ContentService } from "@/app/services/fetchService";
-import { createContext, useState, useEffect, useContext } from "react";
 import { CampaignContext } from "../campaignContext";
 
 export const TicketPageContext = createContext()
@@ -13,45 +14,67 @@ export const TicketPageContextProvider = ({campaignId, children}) => {
    const {campaignType, campaignDetails} = useContext(CampaignContext)
 
    useEffect(() => {
-      const fetchData = async() => {
-         try {
-            const ticketPageResponse = await PageService.getTicketPage(campaignId)
-            const ticketPageId = ticketPageResponse.id
-            const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
+      // const fetchData = async() => {
+      //    try {
+      //       const pageService = getPageService();
+      //       // const contentService = getContentService();
+            
+      //       const ticketPageResponse = await pageService.getTicketPage(campaignId)
+      //       const ticketPageId = ticketPageResponse.id
+      //       const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
+            
+      //       setTicketPageId(ticketPageId)
+            
+      //       setTicketPageInputs({
+      //          // Basic Content
+      //          title: ticketPageResponse.title || "",
+      //          subtitle: ticketPageResponse.subtitle || "",
+      //          description: ticketPageResponse.description || "",
+               
+      //          // Colors
+      //          bg_color: ticketPageResponse.bg_color || "#ffffff",
+      //          p_color: ticketPageResponse.p_color || "#1f2937",
+      //          s_color: ticketPageResponse.s_color || "#6b7280",
+      //          b_color: ticketPageResponse.b_color || "#3b82f6",
+      //          bt_color: ticketPageResponse.bt_color || "#ffffff",
+               
+      //          // Typography
+      //          heroTitleSize: ticketPageResponse.heroTitleSize || "36",
+      //          heroSubtitleSize: ticketPageResponse.heroSubtitleSize || "16",
+      //          sectionTitleSize: ticketPageResponse.sectionTitleSize || "28",
+      //          bodyTextSize: ticketPageResponse.bodyTextSize || "16",
+      //          buttonTextSize: ticketPageResponse.buttonTextSize || "16",
+               
+      //          // Layout
+      //          cardRadius: ticketPageResponse.cardRadius || "4",
+      //          buttonRadius: ticketPageResponse.buttonRadius || "4",
+      //       })
 
-            setTicketPageInputs({
-               title: ticketPageResponse.title || "",
-               date: ticketPageResponse.date || "",
-               address: ticketPageResponse.address || "",
-               bgImage: ticketPageResponse.bgImage || "",
-               aboutDescription: ticketPageResponse.aboutDescription || "",
-               venueName: ticketPageResponse.venueName || "",
-               instructions: ticketPageResponse.instructions || "",
-               bg_color: ticketPageResponse.bg_color || "",
-               bg_color2: ticketPageResponse.bg_color2 || "",
-               p_color: ticketPageResponse.p_color || "",
-               s_color: ticketPageResponse.s_color || "",
-               b1_color: ticketPageResponse.b1_color || "",
-            })
+      //       // Fetch page sections for the ticket page
+      //       const ticketPageSections = await pageService.getPageSectionsByPage(organizationId, 'ticket_landing', ticketPageId)
+      //       setTicketPageSections((prevSections) => {
+      //          return prevSections.map(section => {
+      //             const matchingSection = ticketPageSections.find(s => s.name === section.name);
+      //             return {
+      //                ...section,
+      //                active: matchingSection ? matchingSection.active : section.active,
+      //                required: matchingSection ? matchingSection.required : section.required,
+      //                dropdown: matchingSection ? matchingSection.dropdown : section.dropdown
+      //             };
+      //          });
+      //       })
 
-            const ticketPageSections = await PageService.getPageSectionsByPage(organizationId, 'ticket_landing', ticketPageId)
-            setTicketPageSections((prevSections) => {
-               return prevSections.map(section => {
-                  const match = ticketPageSections.find((item) => item.name == section.name)
-                  return {...section, id: match.id, active: match.active }
-               })
-            })
+      //       // Fetch tickets for the campaign
+      //       const ticketsResponse = await contentService.getCampaignTickets(campaignId)
+      //       setTickets(ticketsResponse)
+      //    } catch (err) {
+      //       console.log(err)
+      //    }
+      // }
 
-            const ticketsResponse = await ContentService.getCampaignTickets(campaignId)
-            setTickets(ticketsResponse)
-         } catch (err) {
-            console.log(err)
-         }
-      }
-
-      if (campaignType == "ticketed-event") {
-         fetchData()
-      }
+      // if (campaignType == "ticketed-event") {
+      //    fetchData()
+      // }
    }, [])
 
    return (

@@ -8,7 +8,7 @@ import { AboutPageContextProvider } from "@/app/context/organizationPages/aboutP
 import { CartContextProvider } from "@/app/context/cartContext"
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
-import { Services } from "@/app/services"
+import { getOrganizationService } from "@/app/services"
 
 const OrganizationLayout = ({children, params}) => {
    const organizationId = params.organizationId
@@ -25,12 +25,15 @@ const OrganizationLayout = ({children, params}) => {
          try {
             setLoading(true)
             
+            // Get service instance
+            const organizationService = getOrganizationService();
+            
             // Fetch organization status
-            const statusResponse = await Services.Organization.getOrganizationStatus(organizationId)
+            const statusResponse = await organizationService.getOrganizationStatus(organizationId)
             setOrganizationStatus(statusResponse)
             
             // Also fetch basic organization data for name
-            const orgResponse = await Services.Organization.getOrganization(organizationId)
+            const orgResponse = await organizationService.getOrganization(organizationId)
             setOrganizationData(orgResponse)
             
          } catch (error) {

@@ -4,7 +4,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import { getCampaignsFiltered, getCampaignsDateRange } from "@/app/services/fetchService";
+import { getCampaignService } from "@/app/services";
 
 const Filters = ({setData, organizationId}) => {
    const [startDate, setStartDate] = useState(null);
@@ -25,18 +25,20 @@ const Filters = ({setData, organizationId}) => {
       setStartDate(start)
       setEndDate(end)
 
+      const campaignService = getCampaignService();
       if (start && end) {
-         const response = await getCampaignsDateRange(start, end, organizationId);
+         const response = await campaignService.getCampaignsByDateRange(start, end, organizationId);
          setData(response);
       } else {
-         const response = await getCampaignsFiltered(organizationId, "all")
+         const response = await campaignService.getFilteredCampaigns(organizationId, { status: "all" })
          setData(response)
       }
    }
 
    useEffect(() => {
       const fetchData = async() => {
-         const response = await getCampaignsFiltered(organizationId, status, type)
+         const campaignService = getCampaignService();
+         const response = await campaignService.getFilteredCampaigns(organizationId, { status, type })
          setData(response)
       }
 

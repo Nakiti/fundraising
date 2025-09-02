@@ -1,6 +1,6 @@
 import { useState } from "react"
 import debounce from "lodash/debounce"
-import { getCampaignSearch } from "@/app/services/fetchService"
+import { getCampaignService } from "@/app/services"
 import { IoIosSearch } from "react-icons/io";
 
 const Searchbar = ({setData, organizationId}) => {
@@ -13,7 +13,8 @@ const Searchbar = ({setData, organizationId}) => {
 
    const debouncedSearch = debounce(async (query) => {
       try {
-         const response = await getCampaignSearch(query, organizationId);
+         const campaignService = getCampaignService();
+         const response = await campaignService.searchCampaigns(query, organizationId);
          setData(response)
          console.log("ASasas", response)
 
@@ -24,7 +25,8 @@ const Searchbar = ({setData, organizationId}) => {
 
    const handleSearch = async() => {
       try {
-         const response = await getCampaignSearch(query, organizationId)
+         const campaignService = getCampaignService();
+         const response = await campaignService.searchCampaigns(query, organizationId)
          setData(response)
          console.log("ASasas", response)
       } catch (err) {

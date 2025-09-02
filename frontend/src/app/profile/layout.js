@@ -2,7 +2,7 @@
 import Header from "../components/header"
 import { useState, useContext, useEffect } from "react"
 import { AuthContext } from "../context/authContext"
-import { Services, useApi, useToast } from "../services";
+import { getUserService, useApi, useToast } from "../services";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { IoIosAdd } from "react-icons/io";
@@ -13,13 +13,16 @@ const ProfileLayout = ({children}) => {
    const router = useRouter()
    const { showError } = useToast()
 
+   // Get UserService instance
+   const userService = getUserService();
+
    // API hook for fetching user data
    const { 
       data: userData, 
       loading: userDataLoading, 
       error: userDataError, 
       execute: fetchUserData 
-   } = useApi(Services.User.getUserData);
+   } = useApi(userService.getUserData.bind(userService));
 
    // Watch for when currentUser becomes valid and fetch user data
    useEffect(() => { 

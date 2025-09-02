@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Services } from "@/app/services"
+import { getPageService } from "@/app/services"
 import { FaUser, FaHeart } from "react-icons/fa"
 import { useRouter } from "next/navigation"
 import CartIcon from "@/app/components/CartIcon"
@@ -11,11 +11,14 @@ const Header = ({ organizationId }) => {
    const [loading, setLoading] = useState(true)
    const router = useRouter()
 
+   // Get PageService instance
+   const pageService = getPageService();
+
    useEffect(() => {
       const fetchHeaderData = async () => {
          try {
             console.log('Fetching header data for organization:', organizationId)
-            const response = await Services.Page.getHeaderPage(organizationId)
+            const response = await pageService.getHeaderPage(organizationId)
             console.log('Header data received:', response)
             setHeaderData(response)
          } catch (error) {

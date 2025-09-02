@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "@/app/context/authContext"
-import { Services, useApi, useFormSubmit, useToast } from "@/app/services"
+import { getUserService, useApi, useFormSubmit, useToast } from "@/app/services"
 import { useRouter } from "next/navigation"
 import { FiCheck, FiUsers, FiMail, FiRefreshCw } from "react-icons/fi";
 
@@ -11,19 +11,22 @@ const Invites = () => {
    const { showError, showSuccess } = useToast()
    const [hasInitiatedFetch, setHasInitiatedFetch] = useState(false)
 
+   // Get UserService instance
+   const userService = getUserService();
+
    // API hook for fetching pending organizations
    const { 
       data: organizations, 
       loading, 
       error, 
       execute: fetchOrganizations 
-   } = useApi(Services.User.getPendingUserOrganizations);
+   } = useApi(userService.getPendingUserOrganizations.bind(userService));
 
    // API hook for accepting invites
    const { 
       submit: acceptInvite, 
       loading: acceptLoading 
-   } = useFormSubmit(Services.Update.User.updateUserOrganizationRelation);
+   } = useFormSubmit(userService.acceptOrganizationInvite.bind(userService));
 
    useEffect(() => {
       // Only fetch organizations if we have a valid currentUser object with an id

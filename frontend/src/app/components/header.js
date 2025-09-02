@@ -6,7 +6,7 @@ import { AuthContext } from "../context/authContext";
 import { FaUserCircle, FaRegUser, FaSignOutAlt } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { IoReorderThree } from "react-icons/io5";
-import { Services, useApi, useToast } from "../services";
+import { getUserService, useApi, useToast } from "../services";
 
 // Separate component for sidebar toggle to handle context properly
 const SidebarToggle = () => {
@@ -38,8 +38,11 @@ const Header = ({ showSidebarToggle = false }) => {
    
    const { showError } = useToast();
 
+   // Get UserService instance
+   const userService = getUserService();
+
    // API hook for fetching user data
-   const { execute: fetchUserData, loading: userLoading } = useApi(Services.User.getUserData);
+   const { execute: fetchUserData, loading: userLoading } = useApi(userService.getUserData.bind(userService));
 
    const toggleDropdown = () => {
       setIsDropdownOpen(!isDropdownOpen);

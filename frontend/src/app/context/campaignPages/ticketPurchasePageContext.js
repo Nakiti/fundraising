@@ -1,7 +1,8 @@
+"use client";
+import { getPageService } from "@/app/services";
+import { createContext, useContext, useState, useEffect } from "react";
 import { initialTicketPurchaseSections } from "@/app/constants/pageSectionsConfig";
 import useFormInput from "@/app/hooks/useFormInput";
-import { PageService } from "@/app/services/fetchService";
-import { createContext, useState, useEffect, useContext } from "react";
 import { CampaignContext } from "../campaignContext";
 
 export const TicketPurchasePageContext = createContext()
@@ -14,20 +15,40 @@ export const TicketPurchasePageContextProvider = ({campaignId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const ticketPurchaseResponse = await PageService.getTicketPurchasePage(campaignId)
+            const pageService = getPageService();
+            const ticketPurchaseResponse = await pageService.getTicketPurchasePage(campaignId)
             const ticketPurchasePageId = ticketPurchaseResponse.id
             const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
-
+            
+            setTicketPurchasePageId(ticketPurchasePageId)
+            
             setTicketPurchasePageInputs({
-               headline: ticketPurchaseResponse.headline || "",
+               // Basic Content
+               title: ticketPurchaseResponse.title || "",
+               subtitle: ticketPurchaseResponse.subtitle || "",
                description: ticketPurchaseResponse.description || "",
-               bg_image: ticketPurchaseResponse.bg_image || "",
-               bg_color: ticketPurchaseResponse.bg_color || "",
-               p_color: ticketPurchaseResponse.p_color || "",
-               s_color: ticketPurchaseResponse.s_color || "",
+               
+               // Colors
+               bg_color: ticketPurchaseResponse.bg_color || "#ffffff",
+               p_color: ticketPurchaseResponse.p_color || "#1f2937",
+               s_color: ticketPurchaseResponse.s_color || "#6b7280",
+               b_color: ticketPurchaseResponse.b_color || "#3b82f6",
+               bt_color: ticketPurchaseResponse.bt_color || "#ffffff",
+               
+               // Typography
+               heroTitleSize: ticketPurchaseResponse.heroTitleSize || "36",
+               heroSubtitleSize: ticketPurchaseResponse.heroSubtitleSize || "16",
+               sectionTitleSize: ticketPurchaseResponse.sectionTitleSize || "28",
+               bodyTextSize: ticketPurchaseResponse.bodyTextSize || "16",
+               buttonTextSize: ticketPurchaseResponse.buttonTextSize || "16",
+               
+               // Layout
+               cardRadius: ticketPurchaseResponse.cardRadius || "4",
+               buttonRadius: ticketPurchaseResponse.buttonRadius || "4",
             })
 
-            const ticketPurchaseSections = await PageService.getPageSectionsByPage(organizationId, 'ticket_purchase', ticketPurchasePageId)
+            // Fetch page sections for the ticket purchase page
+            const ticketPurchaseSections = await pageService.getPageSectionsByPage(organizationId, 'ticket_purchase', ticketPurchasePageId)
             setTicketPurchasePageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = ticketPurchaseSections.find((item) => item.name == section.name)

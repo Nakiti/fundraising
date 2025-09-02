@@ -1,6 +1,6 @@
 "use client"
+import { getCampaignService, getPageService } from "@/app/services"
 import { useState, useEffect } from "react"
-import { getCampaignDetails, getThankYouPage } from "@/app/services/fetchService"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
 import { FaShare, FaHeart, FaCheckCircle } from "react-icons/fa"
 
@@ -14,12 +14,15 @@ const ThankYouPage = ({params}) => {
 
    useEffect(() => {
       const fetchData = async() => {
-         const campaignResponse = await getCampaignDetails(campaignId)
+         const campaignService = getCampaignService();
+         const pageService = getPageService();
+         
+         const campaignResponse = await campaignService.getCampaignDetails(campaignId)
          
          if (campaignResponse.status == "active" || status == "preview") {
             setCampaignDetails(campaignResponse)
 
-            const displayResponse = await getThankYouPage(campaignId)
+            const displayResponse = await pageService.getThankYouPage(campaignId)
             setDisplay(displayResponse)
             console.log("asdasd", displayResponse)
          }

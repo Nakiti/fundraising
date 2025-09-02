@@ -1,10 +1,8 @@
 "use client"
-import { useState, useContext } from "react"
+import { getCampaignService } from "@/app/services"
+import { useState, useEffect, useContext } from "react"
 import TicketComponent from "../../../../components/ticketComponent"
 import { CampaignContext } from "@/app/context/campaignContext"
-import { getCampaignTickets } from "@/app/services/fetchService"
-import { createCampaignTicket } from "@/app/services/createServices"
-import { deleteCampaignTicketsBatch } from "@/app/services/deleteService"
 import useFormInput from "@/app/hooks/useFormInput"
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
@@ -26,15 +24,16 @@ const Tickets = () => {
 
    const handleSave = async () => { //not sure this works right
       try {
-         const existingTickets = await getCampaignTickets(campaignId)
+         const campaignService = getCampaignService();
+         const existingTickets = await campaignService.getCampaignTickets(campaignId)
          const ticketsToAdd = tickets.filter(item => !existingTickets.includes(item))
          const ticketsToRemove = existingTickets.filter(item => !tickets.includes(item))
 
          if (ticketsToAdd.length > 0) {
-            await createCampaignTicket(campaignId, ticketsToAdd)
+            await campaignService.createCampaignTicket(campaignId, ticketsToAdd)
          }
                    if (ticketsToRemove.length > 0) {
-             await deleteCampaignTicketsBatch(ticketsToRemove)
+             await campaignService.deleteCampaignTicket(ticketsToRemove)
           }
           markChangesAsSaved()
           markPageChangesAsSaved('tickets')

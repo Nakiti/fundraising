@@ -1,17 +1,20 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Services } from "@/app/services"
+import { getPageService } from "@/app/services"
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaTiktok } from "react-icons/fa"
 
 const Footer = ({ organizationId }) => {
    const [footerData, setFooterData] = useState(null)
    const [loading, setLoading] = useState(true)
 
+   // Get PageService instance
+   const pageService = getPageService();
+
    useEffect(() => {
       const fetchFooterData = async () => {
          try {
             console.log('Fetching footer data for organization:', organizationId)
-            const response = await Services.Page.getFooterPage(organizationId)
+            const response = await pageService.getFooterPage(organizationId)
             console.log('Footer data received:', response)
             setFooterData(response)
          } catch (error) {

@@ -359,4 +359,26 @@ export class DesignationService extends BaseService {
     const results = await this.executeQuery(query, params);
     return results || [];
   }
+
+  /**
+   * Get designations by campaign
+   * @param {number} campaignId - Campaign ID
+   * @returns {Promise<Array>} Array of designations associated with the campaign
+   */
+  async getDesignationsByCampaign(campaignId) {
+    if (!campaignId) {
+      throw new ValidationError('Campaign ID is required');
+    }
+
+    const query = `
+      SELECT d.* 
+      FROM designations d
+      JOIN campaign_designations cd ON d.id = cd.designation_id
+      WHERE cd.campaign_id = ?
+      ORDER BY d.title ASC
+    `;
+
+    const results = await this.executeQuery(query, [campaignId]);
+    return results || [];
+  }
 }

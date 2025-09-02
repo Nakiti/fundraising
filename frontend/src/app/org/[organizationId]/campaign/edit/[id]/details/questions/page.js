@@ -1,13 +1,10 @@
 "use client"
 import { FaTrash } from "react-icons/fa"
-import { useContext, useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import { AuthContext } from "@/app/context/authContext"
 import useFormInput from "@/app/hooks/useFormInput"
-import { getCustomQuestions } from "@/app/services/fetchService"
-import { deleteCampaignQuestionsBatch } from "@/app/services/deleteService"
-import { createCustomQuestion } from "@/app/services/createServices"
-import { updateCampaignDetails } from "@/app/services/updateServices"
+import { getCampaignService } from "@/app/services"
 
 const Questions = () => {
    const {questionInputs, handleQuestionInputsChange, customQuestions, setCustomQuestionsWithTracking, campaignId, loading, campaignDetails, campaignStatus, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
@@ -39,7 +36,8 @@ const Questions = () => {
    const handleSave = async () => {
       try {
          // Save custom questions
-         const existingQuestions = await getCustomQuestions(campaignId)
+         const campaignService = getCampaignService();
+         const existingQuestions = await campaignService.getCustomQuestions(campaignId)
          const questionsToAdd = customQuestions.filter(item => !existingQuestions.includes(item))
          const questionsToRemove = existingQuestions.filter(item => !customQuestions.includes(item))
 
@@ -47,15 +45,15 @@ const Questions = () => {
          console.log(questionsToRemove)
 
          if (questionsToAdd.length > 0) {
-            await createCustomQuestion(campaignId, questionsToAdd)
+            await campaignService.addCampaignQuestion(campaignId, questionsToAdd)
          }
          if (questionsToRemove.length > 0) {
-            await deleteCampaignQuestionsBatch(questionsToRemove)
+            await campaignService.removeCampaignQuestion(questionsToRemove)
          }
 
          // Save checkbox question values to campaign details
          if (campaignDetails && currentUser) {
-            await updateCampaignDetails(campaignId, campaignDetails, campaignStatus, currentUser, questionInputs)
+            await campaignService.updateCampaign(campaignId, campaignDetails)
          }
          
          markChangesAsSaved()

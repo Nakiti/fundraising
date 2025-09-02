@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDetails, getPeerFundraisingPage } from "@/app/services/fetchService"
+import { getCampaignService, getPageService } from "@/app/services"
 import { useState, useEffect } from "react"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
 
@@ -14,12 +14,15 @@ const PeerFundraisingPage = ({params}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const campaignResponse = await getCampaignDetails(campaignId)
+            const campaignService = getCampaignService();
+            const pageService = getPageService();
+            
+            const campaignResponse = await campaignService.getCampaignDetails(campaignId)
             setCampaignDetails(campaignResponse)
             const campaignStatus = campaignResponse.status
 
             if (status == "preview" || campaignStatus == "active") {
-               const response = await getPeerFundraisingPage(campaignId)
+               const response = await pageService.getPeerFundraisingPage(campaignId)
                setPageInputs(response)
 
                console.log(response)

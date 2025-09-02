@@ -1,4 +1,4 @@
-import { apiClient } from './apiClient';
+import { api } from './apiClient';
 
 export const CartService = {
   /**
@@ -6,8 +6,8 @@ export const CartService = {
    */
   async getOrganizationDesignations(organizationId) {
     try {
-      const response = await apiClient.get(`/api/organizations/${organizationId}/designations`);
-      return response.data;
+      const response = await api.get(`/organizations/${organizationId}/designations`);
+      return response;
     } catch (error) {
       console.error('Error fetching organization designations:', error);
       throw error;
@@ -20,14 +20,14 @@ export const CartService = {
    */
   async validateCartItems(cartItems) {
     try {
-      const response = await apiClient.post('/api/cart/validate', {
+      const response = await api.post('/cart/validate', {
         items: cartItems.map(item => ({
           campaignId: item.campaignId,
           amount: item.amount,
           designationId: item.selectedDesignation
         }))
       });
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Error validating cart items:', error);
       throw error;
@@ -39,7 +39,7 @@ export const CartService = {
    */
   async createCartTransactions(cartData, donorData, paymentData) {
     try {
-      const response = await apiClient.post('/api/cart/checkout', {
+      const response = await api.post('/cart/checkout', {
         items: cartData.items.map(item => ({
           campaign_id: item.campaignId,
           amount: item.amount,
@@ -51,7 +51,7 @@ export const CartService = {
         organization_id: cartData.organizationId,
         total_amount: cartData.totalAmount
       });
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Error creating cart transactions:', error);
       throw error;
@@ -63,10 +63,10 @@ export const CartService = {
    */
   async getCartRecommendations(organizationId, currentCampaignIds) {
     try {
-      const response = await apiClient.post(`/api/organizations/${organizationId}/recommendations`, {
+      const response = await api.post(`/organizations/${organizationId}/recommendations`, {
         currentCampaigns: currentCampaignIds
       });
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Error fetching cart recommendations:', error);
       return []; // Return empty array if recommendations fail
@@ -78,8 +78,8 @@ export const CartService = {
    */
   async saveCart(userId, cartData) {
     try {
-      const response = await apiClient.post(`/api/users/${userId}/cart`, cartData);
-      return response.data;
+      const response = await api.post(`/users/${userId}/cart`, cartData);
+      return response;
     } catch (error) {
       console.error('Error saving cart:', error);
       throw error;
@@ -91,8 +91,8 @@ export const CartService = {
    */
   async loadSavedCart(userId) {
     try {
-      const response = await apiClient.get(`/api/users/${userId}/cart`);
-      return response.data;
+      const response = await api.get(`/users/${userId}/cart`);
+      return response;
     } catch (error) {
       console.error('Error loading saved cart:', error);
       return null;

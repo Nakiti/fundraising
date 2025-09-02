@@ -1,12 +1,12 @@
 import { initialDonationFormSections } from "@/app/constants/pageSectionsConfig";
-import { ContentService, PageService, DesignationService } from "@/app/services/fetchService";
+import { getPageService, getDesignationService, getContentService } from "@/app/services";
 import { createContext, useState, useEffect, useContext } from "react";
 import useFormInput from "@/app/hooks/useFormInput";
 import { CampaignContext } from "../campaignContext";
 
 export const DonationFormContext = createContext()
 
-export const DonationFormContextProvider = ({campaignId, children}) => {
+export const DonationFormContextProvider = ({campaignId, children, organizationId}) => {
    const [donationFormInputs, handleDonationFormInputsChange, setDonationFormInputs] = useFormInput({})
    const [donationFormSections, setDonationFormSections] = useState(initialDonationFormSections)
    const [customQuestions, setCustomQuestions] = useState([])
@@ -16,53 +16,63 @@ export const DonationFormContextProvider = ({campaignId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const donationResponse = await PageService.getDonationForm(campaignId)
-            const donationPageId = donationResponse.id
+            const pageService = getPageService();
+            const designationService = getDesignationService();
+            const contentService = getContentService();
+            const donationResponse = await pageService.getDonationForm(campaignId)
+            const donationPageId = donationResponse.data.id
             const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
+            
             setDonationFormId(donationPageId)
             
             setDonationFormInputs({
                // Basic Content
-               headline: donationResponse.headline || "",
-               description: donationResponse.description || "",
-               subtitle: donationResponse.subtitle || "Donation Form",
+               headline: donationResponse.data.headline || "",
+               description: donationResponse.data.description || "",
+               subtitle: donationResponse.data.subtitle || "Donation Form",
                
                // Colors
-               bg_color: donationResponse.bg_color || "#ffffff",
-               p_color: donationResponse.p_color || "#1f2937",
-               s_color: donationResponse.s_color || "#6b7280",
-               b1_color: donationResponse.b1_color || "#3b82f6",
-               b2_color: donationResponse.b2_color || "#6b7280",
-               b3_color: donationResponse.b3_color || "#10b981",
-               bt_color: donationResponse.bt_color || "#ffffff",
+               bg_color: donationResponse.data.bg_color || "#ffffff",
+               p_color: donationResponse.data.p_color || "#1f2937",
+               s_color: donationResponse.data.s_color || "#6b7280",
+               b1_color: donationResponse.data.b1_color || "#3b82f6",
+               b2_color: donationResponse.data.b2_color || "#6b7280",
+               b3_color: donationResponse.data.b3_color || "#10b981",
+               bt_color: donationResponse.data.bt_color || "#ffffff",
                
                // Donation Amounts
-               button1: donationResponse.button1 || 25,
-               button2: donationResponse.button2 || 50,
-               button3: donationResponse.button3 || 100,
-               button4: donationResponse.button4 || 250,
-               button5: donationResponse.button5 || 500,
-               button6: donationResponse.button6 || 1000,
+               button1: donationResponse.data.button1 || 25,
+               button2: donationResponse.data.button2 || 50,
+               button3: donationResponse.data.button3 || 100,
+               button4: donationResponse.data.button4 || 250,
+               button5: donationResponse.data.button5 || 500,
+               button6: donationResponse.data.button6 || 1000,
                
                // Typography
-               heroTitleSize: donationResponse.heroTitleSize || "36",
-               heroSubtitleSize: donationResponse.heroSubtitleSize || "16",
-               sectionTitleSize: donationResponse.sectionTitleSize || "28",
-               bodyTextSize: donationResponse.bodyTextSize || "16",
-               buttonTextSize: donationResponse.buttonTextSize || "16",
+               heroTitleSize: donationResponse.data.heroTitleSize || "36",
+               heroSubtitleSize: donationResponse.data.heroSubtitleSize || "16",
+               sectionTitleSize: donationResponse.data.sectionTitleSize || "28",
+               bodyTextSize: donationResponse.data.bodyTextSize || "16",
+               buttonTextSize: donationResponse.data.buttonTextSize || "16",
                
                // Layout
-               cardRadius: donationResponse.cardRadius || "4",
-               buttonRadius: donationResponse.buttonRadius || "4",
+               cardRadius: donationResponse.data.cardRadius || "4",
+               buttonRadius: donationResponse.data.buttonRadius || "4",
             })
 
-            const customQuestionsResponse = await ContentService.getCustomQuestions(campaignId)
+            // Fetch designations for the campaign
+            // const designationResponse = await designationService.getDesignationsByCampaign(campaignId)
+            // setDesignations(designationResponse)
+
+            // Fetch custom questions for the campaign
+            const customQuestionsResponse = await contentService.getCustomQuestions(campaignId)
             setCustomQuestions(customQuestionsResponse)
 
-            const donationSections = await PageService.getPageSectionsByPage(organizationId, 'campaign_form', donationPageId)
+            // Fetch page sections for the donation form
+            const donationSections = await pageService.getPageSectionsByPage(organizationId, 'campaign_form', donationPageId)
             setDonationFormSections((prevSections) => {
                return prevSections.map(section => {
-                  const match = donationSections.find((item) => item.name == section.name)
+                  const match = donationSections.data.find((item) => item.name == section.name)
                   return match ? {...section, id: match.id, active: match.active } : section
                })
             })

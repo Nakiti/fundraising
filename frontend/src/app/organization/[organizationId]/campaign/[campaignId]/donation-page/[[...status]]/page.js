@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDesignations, getCampaignDetails, getDonationPage, getCampaignInsights, getDonationForm } from "@/app/services/fetchService"
+import { getCampaignService, getPageService } from "@/app/services"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
@@ -68,39 +68,32 @@ const DonationLandingPage = ({params}) => {
          try {
             setLoading(true)
             
-            const campaignResponse = await getCampaignDetails(campaignId)
+            const campaignService = getCampaignService();
+            const pageService = getPageService();
+            const campaignResponse = await campaignService.getCampaignDetails(campaignId)
             console.log("Campaign details:", campaignResponse)
             
             if (campaignResponse.status == "active" || status == "preview") {
                setCampaignDetails(campaignResponse)
 
-               const displayResponse = await getDonationPage(campaignId)
+               const displayResponse = await pageService.getDonationPage(campaignId)
                setDisplay(displayResponse)
                console.log("Donation page display:", displayResponse)
 
-               const designationResponse = await getCampaignDesignations(campaignId)
+               const designationResponse = await campaignService.getCampaignDesignations(campaignId)
                setDesignations(designationResponse)
                console.log("Designations:", designationResponse)
 
-               const donationFormResponse = await getDonationForm(campaignId)
+               const donationFormResponse = await pageService.getDonationForm(campaignId)
                setDonationForm(donationFormResponse)
                console.log("Donation form:", donationFormResponse)
 
-               // Fetch campaign insights for real statistics
-               try {
-                  const insightsResponse = await getCampaignInsights(campaignId)
-                  setCampaignInsights(insightsResponse)
-                  console.log("Campaign insights:", insightsResponse)
-               } catch (error) {
-                  console.log("Error fetching campaign insights:", error)
-                  // Fallback to basic campaign details
-                  setCampaignInsights({
-                     total_raised: campaignResponse.raised || 0,
-                     donations: campaignResponse.donations || 0,
-                     unique_donors: 0,
-                     average_donation: 0
-                  })
-               }
+               // Use campaign details for basic statistics
+               setCampaignInsights({
+                  total_raised: campaignResponse.raised || 0,
+                  total_donors: campaignResponse.donors || 0,
+                  goal: campaignResponse.goal || 0
+               })
             }
          } catch (error) {
             console.error("Error fetching campaign data:", error)
@@ -300,7 +293,7 @@ const DonationLandingPage = ({params}) => {
                            {display.show_donor_count !== false && (
                               <div className="flex items-center space-x-2">
                                  <FaUsers className="text-slate-400 w-4 h-4" />
-                                 <span>{campaignInsights?.donations || 0} donations</span>
+                                 <span>{campaignInsights?.total_donors || 0} donations</span>
                               </div>
                            )}
                            {campaignInsights?.unique_donors > 0 && (

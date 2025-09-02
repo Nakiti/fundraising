@@ -1,6 +1,6 @@
 import { useState } from "react"
 import debounce from "lodash/debounce"
-import { TransactionService } from "@/app/services/fetchService"
+import { getTransactionService } from "@/app/services"
 import { errorHandler } from "@/app/services/apiClient"
 import { IoIosSearch } from "react-icons/io";
 
@@ -14,7 +14,8 @@ const Searchbar = ({setData, organizationId}) => {
 
    const debouncedSearch = debounce(async (query) => {
       try {
-         const response = await TransactionService.searchTransactions(query, organizationId);
+         const transactionService = getTransactionService();
+         const response = await transactionService.searchTransactions(query, organizationId);
          setData(response)
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -24,7 +25,8 @@ const Searchbar = ({setData, organizationId}) => {
 
    const handleSearch = async() => {
       try {
-         const response = await TransactionService.searchTransactions(query, organizationId)
+         const transactionService = getTransactionService();
+         const response = await transactionService.searchTransactions(query, organizationId)
          setData(response)
          console.log(response)
       } catch (err) {

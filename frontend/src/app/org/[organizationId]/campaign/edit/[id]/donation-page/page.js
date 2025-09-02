@@ -1,7 +1,7 @@
 "use client"
 import { useContext, useState } from "react"
 import SectionManager from "@/app/components/sectionManager"
-import { PageUpdateService, updateDonationPage } from "@/app/services/updateServices"
+import { getPageService } from "@/app/services"
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
@@ -30,8 +30,11 @@ const DonationPage = () => {
             return
          }
          
+         // Get service instance
+         const pageService = getPageService();
+         
          // Update donation page
-         await updateDonationPage(campaignId, donationPageInputs)
+         await pageService.updateDonationPage(campaignId, donationPageInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationPageSections.filter(section => section.id && section.id > 0)
@@ -39,7 +42,7 @@ const DonationPage = () => {
          console.log('Valid sections to update:', validSections)
          if (validSections.length > 0) {
             const sectionPromises = validSections.map(section => 
-               PageUpdateService.updatePageSection(section.id, section.active)
+               pageService.updatePageSection(section.id, section.active)
             )
             await Promise.all(sectionPromises)
          }

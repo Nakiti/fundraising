@@ -4,7 +4,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import { CampaignService, TransactionService } from "@/app/services/fetchService";
+import { getCampaignService, getTransactionService } from "@/app/services";
 import { errorHandler } from "@/app/services/apiClient";
 
 const Filters = ({setData, organizationId}) => {
@@ -14,7 +14,8 @@ const Filters = ({setData, organizationId}) => {
 
    const handleFilter = async (e) => {
       try {
-         const response = await TransactionService.getFilteredTransactions(organizationId, e.target.value)
+         const transactionService = getTransactionService();
+         const response = await transactionService.getFilteredTransactions(organizationId, e.target.value)
          setData(response)
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -29,10 +30,12 @@ const Filters = ({setData, organizationId}) => {
 
       try {
          if (start && end) {
-            const response = await TransactionService.getTransactionsOverTime(start, end, organizationId);
+            const transactionService = getTransactionService();
+            const response = await transactionService.getTransactionsOverTime(start, end, organizationId);
             setData(response);
          } else {
-            const response = await TransactionService.getTransactionsByOrg(organizationId)
+            const transactionService = getTransactionService();
+            const response = await transactionService.getTransactionsByOrg(organizationId)
             setData(response)
          }
       } catch (err) {
@@ -45,10 +48,12 @@ const Filters = ({setData, organizationId}) => {
       try {
          const campaignId = e.target.value;
          if (campaignId === 'all') {
-            const response = await TransactionService.getTransactionsByOrg(organizationId);
+            const transactionService = getTransactionService();
+            const response = await transactionService.getTransactionsByOrg(organizationId);
             setData(response);
          } else {
-            const response = await TransactionService.getTransactionsByCampaignInOrg(campaignId, organizationId);
+            const transactionService = getTransactionService();
+            const response = await transactionService.getTransactionsByCampaignInOrg(campaignId, organizationId);
             setData(response);
          }
       } catch (err) {
@@ -60,7 +65,8 @@ const Filters = ({setData, organizationId}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await CampaignService.getAllCampaigns(organizationId)
+            const campaignService = getCampaignService();
+         const response = await campaignService.getCampaignsByOrganization(organizationId)
             setCampaigns(response)
          } catch (err) {
             const handledError = errorHandler.handle(err)

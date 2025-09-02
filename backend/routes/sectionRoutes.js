@@ -3,11 +3,18 @@ import { createSection, getSection, getSectionByPage, getSectionsByPage, updateS
 
 const router = express.Router()
 
+// New API structure for page_sections table
 router.post("/create", createSection)
 router.put("/update/:id", updateSection)
 router.put("/updateOrder", updateSectionOrder)
-router.get("/get/:id", getSection) 
-router.get("/getSectionsByPage/:id", getSectionByPage) // Legacy endpoint
-router.get("/getSectionsByPage", getSectionsByPage) // New endpoint with query parameters
+
+// Primary endpoint for getting sections by page context (new structure)
+router.get("/getByPage", getSectionsByPage)
+
+// Get individual section by section ID
+router.get("/get/:id", getSection)
+
+// Legacy endpoint for backward compatibility (deprecated)
+router.get("/getByPage/:id", getSectionByPage)
 
 export default router

@@ -33,6 +33,7 @@ export const updateSection = asyncHandler(async (req, res) => {
 
 export const getSection = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  console.log(id)
   
   if (!id) {
     throw new ValidationError('Section ID is required');

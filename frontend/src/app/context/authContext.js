@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useEffect, useState, useCallback } from "react";
-import { Services, useApi, useToast } from "../services";
+import { getAuthService, useApi, useToast } from "../services";
 
 export const AuthContext = createContext()
 
@@ -13,15 +13,18 @@ export const AuthContextProvider = ({children}) => {
    
    const { showError, showSuccess } = useToast();
 
+   // Get AuthService instance
+   const authService = getAuthService();
+
    // API hooks for authentication
-   const { execute: loginUser, loading: loginLoading } = useApi(Services.Auth.loginUser);
-   const { execute: logoutUser, loading: logoutLoading } = useApi(Services.Auth.logoutUser);
-   const { execute: getCurrentUser, loading: authCheckLoading } = useApi(Services.Auth.getCurrentUser, { maxRetries: 0 }); // Disable retries for auth checks
+   const { execute: loginUserExecute, loading: loginLoading } = useApi(authService.loginUser.bind(authService));
+   const { execute: logoutUserExecute, loading: logoutLoading } = useApi(authService.logoutUser.bind(authService));
+   const { execute: getCurrentUserExecute, loading: authCheckLoading } = useApi(authService.getCurrentUser.bind(authService), { maxRetries: 0 }); // Disable retries for auth checks
  
    const login = async (inputs) => {
       try {
          setError(null);
-         const response = await loginUser(inputs);
+         const response = await loginUserExecute(inputs);
          
          if (response && response.success) {
             // Use consistent response structure - check if user is in response.data or response
@@ -46,7 +49,7 @@ export const AuthContextProvider = ({children}) => {
 
    const logout = async () => {
       try {
-         await logoutUser();
+         await logoutUserExecute();
          setCurrentUser(null);
          setIsLoggedIn(false);
          setError(null);
@@ -72,7 +75,7 @@ export const AuthContextProvider = ({children}) => {
    const checkAuthStatus = useCallback(async () => {
       try {
          setLoading(true);
-         const response = await getCurrentUser();
+         const response = await getCurrentUserExecute();
          
          if (response && response.success) {
             // Use consistent response structure - check if user is in response.data or response
@@ -101,7 +104,7 @@ export const AuthContextProvider = ({children}) => {
          setLoading(false);
          setInitialCheckComplete(true);
       }
-   }, [getCurrentUser, clearInvalidToken]);
+   }, [getCurrentUserExecute, clearInvalidToken]);
 
    // Refetch auth status manually
    const refetchAuth = useCallback(async () => {

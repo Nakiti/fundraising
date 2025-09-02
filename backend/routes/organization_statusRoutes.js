@@ -14,7 +14,7 @@ router.use(verifyToken);
 router.put("/update/:organizationId", checkOrganizationAccess, updateOrganizationStatus);
 
 // Get detailed status breakdown
-router.get("/breakdown/:organizationId", checkOrganizationAccess, getOrganizationStatusBreakdown);
+router.get("/get/:organizationId", checkOrganizationAccess, getOrganizationStatusBreakdown);
 
 export default router;
 

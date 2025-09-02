@@ -1,8 +1,7 @@
 "use client"
 import { useContext, useState } from "react"
 import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext";
-import { PageUpdateService } from "@/app/services/updateServices";
-import { PageService } from "@/app/services/fetchService";
+import { getPageService } from "@/app/services";
 import { AuthContext } from "@/app/context/authContext";
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
@@ -29,14 +28,17 @@ const Design = () => {
       setSuccessMessage("")
       
       try {
+         // Get service instance
+         const pageService = getPageService();
+         
          // Update donation form
-         await PageUpdateService.updateDonationForm(donationFormId, donationFormInputs, currentUser.id)
+         await pageService.updateDonationForm(donationFormId, donationFormInputs, currentUser.id)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationFormSections.filter(section => section.id && section.id > 0)
          if (validSections.length > 0) {
             const sectionPromises = validSections.map(section => 
-               PageUpdateService.updatePageSection(section.id, section.active)
+               pageService.updatePageSection(section.id, section.active)
             )
             await Promise.all(sectionPromises)
          }
@@ -58,7 +60,8 @@ const Design = () => {
       setSuccessMessage("")
       
       try {
-         const donationResponse = await PageService.getDonationForm(campaignId)
+         const pageService = getPageService();
+         const donationResponse = await pageService.getDonationForm(campaignId)
          
          setDonationFormInputs({
             // Basic Content

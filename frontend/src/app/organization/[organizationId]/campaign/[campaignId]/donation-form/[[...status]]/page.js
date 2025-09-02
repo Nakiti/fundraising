@@ -1,5 +1,5 @@
 "use client"
-import { getCampaignDesignations, getCampaignDetails, getCustomQuestions, getDonationForm, getSingleDesignation, DesignationService } from "@/app/services/fetchService"
+import { getCampaignService, getPageService, getDesignationService, getDonorService } from "@/app/services"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import PreviewBar from "@/app/organization/[organizationId]/components/previewBar"
@@ -7,7 +7,6 @@ import { FaCreditCard, FaPaypal, FaLock, FaHeart, FaArrowLeft, FaSpinner } from 
 import StripeCheckout from "@/app/components/StripeCheckout"
 import PostDonationAccountModal from "@/app/components/PostDonationAccountModal"
 import { useSearchParams } from "next/navigation"
-import { DonorCreateService } from "@/app/services/donorServices"
 
 const DonationForm = ({params}) => {
    const [display, setDisplay] = useState(null)
@@ -171,7 +170,7 @@ const DonationForm = ({params}) => {
          }
          
          // Try to convert guest donor (will handle both guest conversion and new registration)
-         const result = await DonorCreateService.convertGuestToRegistered(organizationId, {
+         const result = await getDonorService().convertGuestToRegistered(organizationId, {
             ...donorData,
             linkDonorIds: [] // This will be empty for post-donation flow
          })
@@ -225,29 +224,33 @@ const DonationForm = ({params}) => {
             setError("")
             setNoDesignationsError(false)
             
-            const campaignResponse = await getCampaignDetails(campaignId)
+            const campaignService = getCampaignService();
+            const designationService = getDesignationService();
+            const pageService = getPageService();
+            
+            const campaignResponse = await campaignService.getCampaignDetails(campaignId)
             
             if (campaignResponse.status == "active" || status == "preview") {
                setCampaignDetails(campaignResponse)
 
                // First, check if organization has any designations
-               const orgDesignationsResponse = await DesignationService.getAllDesignations(organizationId)
+               const orgDesignationsResponse = await designationService.getAllDesignations(organizationId)
                setOrganizationDesignations(orgDesignationsResponse)
 
                if (orgDesignationsResponse && orgDesignationsResponse.length > 0) {
                   // Organization has designations, proceed with campaign setup
                   if (campaignResponse.default_designation != 0) {
-                     const defaultDesignationResponse = await getSingleDesignation(campaignResponse.default_designation)
+                     const defaultDesignationResponse = await designationService.getSingleDesignation(campaignResponse.default_designation)
                      setDefaultDesignation(defaultDesignationResponse)
                   }
 
-                  const displayResponse = await getDonationForm(campaignId)
+                  const displayResponse = await pageService.getDonationForm(campaignId)
                   setDisplay(displayResponse)
 
-                  const designationResponse = await getCampaignDesignations(campaignId)
+                  const designationResponse = await designationService.getCampaignDesignations(campaignId)
                   setDesignations(designationResponse)
 
-                  const questionsResponse = await getCustomQuestions(campaignId)
+                  const questionsResponse = await pageService.getCustomQuestions(campaignId)
                   setQuestions(questionsResponse)
                } else {
                   // No organization designations exist

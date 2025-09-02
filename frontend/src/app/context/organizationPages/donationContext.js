@@ -1,6 +1,6 @@
-"use client"
-import { createContext, useState, useEffect } from "react";
-import { DesignationService } from "@/app/services/fetchService";
+"use client";
+import { getDesignationService } from "@/app/services";
+import { createContext, useContext, useState, useEffect } from "react";
 
 export const DonationContext = createContext()
 
@@ -10,7 +10,8 @@ export const DonationContextProvider = ({organizationId, children}) => {
    useEffect(() => {
       const fetchData = async() => {
          try {
-            const response = await DesignationService.getActiveDesignations(organizationId)
+            const designationService = getDesignationService();
+            const response = await designationService.getActiveDesignations(organizationId)
             setDesignations(response)
          } catch (err) {
             console.log(err)
