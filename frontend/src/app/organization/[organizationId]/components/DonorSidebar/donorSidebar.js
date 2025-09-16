@@ -2,7 +2,7 @@
 
 import DonorSidebarItem from './donorSidebarItem';
 import { FaHome, FaCreditCard, FaCalendarAlt, FaCog } from "react-icons/fa";
-import { useDonorSidebar } from '../../context/donorSidebarContext';
+import { useDonorSidebar } from '@/app/context/donorSidebarContext';
 
 const DonorSidebar = ({ organizationId }) => {
     const { isCollapsed } = useDonorSidebar();

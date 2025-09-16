@@ -38,15 +38,17 @@ export class PageService extends BaseService {
   /**
    * Update landing page
    */
-  async updateLandingPage(pageId, pageData, files = {}) {
+  async updateLandingPage(organizationId, pageId, pageData, files = {}) {
     this.validateId(pageId, 'Page ID');
     
+    console.log('pageData', pageData);
+    console.log('files', files);
     const formData = this.createFormData({
       ...pageData,
       ...files
     });
     
-    return await this.putFormData(`/landing_page/update/${pageId}`, formData);
+    return await this.putFormData(`/landing_page/update/${organizationId}/${pageId}`, formData);
   }
 
   // ===== ABOUT PAGE OPERATIONS =====
@@ -78,7 +80,7 @@ export class PageService extends BaseService {
   /**
    * Update about page
    */
-  async updateAboutPage(pageId, pageData, files = {}) {
+  async updateAboutPage(organizationId, pageId, pageData, files = {}) {
     this.validateId(pageId, 'Page ID');
     
     const formData = this.createFormData({
@@ -86,7 +88,7 @@ export class PageService extends BaseService {
       ...files
     });
     
-    return await this.putFormData(`/about_page/update/${pageId}`, formData);
+    return await this.putFormData(`/about_page/update/${organizationId}/${pageId}`, formData);
   }
 
   // ===== DONATION PAGE OPERATIONS =====
@@ -102,12 +104,12 @@ export class PageService extends BaseService {
   /**
    * Create donation page
    */
-  async createDonationPage(campaignId, pageData) {
+  async createDonationPage(campaignId) {
     this.validateId(campaignId, 'Campaign ID');
-    this.validateRequired(pageData.title, 'Page title');
+    // this.validateRequired(pageData.title, 'Page title');
     
     return await this.post('/donation_page/create', {
-      ...pageData,
+      // ...pageData,
       campaign_id: campaignId
     });
   }
@@ -115,15 +117,18 @@ export class PageService extends BaseService {
   /**
    * Update donation page
    */
-  async updateDonationPage(pageId, pageData, files = {}) {
+  async updateDonationPage(organizationId, campaignId, pageId, pageData, files = {}) {
     this.validateId(pageId, 'Page ID');
+    console.log('pageId', pageId);
     
+    console.log('pageData', pageData);
+    console.log('files', files);
     const formData = this.createFormData({
       ...pageData,
-      ...files
+      ...files,
     });
     
-    return await this.putFormData(`/donation_page/update/${pageId}`, formData);
+    return await this.putFormData(`/donation_page/update/${organizationId}/${campaignId}/${pageId}`, formData);
   }
 
   // ===== DONATION FORM OPERATIONS =====
@@ -139,12 +144,12 @@ export class PageService extends BaseService {
   /**
    * Create donation form
    */
-  async createDonationForm(campaignId, formData) {
+  async createDonationForm(campaignId) {
     this.validateId(campaignId, 'Campaign ID');
-    this.validateRequired(formData.title, 'Form title');
+    // this.validateRequired(formData.title, 'Form title');
     
     return await this.post('/donation_form/create', {
-      ...formData,
+      // ...formData,
       campaign_id: campaignId
     });
   }
@@ -152,15 +157,17 @@ export class PageService extends BaseService {
   /**
    * Update donation form
    */
-  async updateDonationForm(formId, formData, files = {}) {
+  async updateDonationForm(organizationId, campaignId, formId, formData, files = {}) {
     this.validateId(formId, 'Form ID');
     
+    console.log('formData', formData);
+    console.log('files', files);
     const formDataToSend = this.createFormData({
       ...formData,
       ...files
     });
     
-    return await this.putFormData(`/donation_form/update/${formId}`, formDataToSend);
+    return await this.putFormData(`/donation_form/update/${organizationId}/${campaignId}/${formId}`, formDataToSend);
   }
 
   // ===== THANK YOU PAGE OPERATIONS =====
@@ -176,12 +183,12 @@ export class PageService extends BaseService {
   /**
    * Create thank you page
    */
-  async createThankYouPage(campaignId, pageData) {
+  async createThankYouPage(campaignId) {
     this.validateId(campaignId, 'Campaign ID');
-    this.validateRequired(pageData.title, 'Page title');
+    // this.validateRequired(pageData.title, 'Page title');
     
     return await this.post('/thankyou_page/create', {
-      ...pageData,
+      // ...pageData,
       campaign_id: campaignId
     });
   }
@@ -189,15 +196,17 @@ export class PageService extends BaseService {
   /**
    * Update thank you page
    */
-  async updateThankYouPage(pageId, pageData, files = {}) {
+  async updateThankYouPage(organizationId, campaignId, pageId, pageData, files = {}) {
     this.validateId(pageId, 'Page ID');
-    
+
+    console.log('pageData', pageData);
+    console.log('files', files);
     const formData = this.createFormData({
       ...pageData,
       ...files
     });
     
-    return await this.putFormData(`/thankyou_page/update/${pageId}`, formData);
+    return await this.putFormData(`/thankyou_page/update/${organizationId}/${campaignId}/${pageId}`, formData);
   }
 
   // ===== HEADER & FOOTER PAGE OPERATIONS =====
@@ -226,7 +235,7 @@ export class PageService extends BaseService {
   /**
    * Update header page
    */
-  async updateHeaderPage(pageId, pageData, files = {}) {
+  async updateHeaderPage(organizationId, pageId, pageData, files = {}) {
     this.validateId(pageId, 'Page ID');
     
     const formData = this.createFormData({
@@ -234,7 +243,7 @@ export class PageService extends BaseService {
       ...files
     });
     
-    return await this.putFormData(`/header_page/update/${pageId}`, formData);
+    return await this.putFormData(`/header_page/update/${organizationId}/${pageId}`, formData);
   }
 
   /**
@@ -261,7 +270,7 @@ export class PageService extends BaseService {
   /**
    * Update footer page
    */
-  async updateFooterPage(pageId, pageData, files = {}) {
+  async updateFooterPage(organizationId, pageId, pageData, files = {}) {
     this.validateId(pageId, 'Page ID');
     
     const formData = this.createFormData({
@@ -269,7 +278,7 @@ export class PageService extends BaseService {
       ...files
     });
     
-    return await this.putFormData(`/footer_page/update/${pageId}`, formData);
+    return await this.putFormData(`/footer_page/update/${organizationId}/${pageId}`, formData);
   }
 
   // ===== PEER FUNDRAISING PAGE OPERATIONS =====
@@ -448,12 +457,15 @@ export class PageService extends BaseService {
     this.validateRequired(name, 'Section name');
     this.validateRequired(currentUser, 'Current user');
     
+    // Coerce active to DB bit (0/1)
+    const activeBit = typeof active === 'boolean' ? (active ? 1 : 0) : (Number(active) ? 1 : 0);
+
     return await this.post('/section/createByPage', {
       organization_id: organizationId,
       page_type: pageType,
       page_reference_id: pageReferenceId,
       name: name,
-      active: active,
+      active: activeBit,
       user_id: currentUser.id
     });
   }
@@ -462,9 +474,36 @@ export class PageService extends BaseService {
    * Update page section
    */
   async updatePageSection(sectionId, sectionData) {
+    console.log("sectionId", sectionId)
     this.validateId(sectionId, 'Section ID');
-    
-    return await this.put(`/section/update/${sectionId}`, sectionData);
+
+    console.log('sectionData', sectionData);
+
+    // Support boolean, string, or number for active; coerce to 0/1 for DB
+    const activeBit = typeof sectionData === 'boolean' ? (sectionData ? 1 : 0) : (Number(sectionData) ? 1 : 0);
+    return await this.put(`/section/update/${sectionId}`, { active: activeBit });
+  }
+
+  /**
+   * Bulk update sections' active flags
+   */
+  async bulkUpdateSections(items) {
+    if (!Array.isArray(items) || items.length === 0) return;
+    // Ensure active is 0/1
+    const payload = items.map((i) => ({ id: i.id, active: typeof i.active === 'boolean' ? (i.active ? 1 : 0) : (Number(i.active) ? 1 : 0) }));
+    return await this.put(`/section/bulkUpdate`, { items: payload });
+  }
+
+  /**
+   * Update section order for a page
+   */
+  async updateSectionsOrder(organizationId, pageType, pageReferenceId, sections) {
+    return await this.put(`/section/updateOrder`, {
+      organization_id: organizationId,
+      page_type: pageType,
+      page_reference_id: pageReferenceId,
+      sections
+    });
   }
 
   /**

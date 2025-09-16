@@ -1,5 +1,4 @@
 import { BlobServiceClient } from '@azure/storage-blob';
-import { v4 as uuidv4 } from 'uuid';
 
 class ImageService {
    constructor() {
@@ -55,18 +54,19 @@ class ImageService {
          'admin': 1        // 1 hour
       };
       
+      console.log("imagePath", imagePath)
       return this.generateSasToken(imagePath, 'r', expiryHours[accessLevel]);
    }
 
    // Upload image to blob storage
    async uploadImage(orgId, entityType, entityId, imageType, file) {
       try {
-         // Generate unique filename
-         const fileExtension = file.originalname.split('.').pop();
-         const fileName = `${uuidv4()}.${fileExtension}`;
-         
-         // Create blob path
-         const blobPath = `organizations/${orgId}/${entityType}/${entityId}/${imageType}/${fileName}`;
+         console.log("entityType", entityType)
+         console.log("entityId", entityId)
+         console.log("imageType", imageType)
+         console.log("file", file)
+         // Create deterministic blob path so each image type has a single blob that gets overwritten
+         const blobPath = `organizations/${orgId}/${entityType}/${entityId}/${imageType}/image`;
          
          if (!this.isAzureConfigured) {
          // For development, return the path as if it was uploaded
@@ -80,11 +80,12 @@ class ImageService {
          
          // Upload file
          await blockBlobClient.uploadData(file.buffer, {
-         blobHTTPHeaders: {
-            blobContentType: file.mimetype,
-         },
+            blobHTTPHeaders: {
+               blobContentType: file.mimetype,
+            },
          });
 
+         console.log("blobPath", blobPath)
          return blobPath;
       } catch (error) {
          console.error('Image upload failed:', error);

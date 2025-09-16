@@ -42,7 +42,6 @@ const Header = ({ showSidebarToggle = false }) => {
    const userService = getUserService();
 
    // API hook for fetching user data
-   const { execute: fetchUserData, loading: userLoading } = useApi(userService.getUserData.bind(userService));
 
    const toggleDropdown = () => {
       setIsDropdownOpen(!isDropdownOpen);
@@ -62,7 +61,8 @@ const Header = ({ showSidebarToggle = false }) => {
       if (!currentUser?.id) return;
       
       try {
-         const response = await fetchUserData(currentUser.id);
+         const response = await userService.getUserData(currentUser.id);
+         // console.log("response from header", response)
          if (response) {
             setUserData(response);
          }
@@ -77,7 +77,7 @@ const Header = ({ showSidebarToggle = false }) => {
    }, [currentUser?.id]);
 
    return (
-      <div className="flex justify-between items-center px-4 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm" style={{ height: "50px" }}>
+      <div className="relative z-40 flex justify-between items-center px-4 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm" style={{ height: "50px" }}>
          <div className="flex items-center space-x-4">
             {showSidebarToggle && <SidebarToggle />}
             <Link href="/" className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-200">
@@ -94,7 +94,7 @@ const Header = ({ showSidebarToggle = false }) => {
                   >
                      <FaUserCircle size={32} className="text-gray-600" />
                      <span className="text-sm font-medium text-gray-700">
-                        {userData.first_name} {userData.last_name}
+                        {userData.firstName} {userData.lastName}
                      </span>
                      {isDropdownOpen ? 
                         <IoIosArrowUp className="text-gray-400 text-sm" /> : 
@@ -106,7 +106,7 @@ const Header = ({ showSidebarToggle = false }) => {
                      <div className="absolute right-0 top-full mt-1 w-64 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                         <div className="p-3 border-b border-gray-100">
                            <h3 className="text-sm font-semibold text-gray-900">Account</h3>
-                           <p className="text-xs text-gray-500">{userData.first_name} {userData.last_name}</p>
+                           <p className="text-xs text-gray-500">{userData.firstName} {userData.lastName}</p>
                         </div>
                         <Link
                            href="/profile"
@@ -118,11 +118,11 @@ const Header = ({ showSidebarToggle = false }) => {
                         </Link>
                         <button
                            onClick={handleLogout}
-                           disabled={userLoading}
+                           // disabled={userLoading}
                            className="flex items-center w-full text-sm text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-1"
                         >
                            <FaSignOutAlt className="mr-3" /> 
-                           {userLoading ? 'Logging out...' : 'Logout'}
+                           {/* {userLoading ? 'Logging out...' : 'Logout'} */}
                         </button>
                      </div>
                   )}

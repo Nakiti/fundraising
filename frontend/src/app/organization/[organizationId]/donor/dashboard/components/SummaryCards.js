@@ -4,7 +4,7 @@ const SummaryCards = ({ summary, formatCurrency, formatDate }) => {
     const cards = [
         {
             title: "Total Donations",
-            value: summary?.total_donations || 0,
+            value: summary?.totalDonations || 0,
             subtitle: "Lifetime contributions",
             icon: FaHeart,
             iconBg: "bg-rose-50",
@@ -12,7 +12,7 @@ const SummaryCards = ({ summary, formatCurrency, formatDate }) => {
         },
         {
             title: "Total Amount",
-            value: formatCurrency(summary?.total_amount),
+            value: formatCurrency(summary?.totalDonated),
             subtitle: "Impact generated",
             icon: FaDollarSign,
             iconBg: "bg-emerald-50",
@@ -20,7 +20,7 @@ const SummaryCards = ({ summary, formatCurrency, formatDate }) => {
         },
         {
             title: "Last Donation",
-            value: summary?.last_donation ? formatDate(summary.last_donation) : 'Never',
+            value: summary?.lastDonationDate ? formatDate(summary.lastDonationDate) : 'Never',
             subtitle: "Most recent activity",
             icon: FaCalendarAlt,
             iconBg: "bg-violet-50",

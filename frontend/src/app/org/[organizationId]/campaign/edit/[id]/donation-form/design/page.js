@@ -8,7 +8,7 @@ import ErrorModal from "@/app/components/errorModal"
 import { FaPalette, FaFont, FaMousePointer, FaRuler, FaSave, FaUndo } from "react-icons/fa";
 
 const Design = () => {
-   const {campaignId, donationFormInputs, handleDonationFormInputsChange, donationFormSections, donationFormId, setDonationFormInputs} = useContext(DonationFormContext)
+   const {campaignId, donationFormInputs, handleDonationFormInputsChange, donationFormSections, donationFormId, setDonationFormInputs, organizationId} = useContext(DonationFormContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
@@ -32,7 +32,7 @@ const Design = () => {
          const pageService = getPageService();
          
          // Update donation form
-         await pageService.updateDonationForm(donationFormId, donationFormInputs, currentUser.id)
+         await pageService.updateDonationForm(organizationId, campaignId, donationFormId, donationFormInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationFormSections.filter(section => section.id && section.id > 0)

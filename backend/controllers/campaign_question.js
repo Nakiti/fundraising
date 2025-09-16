@@ -16,11 +16,12 @@ import {
 
 export const createCustomQuestion = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const questions = req.body;
+  const {questions} = req.body;
   
   if (!id) {
     throw new ValidationError('Campaign ID is required');
   }
+  console.log(questions)
   
   if (!questions || !Array.isArray(questions) || questions.length === 0) {
     throw new ValidationError('Questions array is required and must not be empty');
@@ -64,7 +65,10 @@ export const deleteCustomQuestion = asyncHandler(async (req, res) => {
 })
 
 export const deleteCustomQuestionsBatch = asyncHandler(async (req, res) => {
-  const items = req.body;
+  const {items} = req.body;
+
+  console.log(req.body)
+  console.log(items)
   
   if (!items || !Array.isArray(items) || items.length === 0) {
     throw new ValidationError('Items array is required and must not be empty');

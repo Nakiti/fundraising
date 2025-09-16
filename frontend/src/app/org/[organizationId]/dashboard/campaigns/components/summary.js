@@ -7,8 +7,12 @@ import Box from "./box"
    Props:
       - data: the campaigns
 */
-const Summary = ({data}) => {
+const Summary = ({campaigns}) => {
    // calculates each statistic appropriately 
+
+   const data = campaigns
+   console.log("data", data)
+   console.log("campaigns", campaigns)
    const summary = {
       totalDonations: data.reduce((acc, campaign) => acc + campaign.donations, 0),
       totalRaised: data.reduce((acc, campaign) => acc + Number(campaign.amount_raised), 0),

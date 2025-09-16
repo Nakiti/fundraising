@@ -17,6 +17,8 @@ import {
    OrganizationStatus,
    LoadingSkeleton
 } from "./components"
+import { FaDollarSign, FaHandHoldingHeart, FaUserPlus } from "react-icons/fa"
+import { IoIosStats } from "react-icons/io"
 
 /*
    Component: Home
@@ -106,13 +108,13 @@ const Home = ({params}) => {
             dashboardService.getDashboardNotifications(organizationId, 10)
          ]);
 
-         console.log("top campaigns", campaignsResponse)
-         console.log("status", statusResponse)
-         console.log("notifications", notificationsResponse)
          console.log("summary", summaryResponse)
          console.log("donations", donationsResponse)
+         console.log("campaigns", campaignsResponse)
+         console.log("status", statusResponse)
+         console.log("notifications", notificationsResponse)
 
-         setSummaryData(summaryResponse.data);
+         setSummaryData(summaryResponse);
          setRecentDonations(donationsResponse);
          setTopCampaigns(campaignsResponse);
          setOrganizationStatus(statusResponse);
@@ -137,7 +139,7 @@ const Home = ({params}) => {
       }
 
       fetchData()
-   }, [currentUser, organizationId])
+   }, [currentUser, organizationId, active])
 
    /*
       Function: formatTimeAgo

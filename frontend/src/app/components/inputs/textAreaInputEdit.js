@@ -10,7 +10,7 @@
       - value: the value property of the input
       - changeFunc: the onChange function
 */
-const TextAreaInputEdit = ({title, rows, placeholder, name, value, changeFunc}) => {
+const TextAreaInputEdit = ({title, rows, placeholder, name, value, changeFunc,}) => {
 
    return (
       <div className="mb-6">

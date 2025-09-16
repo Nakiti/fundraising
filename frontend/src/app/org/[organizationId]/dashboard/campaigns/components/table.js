@@ -117,23 +117,23 @@ const Table = ({setData, data, organizationId}) => {
                               #{row.id}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {row.internal_name}
+                              {row.internalName}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {new Date(row.created_at)?.toLocaleDateString("en-US", {
+                              {new Date(row.createdAt)?.toLocaleDateString("en-US", {
                                  year: 'numeric',
                                  month: 'short',
                                  day: 'numeric'
                               })}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {row.status === "inactive" ? "-" : `$${(row.amount_raised || 0)?.toLocaleString()}`}
+                                 {row.status === "draft" ? "-" : `$${(row.amountRaised || 0)?.toLocaleString()}`}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {row.status === "inactive" ? "-" : row.donations?.toLocaleString()}
+                              {row.status === "draft" ? "-" : row.donations?.toLocaleString()}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {row.status === "inactive" ? "-" : row.visits?.toLocaleString()}
+                              {row.status === "draft" ? "-" : row.visits?.toLocaleString()}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               <span className="capitalize">
@@ -143,7 +143,7 @@ const Table = ({setData, data, organizationId}) => {
                            <td className="px-6 py-4 whitespace-nowrap">
                               <span
                                  className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                                    row.status === "inactive" 
+                                    row.status === "draft" 
                                        ? "bg-red-100 text-red-800" 
                                        : "bg-green-100 text-green-800"
                                  }`}

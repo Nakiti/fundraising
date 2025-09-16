@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.post("/create", createAboutPage)
 router.get("/get/:organizationId", getAboutPage)
-router.put("/update/:organizationId", updateAboutPage)
+router.put("/update/:organizationId/:pageId", updateAboutPage)
 
 export default router

@@ -38,6 +38,7 @@ const DonorDashboard = ({ params }) => {
             ]);
             
             console.log("donationsData", donationsData)
+            console.log("summaryData", summaryData)
             setDonations(donationsData);
             setSummary(summaryData);
         } catch (error) {

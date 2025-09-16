@@ -12,6 +12,7 @@ const DetailsLayout = ({params, children}) => {
 
    const links = [
       {title: "About", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/about`},
+      {title: "Settings", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/settings`},
       campaignType == "ticketed-event" ? {title: "Tickets", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/tickets`} : null,
       {title: "Designations", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/designations`},
       {title: "Questions", path: `/org/${organizationId}/campaign/edit/${campaignId}/details/questions`},

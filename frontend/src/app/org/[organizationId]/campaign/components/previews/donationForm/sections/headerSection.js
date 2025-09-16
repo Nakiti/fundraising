@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext"
-import TextAreaInputEdit from "@/app/components/textAreaInputEdit"
+import TextAreaInputEdit from "@/app/components/inputs/textAreaInputEdit"
 
 const DonationFormHeaderSection = () => {
    const {donationFormInputs, handleDonationFormInputsChange} = useContext(DonationFormContext)

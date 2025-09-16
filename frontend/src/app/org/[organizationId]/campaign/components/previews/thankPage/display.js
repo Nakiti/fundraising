@@ -38,9 +38,9 @@ const Display = () => {
          <div className="relative">
             <div className="max-w-lg mx-auto px-4 py-12">
                {/* Success Card */}
-               <div className="bg-white border border-slate-200 p-6 text-center shadow-sm" style={{borderRadius: thankPageInputs.cardRadius || '12px'}}>
+               <div className="bg-white border border-slate-200 p-6 text-center shadow-sm" style={{borderRadius: '12px'}}>
                   {/* Success Icon */}
-                  <div className="mx-auto w-12 h-12 bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-4" style={{borderRadius: thankPageInputs.cardRadius || '12px'}}>
+                  <div className="mx-auto w-12 h-12 bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-4" style={{borderRadius: '12px'}}>
                      <FaCheckCircle className="text-emerald-600 text-xl" />
                   </div>
 
@@ -49,7 +49,7 @@ const Display = () => {
                      className="font-bold mb-3 leading-tight"
                      style={{ 
                         color: thankPageInputs.p_color || '#1e293b',
-                        fontSize: (parseInt(thankPageInputs.heroTitleSize) || 24) + 'px'
+                        fontSize: '24px'
                      }}
                   >
                      {thankPageInputs.headline || "Thank You!"}
@@ -59,14 +59,14 @@ const Display = () => {
                      className="leading-relaxed max-w-md mx-auto mb-6"
                      style={{ 
                         color: thankPageInputs.s_color || '#64748b',
-                        fontSize: (parseInt(thankPageInputs.bodyTextSize) || 14) + 'px'
+                        fontSize: '14px'
                      }}
                   >
                      {thankPageInputs.description || "Your generous donation has been received and will make a real difference in our mission. We're incredibly grateful for your support!"}
                   </p>
 
                   {/* Transaction Summary */}
-                  <div className="bg-slate-50 p-4 mb-6 text-left" style={{borderRadius: thankPageInputs.cardRadius || '8px'}}>
+                  <div className="bg-slate-50 p-4 mb-6 text-left" style={{borderRadius: '8px'}}>
                      <h3 className="font-semibold mb-3 text-sm" style={{ color: thankPageInputs.p_color || '#1e293b' }}>Donation Summary</h3>
                      <div className="space-y-2">
                         <div className="flex justify-between">
@@ -98,8 +98,8 @@ const Display = () => {
                         style={{ 
                            backgroundColor: thankPageInputs.b1_color || '#475569',
                            color: thankPageInputs.bt_color || '#ffffff',
-                           borderRadius: thankPageInputs.buttonRadius || '6px',
-                           fontSize: (parseInt(thankPageInputs.buttonTextSize) || 14) + 'px'
+                           borderRadius: '6px',
+                           fontSize: '14px'
                         }}
                      >
                         <FaHeart className="w-3 h-3" />
@@ -110,8 +110,8 @@ const Display = () => {
                         className="w-full py-3 px-4 font-semibold border border-slate-200 hover:border-slate-300 transition-all duration-300 flex items-center justify-center space-x-2"
                         style={{ 
                            color: thankPageInputs.p_color || '#1e293b',
-                           borderRadius: thankPageInputs.buttonRadius || '6px',
-                           fontSize: (parseInt(thankPageInputs.buttonTextSize) || 14) + 'px'
+                           borderRadius: '6px',
+                           fontSize: '14px'
                         }}
                      >
                         <FaShare className="w-3 h-3" />

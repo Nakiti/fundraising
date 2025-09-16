@@ -2,12 +2,13 @@
 import LandingPageDisplay from "./components/landingPageDisplay"
 import { useContext, useState } from "react"
 import { LandingPageContext } from "@/app/context/organizationPages/landingPageContext"
-import { updateLandingPage, updatePageSection } from "@/app/services/updateServices"
 import { AuthContext } from "@/app/context/authContext"
 import Navbar from "../components/navbar"
 import { validateActiveSections } from "@/app/utils/pageValidation"
+import { getPageService } from "@/app/services"
 
 const EditLandingLayout = ({params, children}) => {
+   const pageService = getPageService()
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isSaving, setIsSaving] = useState(false)
@@ -15,7 +16,7 @@ const EditLandingLayout = ({params, children}) => {
    const [isDeactivating, setIsDeactivating] = useState(false)
    const {currentUser} = useContext(AuthContext)
    const organizationId = params.organizationId
-   const {inputs, sections, setInputs} = useContext(LandingPageContext)
+   const {inputs, sections, setInputs, filesToUpload, saveSectionsActives} = useContext(LandingPageContext)
 
    const links = [
       `/org/${organizationId}/page/landing`,
@@ -40,14 +41,10 @@ const EditLandingLayout = ({params, children}) => {
          }
          
          // Update landing page content and styling
-         await updateLandingPage(inputs.id, inputs, organizationId)
+            await pageService.updateLandingPage(organizationId, inputs.id, inputs, filesToUpload)
          
-         // Update section visibility states
-         for (const section of sections) {
-            if (section.id) {
-               await updatePageSection(section.id, section.active)
-            }
-         }
+         // Bulk update section visibility states
+         await saveSectionsActives()
 
          // Success feedback
          console.log("Landing page saved successfully!")
@@ -82,15 +79,11 @@ const EditLandingLayout = ({params, children}) => {
          }
 
          // Update landing page content and styling with active status
-         const publishData = { ...inputs, active: true }
-         await updateLandingPage(inputs.id, publishData, organizationId)
+         const publishData = { ...inputs, active: 1 }
+         await pageService.updateLandingPage(organizationId, inputs.id, publishData, filesToUpload)
          
-         // Update section visibility states
-         for (const section of sections) {
-            if (section.id) {
-               await updatePageSection(section.id, section.active)
-            }
-         }
+         // Bulk update section visibility states
+         await saveSectionsActives()
 
          // Update the context to reflect the new active status
          setInputs(prev => ({ ...prev, active: true }))
@@ -118,15 +111,11 @@ const EditLandingLayout = ({params, children}) => {
 
       try {
          // Update landing page content and styling with inactive status
-         const deactivateData = { ...inputs, active: false }
-         await updateLandingPage(inputs.id, deactivateData, organizationId)
+         const deactivateData = { ...inputs, active: 0 }
+         await pageService.updateLandingPage(organizationId, inputs.id, deactivateData, filesToUpload)
          
-         // Update section visibility states
-         for (const section of sections) {
-            if (section.id) {
-               await updatePageSection(section.id, section.active)
-            }
-         }
+         // Bulk update section visibility states
+         await saveSectionsActives()
 
          // Update the context to reflect the new inactive status
          setInputs(prev => ({ ...prev, active: false }))

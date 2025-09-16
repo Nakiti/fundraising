@@ -1,8 +1,8 @@
 "use client";
 import { DonorProvider } from "@/app/context/donorContext";
 import { DonorSidebarProvider } from "@/app/context/donorSidebarContext";
-import DonorSidebar from "@/app/components/DonorSidebar/donorSidebar";
-import DonorHeader from "@/app/components/DonorHeader/donorHeader";
+import DonorSidebar from "@/app/organization/[organizationId]/components/DonorSidebar/donorSidebar";
+import DonorHeader from "@/app/organization/[organizationId]/components/DonorHeader/donorHeader";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 

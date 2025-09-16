@@ -2,9 +2,6 @@
 import Header from "./components/header"
 import Footer from "./components/footer"
 import InactiveMessage from "./components/InactiveMessage"
-import { DonationContextProvider } from "@/app/context/organizationPages/donationContext"
-import { LandingPageContextProvider } from "@/app/context/organizationPages/landingPageContext"
-import { AboutPageContextProvider } from "@/app/context/organizationPages/aboutPageContext"
 import { CartContextProvider } from "@/app/context/cartContext"
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
@@ -30,11 +27,12 @@ const OrganizationLayout = ({children, params}) => {
             
             // Fetch organization status
             const statusResponse = await organizationService.getOrganizationStatus(organizationId)
-            setOrganizationStatus(statusResponse)
+            console.log("statusResponse", statusResponse)
+            setOrganizationStatus(statusResponse.data.currentStatus)
             
             // Also fetch basic organization data for name
             const orgResponse = await organizationService.getOrganization(organizationId)
-            setOrganizationData(orgResponse)
+            setOrganizationData(orgResponse.data)
             
          } catch (error) {
             console.error('Error fetching organization status:', error)
@@ -63,7 +61,7 @@ const OrganizationLayout = ({children, params}) => {
    }
 
    // Show inactive message if organization is not active
-   if (organizationStatus?.organization?.status !== 'active') {
+   if (organizationStatus !== 'active') {
       return (
          <InactiveMessage organizationName={organizationData?.name} />
       )
@@ -71,19 +69,13 @@ const OrganizationLayout = ({children, params}) => {
 
    return (
       <CartContextProvider organizationId={organizationId}>
-         <DonationContextProvider>
-            <LandingPageContextProvider organizationId={organizationId}>
-               <AboutPageContextProvider organizationId={organizationId}>
-                  <div className={isDonorPage ? "h-screen bg-gray-50" : "min-h-screen bg-gray-50 flex flex-col"}>
-                     {!isDonorPage && <Header organizationId={organizationId}/>}
-                     <main className={isDonorPage ? "h-full" : "flex-1"}>
-                        {children}
-                     </main>
-                     {!isDonorPage && <Footer organizationId={organizationId}/>}
-                  </div>
-               </AboutPageContextProvider>
-            </LandingPageContextProvider>
-         </DonationContextProvider>
+         <div className={isDonorPage ? "h-screen bg-gray-50" : "min-h-screen bg-gray-50 flex flex-col"}>
+            {!isDonorPage && <Header organizationId={organizationId}/>}
+            <main className={isDonorPage ? "h-full" : "flex-1"}>
+               {children}
+            </main>
+            {!isDonorPage && <Footer organizationId={organizationId}/>}
+         </div>
       </CartContextProvider>
    )
 }

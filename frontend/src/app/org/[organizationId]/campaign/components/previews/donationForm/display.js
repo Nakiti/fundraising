@@ -2,9 +2,11 @@
 import { useContext } from "react";
 import { DonationFormContext } from "@/app/context/campaignPages/donationFormContext";
 import { FaCreditCard, FaPaypal, FaLock, FaHeart } from "react-icons/fa";
+import { CampaignContext } from "@/app/context/campaignContext";
 
 const Display = () => {
-   const { donationFormInputs, customQuestions } = useContext(DonationFormContext)
+   const { donationFormInputs } = useContext(DonationFormContext)
+   const { customQuestions } = useContext(CampaignContext)
    
    return (
       <div 
@@ -44,7 +46,7 @@ const Display = () => {
                      className="font-bold mb-3 leading-tight"
                      style={{ 
                         color: donationFormInputs.p_color || '#1e293b',
-                        fontSize: (parseInt(donationFormInputs.heroTitleSize) || 24) + 'px'
+                        fontSize: '24px'
                      }}
                   >
                      {donationFormInputs.headline || "Make a Donation"}
@@ -53,7 +55,7 @@ const Display = () => {
                      className="leading-relaxed max-w-md mx-auto"
                      style={{ 
                         color: donationFormInputs.s_color || '#64748b',
-                        fontSize: (parseInt(donationFormInputs.bodyTextSize) || 14) + 'px'
+                        fontSize: '14px'
                      }}
                   >
                      {donationFormInputs.description || "Your generous contribution helps us continue our mission and make a positive impact in our community."}
@@ -68,7 +70,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
+                           fontSize: '16px'
                         }}
                      >
                         Choose Your Amount
@@ -78,7 +80,7 @@ const Display = () => {
                            <button
                               key={index}
                               className="p-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-center"
-                              style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                              style={{ borderRadius: '6px' }}
                            >
                               <div className="font-semibold text-sm" style={{ color: donationFormInputs.p_color || '#1e293b' }}>${amount || '25'}</div>
                            </button>
@@ -88,7 +90,7 @@ const Display = () => {
                            placeholder="Custom"
                            style={{ 
                               gridColumn: 'span 2',
-                              borderRadius: donationFormInputs.buttonRadius || '6px'
+                              borderRadius: '6px'
                            }}
                         />
                      </div>
@@ -100,7 +102,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
+                           fontSize: '16px'
                         }}
                      >
                         Select Fund
@@ -108,7 +110,7 @@ const Display = () => {
                      <select 
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 bg-white text-sm"
                         defaultValue=""
-                        style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                        style={{ borderRadius: '6px' }}
                         disabled
                      >
                         <option value="" disabled>Choose a fund</option>
@@ -124,7 +126,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
+                           fontSize: '16px'
                         }}
                      >
                         Your Information
@@ -133,58 +135,67 @@ const Display = () => {
                         <input 
                            className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
                            placeholder="First Name"
-                           style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                           style={{ borderRadius: '6px' }}
                         />
                         <input 
                            className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
                            placeholder="Last Name"
-                           style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                           style={{ borderRadius: '6px' }}
                         />
                      </div>
                      <input 
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-3 text-sm"
                         placeholder="Email Address"
                         type="email"
-                        style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                        style={{ borderRadius: '6px' }}
                      />
                      <input 
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 mb-3 text-sm"
                         placeholder="Street Address"
-                        style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                        style={{ borderRadius: '6px' }}
                      />
                      <div className="grid grid-cols-3 gap-3 mb-3">
                         <input 
                            className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
                            placeholder="City"
-                           style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                           style={{ borderRadius: '6px' }}
                         />
                         <input 
                            className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
                            placeholder="State"
-                           style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                           style={{ borderRadius: '6px' }}
                         />
                         <input 
                            className="p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
                            placeholder="ZIP Code"
-                           style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                           style={{ borderRadius: '6px' }}
                         />
                      </div>
                      <input 
                         className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
                         placeholder="Phone Number"
                         type="tel"
-                        style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                        style={{ borderRadius: '6px' }}
                      />
                   </div>
 
                   {/* Custom Questions */}
-                  {customQuestions && customQuestions.length > 0 && (
+                  <h2 
+                     className="font-semibold mt-3 mb-6 text-center"
+                     style={{ 
+                        color: donationFormInputs.p_color || '#1e293b',
+                        fontSize: '16px'
+                     }}
+                  >
+                     Custom Questions Will Be Shown Here
+                  </h2>
+                  {/* {customQuestions && customQuestions.length > 0 && (
                      <div className="mb-6">
                         <h2 
                            className="font-semibold mb-3"
                            style={{ 
                               color: donationFormInputs.p_color || '#1e293b',
-                              fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
+                              fontSize: '16px'
                            }}
                         >
                            Additional Questions
@@ -198,13 +209,13 @@ const Display = () => {
                                  <input 
                                     className="w-full p-3 border border-slate-200 focus:border-slate-300 focus:outline-none transition-all duration-200 text-sm"
                                     placeholder="Your answer"
-                                    style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                                    style={{ borderRadius: '6px' }}
                                  />
                               </div>
                            ))}
                         </div>
                      </div>
-                  )}
+                  )} */}
 
                   {/* Summary */}
                   <div className="bg-slate-50 p-4 mb-6" style={{ borderRadius: donationFormInputs.cardRadius || '8px' }}>
@@ -233,7 +244,7 @@ const Display = () => {
                         className="font-semibold mb-3"
                         style={{ 
                            color: donationFormInputs.p_color || '#1e293b',
-                           fontSize: (parseInt(donationFormInputs.sectionTitleSize) || 16) + 'px'
+                           fontSize: '16px'
                         }}
                      >
                         Payment Method
@@ -241,7 +252,7 @@ const Display = () => {
                      <div className="space-y-2">
                         <button 
                            className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2"
-                           style={{ borderRadius: donationFormInputs.buttonRadius || '6px' }}
+                           style={{ borderRadius: '6px' }}
                         >
                            <FaPaypal className="text-blue-600 w-4 h-4" />
                            <span className="font-semibold text-sm" style={{ color: donationFormInputs.p_color || '#1e293b' }}>PayPal</span>
@@ -249,7 +260,7 @@ const Display = () => {
                         <button 
                            className="w-full p-3 border border-slate-200 hover:border-slate-300 transition-all duration-200 flex items-center justify-center space-x-2"
                            style={{ 
-                              borderRadius: donationFormInputs.buttonRadius || '6px',
+                              borderRadius: '6px',
                               borderColor: donationFormInputs.b1_color || '#475569'
                            }}
                         >
@@ -271,8 +282,8 @@ const Display = () => {
                      style={{ 
                         backgroundColor: donationFormInputs.b1_color || '#475569',
                         color: donationFormInputs.bt_color || '#ffffff',
-                        borderRadius: donationFormInputs.buttonRadius || '6px',
-                        fontSize: (parseInt(donationFormInputs.buttonTextSize) || 14) + 'px'
+                        borderRadius: '6px',
+                        fontSize: '14px'
                      }}
                   >
                      <FaHeart className="w-3 h-3" />

@@ -473,14 +473,14 @@ export class StripeService extends BaseService {
       paymentIntent.id
     ]);
 
-    // Update campaign_details donations count
+    // Update campaigns donations/raised counters
     const updateCampaignQuery = `
-      UPDATE campaign_details 
+      UPDATE campaigns 
       SET 
         donations = COALESCE(donations, 0) + 1,
         raised = COALESCE(raised, 0) + ?,
         updated_at = NOW()
-      WHERE campaign_id = ?
+      WHERE id = ?
     `;
 
     try {

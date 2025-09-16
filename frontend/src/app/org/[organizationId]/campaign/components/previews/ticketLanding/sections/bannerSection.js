@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
-import TextAreaInputEdit from "@/app/components/textAreaInputEdit";
-import ImageInputEdit from "@/app/components/imageInputEdit";
+import TextAreaInputEdit from "@/app/components/inputs/textAreaInputEdit";
+import ImageInputEdit from "@/app/components/inputs/imageInputEdit";
 
 const LandingBanner = () => {
    const {ticketsPageInputs, handleTicketsPageInputs} = useContext(TicketPageContext)

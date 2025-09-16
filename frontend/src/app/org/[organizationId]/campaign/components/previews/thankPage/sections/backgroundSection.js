@@ -1,4 +1,4 @@
-import ImageInputEdit from "@/app/components/imageInputEdit"
+import ImageInputEdit from "@/app/components/inputs/imageInputEdit"
 import { useContext } from "react"
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
 

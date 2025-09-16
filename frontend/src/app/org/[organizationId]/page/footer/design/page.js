@@ -104,7 +104,7 @@ const FooterDesignPage = () => {
          ))}
 
          {/* Typography Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-green-50" style={{borderRadius: "4px"}}>
                   <FaFont className="w-3 h-3 text-green-600" />
@@ -138,10 +138,10 @@ const FooterDesignPage = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Element Toggles */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-orange-50" style={{borderRadius: "4px"}}>
                   <FaToggleOn className="w-3 h-3 text-orange-600" />
@@ -172,7 +172,7 @@ const FooterDesignPage = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
       </div>
    )
 }

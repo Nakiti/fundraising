@@ -1,4 +1,40 @@
 import { api, validators } from '../apiClient.js';
+import apiClient from '../apiClient.js';
+
+// Utility helpers for transforming keys
+const isPlainObject = (value) => {
+  if (Object.prototype.toString.call(value) !== '[object Object]') return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === null || prototype === Object.prototype;
+};
+
+const toSnake = (str) => {
+  return str
+    .replace(/([A-Z])/g, '_$1')
+    .replace(/[-\s]+/g, '_')
+    .toLowerCase();
+};
+
+const transformKeysDeep = (input, keyTransform) => {
+  if (Array.isArray(input)) {
+    return input.map((item) => transformKeysDeep(item, keyTransform));
+  }
+  if (isPlainObject(input)) {
+    const result = {};
+    for (const [key, value] of Object.entries(input)) {
+      const newKey = keyTransform(key);
+      result[newKey] = transformKeysDeep(value, keyTransform);
+    }
+    return result;
+  }
+  return input;
+};
+
+const isFileLike = (value) => {
+  const hasFile = typeof File !== 'undefined';
+  const hasBlob = typeof Blob !== 'undefined';
+  return (hasFile && value instanceof File) || (hasBlob && value instanceof Blob);
+};
 
 /**
  * Base service class providing common API operations
@@ -55,6 +91,19 @@ export class BaseService {
   async delete(endpoint) {
     try {
       const response = await api.delete(endpoint);
+      return response.data?.success ? response.data.data : null;
+    } catch (error) {
+      this.handleError('DELETE', endpoint, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Execute a DELETE request with data in body
+   */
+  async deleteWithData(endpoint, data = {}) {
+    try {
+      const response = await apiClient.delete(endpoint, { data });
       return response.data?.success ? response.data.data : null;
     } catch (error) {
       this.handleError('DELETE', endpoint, error);
@@ -206,6 +255,16 @@ export class BaseService {
   }
 
   /**
+   * Validate value is within a range (inclusive)
+   */
+  validateRange(value, minValue, maxValue, fieldName) {
+    validators.number(value, fieldName);
+    if (value < minValue || value > maxValue) {
+      throw new Error(`${fieldName} must be between ${minValue} and ${maxValue}`);
+    }
+  }
+
+  /**
    * Validate array fields
    */
   validateArray(value, fieldName) {
@@ -270,16 +329,28 @@ export class BaseService {
     const formData = new FormData();
     
     Object.entries(data).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        if (value instanceof File) {
-          formData.append(key, value);
-        } else if (typeof value === 'object') {
-          formData.append(key, JSON.stringify(value));
-        } else {
-          formData.append(key, value.toString());
-        }
+      if (value === null || value === undefined) return;
+
+      // Preserve file field names exactly so multer matches backend configs
+      if (isFileLike(value)) {
+        formData.append(key, value);
+        return;
       }
+
+      const snakeKey = toSnake(key);
+
+      // For objects/arrays, deep-transform keys to snake_case before JSON serializing
+      if (isPlainObject(value) || Array.isArray(value)) {
+        const transformed = transformKeysDeep(value, toSnake);
+        formData.append(snakeKey, JSON.stringify(transformed));
+        return;
+      }
+
+      // Primitives
+      formData.append(snakeKey, value.toString());
     });
+
+    console.log("formData", formData)
     
     return formData;
   }

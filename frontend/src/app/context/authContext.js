@@ -28,7 +28,7 @@ export const AuthContextProvider = ({children}) => {
          
          if (response && response.success) {
             // Use consistent response structure - check if user is in response.data or response
-            const userData = response.data?.user || response.user;
+            const userData = response.data?.user
             setCurrentUser(userData);
             setIsLoggedIn(true);
             showSuccess('Login Successful', 'Welcome back!');

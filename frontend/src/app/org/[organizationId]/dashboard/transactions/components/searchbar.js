@@ -16,7 +16,7 @@ const Searchbar = ({setData, organizationId}) => {
       try {
          const transactionService = getTransactionService();
          const response = await transactionService.searchTransactions(query, organizationId);
-         setData(response)
+         setData(response.data)
       } catch (err) {
          const handledError = errorHandler.handle(err)
          console.error('Transaction search error:', handledError.message);

@@ -46,10 +46,10 @@ const Filters = ({setData, organizationId}) => {
          const campaignService = getCampaignService();
          if (start && end) {
             const response = await campaignService.getCampaignsByDateRange(start, end, organizationId);
-            setData(response);
+            setData(response.data);
          } else {
             const response = await campaignService.getFilteredCampaigns(organizationId, { status: "all" })
-            setData(response)
+            setData(response.data)
          }
       } catch (err) {
          const handledError = errorHandler.handle(err)
@@ -62,7 +62,7 @@ const Filters = ({setData, organizationId}) => {
          try {
             const campaignService = getCampaignService();
             const response = await campaignService.getFilteredCampaigns(organizationId, { status, type })
-            setData(response)
+            setData(response.data)
          } catch (err) {
             const handledError = errorHandler.handle(err)
             console.error('Filter error:', handledError.message);

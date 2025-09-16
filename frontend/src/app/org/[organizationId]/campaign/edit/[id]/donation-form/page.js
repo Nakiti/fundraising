@@ -9,7 +9,7 @@ import ErrorModal from "@/app/components/errorModal"
 import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const DonationForm = () => {
-   const {donationFormSections, setDonationFormSections, donationFormInputs, campaignId, donationFormId} = useContext(DonationFormContext)
+   const {donationFormSections, setDonationFormSections, donationFormInputs, campaignId, donationFormId, organizationId, filesToUpload} = useContext(DonationFormContext)
    const {currentUser} = useContext(AuthContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
@@ -29,20 +29,20 @@ const DonationForm = () => {
       
       try {
          // Validate all active sections before saving
-         const validation = validateActiveSections('donationForm', donationFormSections, donationFormInputs)
+         // const validation = validateActiveSections('donationForm', donationFormSections, donationFormInputs)
          
-         if (!validation.isValid) {
-            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
-            setError(true)
-            setIsLoading(false)
-            return
-         }
+         // if (!validation.isValid) {
+         //    setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+         //    setError(true)
+         //    setIsLoading(false)
+         //    return
+         // }
          
          // Get service instance
          const pageService = getPageService();
          
          // Update donation form
-         await pageService.updateDonationForm(donationFormId, donationFormInputs, currentUser.id)
+         await pageService.updateDonationForm(organizationId, campaignId, donationFormId, donationFormInputs, filesToUpload)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationFormSections.filter(section => section.id && section.id > 0)

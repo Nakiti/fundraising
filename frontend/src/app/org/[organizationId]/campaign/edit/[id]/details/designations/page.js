@@ -30,7 +30,13 @@ const Designations = () => {
    }
 
    const handleCampaignDetailsChangeWrapper = (e) => {
-      handleCampaignDetailsChange(e)
+      const { name, value } = e.target
+      if (name === "defaultDesignation") {
+         const parsedValue = value === "" ? 0 : parseInt(value, 10)
+         handleCampaignDetailsChange({ target: { name, value: parsedValue } })
+      } else {
+         handleCampaignDetailsChange(e)
+      }
    }  
 
    const handleSave = async() => {
@@ -39,8 +45,8 @@ const Designations = () => {
          const designationService = getDesignationService();
          
          const existingRelations = await campaignService.getCampaignDesignations(campaignId)
-         const relationsToAdd = selectedDesignations.filter(designation =>!existingRelations.includes(designation))
-         const relationsToRemove = existingRelations.filter(designation =>!selectedDesignations.includes(designation))
+         const relationsToAdd = selectedDesignations.filter(designation =>!existingRelations.data.includes(designation))
+         const relationsToRemove = existingRelations.data.filter(designation =>!selectedDesignations.includes(designation))
 
          console.log(relationsToAdd, relationsToRemove)
          if (relationsToAdd.length > 0) {
@@ -50,7 +56,8 @@ const Designations = () => {
             await designationService.removeCampaignDesignation(relationsToRemove)
          }
 
-         await campaignService.updateCampaign(campaignId, campaignDetails)
+         console.log("campaignDetails", campaignDetails)
+         await campaignService.updateCampaign(campaignId, {...campaignDetails, updatedBy: currentUser.id})
           markChangesAsSaved()
           markPageChangesAsSaved('designations')
       } catch (err) {

@@ -57,7 +57,7 @@ const HeaderBar = ({organizationId, campaignType, campaign, campaignId}) => {
                   {/* Campaign Info */}
                   <div className="flex-1">
                      <h1 className="text-2xl font-bold text-white mb-1">
-                        {campaign && campaign.internal_name}
+                        {campaign && campaign.internalName}
                      </h1>
                      <p className="text-sm text-gray-400 capitalize">
                         {campaign && campaign.type.replace('-', ' ')} Campaign

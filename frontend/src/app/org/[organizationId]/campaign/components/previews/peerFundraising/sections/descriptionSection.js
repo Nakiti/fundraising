@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { PeerFundraisingPageContext } from "@/app/context/campaignPages/peerFundraisingPageContext";
-import TextAreaInputEdit from "@/app/components/textAreaInputEdit";
+import TextAreaInputEdit from "@/app/components/inputs/textAreaInputEdit";
 
 const PeerFundraisingDescritpionSection = () => {
    const {peerFundraisingPageInputs, handlePeerFundraisingPageInputsChange} = useContext(PeerFundraisingPageContext)

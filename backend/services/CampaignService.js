@@ -22,9 +22,9 @@ export class CampaignService extends BaseService {
    * @returns {Promise<Object>} Created campaign
    */
   async createCampaign(campaignData) {
-    const { organization_id, created_by, url } = campaignData;
-    
-    // Validate required fields
+    const { organization_id, created_by, url, internal_name, type } = campaignData;
+    // console.log("campaignData ", campaignData)
+    // Validate required fields 
     this.validateRequiredFields(campaignData, ['organization_id', 'created_by']);
 
     // Check if URL is already taken (if provided)
@@ -32,11 +32,12 @@ export class CampaignService extends BaseService {
       await this.validateUniqueUrl(url);
     }
 
-    const campaignToCreate = {
+    const campaignToCreate = { 
       organization_id,
       created_by,
       updated_by: created_by,
-      url: url || null
+      internal_name,
+      type
     };
 
     return await this.create(campaignToCreate);
@@ -54,14 +55,12 @@ export class CampaignService extends BaseService {
 
     const query = `
       SELECT 
-        campaigns.*, 
-        campaign_details.*,       
+        campaigns.*,      
         creator.first_name AS creator_first_name, 
         creator.last_name AS creator_last_name, 
         updater.first_name AS updater_first_name, 
         updater.last_name AS updater_last_name 
       FROM campaigns 
-      INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       INNER JOIN users AS creator ON campaigns.created_by = creator.id
       INNER JOIN users AS updater ON campaigns.updated_by = updater.id 
       WHERE campaigns.id = ?
@@ -89,24 +88,17 @@ export class CampaignService extends BaseService {
 
     const query = `
       SELECT campaigns.*, 
-             campaign_details.internal_name, 
-             campaign_details.external_name,
-             campaign_details.visits, 
-             campaign_details.donations, 
-             campaign_details.type, 
-             campaign_details.status,
              SUM(transactions.amount) AS amount_raised
       FROM campaigns 
-      INNER JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       LEFT JOIN transactions ON campaigns.id = transactions.campaign_id AND transactions.status = 'completed'
       WHERE campaigns.organization_id = ? 
       AND (
-        campaign_details.internal_name LIKE ? 
-        OR campaign_details.external_name LIKE ?
-        OR campaign_details.url LIKE ?
+        campaigns.internal_name LIKE ? 
+        OR campaigns.external_name LIKE ?
+        OR campaigns.url LIKE ?
       )
-      GROUP BY campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.donations, campaign_details.type, campaign_details.status
-      ORDER BY campaign_details.internal_name ASC
+      GROUP BY campaigns.id, campaigns.created_at, campaigns.internal_name, campaigns.external_name, campaigns.visits, campaigns.donations, campaigns.type, campaigns.status
+      ORDER BY campaigns.internal_name ASC
     `;
 
     const searchTerm = `%${searchQuery}%`;
@@ -125,18 +117,11 @@ export class CampaignService extends BaseService {
 
     const query = `
       SELECT campaigns.*, 
-             campaign_details.internal_name, 
-             campaign_details.external_name, 
-             campaign_details.visits, 
-             campaign_details.donations, 
-             campaign_details.type, 
-             campaign_details.status, 
              SUM(transactions.amount) AS amount_raised
       FROM campaigns 
-      LEFT JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       LEFT JOIN transactions ON campaigns.id = transactions.campaign_id AND transactions.status = 'completed'
       WHERE campaigns.organization_id = ?
-      GROUP BY campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.donations, campaign_details.type, campaign_details.status
+      GROUP BY campaigns.id, campaigns.created_at, campaigns.internal_name, campaigns.external_name, campaigns.visits, campaigns.donations, campaigns.type, campaigns.status
       ORDER BY campaigns.created_at DESC
     `;
 
@@ -163,27 +148,20 @@ export class CampaignService extends BaseService {
     
     let query = `
       SELECT campaigns.*, 
-             campaign_details.internal_name, 
-             campaign_details.external_name,
-             campaign_details.visits, 
-             campaign_details.donations, 
-             campaign_details.type, 
-             campaign_details.status,
              SUM(transactions.amount) AS amount_raised
       FROM campaigns 
-      LEFT JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       LEFT JOIN transactions ON campaigns.id = transactions.campaign_id AND transactions.status = 'completed'
       WHERE campaigns.organization_id = ?
     `;
     const params = [organizationId];
 
     if (status) {
-      query += ` AND campaign_details.status = ?`;
+      query += ` AND campaigns.status = ?`;
       params.push(status);
     }
 
     if (type) {
-      query += ` AND campaign_details.type = ?`;
+      query += ` AND campaigns.type = ?`;
       params.push(type);
     }
 
@@ -197,7 +175,7 @@ export class CampaignService extends BaseService {
       params.push(endDate);
     }
 
-    query += ` GROUP BY campaigns.id, campaigns.created_at, campaign_details.internal_name, campaign_details.external_name, campaign_details.visits, campaign_details.donations, campaign_details.type, campaign_details.status ORDER BY campaigns.created_at DESC LIMIT ? OFFSET ?`;
+    query += ` GROUP BY campaigns.id, campaigns.created_at, campaigns.internal_name, campaigns.external_name, campaigns.visits, campaigns.donations, campaigns.type, campaigns.status ORDER BY campaigns.created_at DESC LIMIT ? OFFSET ?`;
     params.push(limit, offset);
 
     return await this.executeQuery(query, params);
@@ -220,17 +198,17 @@ export class CampaignService extends BaseService {
       throw new ValidationError(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
     }
 
-    // Update status in campaign_details table
+    // Update status in campaigns table
     const query = `
-      UPDATE campaign_details 
+      UPDATE campaigns 
       SET status = ?, updated_at = NOW(), updated_by = ? 
-      WHERE campaign_id = ?
+      WHERE id = ?
     `;
     
     await this.executeQuery(query, [status, updatedBy, campaignId]);
     
-    // Return the updated campaign with details
-    return await this.getCampaignWithDetails(campaignId);
+    // Return the updated campaign
+    return await this.findById(campaignId);
   }
 
   /**
@@ -309,9 +287,8 @@ export class CampaignService extends BaseService {
     }
 
     const query = `
-      SELECT campaigns.*, campaign_details.internal_name, campaign_details.external_name
+      SELECT campaigns.*
       FROM campaigns 
-      LEFT JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
       WHERE campaigns.organization_id = ? 
       AND campaigns.created_at BETWEEN ? AND ?
       ORDER BY campaigns.created_at DESC

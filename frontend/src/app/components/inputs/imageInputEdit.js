@@ -1,5 +1,5 @@
 //imports
-import useImageUpload from "../hooks/useImageUpload"
+// import useImageUpload from "../hooks/useImageUpload"
 
 
 /*
@@ -12,7 +12,6 @@ import useImageUpload from "../hooks/useImageUpload"
 */
 const ImageInputEdit = ({title, name, changeFunc}) => {
    // Destructure the handleImageUpload function from the custom hook
-   const {handleImageUpload} = useImageUpload()
 
    return (
       <div className="mb-6">
@@ -32,7 +31,7 @@ const ImageInputEdit = ({title, name, changeFunc}) => {
                className="hidden" 
                name={name}
                accept="image/*"
-               onChange={(e) => handleImageUpload(e, changeFunc)}
+               onChange={changeFunc}
             />
          </label>                  
       </div>

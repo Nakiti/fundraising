@@ -2,14 +2,16 @@
 import { useContext } from "react";
 import { DonationPageContext } from "@/app/context/campaignPages/donationPageContext";
 import { FaShare, FaHeart, FaUsers, FaTrophy, FaClock } from "react-icons/fa";
+import { CampaignContext } from "@/app/context/campaignContext";
 
 const Display = () => {
    const { donationPageInputs } = useContext(DonationPageContext)
+   const { campaignDetails } = useContext(CampaignContext)
 
    return (
       <div 
          className="bg-white w-full"
-         style={{ backgroundColor: donationPageInputs.bg_color || '#fafafa' }}
+         style={{ backgroundColor: donationPageInputs.bgColor || '#fafafa' }}
       >
          {/* Header */}
          <div className="bg-slate-800 w-full px-4 py-3">
@@ -35,21 +37,21 @@ const Display = () => {
             <div className="relative w-full" style={{height: "500px"}}>
                <img
                   className="w-full h-full object-cover"
-                  src={donationPageInputs.banner_image || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
+                  src={donationPageInputs.banner_image}
                   alt="Campaign Banner"
                />
                <div 
                   className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 px-4"
                   style={{
-                     backgroundColor: `rgba(0, 0, 0, ${donationPageInputs.overlayOpacity || "0.4"})`
+                     backgroundColor: `rgba(0, 0, 0, 0.4)`
                   }}
                >
                   <div className="max-w-2xl mx-auto space-y-4">
                      <h1 
                         className="font-bold text-white leading-tight"
                         style={{
-                           color: donationPageInputs.bannerTitleColor || '#ffffff',
-                           fontSize: (parseInt(donationPageInputs.bannerTitleSize) || 56) + 'px'
+                           color: donationPageInputs.bannerTitleColor,
+                           fontSize: '56px'
                         }}
                      >
                         {donationPageInputs.headline || "Support Our Cause"}
@@ -57,8 +59,8 @@ const Display = () => {
                      <p 
                         className="text-slate-100 max-w-xl mx-auto leading-relaxed"
                         style={{
-                           color: donationPageInputs.bannerSubtitleColor || '#e2e8f0',
-                           fontSize: (parseInt(donationPageInputs.bannerSubtitleSize) || 20) + 'px'
+                           color: donationPageInputs.bannerSubtitleColor,
+                           fontSize: '20px'
                         }}
                      >
                         {donationPageInputs.description || "Your support makes a real difference in our community. Every donation, no matter the size, helps us achieve our mission and create positive change for those who need it most."}
@@ -67,10 +69,10 @@ const Display = () => {
                         <button 
                            className="font-semibold transition-all duration-300 flex items-center space-x-2 hover:shadow-md transform hover:-translate-y-0.5"
                            style={{
-                              backgroundColor: donationPageInputs.b1_color || '#475569',
-                              color: donationPageInputs.bt_color || '#FFFFFF',
-                              borderRadius: donationPageInputs.buttonRadius || '6px',
-                              fontSize: (parseInt(donationPageInputs.buttonTextSize) || 14) + 'px',
+                              backgroundColor: donationPageInputs.b1Color,
+                              color: donationPageInputs.btColor,
+                              borderRadius: '6px',
+                              fontSize: '14px',
                               padding: '10px 20px'
                            }}
                         >
@@ -94,16 +96,16 @@ const Display = () => {
                               <p 
                                  className="text-xs font-medium mb-1 sm:mb-2"
                                  style={{ 
-                                    color: donationPageInputs.s_color || '#64748b',
+                                    color: donationPageInputs.sColor,
                                     fontSize: '12px'
                                  }}
                               >
-                                 {donationPageInputs.subtitle || "Fundraiser"}
+                                 {"Fundraiser"}
                               </p>
                               <h2 
                                  className="text-lg sm:text-xl font-bold leading-tight"
                                  style={{ 
-                                    color: donationPageInputs.p_color || '#1e293b',
+                                    color: donationPageInputs.pColor,
                                     fontSize: '20px'
                                  }}
                               >
@@ -113,8 +115,8 @@ const Display = () => {
                            <button 
                               className="text-xs hover:opacity-80 transition-opacity flex items-center justify-center sm:justify-start space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md self-start"
                               style={{ 
-                                 color: donationPageInputs.b1_color || '#475569',
-                                 backgroundColor: donationPageInputs.b1_color ? `${donationPageInputs.b1_color}15` : '#f1f5f9',
+                                 color: donationPageInputs.b1Color,
+                                 backgroundColor: donationPageInputs.b1Color ? `${donationPageInputs.b1Color}15` : '#f1f5f9',
                                  fontSize: '12px'
                               }}
                            >
@@ -127,7 +129,7 @@ const Display = () => {
                         <p 
                            className="leading-relaxed text-sm"
                            style={{
-                              color: donationPageInputs.s_color || '#64748b',
+                              color: donationPageInputs.sColor,
                               fontSize: '14px'
                            }}
                         >
@@ -141,7 +143,7 @@ const Display = () => {
                            <span 
                               className="font-semibold text-sm"
                               style={{ 
-                                 color: donationPageInputs.p_color || '#1e293b',
+                                 color: donationPageInputs.pColor,
                                  fontSize: '14px'
                               }}
                            >
@@ -150,7 +152,7 @@ const Display = () => {
                            <span 
                               className="font-medium text-xs"
                               style={{ 
-                                 color: donationPageInputs.s_color || '#64748b',
+                                 color: donationPageInputs.sColor,
                                  fontSize: '12px'
                               }}
                            >
@@ -161,12 +163,12 @@ const Display = () => {
                            <div 
                               className="h-2 sm:h-3 rounded-full transition-all duration-500 ease-out"
                               style={{ 
-                                 backgroundColor: donationPageInputs.b1_color || '#475569',
+                                 backgroundColor: donationPageInputs.b1Color,
                                  width: '24.5%'
                               }}
                            ></div>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-xs" style={{ color: donationPageInputs.s_color || '#64748b' }}>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-xs" style={{ color: donationPageInputs.sColor }}>
                            <div className="flex items-center space-x-1.5 sm:space-x-2">
                               <FaUsers className="text-slate-400 w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                               <span className="truncate">127 donations</span>
@@ -187,11 +189,11 @@ const Display = () => {
                      </div>
 
                      {/* Donation Leaderboard Preview */}
-                     <div className="bg-white border border-slate-100 p-3 sm:p-4 lg:p-6 rounded-lg sm:rounded-xl">
+                     {campaignDetails.showLeaderboard && <div className="bg-white border border-slate-100 p-3 sm:p-4 lg:p-6 rounded-lg sm:rounded-xl">
                         <h3 
                            className="font-bold text-base mb-3 sm:mb-4 lg:mb-6"
                            style={{
-                              color: donationPageInputs.p_color || '#1e293b',
+                              color: donationPageInputs.pColor,
                               fontSize: '16px'
                            }}
                         >
@@ -230,7 +232,7 @@ const Display = () => {
                                        <div 
                                           className="font-semibold text-sm truncate"
                                           style={{ 
-                                             color: donationPageInputs.p_color || '#1e293b',
+                                             color: donationPageInputs.pColor,
                                              fontSize: '14px'
                                           }}
                                        >
@@ -241,7 +243,7 @@ const Display = () => {
                                  <div 
                                     className="font-bold text-sm ml-2 flex-shrink-0"
                                     style={{ 
-                                       color: donationPageInputs.p_color || '#1e293b',
+                                       color: donationPageInputs.pColor,
                                        fontSize: '14px'
                                     }}
                                  >
@@ -250,7 +252,7 @@ const Display = () => {
                               </div>
                            ))}
                         </div>
-                     </div>
+                     </div>}
                   </div>
 
                   {/* Sidebar */}
@@ -259,7 +261,7 @@ const Display = () => {
                         <h3 
                            className="font-bold text-base mb-3 sm:mb-4 lg:mb-6"
                            style={{
-                              color: donationPageInputs.p_color || '#1e293b',
+                              color: donationPageInputs.pColor,
                               fontSize: '16px'
                            }}
                         >
@@ -275,7 +277,7 @@ const Display = () => {
                                  <div 
                                     className="font-bold text-sm"
                                     style={{ 
-                                       color: donationPageInputs.p_color || '#1e293b',
+                                       color: donationPageInputs.pColor,
                                        fontSize: '14px'
                                     }}
                                  >
@@ -283,7 +285,7 @@ const Display = () => {
                                  </div>
                                  <div 
                                     className="text-xs mt-0.5 sm:mt-1"
-                                    style={{ color: donationPageInputs.s_color || '#64748b' }}
+                                    style={{ color: donationPageInputs.sColor }}
                                  >
                                     Donation
                                  </div>
@@ -293,8 +295,8 @@ const Display = () => {
                         <button 
                            className="w-full py-2 sm:py-3 lg:py-3 px-4 sm:px-6 font-bold text-white transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 hover:opacity-90 text-sm"
                            style={{
-                              backgroundColor: donationPageInputs.b1_color || '#475569',
-                              borderRadius: donationPageInputs.buttonRadius || '12px',
+                              backgroundColor: donationPageInputs.b1Color,
+                              borderRadius: '12px',
                               fontSize: '14px'
                            }}
                         >
@@ -305,7 +307,7 @@ const Display = () => {
                            className="mt-4 w-full py-2 sm:py-3 lg:py-3 px-4 sm:px-6 font-bold text-white transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 hover:opacity-90 text-sm"
                            style={{
                               backgroundColor: "gray",
-                              borderRadius: donationPageInputs.buttonRadius || '12px',
+                              borderRadius: '12px',
                               fontSize: '14px'
                            }}
                         >

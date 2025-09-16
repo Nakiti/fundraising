@@ -72,6 +72,10 @@ class ServiceRegistry {
     // Stripe Service
     const { StripeService } = await import('../domain/StripeService.js');
     this.services.set('stripe', new StripeService());
+
+    // Custom Question Response Service
+    const { CustomQuestionResponseService } = await import('../domain/CustomQuestionResponseService.js');
+    this.services.set('customQuestionResponse', new CustomQuestionResponseService());
   }
 
   /**
@@ -135,6 +139,7 @@ export const getTransactionService = () => serviceRegistry.getService('transacti
 export const getDesignationService = () => serviceRegistry.getService('designation');
 export const getContentService = () => serviceRegistry.getService('content');
 export const getStripeService = () => serviceRegistry.getService('stripe');
+export const getCustomQuestionResponseService = () => serviceRegistry.getService('customQuestionResponse');
 
 // Export the registry instance and initialization function
 export { serviceRegistry };

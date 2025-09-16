@@ -1,209 +1,83 @@
 "use client"
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { getCampaignService, getDesignationService } from '@/app/services';
 
 const CartContext = createContext();
-
-// Cart action types
-const CART_ACTIONS = {
-  ADD_TO_CART: 'ADD_TO_CART',
-  REMOVE_FROM_CART: 'REMOVE_FROM_CART',
-  UPDATE_AMOUNT: 'UPDATE_AMOUNT',
-  UPDATE_DESIGNATION: 'UPDATE_DESIGNATION',
-  UPDATE_CUSTOM_RESPONSE: 'UPDATE_CUSTOM_RESPONSE',
-  CLEAR_CART: 'CLEAR_CART',
-  SET_LOADING: 'SET_LOADING',
-  SET_ERROR: 'SET_ERROR'
-};
-
-// Initial cart state
-const initialState = {
-  items: [],
-  totalAmount: 0,
-  organizationId: null,
-  loading: false,
-  error: null
-};
-
-// Cart reducer
-const cartReducer = (state, action) => {
-  switch (action.type) {
-    case CART_ACTIONS.ADD_TO_CART: {
-      const newItem = action.payload;
-      console.log('Reducer ADD_TO_CART:', { newItem, currentState: state });
-      const existingItemIndex = state.items.findIndex(item => item.campaignId === newItem.campaignId);
-      
-      let newItems;
-      if (existingItemIndex >= 0) {
-        // Update existing item
-        console.log('Updating existing item at index:', existingItemIndex);
-        newItems = [...state.items];
-        newItems[existingItemIndex] = { ...newItems[existingItemIndex], ...newItem };
-      } else {
-        // Add new item
-        console.log('Adding new item to cart');
-        newItems = [...state.items, newItem];
-      }
-      
-      const totalAmount = newItems.reduce((sum, item) => sum + (item.amount || 0), 0);
-      
-      const newState = {
-        ...state,
-        items: newItems,
-        totalAmount,
-        organizationId: newItem.organizationId
-      };
-      
-      console.log('New cart state:', newState);
-      return newState;
-    }
-    
-    case CART_ACTIONS.REMOVE_FROM_CART: {
-      const newItems = state.items.filter(item => item.campaignId !== action.payload.campaignId);
-      const totalAmount = newItems.reduce((sum, item) => sum + (item.amount || 0), 0);
-      
-      return {
-        ...state,
-        items: newItems,
-        totalAmount
-      };
-    }
-    
-    case CART_ACTIONS.UPDATE_AMOUNT: {
-      const { campaignId, amount } = action.payload;
-      const newItems = state.items.map(item =>
-        item.campaignId === campaignId ? { ...item, amount } : item
-      );
-      const totalAmount = newItems.reduce((sum, item) => sum + (item.amount || 0), 0);
-      
-      return {
-        ...state,
-        items: newItems,
-        totalAmount
-      };
-    }
-    
-    case CART_ACTIONS.UPDATE_DESIGNATION: {
-      const { campaignId, designationId } = action.payload;
-      const newItems = state.items.map(item =>
-        item.campaignId === campaignId ? { ...item, selectedDesignation: designationId } : item
-      );
-      
-      return {
-        ...state,
-        items: newItems
-      };
-    }
-    
-    case CART_ACTIONS.UPDATE_CUSTOM_RESPONSE: {
-      const { campaignId, questionId, response } = action.payload;
-      const newItems = state.items.map(item => {
-        if (item.campaignId === campaignId) {
-          return {
-            ...item,
-            customResponses: {
-              ...item.customResponses,
-              [questionId]: response
-            }
-          };
-        }
-        return item;
-      });
-      
-      return {
-        ...state,
-        items: newItems
-      };
-    }
-    
-    case CART_ACTIONS.CLEAR_CART: {
-      return {
-        ...state,
-        items: [],
-        totalAmount: 0
-      };
-    }
-    
-    case CART_ACTIONS.SET_LOADING: {
-      return {
-        ...state,
-        loading: action.payload
-      };
-    }
-    
-    case CART_ACTIONS.SET_ERROR: {
-      return {
-        ...state,
-        error: action.payload
-      };
-    }
-    
-    default:
-      return state;
-  }
+const calculateTotalAmount = (items) => {
+  return items.reduce((sum, item) => sum + (item.amount || 0), 0);
 };
 
 // Cart Context Provider
 export const CartContextProvider = ({ children, organizationId }) => {
-  const [state, dispatch] = useReducer(cartReducer, {
-    ...initialState,
-    organizationId
-  });
+  const [items, setItems] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage on mount or organization change
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedCart = localStorage.getItem(`cart_${organizationId}`);
       if (savedCart) {
         try {
           const cartData = JSON.parse(savedCart);
-          cartData.items.forEach(item => {
-            dispatch({ type: CART_ACTIONS.ADD_TO_CART, payload: item });
-          });
-        } catch (error) {
-          console.error('Error loading cart from localStorage:', error);
+          const loadedItems = Array.isArray(cartData.items) ? cartData.items : [];
+          setItems(loadedItems);
+          setTotalAmount(calculateTotalAmount(loadedItems));
+        } catch (err) {
+          console.error('Error loading cart from localStorage:', err);
         }
+      } else {
+        // Reset if no saved cart for this org
+        setItems([]);
+        setTotalAmount(0);
       }
     }
   }, [organizationId]);
 
-  // Save cart to localStorage when state changes
+  // Save cart to localStorage when items/total change
   useEffect(() => {
-    if (typeof window !== 'undefined' && state.items.length > 0) {
+    if (typeof window !== 'undefined' && items.length > 0) {
       const cartData = {
-        items: state.items,
-        totalAmount: state.totalAmount,
-        organizationId: state.organizationId
+        items,
+        totalAmount,
+        organizationId
       };
       console.log('Saving cart to localStorage:', cartData);
       localStorage.setItem(`cart_${organizationId}`, JSON.stringify(cartData));
     }
-  }, [state.items, state.totalAmount, organizationId]);
+  }, [items, totalAmount, organizationId]);
 
   // Add campaign to cart with full data loading
   const addToCart = async (campaignId, initialAmount = 0) => {
     try {
       console.log('AddToCart called with:', { campaignId, initialAmount, organizationId });
-      dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
-      dispatch({ type: CART_ACTIONS.SET_ERROR, payload: null });
+      setLoading(true);
+      setError(null);
 
       // Fetch all required data for the campaign
       console.log('Fetching campaign data...');
       const campaignService = getCampaignService();
       const designationService = getDesignationService();
       
-      const [campaignDetails, campaignDesignations, organizationDesignations, customQuestions] = await Promise.all([
+      // Use org designations endpoint and unwrap service responses consistently
+      const [campaignDetailsResp, campaignDesignationsResp, organizationDesignationsResp, customQuestions] = await Promise.all([
         campaignService.getCampaignDetails(campaignId),
         campaignService.getCampaignDesignations(campaignId),
-        designationService.getAllDesignations(organizationId),
+        designationService.getDesignationsByOrganization(organizationId),
         campaignService.getCustomQuestions(campaignId)
       ]);
+
+      // Unwrap data payloads (BaseService.get returns { success, data, ... })
+      const campaignDetails = campaignDetailsResp?.data ?? campaignDetailsResp ?? {};
+      const campaignDesignations = campaignDesignationsResp?.data ?? campaignDesignationsResp ?? [];
+      const organizationDesignations = organizationDesignationsResp?.data ?? organizationDesignationsResp ?? [];
 
       console.log('Fetched data:', { campaignDetails, campaignDesignations, organizationDesignations, customQuestions });
 
       const cartItem = {
         campaignId,
-        campaignName: campaignDetails.external_name || campaignDetails.internal_name,
+        campaignName: campaignDetails.externalName,
         campaignImage: campaignDetails.image,
         amount: initialAmount,
         selectedDesignation: null,
@@ -216,49 +90,81 @@ export const CartContextProvider = ({ children, organizationId }) => {
       };
 
       console.log('Creating cart item:', cartItem);
-      dispatch({ type: CART_ACTIONS.ADD_TO_CART, payload: cartItem });
+      // Merge or add item
+      setItems((prev) => {
+        const index = prev.findIndex((i) => i.campaignId === campaignId);
+        let newItems;
+        if (index >= 0) {
+          newItems = [...prev];
+          newItems[index] = { ...newItems[index], ...cartItem };
+        } else {
+          newItems = [...prev, cartItem];
+        }
+        setTotalAmount(calculateTotalAmount(newItems));
+        return newItems;
+      });
       console.log('Cart item added successfully');
       return cartItem;
     } catch (error) {
       console.error('Error adding to cart:', error);
-      dispatch({ type: CART_ACTIONS.SET_ERROR, payload: 'Failed to add campaign to cart' });
+      setError('Failed to add campaign to cart');
       throw error;
     } finally {
-      dispatch({ type: CART_ACTIONS.SET_LOADING, payload: false });
+      setLoading(false);
     }
   };
 
   // Remove campaign from cart
   const removeFromCart = (campaignId) => {
-    dispatch({ type: CART_ACTIONS.REMOVE_FROM_CART, payload: { campaignId } });
-    
-    // Update localStorage
-    if (typeof window !== 'undefined') {
-      const newItems = state.items.filter(item => item.campaignId !== campaignId);
-      if (newItems.length === 0) {
+    setItems((prev) => {
+      const newItems = prev.filter(item => item.campaignId !== campaignId);
+      setTotalAmount(calculateTotalAmount(newItems));
+      // If cart is empty, clear storage
+      if (typeof window !== 'undefined' && newItems.length === 0) {
         localStorage.removeItem(`cart_${organizationId}`);
       }
-    }
+      return newItems;
+    });
   };
 
   // Update amount for specific campaign
   const updateAmount = (campaignId, amount) => {
-    dispatch({ type: CART_ACTIONS.UPDATE_AMOUNT, payload: { campaignId, amount } });
+    setItems((prev) => {
+      const newItems = prev.map(item =>
+        item.campaignId === campaignId ? { ...item, amount } : item
+      );
+      setTotalAmount(calculateTotalAmount(newItems));
+      return newItems;
+    });
   };
 
   // Update designation for specific campaign
   const updateDesignation = (campaignId, designationId) => {
-    dispatch({ type: CART_ACTIONS.UPDATE_DESIGNATION, payload: { campaignId, designationId } });
+    setItems((prev) => prev.map(item => (
+      item.campaignId === campaignId ? { ...item, selectedDesignation: designationId } : item
+    )));
   };
 
   // Update custom question response
   const updateCustomResponse = (campaignId, questionId, response) => {
-    dispatch({ type: CART_ACTIONS.UPDATE_CUSTOM_RESPONSE, payload: { campaignId, questionId, response } });
+    setItems((prev) => prev.map(item => {
+      if (item.campaignId === campaignId) {
+        return {
+          ...item,
+          customResponses: {
+            ...item.customResponses,
+            [questionId]: response
+          }
+        };
+      }
+      return item;
+    }));
   };
 
   // Clear entire cart
   const clearCart = () => {
-    dispatch({ type: CART_ACTIONS.CLEAR_CART });
+    setItems([]);
+    setTotalAmount(0);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(`cart_${organizationId}`);
     }
@@ -266,19 +172,19 @@ export const CartContextProvider = ({ children, organizationId }) => {
 
   // Check if campaign is in cart
   const isInCart = (campaignId) => {
-    return state.items.some(item => item.campaignId === campaignId);
+    return items.some(item => item.campaignId === campaignId);
   };
 
   // Get cart item count
   const getItemCount = () => {
-    return state.items.length;
+    return items.length;
   };
 
   // Validate cart before checkout
   const validateCart = () => {
     const errors = [];
     
-    state.items.forEach(item => {
+    items.forEach(item => {
       if (!item.amount || item.amount <= 0) {
         errors.push(`Please set an amount for ${item.campaignName}`);
       }
@@ -299,11 +205,11 @@ export const CartContextProvider = ({ children, organizationId }) => {
 
   const value = {
     // State
-    items: state.items,
-    totalAmount: state.totalAmount,
-    organizationId: state.organizationId,
-    loading: state.loading,
-    error: state.error,
+    items,
+    totalAmount,
+    organizationId,
+    loading,
+    error,
     
     // Actions
     addToCart,

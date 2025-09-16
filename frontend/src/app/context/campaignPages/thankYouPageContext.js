@@ -8,7 +8,8 @@ export const ThankYouPageContext = createContext()
 
 export const ThankYouPageContextProvider = ({campaignId, children, organizationId}) => {
    const [thankYouPageSections, setThankYouPageSections] = useState(initialThankyouPageSections)
-   const [thankPageInputs, handleThankInputsChange, setThankPageInputs] = useFormInput({})
+   const [thankPageInputs, handleThankInputsChange, setThankPageInputs, filesToUpload] = useFormInput({})
+   const [thankYouPageId, setThankYouPageId] = useState(null)  
 
    useEffect(() => {
       const fetchData = async() => {
@@ -16,36 +17,37 @@ export const ThankYouPageContextProvider = ({campaignId, children, organizationI
             const pageService = getPageService();
             const thankYouResponse = await pageService.getThankYouPage(campaignId)
             const thankYouPageId = thankYouResponse.data.id
-
+            setThankYouPageId(thankYouPageId)
             setThankPageInputs({
+
                // Basic Content
                headline: thankYouResponse.data.headline || "",
                description: thankYouResponse.data.description || "",
                
                // Images
-               bg_image: thankYouResponse.data.bg_image || "",
+               bg_image: thankYouResponse.data.bgImageUrl || "",
                
                // Colors
-               bg_color: thankYouResponse.data.bg_color || "#ffffff",
-               p_color: thankYouResponse.data.p_color || "#1f2937",
-               s_color: thankYouResponse.data.s_color || "#6b7280",
+               bg_color: thankYouResponse.data.bgColor || "#ffffff",
+               p_color: thankYouResponse.data.pColor || "#1f2937",
+               s_color: thankYouResponse.data.sColor || "#6b7280",
                
                // Typography
-               heroTitleSize: thankYouResponse.data.heroTitleSize || "36",
-               bodyTextSize: thankYouResponse.data.bodyTextSize || "16",
-               buttonTextSize: thankYouResponse.data.buttonTextSize || "14",
+               // heroTitleSize: thankYouResponse.data.heroTitleSize || "36",
+               // bodyTextSize: thankYouResponse.data.bodyTextSize || "16",
+               // buttonTextSize: thankYouResponse.data.buttonTextSize || "14",
                
                // Layout
-               cardRadius: thankYouResponse.data.cardRadius || "4",
-               buttonRadius: thankYouResponse.data.buttonRadius || "4",
+               // cardRadius: thankYouResponse.data.cardRadius || "4",
+               // buttonRadius: thankYouResponse.data.buttonRadius || "4",
             })
 
-            console.log("organizationId", organizationId)
-            const thankYouSections = await pageService.getPageSectionsByPage(organizationId, 'thankyou-page', thankYouPageId)
+            const thankYouSections = await pageService.getPageSectionsByPage(organizationId, 'thankyou_page', thankYouPageId)
+            console.log("thankYouSections", thankYouSections)
             setThankYouPageSections((prevSections) => {
                return prevSections.map(section => {
                   const match = thankYouSections.data.find((item) => item.name == section.name)
-                  return match ? {...section, id: match.id, active: match.active } : section
+                  return match ? {...section, pageSectionId: match.id, active: match.active } : section
                })
             })
          } catch (err) {
@@ -58,7 +60,7 @@ export const ThankYouPageContextProvider = ({campaignId, children, organizationI
 
       return (
       <ThankYouPageContext.Provider value={{campaignId, thankPageInputs, 
-        handleThankInputsChange, setThankPageInputs, thankYouPageSections, setThankYouPageSections}}
+        handleThankInputsChange, setThankPageInputs, thankYouPageSections, setThankYouPageSections, organizationId, thankYouPageId, filesToUpload}}
       >
          {children}
       </ThankYouPageContext.Provider>

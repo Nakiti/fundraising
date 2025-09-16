@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
-import TextAreaInputEdit from "@/app/components/textAreaInputEdit";
+import TextAreaInputEdit from "@/app/components/inputs/textAreaInputEdit";
 
 const LandingAbout = () => {
 

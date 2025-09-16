@@ -13,6 +13,8 @@ const sectionService = getSectionService()
 
 export const createSection = asyncHandler(async (req, res) => {
   // Delegate to SectionService
+
+  console.log("req.body for section creation", req.body)
   const section = await sectionService.createSection(req.body);
   
   sendCreated(res, { sectionId: section.id }, 'Section created successfully');
@@ -31,9 +33,18 @@ export const updateSection = asyncHandler(async (req, res) => {
   sendUpdated(res, { success: true }, 'Section updated successfully');
 })
 
+export const bulkUpdateSections = asyncHandler(async (req, res) => {
+  const { items } = req.body;
+  if (!Array.isArray(items) || items.length === 0) {
+    throw new ValidationError('Items array is required');
+  }
+  await sectionService.bulkUpdateSections(items);
+  sendUpdated(res, { success: true }, 'Sections updated successfully');
+})
+
 export const getSection = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(id)
+  // console.log(id)
   
   if (!id) {
     throw new ValidationError('Section ID is required');

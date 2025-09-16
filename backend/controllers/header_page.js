@@ -31,9 +31,9 @@ export const createHeaderPage = asyncHandler(async (req, res) => {
 })
 
 export const updateHeaderPage = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { organizationId, pageId } = req.params;
   
-  if (!id) {
+  if (!organizationId || !pageId) {
     throw new ValidationError('Header page ID is required');
   }
   
@@ -41,7 +41,7 @@ export const updateHeaderPage = asyncHandler(async (req, res) => {
   await handlePageFileUpload(req, res, getImageFieldsForPageType('header'));
   
   // Delegate to PageService
-  const headerPage = await pageService.updateHeaderPage(id, req.body, req.files);
+  const headerPage = await pageService.updateHeaderPage(organizationId, pageId, req.body, req.files);
   
   sendUpdated(res, { pageId: headerPage.id }, 'Header page updated successfully');
 })

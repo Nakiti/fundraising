@@ -42,7 +42,7 @@ export class DesignationService extends BaseService {
    */
   async updateDesignation(designationId, updateData) {
     this.validateId(designationId, 'Designation ID');
-    this.validateRequired(updateData, 'Update data');
+    this.validateRequired(updateData, 'Update data'); 
 
     if (updateData.title) {
       this.validateMinLength(updateData.title, 2, 'Title');
@@ -95,14 +95,11 @@ export class DesignationService extends BaseService {
   }
 
   /**
-   * Get all designations with pagination
+   * Get all designations for an organization
    */
-  async getAllDesignations(page = 1, limit = 10, filters = {}) {
-    this.validateRange(page, 1, 1000, 'Page number');
-    this.validateRange(limit, 1, 100, 'Limit');
-
-    const params = { page, limit, ...filters };
-    return await this.getWithQuery('/designation/list', params);
+  async getAllDesignations(organizationId) {
+    this.validateId(organizationId, 'Organization ID');
+    return await this.get(`/designation/org/${organizationId}`);
   }
 
   /**
@@ -389,5 +386,13 @@ export class DesignationService extends BaseService {
     this.validateMinLength(templateName, 2, 'Template name');
 
     return await this.post(`/designation/saveAsTemplate/${designationId}`, { name: templateName });
+  }
+
+  /**
+   * Get default designation for a campaign
+   */
+  async getDefaultDesignation(campaignId) {
+    this.validateId(campaignId, 'Campaign ID');
+    return await this.get(`/designation/default/${campaignId}`);
   }
 }

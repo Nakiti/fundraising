@@ -29,10 +29,11 @@ const upload = multer({
 export function handlePageFileUpload(req, res, imageFields) {
   return new Promise((resolve, reject) => {
     const fields = imageFields.map(fieldName => ({ name: fieldName, maxCount: 1 }));
-    
-    upload.fields(fields)(req, res, (err) => {
+    console.log("imageFields", imageFields)
+    upload.fields(fields)(req, res, (err) => {  
       if (err) {
-        if (err.code === "LIMIT_FILE_SIZE") {
+        console.log("err", err)
+        if (err.code === "LIMIT_FILE_SIZE") { 
           reject(new ValidationError('File is too large. Max size is 5MB'));
         } else if (err.code === "LIMIT_FIELD_VALUE") {
           reject(new ValidationError('Field data is too large. Max size is 25MB'));
@@ -52,8 +53,8 @@ export function handlePageFileUpload(req, res, imageFields) {
  * Get image field configurations for different page types
  */
 export const PAGE_IMAGE_CONFIGS = {
-  about: ['bgImage', 'storyImage', 'aboutImage', 'teamImage', 'missionImage', 'visionImage', 'valuesImage'],
-  landing: ['bgImage', 'aboutImage', 'textImage', 'imageOne', 'imageTwo', 'imageThree'],
+  about: ['bg_image', 'story_image', 'about_image', 'team_image', 'mission_image', 'vision_image', 'values_image'],
+  landing: ['bg_image', 'about_image', 'text_image', 'image_one', 'image_two', 'image_three'],
   header: ['logo'],
   footer: ['logo'],
   'donation-page': ['banner_image', 'small_image'],
@@ -64,7 +65,7 @@ export const PAGE_IMAGE_CONFIGS = {
 /**
  * Get image fields for a specific page type
  * @param {string} pageType - Type of page
- * @returns {Array<string>} Array of image field names
+ * @returns {Array<string>} Array of image field names 
  */
 export function getImageFieldsForPageType(pageType) {
   const fields = PAGE_IMAGE_CONFIGS[pageType];

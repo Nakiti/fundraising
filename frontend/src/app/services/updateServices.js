@@ -382,7 +382,8 @@ export class PageUpdateService {
       try {
          validators.id(id, 'Section ID');
 
-         const response = await api.put(`/sections/update/${id}`, { active: active });
+         const activeBit = typeof active === 'boolean' ? (active ? 1 : 0) : (Number(active) ? 1 : 0);
+         const response = await api.put(`/section/update/${id}`, { active: activeBit });
          
          return response.success ? (response.data?.success ? null : response.data) : null;
       } catch (error) {

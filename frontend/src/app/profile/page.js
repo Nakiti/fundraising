@@ -1,7 +1,8 @@
 "use client"
 import { useState, useContext, useEffect } from "react"
 import { AuthContext } from "../context/authContext"
-import { getUserService, useApi, useToast } from "../services";
+import { getUserService, useToast } from "../services";
+import { errorHandler } from "../services/apiClient";
 import Link from "next/link";
 import { FiRefreshCw, FiExternalLink, FiUsers } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
@@ -10,56 +11,56 @@ const Profile = () => {
    const { currentUser, isLoggedIn, loading: authLoading, initialCheckComplete, isCheckingAuth, refetchAuth } = useContext(AuthContext)
    const { showError, showSuccess } = useToast()
    const [hasInitiatedFetch, setHasInitiatedFetch] = useState(false)
+   const [organizations, setOrganizations] = useState(null)
+   const [loading, setLoading] = useState(false)
 
    // Get UserService instance
    const userService = getUserService();
 
-   // API hook for fetching user organizations
-   const { 
-      data: organizations, 
-      loading, 
-      error, 
-      execute: fetchOrganizations 
-   } = useApi(userService.getUserOrganizations.bind(userService));
+   // Fetch user organizations using service (no legacy useApi)
+   const fetchOrganizations = async (userId) => {
+      try {
+         setHasInitiatedFetch(true)
+         setLoading(true)
+         const data = await userService.getUserOrganizations(userId)
+         console.log("data", data)
+         setOrganizations(data)
+      } catch (err) {
+         const handled = errorHandler.handle(err)
+         showError('Error', handled.message || 'Failed to load organizations')
+      } finally {
+         setLoading(false)
+      }
+   }
 
    useEffect(() => {
       // Wait for authentication to be fully loaded and user to be available
       if (!authLoading && isLoggedIn && currentUser && currentUser.id) {
-         setHasInitiatedFetch(true);
-         fetchOrganizations(currentUser.id);
+         fetchOrganizations(currentUser.id)
       }
-   }, []); // Added fetchOrganizations to dependencies
+   }, [authLoading, isLoggedIn, currentUser?.id]);
 
    // Add a retry mechanism if organizations haven't loaded after a delay
    useEffect(() => {
       if (!authLoading && isLoggedIn && currentUser && currentUser.id && !hasInitiatedFetch) {
          const timer = setTimeout(() => {
-            setHasInitiatedFetch(true);
-            fetchOrganizations(currentUser.id);
-         }, 1000); // Retry after 1 second if not already fetched
-         
-         return () => clearTimeout(timer);
+            fetchOrganizations(currentUser.id)
+         }, 1000) // Retry after 1 second if not already fetched
+         return () => clearTimeout(timer)
       }
-   }, [currentUser?.id, isLoggedIn, authLoading, hasInitiatedFetch, fetchOrganizations]);
-
-   // Handle errors
-   useEffect(() => {
-      if (error) {
-         showError('Error', error.message || 'Failed to load organizations');
-      }
-   }, [error, showError]);
+   }, [currentUser?.id, isLoggedIn, authLoading, hasInitiatedFetch])
 
    // Manual refresh function
    const handleRefresh = async () => {
       try {
          await refetchAuth();
          if (currentUser && currentUser.id) {
-            setHasInitiatedFetch(true);
             await fetchOrganizations(currentUser.id);
             showSuccess('Success', 'Profile refreshed successfully');
          }
       } catch (err) {
-         showError('Error', 'Failed to refresh profile');
+         const handled = errorHandler.handle(err)
+         showError('Error', handled.message || 'Failed to refresh profile');
       }
    };
 
@@ -164,7 +165,7 @@ const Profile = () => {
                               
                               {/* Action Button */}
                               <Link 
-                                 href={`/org/${item.organization_id}/dashboard/home`}
+                                 href={`/org/${item.organizationId}/dashboard/home`}
                                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm shadow-sm hover:shadow-md"
                               >
                                  <span>Open Organization</span>

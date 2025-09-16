@@ -55,6 +55,7 @@ export class BaseService {
           
           reject(enhancedError);
         } else {
+          // console.log('results', results);
           resolve(results);
         }
       });
@@ -126,8 +127,8 @@ export class BaseService {
     const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const dataWithTimestamps = {
       ...data,
-      created_at: now,
-      updated_at: now
+      // created_at: now,
+      // updated_at: now
     };
 
     const columns = Object.keys(dataWithTimestamps);
@@ -140,6 +141,43 @@ export class BaseService {
     return {
       id: result.insertId,
       ...dataWithTimestamps
+    };
+  }
+
+  /**
+   * Create multiple records in a batch operation
+   * @param {Array} dataArray - Array of data objects to insert
+   * @returns {Promise<Object>} Batch creation result
+   */
+  async createBatch(dataArray) {
+    if (!Array.isArray(dataArray) || dataArray.length === 0) {
+      throw new ValidationError('Data array is required for batch creation');
+    }
+
+    // Use the first record to determine the structure
+    const firstRecord = dataArray[0];
+    if (!firstRecord || Object.keys(firstRecord).length === 0) {
+      throw new ValidationError('First record in batch must have data');
+    }
+
+    const columns = Object.keys(firstRecord);
+    const placeholders = columns.map(() => '?').join(', ');
+    
+    // Build the batch insert query
+    const valuesPlaceholders = dataArray.map(() => `(${placeholders})`).join(', ');
+    const query = `INSERT INTO ${this.tableName} (${columns.join(', ')}) VALUES ${valuesPlaceholders}`;
+    
+    // Flatten all values into a single array
+    const values = dataArray.flatMap(record => 
+      columns.map(col => record[col])
+    );
+
+    const result = await this.executeQuery(query, values);
+    
+    return {
+      insertId: result.insertId,
+      affectedRows: result.affectedRows,
+      changedRows: result.changedRows
     };
   }
 
@@ -233,11 +271,13 @@ export class BaseService {
 
   /**
    * Validate required fields
-   * @param {Object} data - Data to validate
+   * @param {Object} data - Data to validate 
    * @param {Array} requiredFields - Array of required field names
    * @throws {ValidationError} If any required field is missing
    */
   validateRequiredFields(data, requiredFields) {
+    // console.log('data', data);
+    // console.log('requiredFields', requiredFields);
     const missingFields = requiredFields.filter(field => 
       !data[field] || (typeof data[field] === 'string' && data[field].trim() === '')
     );
@@ -257,6 +297,26 @@ export class BaseService {
     if (!emailRegex.test(email)) {
       throw new ValidationError('Invalid email format');
     }
+  }
+
+  /**
+   * Validate ID field
+   * @param {any} value - Value to validate as ID
+   * @param {string} fieldName - Name of the field for error messages
+   * @throws {ValidationError} If ID is invalid
+   */
+  validateId(value, fieldName = 'ID') {
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
+      throw new ValidationError(`${fieldName} must be a valid ID`);
+    }
+    
+    // Convert to number for validation
+    const numValue = Number(value);
+    if (isNaN(numValue) || numValue <= 0 || !Number.isInteger(numValue)) {
+      throw new ValidationError(`${fieldName} must be a valid positive integer ID`);
+    }
+    
+    return true;
   }
 
   /**

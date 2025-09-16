@@ -129,7 +129,7 @@ const LandingPageDisplay = () => {
          <div className="relative w-full" style={{height: customStyles.heroHeight}}>
             <img
                className="w-full h-full object-cover"
-               src={inputs.bgImage ? inputs.bgImage : "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
+               src={inputs.bg_image ? inputs.bg_image : "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
                alt="Organization"
             />
             <div 

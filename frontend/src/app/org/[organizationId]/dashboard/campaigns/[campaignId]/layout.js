@@ -14,7 +14,7 @@ const CampaignPageLayout = ({children, params}) => {
          try {
             console.log(campaignId)
             const campaignService = getCampaignService();
-            const response = await campaignService.getCampaignDetails(campaignId)
+            const response = await campaignService.getCampaign(campaignId)
             console.log("response from campaign ", response)
             setCampaign(response.data)
             setCampaignType(response.data.type)
@@ -28,7 +28,7 @@ const CampaignPageLayout = ({children, params}) => {
 
    return (
       <div className="overflow-y-auto h-screen">
-         <HeaderBar organizationId={organizationId} campaignType={campaignType} campaign={campaign} campaignId={campaignId}/>
+         {campaign && campaignType && <HeaderBar organizationId={organizationId} campaignType={campaignType} campaign={campaign} campaignId={campaignId}/>}
          {children}
       </div>
    )

@@ -76,7 +76,7 @@ const CampaignPage = ({params}) => {
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-500">Last Updated</label>
                            <p className="text-lg text-gray-900">
-                              {new Date(campaign.updated_at).toLocaleDateString("en-US", {
+                              {new Date(campaign.updatedAt).toLocaleDateString("en-US", {
                                  year: 'numeric',
                                  month: 'long',
                                  day: 'numeric'
@@ -86,13 +86,13 @@ const CampaignPage = ({params}) => {
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-500">Updated By</label>
                            <p className="text-lg text-gray-900">
-                              {campaign.updater_first_name} {campaign.updater_last_name}
+                              {campaign.updaterFirstName} {campaign.updaterLastName}
                            </p>
                         </div>
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-500">Created</label>
                            <p className="text-lg text-gray-900">
-                              {new Date(campaign.created_at).toLocaleDateString("en-US", {
+                              {new Date(campaign.createdAt).toLocaleDateString("en-US", {
                                  year: 'numeric',
                                  month: 'long',
                                  day: 'numeric'
@@ -102,7 +102,7 @@ const CampaignPage = ({params}) => {
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-500">Created By</label>
                            <p className="text-lg text-gray-900">
-                              {campaign.creator_first_name} {campaign.creator_last_name}
+                                 {campaign.creatorFirstName} {campaign.creatorLastName}
                            </p>
                         </div>
                      </div>

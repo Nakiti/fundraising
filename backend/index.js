@@ -32,12 +32,15 @@ import donorRoutes from "./routes/donorRoutes.js"
 import guestDonorRoutes from "./routes/guestDonorRoutes.js"
 import stripeRoutes from "./routes/stripeRoutes.js"
 import organizationStatusRoutes from "./routes/organization_statusRoutes.js"
+import themeRoutes from "./routes/themeRoutes.js"
+import customQuestionResponseRoutes from "./routes/custom_question_responseRoutes.js"
 import { 
   globalErrorHandler, 
   notFoundHandler, 
   handleUnhandledRejection, 
   handleUncaughtException 
 } from "./middleware/errorHandler.js"
+import { caseTransformMiddleware } from "./middleware/caseTransform.js"
 
 const app = express()
 
@@ -91,6 +94,8 @@ const corsOptions = {
 };
  
 app.use(express.json({ limit: '10mb' }))
+// Case transform must run after body parsing and before routes
+app.use(caseTransformMiddleware)
 app.use(cors(corsOptions))
 app.use(cookieParser())
 
@@ -150,7 +155,7 @@ app.use("/api/user_organization", user_organizationRoutes)
 app.use("/api/campaign_details", campaign_detailRoutes)
 app.use("/api/section", sectionRoutes)
 app.use("/api/thankyou_page", thankYouPageRoutes)
-app.use("/api/faq", faqRoutes)
+app.use("/api/faq", faqRoutes) 
 app.use("/api/ticket_page", ticketPageRoutes)
 app.use("/api/campaign_ticket", campaignTicketRoutes)
 app.use("/api/peer_fundraising_page", peerFundraisingPageRoutes)
@@ -165,6 +170,8 @@ app.use("/api/donor", donorRoutes)
 app.use("/api/guest-donor", guestDonorRoutes)
 app.use("/api/stripe", stripeRoutes)
 app.use("/api/organization_status", organizationStatusRoutes)
+app.use("/api/custom_question_response", customQuestionResponseRoutes)
+app.use("/api", themeRoutes)
 
 // Global error handling middleware (must be last)
 app.use(notFoundHandler);

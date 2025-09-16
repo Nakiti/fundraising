@@ -3,15 +3,17 @@ import { asyncHandler } from "../middleware/errorHandler.js";
 import { 
   sendCreated, 
   sendUpdated, 
-  sendSuccess, 
-  sendNotFound, 
-  sendDatabaseError 
+  sendSuccess
 } from "../utils/response.js";
 import { 
   ValidationError, 
   NotFoundError, 
   DatabaseError 
 } from "../utils/errors.js";
+import { getCampaignService } from "../services/ServiceRegistry.js";
+
+// Temporary compatibility: forward detail updates to campaigns table
+const campaignService = getCampaignService();
 
 export const createCampaignDetails = asyncHandler(async (req, res) => {
    // Validate required fields
@@ -48,89 +50,62 @@ export const createCampaignDetails = asyncHandler(async (req, res) => {
 });
 
 export const updateCampaignDetails = asyncHandler(async (req, res) => {
-   // Validate required fields
-   const { 
-      internalName, 
-      externalName, 
-      goal, 
-      defaultDesignation, 
-      status, 
-      url, 
-      userId,
-      showPhone, 
-      showTitle,
-      showSuffix,
-      showCompanyName,
-      showWebsiteUrl
-   } = req.body;
    const { id } = req.params;
-   
    if (!id) {
       throw new ValidationError('Campaign ID is required');
    }
 
-   if (!internalName || !userId) {
-      throw new ValidationError('Missing required fields: internalName, userId');
-   }
-
-   const query = "UPDATE campaign_details SET `internal_name` = ?, `external_name` = ?, `goal` = ?, `default_designation` = ?, `status` = ?, `url` = ?, `show_phone` = ?, `show_title` = ?, `show_suffix` = ?, `show_company_name` = ?, `show_website_url` = ?, `updated_at` = ?, `updated_by` = ? WHERE `campaign_id` = ?"
-
-   const values = [
+   const {
       internalName,
       externalName,
       goal,
       defaultDesignation,
       status,
       url,
-      showPhone || false,
-      showTitle || false,
-      showSuffix || false,
-      showCompanyName || false,
-      showWebsiteUrl || false,
-      (new Date()).toISOString().slice(0, 19).replace('T', ' '),
       userId,
-      id
-   ]
+      showPhone,
+      showTitle,
+      showSuffix,
+      showCompanyName,
+      showWebsiteUrl
+   } = req.body;
 
-   return new Promise((resolve, reject) => {
-      db.query(query, values, (err, data) => {
-         if (err) {
-            reject(new DatabaseError('Failed to update campaign details', err));
-         } else {
-            if (data.affectedRows === 0) {
-               reject(new NotFoundError('Campaign details'));
-            } else {
-               sendUpdated(res, { success: true }, 'Campaign details updated successfully');
-      resolve();
-            }
-         }
-      });
-   });
+   if (!internalName || !userId) {
+      throw new ValidationError('Missing required fields: internalName, userId');
+   }
+
+   // Map camelCase body to campaigns snake_case columns
+   const updateData = {
+      internal_name: internalName,
+      external_name: externalName,
+      goal: goal,
+      default_designation: defaultDesignation,
+      status: status,
+      url: url,
+      show_phone: !!showPhone,
+      show_title: !!showTitle,
+      show_suffix: !!showSuffix,
+      show_company_name: !!showCompanyName,
+      show_website_url: !!showWebsiteUrl,
+      updated_by: userId
+   };
+
+   if (url) {
+      await campaignService.validateUniqueUrl(url, id);
+   }
+
+   const updated = await campaignService.update(id, updateData);
+   sendUpdated(res, updated, 'Campaign details updated successfully');
 });
 
 export const getCampaignDetails = asyncHandler(async (req, res) => {
-   // Validate required fields
    const { id } = req.params;
-   
    if (!id) {
       throw new ValidationError('Campaign ID is required');
    }
-
-   const query = "SELECT * FROM campaign_details WHERE campaign_id = ?"
-   const value = [id]
-
-   return new Promise((resolve, reject) => {
-      db.query(query, value, (err, data) => {
-         if (err) {
-            reject(new DatabaseError('Failed to fetch campaign details', err));
-         } else {
-            if (!data || data.length === 0) {
-               reject(new NotFoundError('Campaign details'));
-            } else {
-               sendSuccess(res, data[0], 'Campaign details retrieved successfully');
-      resolve();
-            }
-         }
-      });
-   });
+   const campaign = await campaignService.findById(id);
+   if (!campaign) {
+      throw new NotFoundError('Campaign');
+   }
+   sendSuccess(res, campaign, 'Campaign details retrieved successfully');
 });

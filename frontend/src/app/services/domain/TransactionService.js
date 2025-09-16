@@ -20,6 +20,19 @@ export class TransactionService extends BaseService {
   }
 
   /**
+   * Get transaction for thank you page with campaign validation
+   */
+  async getTransactionForThankYou(transactionId, campaignId) {
+    this.validateId(transactionId, 'Transaction ID');
+    this.validateId(campaignId, 'Campaign ID');
+    
+    return await this.getWithQuery('/transaction/thank-you', {
+      transactionId,
+      campaignId
+    });
+  }
+
+  /**
    * Create a new transaction
    */
   async createTransaction(transactionData) {
@@ -30,6 +43,39 @@ export class TransactionService extends BaseService {
     this.validateId(transactionData.campaign_id, 'Campaign ID');
 
     return await this.post('/transaction/create', transactionData);
+  }
+
+  /**
+   * Create a new transaction with custom question responses
+   * @param {Object} transactionData - Transaction data
+   * @param {Array} [questionResponses] - Array of question response data
+   * @returns {Promise<Object>} Created transaction data with responses
+   */
+  async createTransactionWithResponses(transactionData, questionResponses = []) {
+    this.validateRequired(transactionData, 'Transaction data');
+    this.validateRequired(transactionData.amount, 'Amount');
+    this.validateRequired(transactionData.campaign_id, 'Campaign ID');
+    this.validateId(transactionData.campaign_id, 'Campaign ID');
+
+    // Validate question responses if provided
+    if (questionResponses && questionResponses.length > 0) {
+      this.validateArray(questionResponses, 'Question responses');
+      
+      questionResponses.forEach((response, index) => {
+        this.validateRequired(response.question_id, `Question ID at index ${index}`);
+        this.validateId(response.question_id, `Question ID at index ${index}`);
+        this.validateRequired(response.response_value, `Response value at index ${index}`);
+        this.validateRequired(response.response_type, `Response type at index ${index}`);
+        // this.validateEnum(response.response_type, ['text', 'textarea', 'checkbox', 'select', 'radio'], `Response type at index ${index}`);
+      });
+    }
+
+    const requestData = {
+      ...transactionData,
+      questionResponses
+    };
+
+    return await this.post('/transaction/create-with-responses', requestData);
   }
 
   /**

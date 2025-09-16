@@ -4,12 +4,19 @@ import Link from "next/link";
 import { useState, useEffect } from 'react';
 import { FaGlobe, FaInfoCircle, FaEdit, FaPalette, FaCheck } from "react-icons/fa";
 import { PageService } from "@/app/services/fetchService";
+import { getPageService } from "@/app/services";
 
 const Pages = ({params}) => {
    const organizationId = params.organizationId
    const [pageCards, setPageCards] = useState([])
    const [loading, setLoading] = useState(true)
    const [applyingTheme, setApplyingTheme] = useState(null)
+   const [ids, setIds] = useState({
+      landingPageId: null,
+      aboutPageId: null,
+      headerPageId: null,
+      footerPageId: null
+   })
 
    // Refined theme configurations
    const themes = [
@@ -18,28 +25,28 @@ const Pages = ({params}) => {
          name: 'Modern Blue',
          description: 'Clean, professional design with blue accents',
          colors: {
-            bg_color: '#FFFFFF',
-            p_color: '#1F2937',
-            s_color: '#6B7280',
-            c_color: '#F8FAFC',
-            ct_color: '#1F2937',
-            b_color: '#3B82F6',
-            bt_color: '#FFFFFF',
-            accent_color: '#1E40AF'
+            bgColor: '#FFFFFF',
+            pColor: '#1F2937',
+            sColor: '#6B7280',
+            cColor: '#F8FAFC',
+            ctColor: '#1F2937',
+            bColor: '#3B82F6',
+            btColor: '#FFFFFF',
+            // accentColor: '#1E40AF'
          },
          spacing: {
-            hero_height: '600px',
-            section_padding: '100px',
-            card_radius: '8px',
-            button_radius: '6px'
+            // heroHeight: '600px',
+            // sectionPadding: '100px',
+            // cardRadius: '8px',
+            // buttonRadius: '6px'
          },
          typography: {
-            hero_title_size: '48px',
-            hero_subtitle_size: '18px',
-            section_title_size: '32px',
-            body_text_size: '16px',
-            button_text_size: '16px',
-            card_title_size: '20px'
+            // heroTitleSize: '48px',
+            // heroSubtitleSize: '18px',
+            // sectionTitleSize: '32px',
+            // bodyTextSize: '16px',
+            // buttonTextSize: '16px',
+            // cardTitleSize: '20px'
          }
       },
       {
@@ -47,28 +54,28 @@ const Pages = ({params}) => {
          name: 'Warm Orange',
          description: 'Friendly and approachable with warm tones',
          colors: {
-            bg_color: '#FFF7ED',
-            p_color: '#1F2937',
-            s_color: '#6B7280',
-            c_color: '#FFFFFF',
-            ct_color: '#1F2937',
-            b_color: '#F97316',
-            bt_color: '#FFFFFF',
-            accent_color: '#EA580C'
+            bgColor: '#FFF7ED',
+            pColor: '#1F2937',
+            sColor: '#6B7280',
+            cColor: '#FFFFFF',
+            ctColor: '#1F2937',
+            bColor: '#F97316',
+            btColor: '#FFFFFF',
+            // accentColor: '#EA580C'
          },
          spacing: {
-            hero_height: '550px',
-            section_padding: '80px',
-            card_radius: '12px',
-            button_radius: '8px'
+            // heroHeight: '550px',
+            // sectionPadding: '80px',
+            // cardRadius: '12px',
+            // buttonRadius: '8px'
          },
          typography: {
-            hero_title_size: '44px',
-            hero_subtitle_size: '18px',
-            section_title_size: '30px',
-            body_text_size: '16px',
-            button_text_size: '16px',
-            card_title_size: '22px'
+            // heroTitleSize: '44px',
+            // heroSubtitleSize: '18px',
+            // sectionTitleSize: '30px',
+            // bodyTextSize: '16px',
+            // buttonTextSize: '16px',
+            // cardTitleSize: '22px'
          }
       },
       {
@@ -76,28 +83,28 @@ const Pages = ({params}) => {
          name: 'Elegant Purple',
          description: 'Sophisticated design with purple accents',
          colors: {
-            bg_color: '#FAFAFA',
-            p_color: '#1F2937',
-            s_color: '#6B7280',
-            c_color: '#FFFFFF',
-            ct_color: '#1F2937',
-            b_color: '#8B5CF6',
-            bt_color: '#FFFFFF',
-            accent_color: '#7C3AED'
+            bgColor: '#FAFAFA',
+            pColor: '#1F2937',
+            sColor: '#6B7280',
+            cColor: '#FFFFFF',
+            ctColor: '#1F2937',
+            bColor: '#8B5CF6',
+            btColor: '#FFFFFF',
+            // accentColor: '#7C3AED'
          },
          spacing: {
-            hero_height: '650px',
-            section_padding: '120px',
-            card_radius: '16px',
-            button_radius: '10px'
+            // heroHeight: '650px',
+            // sectionPadding: '120px',
+            // cardRadius: '16px',
+            // buttonRadius: '10px'
          },
          typography: {
-            hero_title_size: '52px',
-            hero_subtitle_size: '20px',
-            section_title_size: '36px',
-            body_text_size: '18px',
-            button_text_size: '16px',
-            card_title_size: '24px'
+            // heroTitleSize: '52px',
+            // heroSubtitleSize: '20px',
+            // sectionTitleSize: '36px',
+            // bodyTextSize: '18px',
+            // buttonTextSize: '16px',
+            // cardTitleSize: '24px'
          }
       },
       {
@@ -105,28 +112,28 @@ const Pages = ({params}) => {
          name: 'Minimal Gray',
          description: 'Clean and minimal with subtle accents',
          colors: {
-            bg_color: '#FFFFFF',
-            p_color: '#111827',
-            s_color: '#4B5563',
-            c_color: '#F9FAFB',
-            ct_color: '#111827',
-            b_color: '#6B7280',
-            bt_color: '#FFFFFF',
-            accent_color: '#374151'
+            bgColor: '#FFFFFF',
+            pColor: '#111827',
+            sColor: '#4B5563',
+            cColor: '#F9FAFB',
+            ctColor: '#111827',
+            bColor: '#6B7280',
+            btColor: '#FFFFFF',
+            // accentColor: '#374151'
          },
          spacing: {
-            hero_height: '500px',
-            section_padding: '60px',
-            card_radius: '4px',
-            button_radius: '4px'
+            // heroHeight: '500px',
+            // sectionPadding: '60px',
+            // cardRadius: '4px',
+            // buttonRadius: '4px'
          },
          typography: {
-            hero_title_size: '40px',
-            hero_subtitle_size: '16px',
-            section_title_size: '28px',
-            body_text_size: '14px',
-            button_text_size: '14px',
-            card_title_size: '18px'
+            // heroTitleSize: '40px',
+            // heroSubtitleSize: '16px',
+            // sectionTitleSize: '28px',
+            // bodyTextSize: '14px',
+            // buttonTextSize: '14px',
+            // cardTitleSize: '18px'
          }
       }
    ]
@@ -139,27 +146,28 @@ const Pages = ({params}) => {
             ...theme.colors,
             ...theme.spacing,
             ...theme.typography,
-            active: true
+            active: 1
          }
          
          console.log(`Applying ${theme.name} theme to all pages:`, themeData)
+         const pageService = getPageService()
 
          // Apply theme to all pages concurrently
          const promises = [
             // Landing page
             (async () => {
                try {
-                  const landingPage = await PageService.getLandingPage(organizationId)
-                  await PageService.updateLandingPage(landingPage.id, themeData)
+                     // const landingPage = await PageService.getLandingPage(organizationId)
+                  await pageService.updateLandingPage(organizationId, ids.landingPageId, themeData)
                } catch (error) {
                   if (error.message.includes('not found') || error.status === 404) {
-                     const createData = await PageService.createLandingPage({
+                     const createData = await pageService.createLandingPage({
                         organization_id: organizationId,
                         user_id: 1,
                         title: 'Landing Page',
                         description: 'Organization landing page'
                      })
-                     await PageService.updateLandingPage(createData.pageId, themeData)
+                     await pageService.updateLandingPage(organizationId, createData.pageId, themeData)
                   } else {
                      throw error
                   }
@@ -169,17 +177,17 @@ const Pages = ({params}) => {
             // About page
             (async () => {
                try {
-                  const aboutPage = await PageService.getAboutPage(organizationId)
-                  await PageService.updateAboutPage(aboutPage.id, themeData)
+                  // const aboutPage = await PageService.getAboutPage(organizationId)
+                  await pageService.updateAboutPage(organizationId, ids.aboutPageId, themeData)
                } catch (error) {
                   if (error.message.includes('not found') || error.status === 404) {
-                     const createData = await PageService.createAboutPage({
+                     const createData = await pageService.createAboutPage({
                         organization_id: organizationId,
                         user_id: 1,
                         title: 'About Page',
                         description: 'Organization about page'
                      })
-                     await PageService.updateAboutPage(createData.pageId, themeData)
+                     await pageService.updateAboutPage(organizationId, createData.pageId, themeData)
                   } else {
                      throw error
                   }
@@ -189,29 +197,29 @@ const Pages = ({params}) => {
             // Header page
             (async () => {
                try {
-                  const headerPage = await PageService.getHeaderPage(organizationId)
+                  // const headerPage = await PageService.getHeaderPage(organizationId)
                   const headerUpdateData = {
-                     bgColor: theme.colors.bg_color,
-                     textColor: theme.colors.p_color,
-                     accentColor: theme.colors.accent_color,
-                     active: true
+                     bgColor: theme.colors.bgColor,
+                     textColor: theme.colors.pColor,
+                     // accentColor: theme.colors.accentColor,
+                     active: 1
                   }
-                  await PageService.updateHeaderPage(headerPage.id, headerUpdateData)
+                  await pageService.updateHeaderPage(organizationId, ids.headerPageId, headerUpdateData)
                } catch (error) {
                   if (error.message.includes('not found') || error.status === 404) {
-                     const createData = await PageService.createHeaderPage({
+                     const createData = await pageService.createHeaderPage({
                         organization_id: organizationId,
                         user_id: 1,
                      })
-                     const newHeaderUpdateData = {
-                        bgColor: theme.colors.bg_color,
-                        textColor: theme.colors.p_color,
-                        accentColor: theme.colors.accent_color,
-                        organizationName: "Organization",
-                        logo: "",
-                        active: true
-                     }
-                     await PageService.updateHeaderPage(createData.pageId, newHeaderUpdateData)
+                     // const newHeaderUpdateData = {
+                     //    bgColor: theme.colors.bg_color,
+                     //    textColor: theme.colors.p_color,
+                     //    accentColor: theme.colors.accent_color,
+                     //    organizationName: "Organization",
+                     //    logo: "",
+                     //    active: true
+                     // }
+                     // await pageService.updateHeaderPage(organizationId, createData.pageId, newHeaderUpdateData)
                   } else {
                      throw error
                   }
@@ -221,31 +229,31 @@ const Pages = ({params}) => {
             // Footer page
             (async () => {
                try {
-                  const footerPage = await PageService.getFooterPage(organizationId)
+                  // const footerPage = await PageService.getFooterPage(organizationId)
                   const footerUpdateData = {
-                     bgColor: theme.colors.bg_color,
-                     textColor: theme.colors.p_color,
-                     linkColor: theme.colors.accent_color,
-                     organizationName: footerPage.organization_name || "Organization",
+                     bgColor: theme.colors.bgColor,
+                     textColor: theme.colors.pColor,
+                     linkColor: theme.colors.accentColor,
+                     organizationName: footerPage.organizationName || "Organization",
                      logo: footerPage.logo || "",
-                     active: true
+                     active: 1
                   }
-                  await PageService.updateFooterPage(footerPage.id, footerUpdateData)
+                  await pageService.updateFooterPage(organizationId, ids.footerPageId, footerUpdateData)
                } catch (error) {
                   if (error.message.includes('not found') || error.status === 404) {
-                     const createData = await PageService.createFooterPage({
+                     const createData = await pageService.createFooterPage({
                         organization_id: organizationId,
                         user_id: 1,
                      })
-                     const newFooterUpdateData = {
-                        bgColor: theme.colors.bg_color,
-                        textColor: theme.colors.p_color,
-                        linkColor: theme.colors.accent_color,
-                        organizationName: "Organization",
-                        logo: "",
-                        active: true
-                     }
-                     await PageService.updateFooterPage(createData.pageId, newFooterUpdateData)
+                     // const newFooterUpdateData = {
+                     //    bgColor: theme.colors.bg_color,
+                     //    textColor: theme.colors.p_color,
+                     //    linkColor: theme.colors.accent_color,
+                     //    organizationName: "Organization",
+                     //    logo: "",
+                     //    active: true
+                     // }
+                     // await pageService.updateFooterPage(organizationId, createData.pageId, newFooterUpdateData)
                   } else {
                      throw error
                   }
@@ -266,13 +274,22 @@ const Pages = ({params}) => {
    const fetchPageStatus = async () => {
       try {
          setLoading(true)
+         const pageService = getPageService()
          
          const [landingPage, aboutPage, headerPage, footerPage] = await Promise.all([
-            PageService.getLandingPage(organizationId),
-            PageService.getAboutPage(organizationId),
-            PageService.getHeaderPage(organizationId),
-            PageService.getFooterPage(organizationId)
+            pageService.getLandingPage(organizationId),
+            pageService.getAboutPage(organizationId),
+            pageService.getHeaderPage(organizationId),
+            pageService.getFooterPage(organizationId)
+
          ])
+
+         setIds({
+            landingPageId: landingPage.data.id,
+            aboutPageId: aboutPage.data.id,
+            headerPageId: headerPage.data.id,
+            footerPageId: footerPage.data.id
+         })
 
          const cards = [
             {
@@ -280,28 +297,28 @@ const Pages = ({params}) => {
                description: "Edit the landing page for your organization",
                href: `/org/${organizationId}/page/landing`,
                icon: <FaGlobe className="w-6 h-6 text-blue-600" />,
-               status: landingPage.active == 1 ? "active" : "draft"
+               status: landingPage.data.active == 1 ? "active" : "draft"
             },
             {
                title: "About Page",
                description: "Edit the about page for your organization",
                href: `/org/${organizationId}/page/about`,
                icon: <FaInfoCircle className="w-6 h-6 text-purple-600" />,
-               status: aboutPage.active == 1? "active" : "draft"
+               status: aboutPage.data.active == 1? "active" : "draft"
             },
             {
                title: "Header Design",
                description: "Customize your organization's header",
                href: `/org/${organizationId}/page/header`,
                icon: <FaEdit className="w-6 h-6 text-green-600" />,
-               status: headerPage.active == 1 ? "active" : "draft"
+               status: headerPage.data.active == 1 ? "active" : "draft"
             },
             {
                title: "Footer Design",
                description: "Customize your organization's footer",
                href: `/org/${organizationId}/page/footer`,
                icon: <FaEdit className="w-6 h-6 text-orange-600" />,
-               status: footerPage.active == 1 ? "active" : "draft"
+               status: footerPage.data.active == 1 ? "active" : "draft"
             },
          ]
 
@@ -359,7 +376,7 @@ const Pages = ({params}) => {
             </div>
 
             {/* Quick Themes Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                <div className="mb-4">
                   <h2 className="text-xl font-semibold text-gray-900 mb-1">Quick Themes</h2>
                   <p className="text-gray-600">Apply professional themes to all pages at once</p>
@@ -368,23 +385,22 @@ const Pages = ({params}) => {
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {themes.map((theme) => (
                      <div key={theme.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-all duration-200">
-                        {/* Color Preview */}
                         <div className="flex space-x-2 mb-3">
                            <div 
                               className="w-6 h-6 rounded border border-gray-200" 
-                              style={{ backgroundColor: theme.colors.b_color }}
+                              style={{ backgroundColor: theme.colors.bColor }}
                            />
                            <div 
                               className="w-6 h-6 rounded border border-gray-200" 
-                              style={{ backgroundColor: theme.colors.accent_color }}
+                              style={{ backgroundColor: theme.colors.accentColor }}
                            />
                            <div 
                               className="w-6 h-6 rounded border border-gray-200" 
-                              style={{ backgroundColor: theme.colors.p_color }}
+                              style={{ backgroundColor: theme.colors.pColor }}
                            />
                            <div 
                               className="w-6 h-6 rounded border border-gray-200" 
-                              style={{ backgroundColor: theme.colors.s_color }}
+                              style={{ backgroundColor: theme.colors.sColor }}
                            />
                         </div>
                         
@@ -411,7 +427,7 @@ const Pages = ({params}) => {
                      </div>
                   ))}
                </div>
-            </div>
+            </div> */}
 
             {/* Page Editor Section */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

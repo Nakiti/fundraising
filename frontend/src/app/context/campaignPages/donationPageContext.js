@@ -3,64 +3,67 @@ import { getPageService, getDesignationService } from "@/app/services";
 import { createContext, useContext, useState, useEffect } from "react";
 import useFormInput from "../../hooks/useFormInput";
 import { initialDonationPageSections } from "../../constants/pageSectionsConfig";
-import { CampaignContext } from "../campaignContext";
 
 export const DonationPageContext = createContext()
 
 export const DonationPageContextProvider = ({campaignId, children, organizationId}) => {
-   const [donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs] = useFormInput({})
+   const [donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs, filesToUpload] = useFormInput({})
    const [donationPageSections, setDonationPageSections] = useState(initialDonationPageSections)
    const [selectedDesignations, setSelectedDesignations] = useState([]);
-   const {campaignType, campaignDetails} = useContext(CampaignContext)
+   const [donationPageId, setDonationPageId] = useState(null)
 
    useEffect(() => {
       const fetchData = async() => {
          try {
-            console.log("campaignId", campaignId)
             const pageService = getPageService();
             const designationService = getDesignationService();
             
             const donationResponse = await pageService.getDonationPage(campaignId)
-            console.log("donationResponse", donationResponse)
+            // console.log("donationResponse", donationResponse)
             const donationPageId = donationResponse.data.id
-            const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
-                        
+            setDonationPageId(donationPageId)
             setDonationPageInputs({
+
                // Basic Content
-               title: donationResponse.data.title || "",
+               headline: donationResponse.data.headline || "",
                subtitle: donationResponse.data.subtitle || "",
                description: donationResponse.data.description || "",
+               banner_image: donationResponse.data.bannerImageUrl || "",
+
+               mainHeadline: donationResponse.data.mainHeadline || "",
+               mainText: donationResponse.data.mainText || "",
                
                // Colors
-               bg_color: donationResponse.data.bg_color || "#ffffff",
-               p_color: donationResponse.data.p_color || "#1f2937",
-               s_color: donationResponse.data.s_color || "#6b7280",
-               b_color: donationResponse.data.b_color || "#3b82f6",
-               bt_color: donationResponse.data.bt_color || "#ffffff",
+               bgColor: donationResponse.data.bgColor || "#ffffff",
+               pColor: donationResponse.data.pColor || "#1f2937",
+               sColor: donationResponse.data.sColor || "#6b7280",
+               btColor: donationResponse.data.btColor || "#ffffff",
+
+               bannerTitleColor: donationResponse.data.bannerTitleColor || "#ffffff",
+               bannerSubtitleColor: donationResponse.data.bannerSubtitleColor || "#e2e8f0",
+
+               b1Color: donationResponse.data.b1Color || "#3b82f6",
                
                // Typography
-               heroTitleSize: donationResponse.data.heroTitleSize || "36",
-               heroSubtitleSize: donationResponse.data.heroSubtitleSize || "16",
-               sectionTitleSize: donationResponse.data.sectionTitleSize || "28",
-               bodyTextSize: donationResponse.data.bodyTextSize || "16",
-               buttonTextSize: donationResponse.data.buttonTextSize || "16",
+               // heroTitleSize: donationResponse.data.heroTitleSize || "36",
+               // heroSubtitleSize: donationResponse.data.heroSubtitleSize || "16",
+               // sectionTitleSize: donationResponse.data.sectionTitleSize || "28",
+               // bodyTextSize: donationResponse.data.bodyTextSize || "16",
+               // buttonTextSize: donationResponse.data.buttonTextSize || "16",
                
                // Layout
-               cardRadius: donationResponse.data.cardRadius || "4",
-               buttonRadius: donationResponse.data.buttonRadius || "4",
+               // cardRadius: donationResponse.data.cardRadius || "4",
+               // buttonRadius: donationResponse.data.buttonRadius || "4",
             })
 
             // Fetch page sections for the donation page
-            const donationSections = await pageService.getPageSectionsByPage(organizationId, 'campaign_donation', donationPageId)
+            const donationSections = await pageService.getPageSectionsByPage(organizationId, 'donation_page', donationPageId)
+            console.log("donationSections", donationSections)
             setDonationPageSections((prevSections) => {
                return prevSections.map(section => {
-                  const matchingSection = donationSections.data.find(s => s.name === section.name);
-                  return {
-                     ...section,
-                     active: matchingSection ? matchingSection.active : section.active,
-                     required: matchingSection ? matchingSection.required : section.required,
-                     dropdown: matchingSection ? matchingSection.dropdown : section.dropdown
-                  };
+                  const match = donationSections.data.find(s => s.name === section.name);
+                  return match ? {...section, pageSectionId: match.id, active: match.active } : section
+
                });
             })
 
@@ -73,11 +76,11 @@ export const DonationPageContextProvider = ({campaignId, children, organizationI
       }
 
       fetchData()
-   }, [campaignId])
+   }, [campaignId, organizationId])
 
       return (
       <DonationPageContext.Provider value={{donationPageInputs, handleDonationPageInputsChange, setDonationPageInputs,
-        donationPageSections, setDonationPageSections, campaignId, selectedDesignations, setSelectedDesignations}}
+        donationPageSections, setDonationPageSections, campaignId, selectedDesignations, setSelectedDesignations, donationPageId, organizationId, filesToUpload}}
       >
          {children}
       </DonationPageContext.Provider>

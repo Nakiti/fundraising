@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { FaUserCircle, FaSignOutAlt, FaCog, FaUser } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { IoReorderThree } from "react-icons/io5";
-import { useDonor } from '../../context/donorContext';
-import { useDonorSidebar } from '../../context/donorSidebarContext';
+import { useDonor } from '@/app/context/donorContext';
+import { useDonorSidebar } from '@/app/context/donorSidebarContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -48,6 +48,12 @@ const DonorHeader = ({ organizationId }) => {
         <div>
           <h1 className="text-lg font-semibold text-gray-900">Donor Portal</h1>
         </div>
+        <Link 
+          href={`/organization/${organizationId}`}
+          className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200"
+        >
+          Home
+        </Link>
       </div>
       
       <div className="flex items-center relative h-full">

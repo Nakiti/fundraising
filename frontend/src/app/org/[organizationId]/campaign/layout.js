@@ -12,7 +12,7 @@ import { TicketPurchasePageContextProvider } from "@/app/context/campaignPages/t
 
 // Inner component that uses the campaign context
 const CampaignLayoutInner = ({ children, campaignId, organizationId }) => {
-  const { campaignType } = useContext(CampaignContext);
+  // const { campaignType } = useContext(CampaignContext);
 
   return (
     <>
@@ -20,13 +20,13 @@ const CampaignLayoutInner = ({ children, campaignId, organizationId }) => {
       <DonationFormContextProvider campaignId={campaignId} organizationId={organizationId}>
         <ThankYouPageContextProvider campaignId={campaignId} organizationId={organizationId}>
           {/* Conditionally load campaign type specific providers */}
-          {campaignType === "crowdfunding" && (
+          {
             <DonationPageContextProvider campaignId={campaignId} organizationId={organizationId}>
               {children}
             </DonationPageContextProvider>
-          )}
+          }
           
-          {campaignType === "peer-to-peer" && (
+          {/* {campaignType === "peer-to-peer" && (
             <>
               <PeerLandingPageContextProvider campaignId={campaignId}>
                 <PeerFundraisingPageContextProvider campaignId={campaignId}>
@@ -34,9 +34,9 @@ const CampaignLayoutInner = ({ children, campaignId, organizationId }) => {
                 </PeerFundraisingPageContextProvider>
               </PeerLandingPageContextProvider>
             </>
-          )}
+          )} */}
           
-          {campaignType === "ticketed-event" && (
+          {/* {campaignType === "ticketed-event" && (
             <>
               <TicketPageContextProvider campaignId={campaignId}>
                 <TicketPurchasePageContextProvider campaignId={campaignId}>
@@ -44,10 +44,10 @@ const CampaignLayoutInner = ({ children, campaignId, organizationId }) => {
                 </TicketPurchasePageContextProvider>
               </TicketPageContextProvider>
             </>
-          )}
+          )} */}
           
           {/* Fallback for when campaign type is not yet loaded */}
-          {!campaignType && children}
+          {/* {!campaignType && children} */}
         </ThankYouPageContextProvider>
       </DonationFormContextProvider>
     </>

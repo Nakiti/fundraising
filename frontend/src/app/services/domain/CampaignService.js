@@ -20,6 +20,11 @@ export class CampaignService extends BaseService {
     return await this.get(`/campaign/get/${campaignId}`);
   }
 
+  async getCampaignWithDetails(campaignId) {
+    this.validateId(campaignId, 'Campaign ID');
+    return await this.get(`/campaign/getWithDetails/${campaignId}`);
+  }
+
   /**
    * Get campaign details (from campaign_details table)
    */
@@ -33,9 +38,10 @@ export class CampaignService extends BaseService {
    */
   async createCampaign(campaignData) {
     this.validateRequired(campaignData, 'Campaign data');
-    this.validateRequired(campaignData.name, 'Campaign name');
-    this.validateMinLength(campaignData.name, 2, 'Campaign name');
-    
+    // this.validateRequired(campaignData.name, 'Campaign name');
+    // this.validateMinLength(campaignData.name, 2, 'Campaign name');
+
+    console.log("campaignData ", campaignData)
     return await this.post('/campaign/create', campaignData);
   }
 
@@ -276,7 +282,10 @@ export class CampaignService extends BaseService {
     this.validateRequired(questionIds, 'Question IDs');
     this.validateArray(questionIds, 'Question IDs');
     
-    return await this.delete(`/campaign_question/remove`, { data: { questionIds } });
+    // Convert array of IDs to array of objects with id property (as expected by backend)
+    const itemsWithId = questionIds.map(id => ({ id }));
+    
+    return await this.deleteWithData(`/campaign_question/removeBatch`, { items: itemsWithId });
   }
 
   /**

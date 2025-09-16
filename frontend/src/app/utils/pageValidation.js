@@ -7,20 +7,20 @@
 const SECTION_FIELDS = {
   // Landing Page Sections
   landing: {
-    banner: ['title', 'description', 'bgImage'],
+    banner: ['title', 'description', 'bg_image'],
     main: ['mainHeadline', 'mainText'],
-    about: ['aboutText', 'aboutImage'],
-    impact: ['impactText', 'textImage'],
-    triple: ['headlineOne', 'descriptionOne', 'imageOne', 'headlineTwo', 'descriptionTwo', 'imageTwo', 'headlineThree', 'descriptionThree', 'imageThree']
+    about: ['aboutText', 'about_image'],
+    impact: ['impactText', 'text_image'],
+    triple: ['headlineOne', 'descriptionOne', 'image_one', 'headlineTwo', 'descriptionTwo', 'image_two', 'headlineThree', 'descriptionThree', 'image_three']
   },
   
   // About Page Sections
   about: {
-    banner: ['headline', 'bgImage'],
-    story: ['aboutText', 'aboutImage'],
+    banner: ['headline', 'bg_image'],
+    story: ['aboutText', 'about_image'],
     what: ['whatText'],
     why: ['whyText'],
-    team: ['teamText', 'teamImage']
+    team: ['teamText', 'team_image']
   },
   
   // Header Page Sections
@@ -38,12 +38,12 @@ const SECTION_FIELDS = {
   donation: {
     banner: ['headline', 'description', 'banner_image'],
     main: ['mainHeadline', 'mainText'],
-    donate: ['donate_button_text']
+    // donate: ['donate_button_text']
   },
   
   thankYou: {
-    message: ['message'],
-    background: ['background_image']
+    message: ['description'],
+    // background: ['background_image']
   },
   
   ticket: {
@@ -64,9 +64,7 @@ const SECTION_FIELDS = {
   },
   
   donationForm: {
-    header: ['header_text'],
-    title: ['title_text'],
-    desc: ['description_text']
+    header: ['headline', 'description'],
   },
   
   ticketPurchase: {
@@ -85,6 +83,12 @@ export const validateActiveSections = (pageType, sections, inputs) => {
   const errors = [];
   const pageFields = SECTION_FIELDS[pageType];
   
+  console.log(`DEBUG - validateActiveSections called with:`)
+  console.log(`pageType:`, pageType)
+  console.log(`sections:`, sections)
+  console.log(`inputs:`, inputs)
+  console.log(`pageFields:`, pageFields)
+  
   if (!pageFields) {
     return {
       isValid: false,
@@ -96,19 +100,23 @@ export const validateActiveSections = (pageType, sections, inputs) => {
   sections.forEach(section => {
     if (section.active && pageFields[section.name]) {
       const requiredFields = pageFields[section.name];
+      console.log(`Checking section "${section.name}" with required fields:`, requiredFields)
       
       requiredFields.forEach(fieldName => {
         const value = inputs[fieldName];
+        console.log(`Field "${fieldName}" has value:`, value, `(type: ${typeof value})`)
         
         // Check if field is empty or only whitespace
         if (!value || (typeof value === 'string' && value.trim() === '')) {
           const sectionDisplayName = section.displayText || section.name;
+          console.log(`Field "${fieldName}" is empty, adding error`)
           errors.push(`${sectionDisplayName}: ${fieldName} is required`);
         }
       });
     }
   });
 
+  console.log(`Final validation errors:`, errors)
   return {
     isValid: errors.length === 0,
     errors
@@ -173,4 +181,53 @@ export const isFieldRequired = (pageType, sectionName, fieldName) => {
   }
 
   return pageFields[sectionName].includes(fieldName);
+};
+
+/**
+ * Validates donation form inputs
+ * @param {Object} params
+ * @param {number} params.amount - Donation amount
+ * @param {boolean} params.isAnonymous - Whether the donation is anonymous
+ * @param {Object} params.formData - Donor information fields
+ * @param {Array} params.designations - Campaign designations
+ * @param {number|null} params.selectedFund - Selected fund index or null
+ * @returns {{isValid: boolean, error?: string}}
+ */
+export const validateDonationForm = ({ amount, isAnonymous, formData, designations, selectedFund }) => {
+  if (!amount || amount <= 0) {
+    return { isValid: false, error: 'Please select a donation amount' };
+  }
+
+  // Require donor information when not anonymous
+  if (!isAnonymous) {
+    if (!formData?.firstName || !formData.firstName.trim()) {
+      return { isValid: false, error: 'Please enter your first name' };
+    }
+    if (!formData?.lastName || !formData.lastName.trim()) {
+      return { isValid: false, error: 'Please enter your last name' };
+    }
+    if (!formData?.email || !formData.email.trim()) {
+      return { isValid: false, error: 'Please enter your email address' };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return { isValid: false, error: 'Please enter a valid email address' };
+    }
+  } else {
+    // For anonymous donations, require email for receipt
+    if (!formData?.email || !formData.email.trim()) {
+      return { isValid: false, error: 'Please enter your email address for donation receipt' };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return { isValid: false, error: 'Please enter a valid email address' };
+    }
+  }
+
+  // If campaign has designations, require fund selection
+  if (Array.isArray(designations) && designations.length > 0 && selectedFund === null) {
+    return { isValid: false, error: 'Please select a fund' };
+  }
+
+  return { isValid: true };
 };

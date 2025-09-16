@@ -34,10 +34,10 @@ const RecentDonationsTable = ({ donations, formatCurrency, formatDate, onMakeDon
                                 {formatDate(donation.date)}
                             </td>
                             <td className="px-5 py-4 whitespace-nowrap text-sm text-slate-800">
-                                {donation.campaign_name || 'General'}
+                                {donation.campaignName || 'General'}
                             </td>
                             <td className="px-5 py-4 whitespace-nowrap text-sm text-slate-500">
-                                {donation.designation_name || 'General'}
+                                {donation.designationName || 'General'}
                             </td>
                             <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-slate-800">
                                 {formatCurrency(donation.amount)}

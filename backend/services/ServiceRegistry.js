@@ -9,6 +9,7 @@ import { TransactionService } from './TransactionService.js';
 import { UserOrganizationService } from './UserOrganizationService.js';
 import { UserService } from './UserService.js';
 import { StripeService } from './StripeService.js';
+import { CustomQuestionResponseService } from './CustomQuestionResponseService.js';
 
 /**
  * Service Registry - Central location for managing all services
@@ -40,6 +41,7 @@ export class ServiceRegistry {
     this._services.set('userOrganization', new UserOrganizationService());
     this._services.set('user', new UserService());
     this._services.set('stripe', new StripeService());
+    this._services.set('customQuestionResponse', new CustomQuestionResponseService());
     
     this._initialized = true;
     console.log('Service Registry initialized with services:', Array.from(this._services.keys()));
@@ -139,3 +141,4 @@ export const getTransactionService = () => serviceRegistry.get('transaction');
 export const getUserOrganizationService = () => serviceRegistry.get('userOrganization');
 export const getUserService = () => serviceRegistry.get('user');
 export const getStripeService = () => serviceRegistry.get('stripe');
+export const getCustomQuestionResponseService = () => serviceRegistry.get('customQuestionResponse');

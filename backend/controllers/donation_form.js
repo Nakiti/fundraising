@@ -17,32 +17,31 @@ export const createDonationForm = asyncHandler(async (req, res) => {
   if (!req.body.campaign_id) {
     throw new ValidationError('Campaign ID is required');
   }
-  if (!req.body.user_id) {
-    throw new ValidationError('User ID is required');
-  }
+  // if (!req.body.user_id) {
+  //   throw new ValidationError('User ID is required');
+  // }
   
   // Add updated_at and updated_by fields
   const pageData = {
-    ...req.body,
     updated_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
     updated_by: req.body.user_id
   };
-  
+   
   // Delegate to PageService
-  const donationForm = await pageService.createDonationForm(req.body.campaign_id, pageData, {});
+  const donationForm = await pageService.createDonationForm(req.body.campaign_id);
   
-  sendCreated(res, { formId: donationForm.id }, 'Donation form created successfully');
+  sendCreated(res, { formId: donationForm.id }, 'Donation form created successfully'); 
 })
 
 export const updateDonationForm = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { organizationId, campaignId, pageId } = req.params;
   
-  if (!id) {
-    throw new ValidationError('Form ID is required');
+  if (!organizationId || !campaignId || !pageId) {
+    throw new ValidationError('Form ID is required'); 
   }
-  if (!req.body.user_id) {
-    throw new ValidationError('User ID is required');
-  }
+  // if (!req.body.user_id) {
+  //   throw new ValidationError('User ID is required');
+  // }
   
   // Handle file upload (single file for bg_image)
   await handlePageFileUpload(req, res, getImageFieldsForPageType('donation-form'));
@@ -50,26 +49,27 @@ export const updateDonationForm = asyncHandler(async (req, res) => {
   // Add updated_at and updated_by fields
   const pageData = {
     ...req.body,
-    updated_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
-    updated_by: req.body.user_id
+    // updated_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+    // updated_by: req.body.user_id
   };
   
   // Delegate to PageService
-  const donationForm = await pageService.updateDonationForm(id, pageData, req.files);
+  const donationForm = await pageService.updateDonationForm(organizationId, campaignId, pageId, pageData, req.files);
   
   sendUpdated(res, { formId: donationForm.id }, 'Donation form updated successfully');
 })
 
 export const getDonationForm = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const { includeTheme = 'true' } = req.query;
   
   if (!id) {
-    throw new ValidationError('Campaign ID is required');
+    throw new ValidationError('Campaign ID is required'); 
   }
   
   try {
-    // Delegate to PageService
-    const donationForm = await pageService.getDonationForm(id);
+    // Delegate to PageService with theme support
+    const donationForm = await pageService.getPageWithTheme('donation-form', id, 'campaign_id', includeTheme === 'true');
     
     sendSuccess(res, donationForm, 'Donation form retrieved successfully');
   } catch (error) {

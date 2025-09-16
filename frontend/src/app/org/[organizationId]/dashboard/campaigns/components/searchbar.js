@@ -29,7 +29,7 @@ const Searchbar = ({setData, organizationId}) => {
       try {
          const campaignService = getCampaignService();
          const response = await campaignService.searchCampaigns(query, organizationId);
-         setData(response)
+         setData(response.data)
       } catch (err) {
          const handledError = errorHandler.handle(err)
          console.error('Search error:', handledError.message);
@@ -43,7 +43,7 @@ const Searchbar = ({setData, organizationId}) => {
       try {
          const campaignService = getCampaignService();
          const response = await campaignService.searchCampaigns(query, organizationId)
-         setData(response)
+         setData(response.data)
       } catch (err) {
          const handledError = errorHandler.handle(err)
          console.error('Search error:', handledError.message)

@@ -21,6 +21,23 @@ export const createTransaction = asyncHandler(async (req, res) => {
   }, 'Transaction created successfully');
 })
 
+export const createTransactionWithResponses = asyncHandler(async (req, res) => {
+  const { questionResponses, ...transactionData } = req.body;
+  
+  // Delegate to TransactionService
+  const transaction = await transactionService.createTransactionWithResponses(
+    transactionData, 
+    questionResponses
+  );
+  
+  sendCreated(res, { 
+    transactionId: transaction.id,
+    stripePaymentIntentId: transaction.stripe_payment_intent_id,
+    questionResponses: transaction.question_responses,
+    responseError: transaction.response_error
+  }, 'Transaction with question responses created successfully');
+})
+
 export const getTransaction = asyncHandler(async (req, res) => {
   const { id } = req.params;
   
@@ -36,6 +53,31 @@ export const getTransaction = asyncHandler(async (req, res) => {
   } catch (error) {
     if (error.name === 'NotFoundError') {
       sendNotFound(res, 'Transaction not found');
+    } else {
+      throw error;
+    }
+  }
+})
+
+export const getTransactionForThankYou = asyncHandler(async (req, res) => {
+  const { transactionId, campaignId } = req.query;
+  
+  if (!transactionId) {
+    throw new ValidationError('Transaction ID is required');
+  }
+  
+  if (!campaignId) {
+    throw new ValidationError('Campaign ID is required');
+  }
+  
+  try {
+    // Delegate to TransactionService
+    const transaction = await transactionService.getTransactionForThankYou(transactionId, campaignId);
+    
+    sendSuccess(res, transaction, 'Transaction retrieved successfully for thank you page');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Transaction not found or does not belong to this campaign');
     } else {
       throw error;
     }

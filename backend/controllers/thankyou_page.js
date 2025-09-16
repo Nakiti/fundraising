@@ -17,9 +17,9 @@ export const createThankYouPage = asyncHandler(async (req, res) => {
   if (!req.body.campaign_id) {
     throw new ValidationError('Campaign ID is required');
   }
-  if (!req.body.user_id) {
-    throw new ValidationError('User ID is required');
-  }
+  // if (!req.body.user_id) {
+  //   throw new ValidationError('User ID is required');
+  // }
   
   // Add updated_at and updated_by fields
   const pageData = {
@@ -29,15 +29,15 @@ export const createThankYouPage = asyncHandler(async (req, res) => {
   };
   
   // Delegate to PageService
-  const thankYouPage = await pageService.createThankYouPage(req.body.campaign_id, pageData, {});
+  const thankYouPage = await pageService.createThankYouPage(req.body.campaign_id);
   
   sendCreated(res, { pageId: thankYouPage.id }, 'Thank you page created successfully');
 })
 
 export const updateThankYouPage = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { organizationId, campaignId, pageId } = req.params;
   
-  if (!id) {
+  if (!organizationId || !campaignId || !pageId) {
     throw new ValidationError('Campaign ID is required');
   }
   
@@ -45,7 +45,7 @@ export const updateThankYouPage = asyncHandler(async (req, res) => {
   await handlePageFileUpload(req, res, getImageFieldsForPageType('thankyou-page'));
   
   // Delegate to PageService
-  const thankYouPage = await pageService.updateThankYouPage(id, req.body, req.files);
+  const thankYouPage = await pageService.updateThankYouPage(organizationId, campaignId, pageId, req.body, req.files);
   
   sendUpdated(res, { pageId: thankYouPage.id }, 'Thank you page updated successfully');
 })

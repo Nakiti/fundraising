@@ -16,7 +16,7 @@ import ErrorModal from "@/app/components/errorModal"
 const Campaigns = ({params}) => {
    const organizationId = params.organizationId
    const [showModal, setShowModal] = useState(false)
-   const [data, setData] = useState(null)
+   const [campaigns, setCampaigns] = useState([])
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
 
@@ -27,13 +27,14 @@ const Campaigns = ({params}) => {
       const fetchData = async() => {
          try {
             const campaignService = getCampaignService();
-         const response = await campaignService.getCampaignsByOrganization(organizationId)
-            setData(response.data)
+            const response = await campaignService.getCampaignsByOrganization(organizationId)
+            setCampaigns(response.data)
             console.log(response)
          } catch (err) {
             const handledError = errorHandler.handle(err)
             setErrorMessage(handledError.message)
             setError(true)
+            setCampaigns([]) // Ensure data is an array even on error
          }
       }
 
@@ -61,19 +62,19 @@ const Campaigns = ({params}) => {
             </div>
 
             {/* Summary Cards */}
-            {data && <Summary data={data}/>}
+            {campaigns && <Summary campaigns={campaigns}/>}
 
             {/* Search and Filters */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                <div className="flex flex-col lg:flex-row lg:items-end gap-4">
-                  <Searchbar setData={setData} organizationId={organizationId}/>
-                  <Filters setData={setData} organizationId={organizationId}/>
+                  <Searchbar setData={setCampaigns} organizationId={organizationId}/>
+                  <Filters setData={setCampaigns} organizationId={organizationId}/>
                </div>
             </div>
 
             {/* Table Section */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-               <Table setData={setData} data={data} organizationId={organizationId}/>
+               {campaigns && <Table setData={setCampaigns} data={campaigns} organizationId={organizationId}/>}
             </div>
          </div>
 

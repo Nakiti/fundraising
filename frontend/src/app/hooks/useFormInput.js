@@ -1,26 +1,47 @@
-//imports
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-/*
-   Custom Hook: useFormInput
-   Description: Manages the state and behavior for form inputs
-*/
+/**
+ * A unified hook to manage form state for both text and file inputs.
+ * @param {Object} initialState - The initial state for the entire form.
+ * @returns {Array} - [inputs, handleChange, setInputs, filesToUpload]
+ */
 const useFormInput = (initialState = {}) => {
    const [inputs, setInputs] = useState(initialState);
+   const [filesToUpload, setFilesToUpload] = useState({});
 
-   /*
-      Function: handleInputChange
-      Description: updates input state with new value for field that changed
-   */
-   const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setInputs((prevInputs) => ({
-         ...prevInputs,
-         [name]: value,
-      }));
+   const handleChange = (e) => {
+      const { name, type } = e.target;
+
+      if (type === 'file') {
+         const { files } = e.target;
+         if (files && files[0]) {
+         const file = files[0];
+         setFilesToUpload(prev => ({ ...prev, [name]: file }));
+         setInputs(prev => ({ ...prev, [name]: URL.createObjectURL(file) }));
+         }
+      } else {
+         const { value } = e.target;
+         setInputs(prev => ({ ...prev, [name]: value }));
+      }
+
+      console.log("inputs", inputs)
    };
 
-   return [inputs, handleInputChange, setInputs];
+   useEffect(() => {
+      const objectUrls = Object.values(inputs).filter(
+         value => typeof value === 'string' && value.startsWith('blob:')
+      );
+      return () => {
+         objectUrls.forEach(url => URL.revokeObjectURL(url));
+      };
+   }, [inputs]);
+
+   // Return an array instead of an object
+   // 1. inputs: State for UI (text values and preview URLs)
+   // 2. handleChange: The smart handler for all inputs
+   // 3. setInputs: The setter for populating the form
+   // 4. filesToUpload: State for the actual File objects
+   return [inputs, handleChange, setInputs, filesToUpload];
 };
 
 export default useFormInput;

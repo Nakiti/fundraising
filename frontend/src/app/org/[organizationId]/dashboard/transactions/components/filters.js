@@ -16,7 +16,7 @@ const Filters = ({setData, organizationId}) => {
       try {
          const transactionService = getTransactionService();
          const response = await transactionService.getFilteredTransactions(organizationId, e.target.value)
-         setData(response)
+         setData(response.data)
       } catch (err) {
          const handledError = errorHandler.handle(err)
          console.error('Transaction filter error:', handledError.message);

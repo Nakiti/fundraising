@@ -7,7 +7,7 @@ import { CampaignContext } from "../campaignContext";
 export const DonationFormContext = createContext()
 
 export const DonationFormContextProvider = ({campaignId, children, organizationId}) => {
-   const [donationFormInputs, handleDonationFormInputsChange, setDonationFormInputs] = useFormInput({})
+   const [donationFormInputs, handleDonationFormInputsChange, setDonationFormInputs, filesToUpload] = useFormInput({})
    const [donationFormSections, setDonationFormSections] = useState(initialDonationFormSections)
    const [customQuestions, setCustomQuestions] = useState([])
    const [donationFormId, setDonationFormId] = useState(null)
@@ -21,24 +21,24 @@ export const DonationFormContextProvider = ({campaignId, children, organizationI
             const contentService = getContentService();
             const donationResponse = await pageService.getDonationForm(campaignId)
             const donationPageId = donationResponse.data.id
-            const organizationId = campaignDetails?.organization_id || 1 // Fallback to 1 if not available
             
             setDonationFormId(donationPageId)
-            
+
+            console.log("donationResponse", donationResponse)
             setDonationFormInputs({
                // Basic Content
                headline: donationResponse.data.headline || "",
                description: donationResponse.data.description || "",
-               subtitle: donationResponse.data.subtitle || "Donation Form",
+               bg_image: donationResponse.data.bgImageUrl || "",
                
                // Colors
-               bg_color: donationResponse.data.bg_color || "#ffffff",
-               p_color: donationResponse.data.p_color || "#1f2937",
-               s_color: donationResponse.data.s_color || "#6b7280",
-               b1_color: donationResponse.data.b1_color || "#3b82f6",
-               b2_color: donationResponse.data.b2_color || "#6b7280",
-               b3_color: donationResponse.data.b3_color || "#10b981",
-               bt_color: donationResponse.data.bt_color || "#ffffff",
+               bg_color: donationResponse.data.bgColor || "#ffffff",
+               p_color: donationResponse.data.pColor || "#1f2937",
+               s_color: donationResponse.data.sColor || "#6b7280",
+               b1_color: donationResponse.data.b1Color || "#3b82f6",
+               // b2_color: donationResponse.data.b2_color || "#6b7280",
+               // b3_color: donationResponse.data.b3_color || "#10b981",
+               // bt_color: donationResponse.data.btColor || "#ffffff",
                
                // Donation Amounts
                button1: donationResponse.data.button1 || 25,
@@ -49,15 +49,15 @@ export const DonationFormContextProvider = ({campaignId, children, organizationI
                button6: donationResponse.data.button6 || 1000,
                
                // Typography
-               heroTitleSize: donationResponse.data.heroTitleSize || "36",
-               heroSubtitleSize: donationResponse.data.heroSubtitleSize || "16",
-               sectionTitleSize: donationResponse.data.sectionTitleSize || "28",
-               bodyTextSize: donationResponse.data.bodyTextSize || "16",
-               buttonTextSize: donationResponse.data.buttonTextSize || "16",
+               // heroTitleSize: donationResponse.data.heroTitleSize || "36",
+               // heroSubtitleSize: donationResponse.data.heroSubtitleSize || "16",
+               // sectionTitleSize: donationResponse.data.sectionTitleSize || "28",
+               // bodyTextSize: donationResponse.data.bodyTextSize || "16",
+               // buttonTextSize: donationResponse.data.buttonTextSize || "16",
                
                // Layout
-               cardRadius: donationResponse.data.cardRadius || "4",
-               buttonRadius: donationResponse.data.buttonRadius || "4",
+               // cardRadius: donationResponse.data.cardRadius || "4",
+               // buttonRadius: donationResponse.data.buttonRadius || "4",
             })
 
             // Fetch designations for the campaign
@@ -69,11 +69,12 @@ export const DonationFormContextProvider = ({campaignId, children, organizationI
             setCustomQuestions(customQuestionsResponse)
 
             // Fetch page sections for the donation form
-            const donationSections = await pageService.getPageSectionsByPage(organizationId, 'campaign_form', donationPageId)
+            const donationSections = await pageService.getPageSectionsByPage(organizationId, 'donation_form', donationPageId)
+            console.log("donationSections", donationSections)
             setDonationFormSections((prevSections) => {
                return prevSections.map(section => {
                   const match = donationSections.data.find((item) => item.name == section.name)
-                  return match ? {...section, id: match.id, active: match.active } : section
+                  return match ? {...section, pageSectionId: match.id, active: match.active } : section
                })
             })
          } catch (err) {
@@ -86,7 +87,7 @@ export const DonationFormContextProvider = ({campaignId, children, organizationI
 
       return (
       <DonationFormContext.Provider value={{campaignId, donationFormId, donationFormInputs, handleDonationFormInputsChange, setDonationFormInputs,
-        donationFormSections, setDonationFormSections, customQuestions 
+        donationFormSections, setDonationFormSections, customQuestions, organizationId, filesToUpload
         }}
       >
          {children}

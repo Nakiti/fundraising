@@ -31,9 +31,9 @@ export const createAboutPage = asyncHandler(async (req, res) => {
 })
 
 export const updateAboutPage = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { organizationId, pageId } = req.params;
   
-  if (!id) {
+  if (!organizationId || !pageId) {
     throw new ValidationError('About page ID is required');
   }
   
@@ -41,22 +41,23 @@ export const updateAboutPage = asyncHandler(async (req, res) => {
   await handlePageFileUpload(req, res, getImageFieldsForPageType('about'));
   
   // Delegate to PageService
-  const aboutPage = await pageService.updateAboutPage(id, req.body, req.files);
+  const aboutPage = await pageService.updateAboutPage(organizationId, pageId, req.body, req.files);
   
   sendUpdated(res, { pageId: aboutPage.id }, 'About page updated successfully');
 })
 
 export const getAboutPage = asyncHandler(async (req, res) => {
   const { organizationId } = req.params;
-  console.log("organizationId", organizationId)
+  const { includeTheme = 'true' } = req.query;
+  // console.log("organizationId", organizationId)
   
   if (!organizationId) {
     throw new ValidationError('Organization ID is required');
   }
   
   try {
-    // Delegate to PageService
-    const aboutPage = await pageService.getAboutPage(organizationId);
+    // Delegate to PageService with theme support
+    const aboutPage = await pageService.getPageWithTheme('about', organizationId, 'organization_id', includeTheme === 'true');
     
     sendSuccess(res, aboutPage, 'About page retrieved successfully');
   } catch (error) {

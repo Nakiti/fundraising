@@ -5,7 +5,7 @@ import {
   AuthorizationError, 
   NotFoundError, 
   ConflictError, 
-  DatabaseError, 
+  DatabaseError,  
   RateLimitError,
   handleDatabaseError,
   handleValidationError,
@@ -59,10 +59,10 @@ export const globalErrorHandler = (err, req, res, next) => {
   if (err instanceof AppError) {
     error = err;
   }
-
+ 
   // Ensure we have a valid status code
   const statusCode = error.statusCode || 500;
-  
+   
   // Ensure we have a valid message
   const message = error.message || 'Something went wrong';
 

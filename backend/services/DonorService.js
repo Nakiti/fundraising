@@ -194,15 +194,13 @@ export class DonorService extends BaseService {
     const query = `
       SELECT 
         t.*,
-        c.name as campaign_name,
-        cd.name as campaign_display_name,
+        c.external_name as campaign_name,
         o.name as organization_name
       FROM transactions t
       LEFT JOIN campaigns c ON t.campaign_id = c.id
-      LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
       LEFT JOIN organizations o ON c.organization_id = o.id
       WHERE t.donor_id = ? AND t.status = ?
-      ORDER BY t.created_at DESC
+      ORDER BY t.date DESC
       LIMIT ? OFFSET ?
     `;
 
@@ -221,13 +219,13 @@ export class DonorService extends BaseService {
 
     const query = `
       SELECT 
-        COUNT(*) as total_donations,
+        COUNT(*) as total_donations, 
         COALESCE(SUM(amount), 0) as total_donated,
-        MIN(created_at) as first_donation_date,
-        MAX(created_at) as last_donation_date,
+        MIN(date) as first_donation_date,
+        MAX(date) as last_donation_date,
         COUNT(DISTINCT campaign_id) as campaigns_supported
       FROM transactions 
-      WHERE donor_id = ? AND status = 'completed'
+      WHERE donor_id = ? AND status = 'completed' 
     `;
 
     const results = await this.executeQuery(query, [donorId]);

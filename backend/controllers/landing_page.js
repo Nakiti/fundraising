@@ -31,9 +31,9 @@ export const createLandingPage = asyncHandler(async (req, res) => {
 })
 
 export const updateLandingPage = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { organizationId, pageId } = req.params;
   
-  if (!id) {
+  if (!organizationId || !pageId) {
     throw new ValidationError('Landing page ID is required');
   }
   
@@ -41,21 +41,22 @@ export const updateLandingPage = asyncHandler(async (req, res) => {
   await handlePageFileUpload(req, res, getImageFieldsForPageType('landing'));
   
   // Delegate to PageService
-  const landingPage = await pageService.updateLandingPage(id, req.body, req.files);
+  const landingPage = await pageService.updateLandingPage(organizationId, pageId, req.body, req.files);
   
   sendUpdated(res, { pageId: landingPage.id }, 'Landing page updated successfully');
 })
 
 export const getLandingPage = asyncHandler(async (req, res) => {
   const { organizationId } = req.params;
+  const { includeTheme = 'true' } = req.query;
   
   if (!organizationId) {
     throw new ValidationError('Organization ID is required');
   }
   
   try {
-    // Delegate to PageService
-    const landingPage = await pageService.getLandingPage(organizationId);
+    // Delegate to PageService with theme support
+    const landingPage = await pageService.getPageWithTheme('landing', organizationId, 'organization_id', includeTheme === 'true');
     
     sendSuccess(res, landingPage, 'Landing page retrieved successfully');
   } catch (error) {

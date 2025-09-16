@@ -5,6 +5,7 @@ import { AuthContext } from "@/app/context/authContext"
 import { getCampaignService } from "@/app/services"
 import { errorHandler } from "@/app/services/apiClient"
 import ErrorModal from "@/app/components/errorModal"
+import TextInput from "@/app/components/inputs/TextInput"
 
 const About = () => {
    const {campaignDetails, handleCampaignDetailsChange, campaignId, campaignStatus, loading, markChangesAsSaved, pageChanges, markPageChangesAsSaved} = useContext(CampaignContext)
@@ -13,11 +14,15 @@ const About = () => {
    const [errorMessage, setErrorMessage] = useState("")
 
    const handleSave = async() => {
-             try {
-                    const campaignService = getCampaignService();
-                    await campaignService.updateCampaign(campaignId, campaignDetails)
-           markChangesAsSaved()
-           markPageChangesAsSaved('about')
+      try {
+         console.log("campaignDetails", campaignDetails)
+         const campaignService = getCampaignService();
+         await campaignService.updateCampaign(campaignId, {
+            ...campaignDetails,
+            updated_by: currentUser.id
+         })
+         markChangesAsSaved()
+         markPageChangesAsSaved('about')
       } catch (err) {
          const handledError = errorHandler.handle(err)
          setErrorMessage(handledError.message)
@@ -25,9 +30,9 @@ const About = () => {
       }
    }
 
-       const handleChange = (e) => {
-       handleCampaignDetailsChange(e)
-    }
+   const handleChange = (e) => {
+      handleCampaignDetailsChange(e)
+   }
 
    // Show loading state while data is being fetched
    if (loading) {
@@ -55,70 +60,15 @@ const About = () => {
          
          {/* Form Grid */}
          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
-            {/* Campaign Name */}
-            <div className="flex flex-col">
-               <label className="text-gray-600 text-sm font-semibold mb-2">
-                  Campaign Name <span className="text-red-500">*</span>
-               </label>
-               <input
-                  name="campaignName"
-                  type="text"
-                  placeholder="Enter a Name"
-                  className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  value={campaignDetails?.campaignName || ""}
-                  onChange={(e) => handleChange(e)}
-               />
-            </div>
-            
-            {/* Internal Campaign Name */}
-            <div className="flex flex-col">
-               <label className="text-gray-600 text-sm font-semibold mb-2">
-                  Internal Campaign Name <span className="text-red-500">*</span>
-               </label>
-               <input
-                  name="internalName"
-                  type="text"
-                  placeholder="Enter Internal Name"
-                  className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  value={campaignDetails?.internalName || ""}
-                  onChange={(e) => handleChange(e)}
-               />
-            </div>
-            
-            {/* Fundraising Goal */}
-            <div className="flex flex-col">
-               <label className="text-gray-600 text-sm font-semibold mb-2">
-                  Fundraising Goal <span className="text-red-500">*</span>
-               </label>
-               <input
-                  name="goal"
-                  type="number"
-                  min="1"
-                  placeholder="Enter a Fundraising Goal"
-                  className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  value={campaignDetails?.goal || ""}
-                  onChange={(e) => handleChange(e)}
-               />
-            </div>
-            
-            {/* Short URL */}
-            <div className="flex flex-col col-span-1 sm:col-span-2">
-               <label className="text-gray-600 text-sm font-semibold mb-2">
-                  Short URL <span className="text-red-500">*</span>
-               </label>               
-               <input
-                  name="url"
-                  type="text"
-                  placeholder="Enter Short URL"
-                  className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  value={campaignDetails?.url || ""}
-                  onChange={(e) => handleChange(e)}
-               />
-            </div>
+
+            <TextInput title="External Name" name="externalName" value={campaignDetails?.externalName} changeFunc={handleChange} placeholder="Enter a Name" />
+            <TextInput title="Internal Campaign Name" name="internalName" value={campaignDetails?.internalName} changeFunc={handleChange} placeholder="Enter Internal Name" />
+            <TextInput title="Fundraising Goal" name="goal" value={campaignDetails?.goal} changeFunc={handleChange} placeholder="Enter a Fundraising Goal" type="number" min="1" />
+            <TextInput title="Short URL" name="url" value={campaignDetails?.url} changeFunc={handleChange} placeholder="Enter Short URL" />
          </div>
 
          <div className="w-full flex flex-row mt-6">
-                         <button 
+            <button 
                 className={`ml-auto ${!pageChanges.about ? "bg-gray-300" : "bg-blue-700 hover:bg-blue-600"} px-6 py-3 w-40 rounded-md shadow-sm text-md text-white `}
                 onClick={handleSave}
                 disabled={!pageChanges.about}

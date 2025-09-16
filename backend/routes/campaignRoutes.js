@@ -1,11 +1,12 @@
-import { createCampaign, deactivateCampaign, getActive, getCampaign, getCampaignsByOrg, getDateRange, getFiltered, searchCampaigns, updateCampaign, getCampaignInsights, sumRaised } from "../controllers/campaign.js"
+import { createCampaign, deactivateCampaign, getActive, getCampaign, getCampaignsByOrg, getDateRange, getFiltered, searchCampaigns, updateCampaign, getCampaignInsights, sumRaised, getCampaignWithDetails } from "../controllers/campaign.js"
 import express from "express"
 
 const router = express.Router()
 
 
 router.post("/create", createCampaign)
-router.get("/get/:id", getCampaign)
+router.get("/get/:id", getCampaignWithDetails)
+router.get("/getWithDetails/:id", getCampaignWithDetails)
 router.get("/org/:id", getCampaignsByOrg)
 router.put("/update/:id", updateCampaign)
 router.get("/getActive", getActive)

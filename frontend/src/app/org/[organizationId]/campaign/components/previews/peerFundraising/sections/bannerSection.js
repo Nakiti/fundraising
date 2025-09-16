@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { PeerFundraisingPageContext } from "@/app/context/campaignPages/peerFundraisingPageContext";
-import ImageInputEdit from "@/app/components/imageInputEdit";
+import ImageInputEdit from "@/app/components/inputs/imageInputEdit";
 
 const PeerFundraisingBannerSection = () => {
    const {handlePeerFundraisingPageInputsChange} = useContext(PeerFundraisingPageContext)

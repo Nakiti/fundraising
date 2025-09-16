@@ -8,7 +8,7 @@ import ErrorModal from "@/app/components/errorModal"
 import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const ThankYouPage = () => {
-   const {thankYouPageSections, setThankYouPageSections, campaignId, thankPageInputs} = useContext(ThankYouPageContext)
+   const {thankYouPageSections, setThankYouPageSections, campaignId, thankPageInputs, organizationId, thankYouPageId, filesToUpload} = useContext(ThankYouPageContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isLoading, setIsLoading] = useState(false)
@@ -21,20 +21,21 @@ const ThankYouPage = () => {
       
       try {
          // Validate all active sections before saving
-         const validation = validateActiveSections('thankYou', thankYouPageSections, thankPageInputs)
+         // const validation = validateActiveSections('thankYou', thankYouPageSections, thankPageInputs)
          
-         if (!validation.isValid) {
-            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
-            setError(true)
-            setIsLoading(false)
-            return
-         }
+         // if (!validation.isValid) {
+         //    setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+         //    setError(true)
+         //    setIsLoading(false)
+         //    return
+         // }
          
          // Get service instance
          const pageService = getPageService();
-         
+
+         console.log("thankYouPageId", thankYouPageId)
          // Update thank you page
-         await pageService.updateThankYouPage(campaignId, thankPageInputs)
+         await pageService.updateThankYouPage(organizationId, campaignId, thankYouPageId, thankPageInputs, filesToUpload)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = thankYouPageSections.filter(section => section.id && section.id > 0)
@@ -48,6 +49,7 @@ const ThankYouPage = () => {
          setSuccessMessage("Thank you page updated successfully!")
          setTimeout(() => setSuccessMessage(""), 3000)
       } catch (err) {
+         console.log("err", err)
          const handledError = errorHandler.handle(err)
          setErrorMessage(handledError.message)
          setError(true)

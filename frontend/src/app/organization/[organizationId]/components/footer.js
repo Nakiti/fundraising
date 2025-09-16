@@ -45,7 +45,7 @@ const Footer = ({ organizationId }) => {
       }
 
       fetchFooterData()
-   }, [organizationId])
+   }, [])
 
    if (loading) {
       return (

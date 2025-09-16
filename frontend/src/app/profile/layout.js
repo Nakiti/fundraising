@@ -2,7 +2,8 @@
 import Header from "../components/header"
 import { useState, useContext, useEffect } from "react"
 import { AuthContext } from "../context/authContext"
-import { getUserService, useApi, useToast } from "../services";
+import { getUserService, useToast } from "../services";
+import { errorHandler } from "../services/apiClient";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { IoIosAdd } from "react-icons/io";
@@ -12,17 +13,26 @@ const ProfileLayout = ({children}) => {
    const pathName = usePathname()
    const router = useRouter()
    const { showError } = useToast()
+   const [userData, setUserData] = useState(null)
+   const [userDataLoading, setUserDataLoading] = useState(false)
 
    // Get UserService instance
    const userService = getUserService();
 
-   // API hook for fetching user data
-   const { 
-      data: userData, 
-      loading: userDataLoading, 
-      error: userDataError, 
-      execute: fetchUserData 
-   } = useApi(userService.getUserData.bind(userService));
+   // Fetch user data using service (no legacy useApi)
+   const fetchUserData = async (userId) => {
+      try {
+         setUserDataLoading(true)
+         const data = await userService.getUserData(userId)
+         // console.log("data", data)
+         setUserData(data)
+      } catch (err) {
+         const handled = errorHandler.handle(err)
+         showError('Error', handled.message || 'Failed to load user data')
+      } finally {
+         setUserDataLoading(false)
+      }
+   }
 
    // Watch for when currentUser becomes valid and fetch user data
    useEffect(() => { 
@@ -34,13 +44,6 @@ const ProfileLayout = ({children}) => {
          fetchUserData(currentUser.id);
       }
    }, [currentUser?.id, isLoggedIn]); // Watch for currentUser.id specifically
-
-   // Handle user data errors
-   useEffect(() => {
-      if (userDataError) {
-         showError('Error', userDataError.message || 'Failed to load user data');
-      }
-   }, [userDataError, showError]);
 
    // Redirect to login if not authenticated and initial check is complete
    useEffect(() => {
@@ -71,19 +74,19 @@ const ProfileLayout = ({children}) => {
          {currentUser && <Header />}
          
          {/* Hero Section */}
-         <div className="relative overflow-hidden bg-white shadow-sm">
+         {userData && <div className="relative overflow-hidden bg-white shadow-sm">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-700 opacity-5"></div>
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                <div className="text-center">
                   <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-                     Welcome back, <span className="text-blue-600">{userData ? `${userData.first_name} ${userData.last_name}` : 'User'}</span>
+                     Welcome back, <span className="text-blue-600">{userData.firstName} {userData.lastName}</span>
                   </h1>
                   <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                      Manage your organizations and stay connected with your fundraising community
                   </p>
                </div>
             </div>
-         </div>
+         </div>}
 
          {/* Create Organization CTA */}
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -88,6 +88,19 @@ export class StripeService {
       throw error;
     }
   }
+
+  /**
+   * Create transaction record with custom question responses after successful payment
+   */
+  static async createTransactionWithResponses(transactionData) {
+    try {
+      const response = await api.post('/transaction/create-with-responses', transactionData);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to create transaction with responses:', error);
+      throw error;
+    }
+  }
 }
 
 /**

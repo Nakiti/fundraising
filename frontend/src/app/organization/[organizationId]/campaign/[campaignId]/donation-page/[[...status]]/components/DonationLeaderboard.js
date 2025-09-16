@@ -15,7 +15,7 @@ const DonationLeaderboard = ({ campaignId, display }) => {
             const transactionService = getTransactionService();
             const response = await transactionService.getTransactionsByCampaign(campaignId)
             // Filter only completed transactions
-            const completedTransactions = response.filter(t => t.status === 'completed')
+            const completedTransactions = response.data.filter(t => t.status === 'completed')
             setTransactions(completedTransactions)
          } catch (error) {
             console.error('Error fetching transactions:', error)
@@ -25,7 +25,7 @@ const DonationLeaderboard = ({ campaignId, display }) => {
       }
 
       fetchTransactions()
-   }, [campaignId])
+   }, [])
 
    // Sort transactions by amount (highest first)
    const highestDonors = [...transactions]

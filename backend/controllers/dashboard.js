@@ -67,7 +67,7 @@ export const getDashboardSummary = (req, res) => {
 
   // Get previous period for comparison
   const previousStartDate = new Date(startDate);
-  const previousEndDate = new Date(startDate);
+  const previousEndDate = new Date(endDate);
   const periodDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
   
   previousStartDate.setDate(previousStartDate.getDate() - periodDays);
@@ -174,10 +174,10 @@ export const getRecentDonations = (req, res) => {
         ELSE COALESCE(d.last_name, 'Donor')
       END as last_name,
       d.email,
-      COALESCE(cd.external_name, 'Unknown Campaign') as campaign_name
+      COALESCE(c.external_name, 'Unknown Campaign') as campaign_name
     FROM transactions t
     LEFT JOIN donors d ON t.donor_id = d.id
-    LEFT JOIN campaign_details cd ON t.campaign_id = cd.campaign_id
+    LEFT JOIN campaigns c ON t.campaign_id = c.id
     WHERE t.organization_id = ?
     AND t.status = 'completed'
     ORDER BY t.date DESC
@@ -228,8 +228,8 @@ export const getTopCampaigns = (req, res) => {
   const query = `
     SELECT 
       c.id,
-      COALESCE(cd.external_name, 'Unnamed Campaign') as name,
-      COALESCE(cd.goal, 0) as goal,
+      COALESCE(c.external_name, 'Unnamed Campaign') as name,
+      COALESCE(c.goal, 0) as goal,
       COALESCE(
         (SELECT SUM(t.amount) 
          FROM transactions t 
@@ -252,24 +252,23 @@ export const getTopCampaigns = (req, res) => {
          AND t.donor_id IS NOT NULL), 
         0
       ) as donors,
-      cd.status
+      c.status
     FROM campaigns c
-    LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
     WHERE c.organization_id = ?
-    AND cd.status = 'active'
+    AND c.status = 'active'
     ORDER BY raised DESC
     LIMIT ?
   `;
 
-  console.log(id)
+  // console.log(id)
 
   db.query(query, [id, parseInt(limit)], (err, data) => {
     if (err) {
       logSQLError(err, 'Top campaigns query');
       throw new DatabaseError('Failed to fetch top campaigns', err);
-    }
+    } 
 
-    console.log("top campaigns", data)
+    // console.log("top campaigns", data)
     
     // Ensure data is an array and handle null/undefined cases
     const campaignsData = Array.isArray(data) ? data : [];
@@ -321,10 +320,9 @@ export const getOrganizationStatus = (req, res) => {
       o.status,
       o.created_at,
       COUNT(DISTINCT c.id) as total_campaigns,
-      COUNT(DISTINCT CASE WHEN cd.status = 'active' THEN c.id END) as active_campaigns
+      COUNT(DISTINCT CASE WHEN c.status = 'active' THEN c.id END) as active_campaigns
     FROM organizations o
     LEFT JOIN campaigns c ON o.id = c.organization_id
-    LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
     WHERE o.id = ?
     GROUP BY o.id, o.name, o.status, o.created_at
   `;
@@ -481,18 +479,17 @@ export const getDashboardNotifications = (req, res) => {
     
     SELECT 
       'milestone' as type,
-      CONCAT('Campaign "', COALESCE(cd.external_name, 'Unnamed Campaign'), '" reached ', 
-             ROUND((COALESCE(SUM(t.amount), 0) / COALESCE(cd.goal, 1)) * 100), '% of goal') as message,
+      CONCAT('Campaign "', COALESCE(c.external_name, 'Unnamed Campaign'), '" reached ', 
+             ROUND((COALESCE(SUM(t.amount), 0) / COALESCE(c.goal, 1)) * 100), '% of goal') as message,
       MAX(t.date) as time,
       c.id as reference_id
     FROM campaigns c
-    LEFT JOIN campaign_details cd ON c.id = cd.campaign_id
     LEFT JOIN transactions t ON c.id = t.campaign_id AND t.status = 'completed'
     WHERE c.organization_id = ?
-    AND cd.status = 'active'
-    AND COALESCE(cd.goal, 0) > 0
-    GROUP BY c.id, cd.external_name, cd.goal
-    HAVING (COALESCE(SUM(t.amount), 0) / COALESCE(cd.goal, 1)) >= 0.5
+    AND c.status = 'active'
+    AND COALESCE(c.goal, 0) > 0
+    GROUP BY c.id, c.external_name, c.goal
+    HAVING (COALESCE(SUM(t.amount), 0) / COALESCE(c.goal, 1)) >= 0.5
     
     ORDER BY time DESC
     LIMIT ?

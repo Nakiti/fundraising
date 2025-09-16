@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { getPageService } from "@/app/services"
 import { FaUser, FaHeart } from "react-icons/fa"
 import { useRouter } from "next/navigation"
-import CartIcon from "@/app/components/CartIcon"
+import CartIcon from "@/app/organization/[organizationId]/components/CartIcon"
 import Link from "next/link"
 
 const Header = ({ organizationId }) => {
@@ -43,7 +43,7 @@ const Header = ({ organizationId }) => {
       }
 
       fetchHeaderData()
-   }, [organizationId])
+   }, [])
 
    if (loading) {
       return (
@@ -72,7 +72,6 @@ const Header = ({ organizationId }) => {
                   <button className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200">
                      Login
                   </button>
-
                </div>
             </div>
          </header>
@@ -102,7 +101,7 @@ const Header = ({ organizationId }) => {
                )}
                <div>
                   <h1 className="font-semibold text-md">
-                     {headerData.organizationName || headerData.organization_name || "Organization Name"}
+                     {headerData.organizationName || "Organization Name"}
                   </h1>
                   {(headerData.tagline) && (
                      <p className="text-sm opacity-75">
@@ -125,7 +124,7 @@ const Header = ({ organizationId }) => {
                {/* Login Button */}
                <button 
                   className="px-4 py-2 hover:bg-gray-100 rounded-md transition-colors duration-200 flex items-center space-x-2"
-                  style={{ color: headerData.textColor || headerData.text_color || "#000000" }}
+                  style={{ color: headerData.textColor ||  "#000000" }}
                   onClick={() => router.push(`/organization/${organizationId}/donor/login`)}
                >
                   <FaUser className="w-4 h-4" />

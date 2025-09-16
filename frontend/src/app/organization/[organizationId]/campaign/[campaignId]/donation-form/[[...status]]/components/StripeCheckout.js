@@ -8,6 +8,7 @@ import {
   useElements
 } from '@stripe/react-stripe-js';
 import { StripeService, StripeUtils } from '@/app/services/stripeService';
+import { getTransactionService } from '@/app/services';
 import { GuestDonorService } from '@/app/services/guestDonorService';
 import { FaCreditCard, FaLock, FaSpinner } from 'react-icons/fa';
 
@@ -39,6 +40,8 @@ const StripePaymentForm = ({
   onError,
   designationId = null,
   isAnonymous = false,
+  questionResponses = {},
+  questions = [],
   loading: externalLoading = false
 }) => {
   const stripe = useStripe();
@@ -132,7 +135,14 @@ const StripePaymentForm = ({
       }
 
       if (paymentIntent.status === 'succeeded') {
-        // Create transaction record in our database
+        // Prepare question responses for the transaction
+        const questionResponsesData = questions.map(question => ({
+          question_id: question.id,
+          response_value: questionResponses[question.id] || '',
+          response_type: question.type
+        })).filter(response => response.response_value !== ''); // Only include non-empty responses
+
+        // Create transaction record in our database with question responses
         const transactionData = {
           campaign_id: campaignId,
           organization_id: organizationId,
@@ -149,12 +159,13 @@ const StripePaymentForm = ({
           is_anonymous: isAnonymous
         };
 
-        await StripeService.createTransaction(transactionData);
+        const transactionService = getTransactionService();
+        const createdTransaction = await transactionService.createTransactionWithResponses(transactionData, questionResponsesData);
 
         // Call success callback
         onSuccess && onSuccess({
           paymentIntent,
-          transactionData,
+          transactionData: createdTransaction,
           guestDonor,
           amount: validatedAmount
         });

@@ -7,7 +7,7 @@ import ErrorModal from "@/app/components/errorModal"
 import { FaPalette, FaFont, FaSave, FaRuler, FaMousePointer, FaUndo } from "react-icons/fa";
 
 const Design = () => {
-   const {campaignId, thankPageInputs, handleThankInputsChange, thankPageSections, setThankPageInputs} = useContext(ThankYouPageContext)
+   const {campaignId, thankPageInputs, handleThankInputsChange, thankPageSections, setThankPageInputs, thankYouPageId, organizationId} = useContext(ThankYouPageContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isLoading, setIsLoading] = useState(false)
@@ -24,7 +24,7 @@ const Design = () => {
          const pageService = getPageService();
          
          // Update thank you page
-         await pageService.updateThankYouPage(campaignId, thankPageInputs)
+         await pageService.updateThankYouPage(organizationId, campaignId, thankYouPageId, thankPageInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = thankPageSections.filter(section => section.id && section.id > 0)

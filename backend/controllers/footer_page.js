@@ -31,9 +31,9 @@ export const createFooterPage = asyncHandler(async (req, res) => {
 })
 
 export const updateFooterPage = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { organizationId, pageId } = req.params;
   
-  if (!id) {
+  if (!organizationId || !pageId) {
     throw new ValidationError('Footer page ID is required');
   }
   
@@ -41,7 +41,7 @@ export const updateFooterPage = asyncHandler(async (req, res) => {
   await handlePageFileUpload(req, res, getImageFieldsForPageType('footer'));
   
   // Delegate to PageService
-  const footerPage = await pageService.updateFooterPage(id, req.body, req.files);
+  const footerPage = await pageService.updateFooterPage(organizationId, pageId, req.body, req.files);
   
   sendUpdated(res, { pageId: footerPage.id }, 'Footer page updated successfully');
 })

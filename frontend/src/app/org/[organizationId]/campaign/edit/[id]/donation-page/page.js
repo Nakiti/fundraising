@@ -8,7 +8,7 @@ import ErrorModal from "@/app/components/errorModal"
 import { validateActiveSections } from "@/app/utils/pageValidation"
 
 const DonationPage = () => {
-   const {donationPageSections, setDonationPageSections, donationPageInputs, campaignId} = useContext(DonationPageContext)
+   const {donationPageSections, setDonationPageSections, donationPageInputs, campaignId, donationPageId, organizationId, filesToUpload} = useContext(DonationPageContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isLoading, setIsLoading] = useState(false)
@@ -21,25 +21,26 @@ const DonationPage = () => {
       
       try {
          // Validate all active sections before saving
-         const validation = validateActiveSections('donation', donationPageSections, donationPageInputs)
+         // const validation = validateActiveSections('donation', donationPageSections, donationPageInputs)
          
-         if (!validation.isValid) {
-            setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
-            setError(true)
-            setIsLoading(false)
-            return
-         }
+         // if (!validation.isValid) {
+         //    setErrorMessage(`Please fill in the following required fields: ${validation.errors.join(", ")}`)
+         //    setError(true)
+         //    setIsLoading(false)
+         //    return
+         // }
          
          // Get service instance
          const pageService = getPageService();
          
          // Update donation page
-         await pageService.updateDonationPage(campaignId, donationPageInputs)
+         console.log('filesToUpload', filesToUpload)
+         await pageService.updateDonationPage(organizationId, campaignId, donationPageId, donationPageInputs, filesToUpload)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationPageSections.filter(section => section.id && section.id > 0)
-         console.log('Donation page sections:', donationPageSections)
-         console.log('Valid sections to update:', validSections)
+         // console.log('Donation page sections:', donationPageSections)
+         // console.log('Valid sections to update:', validSections)
          if (validSections.length > 0) {
             const sectionPromises = validSections.map(section => 
                pageService.updatePageSection(section.id, section.active)

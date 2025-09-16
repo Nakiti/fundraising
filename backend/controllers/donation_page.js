@@ -1,7 +1,7 @@
 import { asyncHandler } from "../middleware/errorHandler.js"
 import {
   sendSuccess,
-  sendCreated,
+  sendCreated, 
   sendUpdated,
   sendNotFound
 } from "../utils/response.js"
@@ -19,15 +19,17 @@ export const createDonationPage = asyncHandler(async (req, res) => {
   }
   
   // Delegate to PageService
-  const donationPage = await pageService.createDonationPage(req.body.campaign_id, req.body, {});
-  
+  const donationPage = await pageService.createDonationPage(req.body.campaign_id);
+   
   sendCreated(res, { pageId: donationPage.id }, 'Donation page created successfully');
 })
 
 export const updateDonationPage = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { organizationId, campaignId, pageId } = req.params;
+
+  // console.log('id', id);
   
-  if (!id) {
+  if (!organizationId || !campaignId || !pageId) {
     throw new ValidationError('Campaign ID is required');
   }
   
@@ -35,7 +37,8 @@ export const updateDonationPage = asyncHandler(async (req, res) => {
   await handlePageFileUpload(req, res, getImageFieldsForPageType('donation-page'));
   
   // Delegate to PageService
-  const donationPage = await pageService.updateDonationPage(id, req.body, req.files);
+  const donationPage = await pageService.updateDonationPage(organizationId, campaignId, pageId, req.body, req.files);
+  console.log('donationPage', donationPage);
   
   sendUpdated(res, { pageId: donationPage.id }, 'Donation page updated successfully');
 })

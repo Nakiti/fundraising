@@ -20,6 +20,10 @@ export class DesignationService extends BaseService {
    * @param {boolean} isUpdate - Whether this is an update operation
    */
   validateDesignationData(designationData, isUpdate = false) {
+    if (!designationData || typeof designationData !== 'object') {
+      throw new ValidationError('Designation data is required');
+    }
+
     if (!isUpdate) {
       // Required fields for creation
       this.validateRequiredFields(designationData, [
@@ -36,9 +40,14 @@ export class DesignationService extends BaseService {
       ]);
     }
 
-    // Validate title length
-    if (designationData.title && designationData.title.length > 255) {
-      throw new ValidationError('Title must be 255 characters or less');
+    // Validate title length and content
+    if (designationData.title) {
+      if (designationData.title.length > 255) {
+        throw new ValidationError('Title must be 255 characters or less');
+      }
+      if (designationData.title.trim().length === 0) {
+        throw new ValidationError('Title cannot be empty');
+      }
     }
 
     // Validate goal if provided
@@ -53,6 +62,14 @@ export class DesignationService extends BaseService {
     if (designationData.status && !['active', 'inactive'].includes(designationData.status)) {
       throw new ValidationError('Status must be either "active" or "inactive"');
     }
+
+    // Validate organization_id if provided
+    if (designationData.organization_id) {
+      const orgId = parseInt(designationData.organization_id);
+      if (isNaN(orgId) || orgId <= 0) {
+        throw new ValidationError('Organization ID must be a positive number');
+      }
+    }
   }
 
   /**
@@ -63,15 +80,19 @@ export class DesignationService extends BaseService {
    * @returns {Promise<boolean>} True if title exists
    */
   async checkTitleExists(title, organizationId, excludeId = null) {
-    let query = 'SELECT id FROM designations WHERE title = ? AND organization_id = ?';
-    let params = [title, organizationId];
-
+    const conditions = { 
+      title: title.trim(), 
+      organization_id: organizationId 
+    };
+    
     if (excludeId) {
-      query += ' AND id != ?';
-      params.push(excludeId);
+      // Use dynamic query for exclusion
+      const query = 'SELECT id FROM designations WHERE title = ? AND organization_id = ? AND id != ?';
+      const results = await this.executeQuery(query, [title.trim(), organizationId, excludeId]);
+      return results && results.length > 0;
     }
-
-    const results = await this.executeQuery(query, params);
+    
+    const results = await this.findBy(conditions, 'id');
     return results && results.length > 0;
   }
 
@@ -84,6 +105,81 @@ export class DesignationService extends BaseService {
     const query = 'SELECT id FROM campaign_designations WHERE designation_id = ? LIMIT 1';
     const results = await this.executeQuery(query, [designationId]);
     return results && results.length > 0;
+  }
+
+  /**
+   * Get designations with dynamic filtering
+   * @param {Object} filters - Dynamic filters
+   * @param {number} filters.organization_id - Organization ID
+   * @param {string} filters.status - Status filter
+   * @param {number} filters.goal_min - Minimum goal amount
+   * @param {number} filters.goal_max - Maximum goal amount
+   * @param {number} filters.raised_min - Minimum raised amount
+   * @param {number} filters.raised_max - Maximum raised amount
+   * @param {Object} options - Query options
+   * @returns {Promise<Array>} Filtered designations
+   */
+  async getDesignationsWithFilters(filters = {}, options = {}) {
+    const { 
+      organization_id, 
+      status, 
+      goal_min, 
+      goal_max, 
+      raised_min, 
+      raised_max,
+      ...otherFilters 
+    } = filters;
+
+    // Build base conditions
+    const conditions = { ...otherFilters };
+    if (organization_id) conditions.organization_id = organization_id;
+    if (status) conditions.status = status;
+
+    // Build dynamic query for range filters
+    let query = `SELECT * FROM designations`;
+    const params = [];
+    const whereClauses = [];
+
+    // Add basic conditions
+    Object.keys(conditions).forEach(key => {
+      whereClauses.push(`${key} = ?`);
+      params.push(conditions[key]);
+    });
+
+    // Add range conditions
+    if (goal_min !== undefined) {
+      whereClauses.push('goal >= ?');
+      params.push(goal_min);
+    }
+    if (goal_max !== undefined) {
+      whereClauses.push('goal <= ?');
+      params.push(goal_max);
+    }
+    if (raised_min !== undefined) {
+      whereClauses.push('raised >= ?');
+      params.push(raised_min);
+    }
+    if (raised_max !== undefined) {
+      whereClauses.push('raised <= ?');
+      params.push(raised_max);
+    }
+
+    if (whereClauses.length > 0) {
+      query += ` WHERE ${whereClauses.join(' AND ')}`;
+    }
+
+    // Add ordering and pagination
+    const { orderBy = 'created_at DESC', limit, offset } = options;
+    query += ` ORDER BY ${orderBy}`;
+    
+    if (limit) {
+      query += ` LIMIT ${limit}`;
+      if (offset) {
+        query += ` OFFSET ${offset}`;
+      }
+    }
+
+    return await this.executeQuery(query, params);
   }
 
   /**
@@ -106,27 +202,19 @@ export class DesignationService extends BaseService {
     }
 
     // Prepare designation data with defaults
-    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const designationToCreate = {
       organization_id: designationData.organization_id,
-      title: designationData.title,
+      title: designationData.title.trim(),
       raised: 0,
       goal: designationData.goal || 0,
       donations: 0,
       status: 'active',
-      created_at: now,
-      updated_at: now,
       created_by: designationData.created_by,
       updated_by: designationData.updated_by
     };
 
-    // Create designation
-    const result = await this.create(designationToCreate);
-    
-    return {
-      id: result.insertId,
-      ...designationToCreate
-    };
+    // Create designation using BaseService
+    return await this.create(designationToCreate);
   }
 
   /**
@@ -136,6 +224,10 @@ export class DesignationService extends BaseService {
    * @returns {Promise<Object>} Updated designation data
    */
   async updateDesignation(designationId, updateData) {
+    if (!designationId) {
+      throw new ValidationError('Designation ID is required');
+    }
+
     // Validate input data
     this.validateDesignationData(updateData, true);
 
@@ -166,51 +258,49 @@ export class DesignationService extends BaseService {
       }
     }
 
-    // Prepare update data
+    // Prepare update data with trimmed title
     const dataToUpdate = {
       ...updateData,
-      updated_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      title: updateData.title ? updateData.title.trim() : updateData.title
     };
 
-    // Update designation
-    await this.update(designationId, dataToUpdate);
-
-    // Return updated designation
-    return await this.findById(designationId);
+    // Update designation using BaseService
+    return await this.update(designationId, dataToUpdate);
   }
 
   /**
    * Get designations by organization ID
    * @param {number} organizationId - Organization ID
-   * @param {boolean} activeOnly - Whether to return only active designations
+   * @param {Object} options - Query options
+   * @param {boolean} options.activeOnly - Whether to return only active designations
+   * @param {string} options.orderBy - Order by clause (default: 'created_at DESC')
+   * @param {number} options.limit - Limit results
+   * @param {number} options.offset - Offset for pagination
    * @returns {Promise<Array>} Array of designations
    */
-  async getDesignationsByOrganization(organizationId, activeOnly = false) {
+  async getDesignationsByOrganization(organizationId, options = {}) {
     if (!organizationId) {
       throw new ValidationError('Organization ID is required');
     }
 
-    let query = 'SELECT * FROM designations WHERE organization_id = ?';
-    let params = [organizationId];
-
+    const { activeOnly = false, orderBy = 'created_at DESC', limit, offset } = options;
+    
+    const conditions = { organization_id: organizationId };
     if (activeOnly) {
-      query += ' AND status = ?';
-      params.push('active');
+      conditions.status = 'active';
     }
 
-    query += ' ORDER BY created_at DESC';
-
-    const results = await this.executeQuery(query, params);
-    return results || [];
+    return await this.findBy(conditions, '*', { orderBy, limit, offset });
   }
 
   /**
    * Get active designations by organization ID
    * @param {number} organizationId - Organization ID
+   * @param {Object} options - Additional query options
    * @returns {Promise<Array>} Array of active designations
    */
-  async getActiveDesignations(organizationId) {
-    return await this.getDesignationsByOrganization(organizationId, true);
+  async getActiveDesignations(organizationId, options = {}) {
+    return await this.getDesignationsByOrganization(organizationId, { ...options, activeOnly: true });
   }
 
   /**
@@ -229,6 +319,35 @@ export class DesignationService extends BaseService {
     }
 
     return designation;
+  }
+
+  /**
+   * Get designation with organization details
+   * @param {number} designationId - Designation ID
+   * @returns {Promise<Object>} Designation with organization data
+   */
+  async getDesignationWithDetails(designationId) {
+    if (!designationId) {
+      throw new ValidationError('Designation ID is required');
+    }
+
+    const query = `
+      SELECT 
+        d.*,
+        o.name as organization_name,
+        o.email as organization_email
+      FROM designations d
+      INNER JOIN organizations o ON d.organization_id = o.id
+      WHERE d.id = ?
+    `;
+
+    const results = await this.executeQuery(query, [designationId]);
+    
+    if (!results || results.length === 0) {
+      throw new NotFoundError('Designation not found');
+    }
+
+    return results[0];
   }
 
   /**
@@ -253,45 +372,10 @@ export class DesignationService extends BaseService {
       throw new ConflictError('Cannot delete designation that is currently in use');
     }
 
-    // Delete designation
-    const result = await this.delete(designationId);
-    return result.affectedRows > 0;
+    // Delete designation using BaseService
+    return await this.delete(designationId);
   }
 
-  /**
-   * Get designation statistics
-   * @param {number} designationId - Designation ID
-   * @returns {Promise<Object>} Designation statistics
-   */
-  async getDesignationStats(designationId) {
-    const designation = await this.getDesignation(designationId);
-    
-    // Get campaign count using this designation
-    const campaignCountQuery = `
-      SELECT COUNT(*) as campaign_count 
-      FROM campaign_designations 
-      WHERE designation_id = ?
-    `;
-    const campaignStats = await this.executeQuery(campaignCountQuery, [designationId]);
-    
-    // Get recent donations to this designation
-    const recentDonationsQuery = `
-      SELECT COUNT(*) as recent_donations, COALESCE(SUM(amount), 0) as recent_amount
-      FROM transactions t
-      JOIN campaign_designations cd ON t.campaign_id = cd.campaign_id
-      WHERE cd.designation_id = ? 
-      AND t.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    `;
-    const recentStats = await this.executeQuery(recentDonationsQuery, [designationId]);
-
-    return {
-      ...designation,
-      campaign_count: campaignStats[0]?.campaign_count || 0,
-      recent_donations: recentStats[0]?.recent_donations || 0,
-      recent_amount: parseFloat(recentStats[0]?.recent_amount || 0),
-      goal_percentage: designation.goal > 0 ? (designation.raised / designation.goal) * 100 : 0
-    };
-  }
 
   /**
    * Update designation totals (raised amount and donation count)
@@ -299,6 +383,10 @@ export class DesignationService extends BaseService {
    * @returns {Promise<Object>} Updated totals
    */
   async updateDesignationTotals(designationId) {
+    if (!designationId) {
+      throw new ValidationError('Designation ID is required');
+    }
+
     // Calculate totals from transactions
     const totalsQuery = `
       SELECT 
@@ -313,11 +401,10 @@ export class DesignationService extends BaseService {
     const results = await this.executeQuery(totalsQuery, [designationId]);
     const totals = results[0] || { total_donations: 0, total_raised: 0 };
 
-    // Update designation with calculated totals
+    // Update designation with calculated totals using BaseService
     await this.update(designationId, {
       donations: totals.total_donations,
-      raised: parseFloat(totals.total_raised),
-      updated_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      raised: parseFloat(totals.total_raised)
     });
 
     return {
@@ -330,22 +417,28 @@ export class DesignationService extends BaseService {
    * Search designations by title
    * @param {number} organizationId - Organization ID
    * @param {string} searchTerm - Search term
-   * @param {boolean} activeOnly - Whether to search only active designations
+   * @param {Object} options - Search options
+   * @param {boolean} options.activeOnly - Whether to search only active designations
+   * @param {string} options.orderBy - Order by clause (default: 'title ASC')
+   * @param {number} options.limit - Limit results
+   * @param {number} options.offset - Offset for pagination
    * @returns {Promise<Array>} Array of matching designations
    */
-  async searchDesignations(organizationId, searchTerm, activeOnly = false) {
+  async searchDesignations(organizationId, searchTerm, options = {}) {
     if (!organizationId) {
       throw new ValidationError('Organization ID is required');
     }
 
     if (!searchTerm || searchTerm.trim().length === 0) {
-      return await this.getDesignationsByOrganization(organizationId, activeOnly);
+      return await this.getDesignationsByOrganization(organizationId, options);
     }
 
+    const { activeOnly = false, orderBy = 'title ASC', limit, offset } = options;
+    
+    // Build dynamic query with LIKE condition
     let query = `
       SELECT * FROM designations 
-      WHERE organization_id = ? 
-      AND title LIKE ?
+      WHERE organization_id = ? AND title LIKE ?
     `;
     let params = [organizationId, `%${searchTerm.trim()}%`];
 
@@ -354,10 +447,16 @@ export class DesignationService extends BaseService {
       params.push('active');
     }
 
-    query += ' ORDER BY title ASC';
+    query += ` ORDER BY ${orderBy}`;
+    
+    if (limit) {
+      query += ` LIMIT ${limit}`;
+      if (offset) {
+        query += ` OFFSET ${offset}`;
+      }
+    }
 
-    const results = await this.executeQuery(query, params);
-    return results || [];
+    return await this.executeQuery(query, params);
   }
 
   /**
@@ -380,5 +479,279 @@ export class DesignationService extends BaseService {
 
     const results = await this.executeQuery(query, [campaignId]);
     return results || [];
+  }
+
+  /**
+   * Validate that designation title is unique within organization
+   * @param {string} title - Title to check
+   * @param {number} organizationId - Organization ID
+   * @param {number} excludeId - Designation ID to exclude from check (for updates)
+   * @throws {ConflictError} If title already exists
+   */
+  async validateUniqueTitle(title, organizationId, excludeId = null) {
+    if (!title || !organizationId) {
+      return;
+    }
+
+    const titleExists = await this.checkTitleExists(title, organizationId, excludeId);
+    if (titleExists) {
+      throw new ConflictError('Designation with this title already exists');
+    }
+  }
+
+  /**
+   * Get designation statistics with enhanced data
+   * @param {number} designationId - Designation ID
+   * @returns {Promise<Object>} Enhanced designation statistics
+   */
+  async getDesignationStats(designationId) {
+    if (!designationId) {
+      throw new ValidationError('Designation ID is required');
+    }
+
+    const designation = await this.getDesignation(designationId);
+    
+    // Get campaign count using this designation
+    const campaignCountQuery = `
+      SELECT COUNT(*) as campaign_count 
+      FROM campaign_designations 
+      WHERE designation_id = ?
+    `;
+    const campaignStats = await this.executeQuery(campaignCountQuery, [designationId]);
+    
+    // Get recent donations to this designation (last 30 days)
+    const recentDonationsQuery = `
+      SELECT COUNT(*) as recent_donations, COALESCE(SUM(amount), 0) as recent_amount
+      FROM transactions t
+      JOIN campaign_designations cd ON t.campaign_id = cd.campaign_id
+      WHERE cd.designation_id = ? 
+      AND t.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+      AND t.status = 'completed'
+    `;
+    const recentStats = await this.executeQuery(recentDonationsQuery, [designationId]);
+
+    // Get all-time statistics
+    const allTimeStats = await this.updateDesignationTotals(designationId);
+
+    return {
+      ...designation,
+      campaign_count: campaignStats[0]?.campaign_count || 0,
+      recent_donations: recentStats[0]?.recent_donations || 0,
+      recent_amount: parseFloat(recentStats[0]?.recent_amount || 0),
+      total_donations: allTimeStats.donations,
+      total_raised: allTimeStats.raised,
+      goal_percentage: designation.goal > 0 ? (designation.raised / designation.goal) * 100 : 0
+    };
+  }
+
+  /**
+   * Get designations with pagination and dynamic filtering
+   * @param {number} organizationId - Organization ID
+   * @param {Object} options - Pagination and filter options
+   * @param {number} options.limit - Number of results per page
+   * @param {number} options.offset - Offset for pagination
+   * @param {string} options.status - Filter by status
+   * @param {string} options.search - Search term for title
+   * @param {string} options.orderBy - Order by clause
+   * @param {Object} options.filters - Additional dynamic filters
+   * @returns {Promise<Object>} Paginated results with metadata
+   */
+  async getDesignationsPaginated(organizationId, options = {}) {
+    if (!organizationId) {
+      throw new ValidationError('Organization ID is required');
+    }
+
+    const { 
+      limit = 20, 
+      offset = 0, 
+      status, 
+      search, 
+      orderBy = 'created_at DESC',
+      filters = {}
+    } = options;
+    
+    // Build dynamic conditions
+    const conditions = { organization_id: organizationId };
+    
+    if (status) {
+      conditions.status = status;
+    }
+    
+    // Add any additional filters
+    Object.assign(conditions, filters);
+
+    // Get total count for pagination
+    const total = await this.count(conditions);
+
+    // Get paginated results
+    const data = await this.findBy(
+      conditions, 
+      '*', 
+      { orderBy, limit, offset }
+    );
+
+    // If search is provided, filter results
+    let filteredData = data;
+    if (search && search.trim().length > 0) {
+      const searchTerm = search.trim().toLowerCase();
+      filteredData = data.filter(designation => 
+        designation.title.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    return {
+      data: filteredData || [],
+      pagination: {
+        total,
+        limit,
+        offset,
+        hasMore: offset + limit < total,
+        totalPages: Math.ceil(total / limit)
+      }
+    };
+  }
+
+  /**
+   * Bulk update designation status
+   * @param {Array<number>} designationIds - Array of designation IDs
+   * @param {string} status - New status
+   * @param {number} updatedBy - User ID who updated the designations
+   * @returns {Promise<Object>} Update results
+   */
+  async bulkUpdateStatus(designationIds, status, updatedBy) {
+    if (!designationIds || !Array.isArray(designationIds) || designationIds.length === 0) {
+      throw new ValidationError('Designation IDs array is required');
+    }
+
+    if (!status || !['active', 'inactive'].includes(status)) {
+      throw new ValidationError('Status must be either "active" or "inactive"');
+    }
+
+    if (!updatedBy) {
+      throw new ValidationError('Updated by user ID is required');
+    }
+
+    // Check if any designations are in use when deactivating
+    if (status === 'inactive') {
+      for (const id of designationIds) {
+        const inUse = await this.checkDesignationInUse(id);
+        if (inUse) {
+          throw new ConflictError(`Cannot deactivate designation ID ${id} - it is currently in use`);
+        }
+      }
+    }
+
+    const placeholders = designationIds.map(() => '?').join(',');
+    const query = `
+      UPDATE designations 
+      SET status = ?, updated_at = NOW(), updated_by = ? 
+      WHERE id IN (${placeholders})
+    `;
+    
+    const params = [status, updatedBy, ...designationIds];
+    const result = await this.executeQuery(query, params);
+
+    return {
+      updated: result.affectedRows,
+      designationIds: designationIds
+    };
+  }
+
+  /**
+   * Build dynamic query with flexible conditions
+   * @param {Object} conditions - Query conditions
+   * @param {Object} options - Query options
+   * @returns {Promise<Array>} Query results
+   */
+  async queryDesignations(conditions = {}, options = {}) {
+    const { 
+      columns = '*', 
+      orderBy, 
+      limit, 
+      offset,
+      joins = [],
+      groupBy,
+      having
+    } = options;
+
+    let query = `SELECT ${columns} FROM designations`;
+    const params = [];
+
+    // Add joins if specified
+    if (joins.length > 0) {
+      joins.forEach(join => {
+        query += ` ${join.type || 'INNER'} JOIN ${join.table} ON ${join.condition}`;
+      });
+    }
+
+    // Build WHERE clause
+    if (Object.keys(conditions).length > 0) {
+      const whereClauses = Object.keys(conditions).map(key => {
+        const value = conditions[key];
+        if (Array.isArray(value)) {
+          const placeholders = value.map(() => '?').join(', ');
+          params.push(...value);
+          return `${key} IN (${placeholders})`;
+        } else if (typeof value === 'object' && value.operator) {
+          params.push(value.value);
+          return `${key} ${value.operator} ?`;
+        } else {
+          params.push(value);
+          return `${key} = ?`;
+        }
+      });
+      query += ` WHERE ${whereClauses.join(' AND ')}`;
+    }
+
+    // Add GROUP BY
+    if (groupBy) {
+      query += ` GROUP BY ${groupBy}`;
+    }
+
+    // Add HAVING
+    if (having) {
+      query += ` HAVING ${having}`;
+    }
+
+    // Add ORDER BY
+    if (orderBy) {
+      query += ` ORDER BY ${orderBy}`;
+    }
+
+    // Add LIMIT and OFFSET
+    if (limit) {
+      query += ` LIMIT ${limit}`;
+      if (offset) {
+        query += ` OFFSET ${offset}`;
+      }
+    }
+
+    return await this.executeQuery(query, params);
+  }
+
+  /**
+   * Get default designation for a campaign
+   * @param {number} campaignId - Campaign ID
+   * @returns {Promise<Object>} Default designation data
+   */
+  async getDefaultDesignation(campaignId) {
+    if (!campaignId) {
+      throw new ValidationError('Campaign ID is required');
+    }
+
+    const query = `
+      SELECT d.*
+      FROM designations d
+      INNER JOIN campaigns c ON d.id = c.default_designation
+      WHERE c.id = ?
+    `;
+
+    const results = await this.executeQuery(query, [campaignId]);
+    
+    if (!results || results.length === 0) {
+      throw new NotFoundError('Default designation not found for this campaign');
+    }
+
+    return results[0];
   }
 }

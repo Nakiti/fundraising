@@ -1,18 +1,34 @@
 "use client"
 import { useContext, useEffect, useState } from "react"
-import { AboutPageContext } from "@/app/context/organizationPages/aboutPageContext"
 import { FaPlay } from "react-icons/fa"
+import { getPageService } from "@/app/services"
+import { useParams } from "next/navigation"
 
 const AboutPage = () => {
-  const { inputs, sections } = useContext(AboutPageContext);
   const [isLoading, setIsLoading] = useState(true);
+  const pageService = getPageService();
+  const [aboutPage, setAboutPage] = useState(null);
+  const [sections, setSections] = useState([]);
+  const { organizationId } = useParams();
+
 
   useEffect(() => {
-    // Set loading to false once inputs are populated
-    if (inputs && Object.keys(inputs).length > 0) {
-      setIsLoading(false);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+      const aboutPageResponse = await pageService.getAboutPage(organizationId)
+      setAboutPage(aboutPageResponse.data)
+
+      const sectionsResponse = await pageService.getPageSectionsByPage(organizationId, 'about', aboutPageResponse.data.id)
+      setSections(sectionsResponse.data)
+      } catch (error) {
+        console.error('Error fetching about page:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [inputs]);
+    fetchData()
+  }, [])
 
   // Show loading state
   if (isLoading) {
@@ -48,22 +64,22 @@ const AboutPage = () => {
 
   // Apply dynamic styles based on customization settings
   const customStyles = {
-    heroHeight: inputs.heroHeight || "600px",
-    sectionPadding: inputs.sectionPadding || "100px",
-    cardRadius: inputs.cardRadius || "12px",
-    buttonRadius: inputs.buttonRadius || "8px",
+      heroHeight: aboutPage.heroHeight || "600px",
+    sectionPadding: aboutPage.sectionPadding || "100px",
+    cardRadius: aboutPage.cardRadius || "12px",
+    buttonRadius: aboutPage.buttonRadius || "8px",
     fontFamily: "Inter, system-ui, sans-serif",
-    accentColor: inputs.accentColor || "#3B82F6",
-    overlayOpacity: inputs.overlayOpacity || "0.4"
+    accentColor: aboutPage.accentColor || "#3B82F6",
+    overlayOpacity: aboutPage.overlayOpacity || "0.4"
   }
 
   return (
-    <div className="bg-white" style={{backgroundColor: inputs.bg_color}}>
+    <div className="bg-white" style={{backgroundColor: aboutPage.bg_color}}>
       {/* Hero Section - Modern Design */}
       <div className="relative w-full overflow-hidden" style={{height: customStyles.heroHeight}}>
         <img
           className="w-full h-full object-cover"
-          src={inputs.bgImage || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
+          src={aboutPage.bgImage || "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80"}
           alt="Organization"
         />
         <div 
@@ -77,22 +93,22 @@ const AboutPage = () => {
             <h1 
               className="font-bold text-white leading-tight"
               style={{
-                color: inputs.banner_title_text || "#ffffff",
-                fontSize: inputs.heroTitleSize || "4rem",
+                color: aboutPage.banner_title_text || "#ffffff",
+                fontSize: aboutPage.heroTitleSize || "4rem",
                 textShadow: "0 2px 4px rgba(0,0,0,0.3)"
               }}
             >
-              {inputs.headline || "About Our Organization"}
+              {aboutPage.headline || "About Our Organization"}
             </h1>
             <p 
               className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed"
               style={{
-                color: inputs.banner_subtitle_text || "#ffffff",
-                fontSize: inputs.heroSubtitleSize || "1.25rem",
+                color: aboutPage.banner_subtitle_text || "#ffffff",
+                fontSize: aboutPage.heroSubtitleSize || "1.25rem",
                 textShadow: "0 1px 2px rgba(0,0,0,0.3)"
               }}
             >
-              {inputs.heroSubtitle || "We are dedicated to making a positive impact in our community through innovative solutions and unwavering commitment to our mission."}
+              {aboutPage.heroSubtitle || "We are dedicated to making a positive impact in our community through innovative solutions and unwavering commitment to our mission."}
             </p>
           </div>
         </div>
@@ -109,11 +125,11 @@ const AboutPage = () => {
             <h2 
               className="font-bold mb-8"
               style={{
-                color: inputs.p_color || "#1F2937",
-                fontSize: inputs.sectionTitleSize || "2.5rem"
+                color: aboutPage.p_color || "#1F2937",
+                fontSize: aboutPage.sectionTitleSize || "2.5rem"
               }}
             >
-              {inputs.storyTitle || "Our Story"}
+              {aboutPage.storyTitle || "Our Story"}
             </h2>
             <div className="max-w-4xl mx-auto">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -121,17 +137,17 @@ const AboutPage = () => {
                   <p 
                     className="leading-relaxed text-lg"
                     style={{
-                      color: inputs.s_color || "#6B7280",
-                      fontSize: inputs.bodyTextSize || "1.125rem"
+                      color: aboutPage.s_color || "#6B7280",
+                      fontSize: aboutPage.bodyTextSize || "1.125rem"
                     }}
                   >
-                    {inputs.storyText || inputs.aboutText || "We are dedicated to making a positive impact in our community through innovative solutions and unwavering commitment to our mission. Our journey began with a simple belief that together, we can create lasting change."}
+                    {aboutPage.storyText || aboutPage.aboutText || "We are dedicated to making a positive impact in our community through innovative solutions and unwavering commitment to our mission. Our journey began with a simple belief that together, we can create lasting change."}
                   </p>
                 </div>
-                {inputs.storyImage && (
+                {aboutPage.storyImage && (
                   <div className="relative">
                     <img 
-                      src={inputs.storyImage} 
+                      src={aboutPage.storyImage} 
                       alt="Our Story" 
                       className="w-full h-80 object-cover rounded-2xl shadow-2xl"
                       style={{borderRadius: customStyles.cardRadius}}
@@ -151,8 +167,8 @@ const AboutPage = () => {
               <h3 
                 className="font-bold mb-4"
                 style={{
-                  color: inputs.p_color || "#1F2937",
-                  fontSize: inputs.sectionTitleSize || "2rem"
+                    color: aboutPage.p_color || "#1F2937",
+                  fontSize: aboutPage.sectionTitleSize || "2rem"
                 }}
               >
                 What We Do
@@ -164,16 +180,16 @@ const AboutPage = () => {
                 <p 
                   className="leading-relaxed text-lg"
                   style={{
-                    color: inputs.s_color || "#6B7280",
-                    fontSize: inputs.bodyTextSize || "1.125rem"
+                    color: aboutPage.s_color || "#6B7280",
+                    fontSize: aboutPage.bodyTextSize || "1.125rem"
                   }}
                 >
-                  {inputs.whatText || "We provide innovative solutions to address the most pressing challenges facing our community. Through strategic partnerships and evidence-based approaches, we create sustainable impact that transforms lives."}
+                  {aboutPage.whatText || "We provide innovative solutions to address the most pressing challenges facing our community. Through strategic partnerships and evidence-based approaches, we create sustainable impact that transforms lives."}
                 </p>
               </div>
               <div className="relative">
                 <img 
-                  src={inputs.aboutImage || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"} 
+                  src={aboutPage.aboutImage || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"} 
                   alt="About" 
                   className="w-full h-80 object-cover rounded-2xl shadow-2xl"
                   style={{borderRadius: customStyles.cardRadius}}
@@ -191,8 +207,8 @@ const AboutPage = () => {
               <h3 
                 className="font-bold mb-4"
                 style={{
-                  color: inputs.p_color || "#1F2937",
-                  fontSize: inputs.sectionTitleSize || "2rem"
+                  color: aboutPage.p_color || "#1F2937",
+                  fontSize: aboutPage.sectionTitleSize || "2rem"
                 }}
               >
                 Why We Do It
@@ -204,11 +220,11 @@ const AboutPage = () => {
                 <p 
                   className="leading-relaxed text-lg text-center"
                   style={{
-                    color: inputs.s_color || "#6B7280",
-                    fontSize: inputs.bodyTextSize || "1.125rem"
+                    color: aboutPage.s_color || "#6B7280",
+                    fontSize: aboutPage.bodyTextSize || "1.125rem"
                   }}
                 >
-                  {inputs.whyText || "We believe in the power of community and the importance of giving back to create lasting positive change. Every action we take is driven by our commitment to building a better future for all."}
+                  {aboutPage.whyText || "We believe in the power of community and the importance of giving back to create lasting positive change. Every action we take is driven by our commitment to building a better future for all."}
                 </p>
               </div>
             </div>
@@ -222,8 +238,8 @@ const AboutPage = () => {
               <h3 
                 className="font-bold mb-4"
                 style={{
-                  color: inputs.p_color || "#1F2937",
-                  fontSize: inputs.sectionTitleSize || "2rem"
+                  color: aboutPage.p_color || "#1F2937",
+                    fontSize: aboutPage.sectionTitleSize || "2rem"
                 }}
               >
                 Our Team
@@ -233,19 +249,19 @@ const AboutPage = () => {
             <p 
               className="leading-relaxed mb-12 max-w-2xl mx-auto text-lg"
               style={{
-                color: inputs.s_color || "#6B7280",
-                fontSize: inputs.bodyTextSize || "1.125rem"
+                color: aboutPage.s_color || "#6B7280",
+                  fontSize: aboutPage.bodyTextSize || "1.125rem"
               }}
             >
-              {inputs.teamText || "Meet the dedicated individuals who make our mission possible. Our team brings together diverse expertise and shared passion for creating positive change."}
+              {aboutPage.teamText || "Meet the dedicated individuals who make our mission possible. Our team brings together diverse expertise and shared passion for creating positive change."}
             </p>
             
-            {inputs.showTeamPhotos && inputs.teamImage && (
+            {aboutPage.showTeamPhotos && aboutPage.teamImage && (
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="group">
                   <div className="relative overflow-hidden rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-300">
                     <img 
-                      src={inputs.teamImage} 
+                        src={aboutPage.teamImage} 
                       alt="Team Member" 
                       className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                       style={{borderRadius: customStyles.cardRadius}}
@@ -256,7 +272,7 @@ const AboutPage = () => {
                         className="font-bold mb-2"
                         style={{
                           color: "#ffffff",
-                          fontSize: inputs.cardTitleSize || "1.25rem"
+                          fontSize: aboutPage.cardTitleSize || "1.25rem"
                         }}
                       >
                         John Doe
@@ -264,7 +280,7 @@ const AboutPage = () => {
                       <p 
                         style={{
                           color: "#ffffff",
-                          fontSize: inputs.bodyTextSize || "1rem"
+                          fontSize: aboutPage.bodyTextSize || "1rem"
                         }}
                       >
                         Executive Director
@@ -275,7 +291,7 @@ const AboutPage = () => {
                 <div className="group">
                   <div className="relative overflow-hidden rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-300">
                     <img 
-                      src={inputs.teamImage} 
+                      src={aboutPage.teamImage} 
                       alt="Team Member" 
                       className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                       style={{borderRadius: customStyles.cardRadius}}
@@ -286,7 +302,7 @@ const AboutPage = () => {
                         className="font-bold mb-2"
                         style={{
                           color: "#ffffff",
-                          fontSize: inputs.cardTitleSize || "1.25rem"
+                          fontSize: aboutPage.cardTitleSize || "1.25rem"
                         }}
                       >
                         Jane Smith
@@ -294,7 +310,7 @@ const AboutPage = () => {
                       <p 
                         style={{
                           color: "#ffffff",
-                          fontSize: inputs.bodyTextSize || "1rem"
+                          fontSize: aboutPage.bodyTextSize || "1rem"
                         }}
                       >
                         Program Manager
@@ -305,7 +321,7 @@ const AboutPage = () => {
                 <div className="group">
                   <div className="relative overflow-hidden rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-300">
                     <img 
-                      src={inputs.teamImage} 
+                      src={aboutPage.teamImage} 
                       alt="Team Member" 
                       className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                       style={{borderRadius: customStyles.cardRadius}}
@@ -316,7 +332,7 @@ const AboutPage = () => {
                         className="font-bold mb-2"
                         style={{
                           color: "#ffffff",
-                          fontSize: inputs.cardTitleSize || "1.25rem"
+                          fontSize: aboutPage.cardTitleSize || "1.25rem"
                         }}
                       >
                         Mike Johnson
@@ -324,7 +340,7 @@ const AboutPage = () => {
                       <p 
                         style={{
                           color: "#ffffff",
-                          fontSize: inputs.bodyTextSize || "1rem"
+                          fontSize: aboutPage.bodyTextSize || "1rem"
                         }}
                       >
                         Community Outreach

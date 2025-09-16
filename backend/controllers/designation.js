@@ -50,11 +50,11 @@ export const getDesignationsByCampaign = asyncHandler(async (req, res) => {
   if (!id) {
     throw new ValidationError('Campaign ID is required');
   }
-  console.log("id", id)
+  // console.log("id", id)
   
   // Delegate to DesignationService
   const designations = await designationService.getDesignationsByCampaign(id);
-  console.log("designations", designations)
+  // console.log("designations", designations)
   
   sendSuccess(res, designations, 'Campaign designations retrieved successfully');
 })
@@ -104,4 +104,25 @@ export const deleteDesignation = asyncHandler(async (req, res) => {
   await designationService.deleteDesignation(id);
   
   sendSuccess(res, null, 'Designation deleted successfully');
+})
+
+export const getDefaultDesignation = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  if (!id) {
+    throw new ValidationError('Campaign ID is required');
+  }
+  
+  try {
+    // Delegate to DesignationService
+    const designation = await designationService.getDefaultDesignation(id);
+    
+    sendSuccess(res, designation, 'Default designation retrieved successfully');
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      sendNotFound(res, 'Default designation not found for this campaign');
+    } else {
+      throw error;
+    }
+  }
 })

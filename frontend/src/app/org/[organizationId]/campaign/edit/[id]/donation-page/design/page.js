@@ -7,7 +7,7 @@ import ErrorModal from "@/app/components/errorModal"
 import { FaPalette, FaFont, FaMousePointer, FaRuler, FaSave, FaImage, FaUndo } from "react-icons/fa";
 
 const Design = () => {
-   const {campaignId, donationPageInputs, handleDonationPageInputsChange, donationPageSections, setDonationPageInputs} = useContext(DonationPageContext)
+   const {campaignId, donationPageInputs, handleDonationPageInputsChange, donationPageSections, setDonationPageInputs, donationPageId, organizationId} = useContext(DonationPageContext)
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isLoading, setIsLoading] = useState(false)
@@ -24,7 +24,7 @@ const Design = () => {
          const pageService = getPageService();
          
          // Update donation page
-         await pageService.updateDonationPage(campaignId, donationPageInputs)
+         await pageService.updateDonationPage(organizationId, campaignId, donationPageId, donationPageInputs)
          
          // Update all sections in parallel (only those with valid IDs)
          const validSections = donationPageSections.filter(section => section.id && section.id > 0)
@@ -64,17 +64,17 @@ const Design = () => {
             mainText: donationResponse.mainText || "Our organization works tirelessly to create positive change in the community. Through innovative programs and dedicated volunteers, we're building a better future for everyone.",
             
             // Images
-            banner_image: donationResponse.banner_image || "",
-            small_image: donationResponse.small_image || "",
+            banner_image: donationResponse.bannerImage || "",
+            small_image: donationResponse.smallImage || "",
             
             // Colors
-            bg_color: donationResponse.bg_color || "#ffffff",
-            p_color: donationResponse.p_color || "#1f2937",
-            s_color: donationResponse.s_color || "#3b82f6",
-            b1_color: donationResponse.b1_color || "#3b82f6",
-            b2_color: donationResponse.b2_color || "#6b7280",
-            b3_color: donationResponse.b3_color || "#10b981",
-            bt_color: donationResponse.bt_color || "#ffffff",
+            bgColor: donationResponse.bgColor || "#ffffff",
+            pColor: donationResponse.pColor || "#1f2937",
+            sColor: donationResponse.sColor || "#3b82f6",
+            b1Color: donationResponse.b1Color || "#3b82f6",
+            b2Color: donationResponse.b2Color || "#6b7280",
+            b3Color: donationResponse.b3Color || "#10b981",
+            btColor: donationResponse.btColor || "#ffffff",
             
             // Banner Text Colors
             bannerTitleColor: donationResponse.bannerTitleColor || "#ffffff",
@@ -89,43 +89,43 @@ const Design = () => {
             button6: donationResponse.button6 || 1000,
             
             // Campaign Stats
-            goal_amount: donationResponse.goal_amount || 10000,
-            raised_amount: donationResponse.raised_amount || 2450,
-            donor_count: donationResponse.donor_count || 127,
-            days_left: donationResponse.days_left || 23,
+            // goal_amount: donationResponse.goal_amount || 10000,
+            // raised_amount: donationResponse.raised_amount || 2450,
+            // donor_count: donationResponse.donor_count || 127,
+            // days_left: donationResponse.days_left || 23,
             
             // Layout Options
-            show_progress: donationResponse.show_progress !== false,
-            show_donor_count: donationResponse.show_donor_count !== false,
-            show_days_left: donationResponse.show_days_left !== false,
-            show_amount_grid: donationResponse.show_amount_grid !== false,
+            // show_progress: donationResponse.show_progress !== false,
+            // show_donor_count: donationResponse.show_donor_count !== false,
+            // show_days_left: donationResponse.show_days_left !== false,
+            // show_amount_grid: donationResponse.show_amount_grid !== false,
             
             // Button Text
-            donate_button_text: donationResponse.donate_button_text || "Donate Now",
-            share_button_text: donationResponse.share_button_text || "Share",
+            // donate_button_text: donationResponse.donate_button_text || "Donate Now",
+            // share_button_text: donationResponse.share_button_text || "Share",
             
             // Footer
-            footer_text: donationResponse.footer_text || "Your Organization",
-            privacy_policy_url: donationResponse.privacy_policy_url || "#",
-            terms_of_service_url: donationResponse.terms_of_service_url || "#",
+            // footer_text: donationResponse.footer_text || "Your Organization",
+            // privacy_policy_url: donationResponse.privacy_policy_url || "#",
+            // terms_of_service_url: donationResponse.terms_of_service_url || "#",
             
             // Typography
-            heroTitleSize: donationResponse.heroTitleSize || "36",
-            heroSubtitleSize: donationResponse.heroSubtitleSize || "16",
-            sectionTitleSize: donationResponse.sectionTitleSize || "28",
-            bodyTextSize: donationResponse.bodyTextSize || "16",
-            buttonTextSize: donationResponse.buttonTextSize || "16",
-            cardTitleSize: donationResponse.cardTitleSize || "18",
+            // heroTitleSize: donationResponse.heroTitleSize || "36",
+            // heroSubtitleSize: donationResponse.heroSubtitleSize || "16",
+            // sectionTitleSize: donationResponse.sectionTitleSize || "28",
+            // bodyTextSize: donationResponse.bodyTextSize || "16",
+            // buttonTextSize: donationResponse.buttonTextSize || "16",
+            // cardTitleSize: donationResponse.cardTitleSize || "18",
             
             // Banner Typography
-            bannerTitleSize: donationResponse.bannerTitleSize || "56",
-            bannerSubtitleSize: donationResponse.bannerSubtitleSize || "20",
+            // bannerTitleSize: donationResponse.bannerTitleSize || "56",
+            // bannerSubtitleSize: donationResponse.bannerSubtitleSize || "20",
             
             // Layout
-            heroHeight: donationResponse.heroHeight || "500",
-            sectionPadding: donationResponse.sectionPadding || "80",
-            cardRadius: donationResponse.cardRadius || "4",
-            buttonRadius: donationResponse.buttonRadius || "4",
+            // heroHeight: donationResponse.heroHeight || "500",
+            // sectionPadding: donationResponse.sectionPadding || "80",
+            // cardRadius: donationResponse.cardRadius || "4",
+            // buttonRadius: donationResponse.buttonRadius || "4",
             
             // Visual Effects
             overlayOpacity: donationResponse.overlayOpacity || "0.3",
@@ -155,15 +155,15 @@ const Design = () => {
          title: "Main Content Text Colors",
          icon: <FaFont className="w-4 h-4" />,
          colors: [
-            { name: "p_color", label: "Primary Text Color", description: "Main text color for headings and important content" },
-            { name: "s_color", label: "Secondary Text Color", description: "Color for body text and secondary content" }
+            { name: "pColor", label: "Primary Text Color", description: "Main text color for headings and important content" },
+            { name: "sColor", label: "Secondary Text Color", description: "Color for body text and secondary content" }
          ]
       },
       {
          title: "Background Colors",
          icon: <FaPalette className="w-4 h-4" />,
          colors: [
-            { name: "bg_color", label: "Background Color", description: "Main background color for the page" }
+            { name: "bgColor", label: "Background Color", description: "Main background color for the page" }
          ]
       },
       {
@@ -177,8 +177,8 @@ const Design = () => {
          title: "Button Styles",
          icon: <FaMousePointer className="w-4 h-4" />,
          colors: [
-            { name: "b1_color", label: "Donate Button Color", description: "Background color for the main donate button" },
-            { name: "bt_color", label: "Button Text Color", description: "Text color for button text" }
+            { name: "b1Color", label: "Donate Button Color", description: "Background color for the main donate button" },
+            { name: "btColor", label: "Button Text Color", description: "Text color for button text" }
          ]
       }
    ]

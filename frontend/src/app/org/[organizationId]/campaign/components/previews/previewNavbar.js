@@ -11,6 +11,8 @@ import { DonationPageContext } from "@/app/context/campaignPages/donationPageCon
 import { PageUpdateService, updateThankYouPage, updateDonationForm, updateDonationPage } from "@/app/services/updateServices"
 import { errorHandler } from "@/app/services/apiClient"
 import { useToast } from "@/app/components/Toast"
+import { useTheme } from "@/app/hooks/useTheme"
+import { getDefaultTheme } from "@/app/utils/themeUtils"
 
 const PreviewNavbar = ({heading, links}) => {
    const pathname = usePathname()
@@ -31,83 +33,42 @@ const PreviewNavbar = ({heading, links}) => {
    
    const campaignId = params?.id
    const organizationId = params?.organizationId
+   
+   // Get organization theme
+   const { theme: organizationTheme, getColor, loading: themeLoading } = useTheme(organizationId, {
+      autoApply: false,
+      fallbackOnError: true
+   })
 
-   // Default styles configuration - Modern, clean, and professional
-   const defaultStyles = {
-      // Colors - Clean, modern palette
-      bg_color: "#ffffff",
-      p_color: "#1f2937", 
-      s_color: "#64748b",
-      b1_color: "#3b82f6",
-      b2_color: "#6b7280",
-      b3_color: "#10b981",
-      bt_color: "#ffffff",
-      
-      // Typography - Readable and modern
-      heroTitleSize: "48",
-      heroSubtitleSize: "18", 
-      sectionTitleSize: "32",
-      bodyTextSize: "16",
-      buttonTextSize: "16",
-      
-      // Layout - Modern spacing and rounded corners
-      cardRadius: "12",
-      buttonRadius: "8",
-      heroHeight: "600",
-      sectionPadding: "100",
-      
-      // Visual Effects - Subtle and elegant
-      overlayOpacity: "0.4"
+   // Theme-aware color configuration - only colors from organization theme
+   const getThemeColors = () => {
+      return {
+         // Core colors from organization theme
+         bgColor: getColor('background_color', '#ffffff'),
+         pColor: getColor('text_primary_color', '#1f2937'), 
+         sColor: getColor('text_secondary_color', '#64748b'),
+         b1Color: getColor('button_background_color', '#3b82f6'),
+         b2Color: getColor('secondary_color', '#6b7280'),
+         b3Color: getColor('success_color', '#10b981'),
+         btColor: getColor('button_text_color', '#ffffff'),
+         cColor: getColor('surface_color', '#ffffff'),
+         ctColor: getColor('text_primary_color', '#1f2937'),
+         tColor: getColor('text_primary_color', '#1f2937'),
+         // Additional color mappings for different page types
+         bannerTitleText: getColor('text_primary_color', '#ffffff'),
+         bannerSubtitleText: getColor('text_secondary_color', '#e2e8f0'),
+         heroSubtitleColor: getColor('text_primary_color', '#ffffff'),
+         bannerTitleColor: getColor('text_primary_color', '#ffffff'),
+         bannerSubtitleColor: getColor('text_secondary_color', '#e2e8f0')
+      }
    }
 
-   // Page-specific default styles to handle attribute inconsistencies
-   const donationFormDefaultStyles = {
-      ...defaultStyles,
-      // Donation form specific adjustments
-      heroTitleSize: "36", // Smaller for form context
-      sectionTitleSize: "20", // Smaller section titles
-      bodyTextSize: "14", // Smaller body text for forms
-      buttonTextSize: "14", // Smaller button text
-      cardRadius: "8", // Slightly smaller radius for forms
-      buttonRadius: "6", // Smaller button radius for forms
-      // Additional form-specific attributes
-      t_color: "#1f2937", // Text color for form elements
-   }
-
-   const thankYouPageDefaultStyles = {
-      ...defaultStyles,
-      // Thank you page specific adjustments
-      heroTitleSize: "32", // Appropriate for thank you messages
-      sectionTitleSize: "24", // Medium section titles
-      bodyTextSize: "16", // Standard body text
-      buttonTextSize: "14", // Standard button text
-      cardRadius: "12", // Standard card radius
-      buttonRadius: "8", // Standard button radius
-      // Additional thank you page attributes
-      t_color: "#1f2937", // Text color for thank you page elements
-   }
-
-   const donationPageDefaultStyles = {
-      ...defaultStyles,
-      // Donation page specific adjustments (landing page style)
-      heroTitleSize: "56", // Larger for hero sections
-      heroSubtitleSize: "20", // Larger subtitle
-      sectionTitleSize: "36", // Larger section titles
-      bodyTextSize: "18", // Larger body text for readability
-      buttonTextSize: "16", // Larger button text
-      cardRadius: "16", // Larger radius for modern look
-      buttonRadius: "10", // Larger button radius
-      heroHeight: "700", // Taller hero section
-      sectionPadding: "120", // More padding for spacious feel
-      overlayOpacity: "0.5", // Slightly more overlay for better text contrast
-      // Additional donation page attributes
-      cardTitleSize: "24", // Card title size for donation page
-      t_color: "#1f2937", // Text color for donation page elements
-      // Banner-specific styling
-      bannerTitleColor: "#ffffff", // White text for banner title
-      bannerSubtitleColor: "#e2e8f0", // Light gray for banner subtitle
-      bannerTitleSize: "56", // Large banner title
-      bannerSubtitleSize: "20", // Medium banner subtitle
+   // Determine which page type is currently being edited
+   const getCurrentPageType = () => {
+      if (pathname.includes('donation-form')) return 'donation-form'
+      if (pathname.includes('thank-you-page')) return 'thank-you'
+      if (pathname.includes('donation-page')) return 'donation-page'
+      return null
    }
 
    const applyDefaultStyles = async () => {
@@ -121,69 +82,84 @@ const PreviewNavbar = ({heading, links}) => {
          return
       }
 
-      // Check if we have access to at least one page context
-      if (!donationFormContext && !thankYouPageContext && !donationPageContext) {
-         showError("Error", "No page contexts available. Please refresh the page and try again.")
+      // Wait for theme to load if still loading
+      if (themeLoading) {
+         showError("Error", "Theme is still loading. Please wait a moment and try again.")
+         return
+      }
+
+      const currentPageType = getCurrentPageType()
+      if (!currentPageType) {
+         showError("Error", "Unable to determine current page type.")
          return
       }
 
       setIsApplyingStyles(true)
       
       try {
-         const updatePromises = []
+         const themeColors = getThemeColors()
+         let pageName = ''
+         let updatePromise = null
 
-         // Update donation form styles
-         if (donationFormContext && donationFormContext.donationFormId) {
-            const updatedDonationFormInputs = {
-               ...donationFormContext.donationFormInputs,
-               ...donationFormDefaultStyles
-            }
-            donationFormContext.setDonationFormInputs(updatedDonationFormInputs)
-            updatePromises.push(
-               updateDonationForm(donationFormContext.donationFormId, updatedDonationFormInputs, currentUser.id)
-            )
+         // Apply colors only to the current page being edited
+         switch (currentPageType) {
+            case 'donation-form':
+               if (!donationFormContext || !donationFormContext.donationFormId) {
+                  showError("Error", "Donation form context not available.")
+                  return
+               }
+               pageName = 'donation form'
+               const updatedDonationFormInputs = {
+                  ...donationFormContext.donationFormInputs,
+                  ...themeColors
+               }
+               donationFormContext.setDonationFormInputs(updatedDonationFormInputs)
+               // updatePromise = updateDonationForm(donationFormContext.donationFormId, updatedDonationFormInputs, currentUser.id)
+               break
+
+            case 'thank-you':
+               if (!thankYouPageContext) {
+                  showError("Error", "Thank you page context not available.")
+                  return
+               }
+               pageName = 'thank you page'
+               const updatedThankYouInputs = {
+                  ...thankYouPageContext.thankPageInputs,
+                  ...themeColors
+               }
+               thankYouPageContext.setThankPageInputs(updatedThankYouInputs)
+               // updatePromise = updateThankYouPage(campaignId, updatedThankYouInputs)
+               break
+
+            case 'donation-page':
+               if (!donationPageContext) {
+                  showError("Error", "Donation page context not available.")
+                  return
+               }
+               pageName = 'donation page'
+               const updatedDonationPageInputs = {
+                  ...donationPageContext.donationPageInputs,
+                  ...themeColors
+               }
+               donationPageContext.setDonationPageInputs(updatedDonationPageInputs)
+               // updatePromise = updateDonationPage(campaignId, updatedDonationPageInputs)
+               break
+
+            default:
+               showError("Error", "Unknown page type.")
+               return
          }
 
-         // Update thank you page styles
-         if (thankYouPageContext) {
-            const updatedThankYouInputs = {
-               ...thankYouPageContext.thankPageInputs,
-               ...thankYouPageDefaultStyles
-            }
-            thankYouPageContext.setThankPageInputs(updatedThankYouInputs)
-            updatePromises.push(
-               updateThankYouPage(campaignId, updatedThankYouInputs)
-            )
-         }
-
-         // Update donation page styles (for crowdfunding campaigns)
-         if (donationPageContext && campaignType === "crowdfunding") {
-            const updatedDonationPageInputs = {
-               ...donationPageContext.donationPageInputs,
-               ...donationPageDefaultStyles
-            }
-            donationPageContext.setDonationPageInputs(updatedDonationPageInputs)
-            updatePromises.push(
-               updateDonationPage(campaignId, updatedDonationPageInputs)
-            )
-         }
-
-         // Check if we have any updates to perform
-         if (updatePromises.length === 0) {
-            showError("Error", "No pages available to update. Please check your campaign configuration.")
-            return
-         }
-
-         // Execute all updates in parallel
-         await Promise.all(updatePromises)
+         // Execute the update
+         // await updatePromise
          
          // Show success feedback
-         showSuccess("Styles Applied", "Default styles have been applied to all pages successfully!")
+         showSuccess("Colors Applied", `Organization theme colors have been applied to the ${pageName} successfully!`)
          
       } catch (error) {
          const handledError = errorHandler.handle(error)
-         console.error("Error applying default styles:", handledError.message)
-         showError("Error", "Failed to apply default styles. Please try again.")
+         console.error("Error applying theme colors:", handledError.message)
+         showError("Error", "Failed to apply theme colors. Please try again.")
       } finally {
          setIsApplyingStyles(false)
       }
@@ -195,20 +171,19 @@ const PreviewNavbar = ({heading, links}) => {
             <div className="flex items-center justify-between">
                <div className="flex items-center space-x-4">
                   <h2 className="text-lg font-semibold text-gray-900">{heading}</h2>
+               </div>
+               <div className="flex space-x-1">
                   <button
                      onClick={applyDefaultStyles}
-                     disabled={isApplyingStyles}
+                     disabled={isApplyingStyles || themeLoading}
                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                        isApplyingStyles 
+                        isApplyingStyles || themeLoading
                            ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
                            : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
                      }`}
                   >
-                     {isApplyingStyles ? "Applying..." : "Apply Default Styles"}
+                     {isApplyingStyles ? "Applying..." : themeLoading ? "Loading Theme..." : "Apply Default Organization Theme"}
                   </button>
-               </div>
-               <div className="flex space-x-1">
-
                   <Link 
                      href={links[0]}
                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${

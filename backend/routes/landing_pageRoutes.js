@@ -4,7 +4,7 @@ import { createLandingPage, getLandingPage, updateLandingPage } from "../control
 const router = express.Router()
 
 router.post("/create", createLandingPage)
-router.put("/update/:id", updateLandingPage)
+router.put("/update/:organizationId/:pageId", updateLandingPage)
 router.get("/get/:organizationId", getLandingPage)
 
 export default router

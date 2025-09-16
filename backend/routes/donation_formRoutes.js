@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get("/get/:id", getDonationForm)
 router.post("/create", createDonationForm)
-router.put("/update/:id", updateDonationForm)
+router.put("/update/:organizationId/:campaignId/:pageId", updateDonationForm)
 
 export default router

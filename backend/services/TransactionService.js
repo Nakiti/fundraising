@@ -22,7 +22,7 @@ export class TransactionService extends BaseService {
   /**
    * Valid payment methods
    */
-  static VALID_METHODS = ['card', 'bank_transfer', 'paypal', 'apple_pay', 'google_pay', 'cash', 'check'];
+  static VALID_METHODS = ['card', 'bank_transfer', 'paypal', 'apple_pay', 'google_pay', 'cash', 'check', 'stripe'];
 
   /**
    * Valid payment method types for Stripe
@@ -160,11 +160,65 @@ export class TransactionService extends BaseService {
 
     // Create transaction
     const result = await this.create(transactionToCreate);
+
+    console.log('result', result);
     
     return {
-      id: result.insertId,
+      id: result.id,
       ...transactionToCreate,
       ...amounts
+    };
+  }
+
+  /**
+   * Create a new transaction with custom question responses
+   * @param {Object} transactionData - Transaction data
+   * @param {Array} questionResponses - Array of question response data
+   * @returns {Promise<Object>} Created transaction data with responses
+   */
+  async createTransactionWithResponses(transactionData, questionResponses = []) {
+    // Create the transaction first
+    const transaction = await this.createTransaction(transactionData);
+    console.log('transaction', transaction);
+
+    // If there are question responses, save them
+    if (questionResponses && questionResponses.length > 0) {
+      try {
+        // Import the service here to avoid circular dependencies
+        const { getCustomQuestionResponseService } = await import('./ServiceRegistry.js');
+        const customQuestionResponseService = getCustomQuestionResponseService();
+
+        // Prepare response data with transaction ID
+        const responsesData = questionResponses.map(response => ({
+          transaction_id: transaction.id,
+          question_id: response.question_id,
+          donor_id: transaction.donor_id, 
+          response_value: response.response_value,
+          response_type: response.response_type
+        }));
+
+        // Create all responses
+        const responsesResult = await customQuestionResponseService.createResponsesBatch(responsesData);
+        
+        return {
+          ...transaction,
+          question_responses: responsesResult.responses
+        };
+      } catch (error) {
+        // If saving responses fails, we should still return the transaction
+        // but log the error for debugging
+        console.error('Failed to save question responses:', error);
+        return {
+          ...transaction,
+          question_responses: [],
+          response_error: 'Failed to save question responses'
+        };
+      }
+    }
+
+    return {
+      ...transaction,
+      question_responses: []
     };
   }
 
@@ -227,6 +281,45 @@ export class TransactionService extends BaseService {
   }
 
   /**
+   * Get transaction by ID with campaign validation for thank-you page
+   * @param {number} transactionId - Transaction ID
+   * @param {number} campaignId - Campaign ID to validate against
+   * @returns {Promise<Object>} Transaction data with campaign and designation info
+   */
+  async getTransactionForThankYou(transactionId, campaignId) {
+    if (!transactionId) {
+      throw new ValidationError('Transaction ID is required');
+    }
+
+    if (!campaignId) {
+      throw new ValidationError('Campaign ID is required');
+    }
+
+    const query = `
+      SELECT 
+        t.*,
+        c.external_name as campaign_name,
+        d.name as designation_name,
+        donor.first_name,
+        donor.last_name,
+        donor.email
+      FROM transactions t
+      LEFT JOIN campaigns c ON t.campaign_id = c.id
+      LEFT JOIN designations d ON t.designation_id = d.id
+      LEFT JOIN donors donor ON t.donor_id = donor.id
+      WHERE t.id = ? AND t.campaign_id = ?
+    `;
+
+    const results = await this.executeQuery(query, [transactionId, campaignId]);
+    
+    if (!results || results.length === 0) {
+      throw new NotFoundError('Transaction not found or does not belong to this campaign');
+    }
+
+    return results[0];
+  }
+
+  /**
    * Get transactions by campaign with privacy controls
    * @param {number} campaignId - Campaign ID
    * @param {boolean} isAdmin - Whether requester has admin privileges
@@ -240,7 +333,7 @@ export class TransactionService extends BaseService {
     const query = `
       SELECT 
         transactions.*, 
-        campaign_details.external_name,
+        campaigns.external_name,
         CASE 
           WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
           ELSE donors.first_name
@@ -256,7 +349,7 @@ export class TransactionService extends BaseService {
         donors.is_guest,
         transactions.is_anonymous
       FROM transactions 
-      INNER JOIN campaign_details ON transactions.campaign_id = campaign_details.campaign_id 
+      LEFT JOIN campaigns ON transactions.campaign_id = campaigns.id 
       LEFT JOIN donors ON transactions.donor_id = donors.id
       WHERE transactions.campaign_id = ?
       ORDER BY transactions.date DESC
@@ -280,7 +373,7 @@ export class TransactionService extends BaseService {
     const query = `
       SELECT 
         transactions.*, 
-        campaign_details.external_name, 
+        campaigns.external_name, 
         CASE 
           WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
           ELSE donors.first_name
@@ -297,7 +390,6 @@ export class TransactionService extends BaseService {
         transactions.is_anonymous
       FROM transactions 
       INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
-      INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
       LEFT JOIN donors ON transactions.donor_id = donors.id 
       WHERE transactions.organization_id = ?
       ORDER BY transactions.date DESC
@@ -383,7 +475,7 @@ export class TransactionService extends BaseService {
     const query = `
       SELECT 
         transactions.*, 
-        campaign_details.external_name,
+        campaigns.external_name, 
         CASE 
           WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
           ELSE donors.first_name
@@ -400,7 +492,6 @@ export class TransactionService extends BaseService {
         transactions.is_anonymous
       FROM transactions 
       INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
-      INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
       LEFT JOIN donors ON transactions.donor_id = donors.id 
       WHERE transactions.organization_id = ?
       AND (
@@ -408,7 +499,7 @@ export class TransactionService extends BaseService {
         CAST(transactions.id AS CHAR) LIKE ? OR
         CAST(transactions.amount AS CHAR) LIKE ? OR
         transactions.status LIKE ? OR
-        campaign_details.external_name LIKE ? OR
+        campaigns.external_name LIKE ? OR
         donors.email LIKE ?
       )
       ORDER BY transactions.date DESC
@@ -442,7 +533,7 @@ export class TransactionService extends BaseService {
     let query = `
       SELECT 
         transactions.*, 
-        campaign_details.external_name,
+        campaigns.external_name,
         CASE 
           WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
           ELSE donors.first_name
@@ -459,7 +550,6 @@ export class TransactionService extends BaseService {
         transactions.is_anonymous
       FROM transactions 
       INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
-      INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
       LEFT JOIN donors ON transactions.donor_id = donors.id 
       WHERE transactions.organization_id = ?
     `;
@@ -492,7 +582,7 @@ export class TransactionService extends BaseService {
     let query = `
       SELECT 
         transactions.*, 
-        campaign_details.external_name,
+        campaigns.external_name,
         CASE 
           WHEN transactions.is_anonymous = TRUE AND ? = FALSE THEN 'Anonymous'
           ELSE donors.first_name
@@ -509,7 +599,6 @@ export class TransactionService extends BaseService {
         transactions.is_anonymous
       FROM transactions 
       INNER JOIN campaigns ON transactions.campaign_id = campaigns.id
-      INNER JOIN campaign_details ON campaign_details.campaign_id = campaigns.id
       LEFT JOIN donors ON transactions.donor_id = donors.id 
       WHERE transactions.organization_id = ?
     `;
@@ -594,13 +683,13 @@ export class TransactionService extends BaseService {
     let query = `
       SELECT 
         transactions.*, 
-        campaign_details.external_name,
+        campaigns.external_name,
         donors.first_name,
         donors.last_name,
         donors.email,
         donors.is_guest
       FROM transactions 
-      INNER JOIN campaign_details ON transactions.campaign_id = campaign_details.campaign_id
+      LEFT JOIN campaigns ON transactions.campaign_id = campaigns.id
       LEFT JOIN donors ON transactions.donor_id = donors.id 
       WHERE transactions.donor_id = ?
     `;

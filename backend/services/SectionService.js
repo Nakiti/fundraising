@@ -6,7 +6,7 @@ import {
 } from '../utils/errors.js';
 
 /**
- * Section Service - Handles page section-related business logic
+ * Section Service - Handles page section-related business logic 
  */
 export class SectionService extends BaseService {
   constructor() {
@@ -37,12 +37,12 @@ export class SectionService extends BaseService {
         'landing', 
         'header', 
         'footer', 
-        'donation-page', 
-        'donation-form', 
-        'thankyou-page',
-        'ticket-page',
-        'peer-fundraising',
-        'peer-landing'
+        'donation_page', 
+        'donation_form', 
+        'thankyou_page',
+        'ticket_page',
+        'peer_fundraising_page',
+        'peer_landing_page'
       ];
       if (!validPageTypes.includes(sectionData.page_type)) {
         throw new ValidationError(`Invalid page_type. Must be one of: ${validPageTypes.join(', ')}`);
@@ -160,7 +160,7 @@ export class SectionService extends BaseService {
     // Create section
     const result = await this.create(sectionToCreate);
     
-    return {
+    return { 
       id: result.insertId,
       ...sectionToCreate
     };
@@ -174,6 +174,7 @@ export class SectionService extends BaseService {
    */
   async updateSection(sectionId, updateData) {
     // Validate input data
+    // console.log('updateData', updateData);
     this.validateSectionData(updateData, true);
 
     // Check if section exists
@@ -208,6 +209,36 @@ export class SectionService extends BaseService {
 
     // Return updated section
     return await this.findById(sectionId);
+  }
+
+  /**
+   * Bulk update sections' active flags
+   * @param {Array<{id:number, active:number}>} items
+   */
+  async bulkUpdateSections(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new ValidationError('Items array is required');
+    }
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const ids = items.map((i) => i.id);
+    // Validate all exist first
+    const placeholders = ids.map(() => '?').join(', ');
+    const checkQuery = `SELECT id FROM page_sections WHERE id IN (${placeholders})`;
+    const existing = await this.executeQuery(checkQuery, ids);
+    if (!existing || existing.length !== ids.length) {
+      throw new NotFoundError('One or more sections not found');
+    }
+
+    // Build CASE update for active
+    const caseClauses = items.map((i) => `WHEN id = ${Number(i.id)} THEN ${Number(i.active) ? 1 : 0}`).join(' ');
+    const updateQuery = `
+      UPDATE page_sections
+      SET active = CASE ${caseClauses} END,
+          updated_at = '${now}'
+      WHERE id IN (${placeholders})
+    `;
+    await this.executeQuery(updateQuery, ids);
+    return true;
   }
 
   /**

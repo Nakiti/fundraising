@@ -19,6 +19,12 @@ export const createCampaign = asyncHandler(async (req, res) => {
 
 export const getCampaign = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const campaign = await campaignService.findById(id);
+  sendSuccess(res, campaign, 'Campaign retrieved successfully'); 
+})
+
+export const getCampaignWithDetails = asyncHandler(async (req, res) => {
+  const { id } = req.params;
   const campaign = await campaignService.getCampaignWithDetails(id);
   sendSuccess(res, campaign, 'Campaign retrieved successfully');
 })
@@ -38,12 +44,10 @@ export const getCampaignsByOrg = asyncHandler(async (req, res) => {
 })
 
 export const getActive = asyncHandler(async (req, res) => {
-  // Get active campaigns by using a custom query since status is in campaign_details
   const query = `
-    SELECT campaigns.*, campaign_details.internal_name, campaign_details.external_name, campaign_details.status
+    SELECT campaigns.*
     FROM campaigns 
-    LEFT JOIN campaign_details ON campaigns.id = campaign_details.campaign_id
-    WHERE campaign_details.status = 'active'
+    WHERE campaigns.status = 'active'
     ORDER BY campaigns.created_at DESC
   `;
   const campaigns = await campaignService.executeQuery(query);
@@ -84,17 +88,28 @@ export const getDateRange = asyncHandler(async (req, res) => {
 export const updateCampaign = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { url, updated_by, ...updateData } = req.body;
+   
+  // Whitelist allowable campaign columns to prevent invalid updates
+  const allowedFields = [
+    'internal_name','external_name','goal','default_designation','status','type','url',
+    'visits','donations','raised','show_phone','show_title','show_suffix','show_company_name','show_website_url'
+  ];
+  const filteredData = Object.fromEntries(
+    Object.entries(updateData).filter(([key]) => allowedFields.includes(key))
+  );
   
   // Validate URL uniqueness if provided
   if (url) {
     await campaignService.validateUniqueUrl(url, id);
   }
+
+  // console.log("filteredData", filteredData) 
   
   // Update campaign with provided data
   const campaign = await campaignService.update(id, {
     url,
     updated_by,
-    ...updateData
+    ...filteredData
   });
   
   sendUpdated(res, campaign, 'Campaign updated successfully');
@@ -109,7 +124,7 @@ export const deactivateCampaign = asyncHandler(async (req, res) => {
 })
 
 export const sumDonations = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; 
   const stats = await campaignService.getCampaignStats(id);
   sendSuccess(res, { total_donations: stats.total_raised }, 'Donations sum calculated successfully');
 })

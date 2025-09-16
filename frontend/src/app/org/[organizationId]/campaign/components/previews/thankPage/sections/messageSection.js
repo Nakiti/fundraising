@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { ThankYouPageContext } from "@/app/context/campaignPages/thankYouPageContext"
-import TextAreaInputEdit from "@/app/components/textAreaInputEdit";
+import TextAreaInputEdit from "@/app/components/inputs/textAreaInputEdit";
 
 const MessageSection = () => {
    const {thankPageInputs, handleThankInputsChange} = useContext(ThankYouPageContext)

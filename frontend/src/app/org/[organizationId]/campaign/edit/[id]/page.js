@@ -14,7 +14,7 @@ const EditCampaign = ({params}) => {
       if (campaignId && organizationId) {
          fetchCampaignData(campaignId, organizationId)
       }
-   }, [campaignId, organizationId, fetchCampaignData])
+   }, [])
 
    useEffect(() => {
       // Redirect to details page after data is loaded

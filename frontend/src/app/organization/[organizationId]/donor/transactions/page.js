@@ -58,13 +58,13 @@ const DonorTransactions = ({ params }) => {
 
         // Status filter
         if (statusFilter !== "all") {
-            filtered = filtered.filter(donation => donation.payment_status === statusFilter);
+            filtered = filtered.filter(donation => donation.status === statusFilter);
         }
 
         // Date filter
         if (dateFilter) {
             filtered = filtered.filter(donation => {
-                const donationDate = new Date(donation.donation_date).toDateString();
+                const donationDate = new Date(donation.date).toDateString();
                 const filterDate = new Date(dateFilter).toDateString();
                 return donationDate === filterDate;
             });

@@ -4,7 +4,7 @@
  * Success Response Helper
  */
 export const sendSuccess = (res, data = null, message = 'Success', statusCode = 200) => {
-  console.log("data", data)
+  // console.log("data", data)
   const response = {
     success: true,
     message,
@@ -12,7 +12,7 @@ export const sendSuccess = (res, data = null, message = 'Success', statusCode = 
     timestamp: new Date().toISOString()
   };
 
-  console.log("response", response)
+  // console.log("response", response)
   return res.status(statusCode).json(response);
 };
 

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { PeerLandingPageContext } from "@/app/context/campaignPages/peerLandingPageContext";
-import TextAreaInputEdit from "@/app/components/textAreaInputEdit";
-import ImageInputEdit from "@/app/components/imageInputEdit";
+import TextAreaInputEdit from "@/app/components/inputs/textAreaInputEdit";
+import ImageInputEdit from "@/app/components/inputs/imageInputEdit";
 
 const PeerLandingBannerSection = () => {
    const {peerLandingPageInputs, handlePeerLandingPageInputsChange} = useContext(PeerLandingPageContext)

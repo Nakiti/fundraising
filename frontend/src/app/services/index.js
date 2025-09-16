@@ -17,7 +17,8 @@ export {
   getTransactionService,
   getDesignationService,
   getContentService,
-  getStripeService
+  getStripeService,
+  getCustomQuestionResponseService
 } from './base/ServiceRegistry.js';
 
 // Domain Service Classes (for direct import if needed)
@@ -32,6 +33,7 @@ export { TransactionService } from './domain/TransactionService.js';
 export { DesignationService } from './domain/DesignationService.js';
 export { ContentService } from './domain/ContentService.js';
 export { StripeService } from './domain/StripeService.js';
+export { CustomQuestionResponseService } from './domain/CustomQuestionResponseService.js';
 
 // ===== LEGACY COMPATIBILITY =====
 

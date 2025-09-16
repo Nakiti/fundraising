@@ -19,9 +19,9 @@ const Transactions = ({params}) => {
       const fetchData = async() => {
          try {
             const transactionService = getTransactionService();
-            const response = await transactionService.getTransactionsByOrg(organizationId)
+            const response = await transactionService.getTransactionsByOrganization(organizationId)
             console.log(response)
-            setData(response)
+            setData(response.data)
          } catch (err) {
             const handledError = errorHandler.handle(err)
             setErrorMessage(handledError.message)

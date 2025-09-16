@@ -13,7 +13,7 @@ const LandingPageDesign = () => {
          colors: [
             { name: "p_color", label: "Primary Text Color", description: "Main text color for headings and important content" },
             { name: "s_color", label: "Secondary Text Color", description: "Color for body text and secondary content" },
-            { name: "ct_color", label: "Card Text Color", description: "Text color used within cards and containers" }
+            // { name: "ct_color", label: "Card Text Color", description: "Text color used within cards and containers" }
          ]
       },
       {
@@ -21,7 +21,7 @@ const LandingPageDesign = () => {
          icon: <FaImage className="w-4 h-4" />,
          colors: [
             { name: "bg_color", label: "Background Color", description: "Main background color for the page" },
-            { name: "c_color", label: "Campaign Card Color", description: "Background color for campaign cards" }
+            // { name: "c_color", label: "Campaign Card Color", description: "Background color for campaign cards" }
          ]
       },
       {
@@ -151,13 +151,13 @@ const LandingPageDesign = () => {
          defaultValue: "0.3",
          description: "Darkness of the overlay on hero images"
       },
-      {
-         name: "accentColor",
-         label: "Accent Color",
-         type: "color",
-         defaultValue: "#1F2937",
-         description: "Primary accent color for highlights"
-      }
+      // {
+      //    name: "accentColor",
+      //    label: "Accent Color",
+      //    type: "color",
+      //    defaultValue: "#1F2937",
+      //    description: "Primary accent color for highlights"
+      // }
    ]
 
    const toggleOptions = [
@@ -270,7 +270,7 @@ const LandingPageDesign = () => {
          ))}
 
          {/* Typography Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-green-50" style={{borderRadius: "4px"}}>
                   <FaFont className="w-3 h-3 text-green-600" />
@@ -304,10 +304,10 @@ const LandingPageDesign = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Layout Customization */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-blue-50" style={{borderRadius: "4px"}}>
                   <FaRuler className="w-3 h-3 text-blue-600" />
@@ -341,7 +341,7 @@ const LandingPageDesign = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
 
          {/* Visual Effects */}
          <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
@@ -404,7 +404,7 @@ const LandingPageDesign = () => {
          </div>
 
          {/* Element Toggles */}
-         <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
+         {/* <div className="bg-white border border-gray-100 p-4" style={{borderRadius: "4px"}}>
             <div className="flex items-center space-x-2 mb-4">
                <div className="p-1.5 bg-orange-50" style={{borderRadius: "4px"}}>
                   <FaToggleOn className="w-3 h-3 text-orange-600" />
@@ -435,7 +435,7 @@ const LandingPageDesign = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </div> */}
       </div>
    )
 }

@@ -38,22 +38,44 @@ const Questions = () => {
          // Save custom questions
          const campaignService = getCampaignService();
          const existingQuestions = await campaignService.getCustomQuestions(campaignId)
-         const questionsToAdd = customQuestions.filter(item => !existingQuestions.includes(item))
-         const questionsToRemove = existingQuestions.filter(item => !customQuestions.includes(item))
-
-         console.log(questionsToAdd)
-         console.log(questionsToRemove)
-
-         if (questionsToAdd.length > 0) {
-            await campaignService.addCampaignQuestion(campaignId, questionsToAdd)
+         
+         // Helper function to check if a question is new (has Date object as ID or very large number)
+         const isNewQuestion = (question) => {
+            return !question.id || 
+                   question.id instanceof Date || 
+                   typeof question.id === 'object' ||
+                   (typeof question.id === 'number' && question.id > 9999999999999)
          }
+         
+         // Separate new questions from existing ones
+         const newQuestions = customQuestions.filter(isNewQuestion)
+         const existingCustomQuestions = customQuestions.filter(q => !isNewQuestion(q))
+         
+         // Find questions to remove (exist in database but not in current state)
+         const questionsToRemove = existingQuestions.filter(dbQuestion => 
+            !existingCustomQuestions.some(currentQuestion => 
+               currentQuestion.id === dbQuestion.id
+            )
+         )
+
+         console.log('Existing questions from DB:', existingQuestions)
+         console.log('New questions to add:', newQuestions)
+         console.log('Questions to remove:', questionsToRemove)
+
+         // Add new questions
+         if (newQuestions.length > 0) {
+            await campaignService.addCampaignQuestion(campaignId, newQuestions)
+         }
+         
+         // Remove deleted questions
          if (questionsToRemove.length > 0) {
-            await campaignService.removeCampaignQuestion(questionsToRemove)
+            const questionIdsToRemove = questionsToRemove.map(q => q.id)
+            await campaignService.removeCampaignQuestion(questionIdsToRemove)
          }
 
          // Save checkbox question values to campaign details
          if (campaignDetails && currentUser) {
-            await campaignService.updateCampaign(campaignId, campaignDetails)
+            await campaignService.updateCampaign(campaignId, {...campaignDetails, updatedBy: currentUser.id})
          }
          
          markChangesAsSaved()
@@ -199,7 +221,7 @@ const Questions = () => {
             </div>
          </div>
          <div className="w-full flex flex-row mt-6">
-                         <button 
+            <button 
                 className={`ml-auto ${!pageChanges.questions ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-700"} px-6 py-3 w-40 rounded-md shadow-sm text-md text-white`}
                 onClick={handleSave}
                 disabled={!pageChanges.questions}

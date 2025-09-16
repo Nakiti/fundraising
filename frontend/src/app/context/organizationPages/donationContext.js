@@ -8,7 +8,7 @@ export const DonationContextProvider = ({organizationId, children}) => {
    const [designations, setDesignations] = useState([])
 
    useEffect(() => {
-      const fetchData = async() => {
+      const fetchData = async() => { 
          try {
             const designationService = getDesignationService();
             const response = await designationService.getActiveDesignations(organizationId)

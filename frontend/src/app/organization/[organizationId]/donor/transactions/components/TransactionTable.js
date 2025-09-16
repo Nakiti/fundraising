@@ -48,16 +48,16 @@ const TransactionTable = ({
                                 {formatDate(donation.date)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {donation.campaign_name || 'General'}
+                                {donation.campaignName || 'General'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {donation.designation_name || 'General'}
+                                {donation.designationName || 'General'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                                 {formatCurrency(donation.amount)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(donation.payment_status)}`}>
+                                <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(donation.status)}`}>
                                     {donation.status}
                                 </span>
                             </td>

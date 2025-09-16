@@ -1,7 +1,8 @@
 "use client"
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "@/app/context/authContext"
-import { getUserService, useApi, useFormSubmit, useToast } from "@/app/services"
+import { getUserService, useToast } from "@/app/services"
+import { errorHandler } from "@/app/services/apiClient"
 import { useRouter } from "next/navigation"
 import { FiCheck, FiUsers, FiMail, FiRefreshCw } from "react-icons/fi";
 
@@ -14,19 +15,25 @@ const Invites = () => {
    // Get UserService instance
    const userService = getUserService();
 
-   // API hook for fetching pending organizations
-   const { 
-      data: organizations, 
-      loading, 
-      error, 
-      execute: fetchOrganizations 
-   } = useApi(userService.getPendingUserOrganizations.bind(userService));
+   // Local state for pending organizations
+   const [organizations, setOrganizations] = useState(null)
+   const [loading, setLoading] = useState(false)
+   const [acceptLoading, setAcceptLoading] = useState(false)
 
-   // API hook for accepting invites
-   const { 
-      submit: acceptInvite, 
-      loading: acceptLoading 
-   } = useFormSubmit(userService.acceptOrganizationInvite.bind(userService));
+   // Fetch pending organizations using service
+   const fetchOrganizations = async (userId) => {
+      try {
+         setHasInitiatedFetch(true)
+         setLoading(true)
+         const data = await userService.getPendingUserOrganizations(userId)
+         setOrganizations(data)
+      } catch (err) {
+         const handled = errorHandler.handle(err)
+         showError('Error', handled.message || 'Failed to load organization invites')
+      } finally {
+         setLoading(false)
+      }
+   }
 
    useEffect(() => {
       // Only fetch organizations if we have a valid currentUser object with an id
@@ -36,21 +43,18 @@ const Invites = () => {
       }
    }, [currentUser?.id]); // Watch for currentUser.id specifically
 
-   // Handle errors
-   useEffect(() => {
-      if (error) {
-         showError('Error', error.message || 'Failed to load organization invites');
-      }
-   }, [error, showError]);
-
    const handleAccept = async (id) => {
       try {
-         await acceptInvite(id);
+         setAcceptLoading(true)
+         await userService.acceptOrganizationInvite(id)
          showSuccess('Invite Accepted', 'You have successfully joined the organization!');
          router.push("/profile");
       } catch (err) {
-         console.error('Error accepting invite:', err);
-         showError('Error', err.message || 'Failed to accept invite. Please try again.');
+         const handled = errorHandler.handle(err)
+         showError('Error', handled.message || 'Failed to accept invite. Please try again.');
+      }
+      finally {
+         setAcceptLoading(false)
       }
    }
 

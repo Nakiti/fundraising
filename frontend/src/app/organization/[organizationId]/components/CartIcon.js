@@ -13,7 +13,7 @@ const CartIcon = ({ organizationId, className = "", showLabel = false }) => {
 
   return (
     <Link 
-      href={`/org/${organizationId}/page/cart`}
+      href={`/organization/${organizationId}/cart`}
       className={`
         relative inline-flex items-center space-x-2 p-2 rounded-lg
         transition-all duration-200 ease-in-out

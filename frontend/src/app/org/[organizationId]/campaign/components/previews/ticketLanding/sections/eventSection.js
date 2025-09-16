@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { CampaignContext } from "@/app/context/campaignContext"
 import useImageUpload from "@/app/hooks/useImageUpload"
 import { TicketPageContext } from "@/app/context/campaignPages/ticketPageContext";
-import TextAreaInputEdit from "@/app/components/textAreaInputEdit";
+import TextAreaInputEdit from "@/app/components/inputs/textAreaInputEdit";
 
 const EventSection = () => {
    const {ticketsPageInputs, handleTicketsPageInputs} = useContext(TicketPageContext)

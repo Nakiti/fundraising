@@ -1,12 +1,13 @@
 import express from "express"
-import { createSection, getSection, getSectionByPage, getSectionsByPage, updateSection, updateSectionOrder } from "../controllers/section.js"
+import { createSection, getSection, getSectionByPage, getSectionsByPage, updateSection, updateSectionOrder, bulkUpdateSections } from "../controllers/section.js"
 
 const router = express.Router()
 
 // New API structure for page_sections table
-router.post("/create", createSection)
+router.post("/createByPage", createSection)
 router.put("/update/:id", updateSection)
 router.put("/updateOrder", updateSectionOrder)
+router.put("/bulkUpdate", bulkUpdateSections)
 
 // Primary endpoint for getting sections by page context (new structure)
 router.get("/getByPage", getSectionsByPage)

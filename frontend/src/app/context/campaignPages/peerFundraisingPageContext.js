@@ -24,12 +24,12 @@ export const PeerFundraisingPageContextProvider = ({campaignId, children}) => {
                headline: peerFundraisingResponse.headline || "",
                tagline: peerFundraisingResponse.tagline || "",
                description: peerFundraisingResponse.description || "",
-               banner_image: peerFundraisingResponse.banner_image || "",
-               person_image: peerFundraisingResponse.person_image || "",
-               p_color: peerFundraisingResponse.p_color || "",
-               s_color: peerFundraisingResponse.s_color || "",
-               bg_color: peerFundraisingResponse.bg_color || "",
-               t_color: peerFundraisingResponse.t_color || "",
+               banner_image: peerFundraisingResponse.bannerImage || "",
+               person_image: peerFundraisingResponse.personImage || "",
+               p_color: peerFundraisingResponse.pColor || "",
+               s_color: peerFundraisingResponse.sColor || "",
+               bg_color: peerFundraisingResponse.bgColor || "",
+               t_color: peerFundraisingResponse.tColor || "",
             })
 
             const peerFundraisingSections = await pageService.getPageSectionsByPage(organizationId, 'peer_fundraising', peerFundraisingPageId)

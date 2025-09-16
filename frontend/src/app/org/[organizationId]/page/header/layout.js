@@ -2,12 +2,13 @@
 import HeaderPageDisplay from "./components/headerPageDisplay"
 import { useContext, useState } from "react"
 import { HeaderPageContext } from "@/app/context/organizationPages/headerPageContext"
-import { Services } from "@/app/services"
 import { AuthContext } from "@/app/context/authContext"
 import Navbar from "../components/navbar"
 import { validateActiveSections } from "@/app/utils/pageValidation"
+import { getPageService } from "@/app/services"
 
 const HeaderLayout = ({params, children}) => {
+   const pageService = getPageService()
    const [error, setError] = useState(false)
    const [errorMessage, setErrorMessage] = useState("")
    const [isSaving, setIsSaving] = useState(false)
@@ -16,6 +17,8 @@ const HeaderLayout = ({params, children}) => {
    const {currentUser} = useContext(AuthContext)
    const organizationId = params.organizationId
    const {inputs, sections, setInputs} = useContext(HeaderPageContext)
+
+   console.log('Header page inputs:', inputs)
 
    const links = [
       `/org/${organizationId}/page/header`,
@@ -40,7 +43,7 @@ const HeaderLayout = ({params, children}) => {
          }
          
          // Use the service to save header page
-         const result = await Services.Update.HeaderPage.saveHeaderPage(inputs.id, inputs, sections)
+         const result = await pageService.updateHeaderPage(organizationId, inputs.id, inputs, sections)
          
          // Success feedback
          console.log(result.message)
@@ -75,7 +78,7 @@ const HeaderLayout = ({params, children}) => {
          }
          
          // Use the service to publish header page
-         const result = await Services.Update.HeaderPage.publishHeaderPage(inputs.id, inputs, sections)
+         const result = await pageService.publishHeaderPage(organizationId, inputs.id, inputs, sections)
          
          // Update the context to reflect the new active status
          setInputs(prev => ({ ...prev, active: true }))
@@ -103,7 +106,7 @@ const HeaderLayout = ({params, children}) => {
 
       try {
          // Use the service to deactivate header page
-         const result = await Services.Update.HeaderPage.deactivateHeaderPage(inputs.id, inputs, sections)
+         const result = await pageService.deactivateHeaderPage(organizationId, inputs.id, inputs, sections)
          
          // Update the context to reflect the new inactive status
          setInputs(prev => ({ ...prev, active: false }))
@@ -135,7 +138,7 @@ const HeaderLayout = ({params, children}) => {
             isSaving={isSaving} 
             isPublishing={isPublishing}
             isDeactivating={isDeactivating}
-            status={inputs.active ? 'active' : 'draft'}
+            status={inputs.active == true ? 'active' : 'draft'}
             pageType="header"
          />
          
